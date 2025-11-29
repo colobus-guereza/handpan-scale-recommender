@@ -312,11 +312,6 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                                             <span className="px-3 py-1 rounded-full bg-indigo-600 text-white text-sm font-bold shadow-sm">
                                                                 {rank}위 추천
                                                             </span>
-                                                            {rank === 1 && (
-                                                                <span className="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wide">
-                                                                    Best Match
-                                                                </span>
-                                                            )}
                                                             {currentScale.vector.rarePopular > 0.7 && (
                                                                 <span className="flex items-center text-amber-500 text-xs font-medium">
                                                                     <Star className="w-3 h-3 fill-current mr-1" /> 인기 스케일
