@@ -290,17 +290,17 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                                 {/* Info Section */}
                                 <div className="flex flex-col justify-center self-center">
                                     <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center space-x-2">
-                                            <span className="px-3 py-1 rounded-full bg-indigo-600 text-white text-sm font-bold shadow-sm">
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            <span className="px-3 py-1 rounded-full bg-indigo-600 text-white text-sm font-bold shadow-sm whitespace-nowrap">
                                                 {currentIndex + 1}위 추천
                                             </span>
                                             {currentIndex === 0 && (
-                                                <span className="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wide">
+                                                <span className="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wide whitespace-nowrap">
                                                     Best Match
                                                 </span>
                                             )}
                                             {currentScale.vector.rarePopular > 0.7 && (
-                                                <span className="flex items-center text-amber-500 text-xs font-medium">
+                                                <span className="flex items-center text-amber-500 text-xs font-medium whitespace-nowrap">
                                                     <Star className="w-3 h-3 fill-current mr-1" /> 인기 스케일
                                                 </span>
                                             )}

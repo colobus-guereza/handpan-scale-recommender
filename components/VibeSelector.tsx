@@ -88,7 +88,7 @@ export default function VibeSelector({ onSelect }: Props) {
 
     return (
         <div className="w-full">
-            <div className="grid grid-cols-4 gap-5">
+            <div className="grid grid-cols-4 gap-6">
                 {VIBES.map((vibe) => {
                     const hoverStyles = getHoverStyles(vibe.id);
                     return (
@@ -100,7 +100,7 @@ export default function VibeSelector({ onSelect }: Props) {
                             whileHover={{ y: -2, scale: 1.01 }}
                             whileTap={{ scale: 0.98 }}
                         onClick={() => onSelect(vibe)}
-                        className={`group relative flex flex-col items-center justify-center p-7 bg-white border border-slate-200 rounded-lg shadow-sm hover:shadow-md ${hoverStyles.border} transition-all duration-300 overflow-hidden`}
+                        className={`group relative flex flex-col items-center justify-center p-9 bg-white border border-slate-200 rounded-lg shadow-sm hover:shadow-md ${hoverStyles.border} transition-all duration-300 overflow-hidden`}
                     >
                         <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
                         
@@ -109,12 +109,12 @@ export default function VibeSelector({ onSelect }: Props) {
                             <div className="shimmer-effect absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </div>
 
-                        <div className={`relative z-10 mb-4 p-4 bg-slate-50 rounded-lg ${hoverStyles.iconBg} transition-all duration-300`}>
+                        <div className={`relative z-10 mb-5 p-5 bg-slate-50 rounded-lg ${hoverStyles.iconBg} transition-all duration-300`}>
                             <div className="group-hover:scale-110 transition-transform duration-300">
-                                {React.cloneElement(vibe.icon as React.ReactElement, { className: `w-12 h-12 text-slate-400 ${hoverStyles.iconColor} transition-all duration-300` })}
+                                {React.cloneElement(vibe.icon as React.ReactElement, { className: `w-16 h-16 text-slate-400 ${hoverStyles.iconColor} transition-all duration-300` })}
                             </div>
                         </div>
-                        <h3 className={`relative z-10 text-xl font-bold text-slate-700 ${hoverStyles.textColor} tracking-tight transition-colors`}>
+                        <h3 className={`relative z-10 text-2xl font-bold text-slate-700 ${hoverStyles.textColor} tracking-tight transition-colors`}>
                             {vibe.title}
                         </h3>
                         </motion.button>
