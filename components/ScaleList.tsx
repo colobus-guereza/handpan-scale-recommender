@@ -241,18 +241,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                 </button>
             </div>
 
-            {/* Sidebar Navigation */}
-            <div className="fixed left-4 top-1/2 -translate-y-1/2 z-50 hidden xl:flex flex-col gap-3">
-                {VIBES.filter(v => v.id !== selectedVibe.id).map(vibe => (
-                    <button
-                        key={vibe.id}
-                        onClick={() => onChangeVibe(vibe)}
-                        className="w-32 py-3 px-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-slate-600 text-left"
-                    >
-                        {vibe.title}
-                    </button>
-                ))}
-            </div>
+
 
             {/* Main Carousel Section */}
             <div className="relative">
@@ -456,29 +445,45 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
             </div>
 
             {/* 스케일 분류기준 및 전체 스케일 토글 버튼 */}
-            <div className="flex justify-end gap-3 mb-4">
-                <button
-                    onClick={() => setShowClassificationCriteria(!showClassificationCriteria)}
-                    className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600 transition-all"
-                >
-                    <span>스케일 분류기준 {showClassificationCriteria ? '접기' : ''}</span>
-                    {showClassificationCriteria ? (
-                        <ChevronUp className="w-4 h-4" />
-                    ) : (
-                        <ChevronDown className="w-4 h-4" />
-                    )}
-                </button>
-                <button
-                    onClick={() => setShowAllScales(!showAllScales)}
-                    className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600 transition-all"
-                >
-                    <span>전체 스케일 {showAllScales ? '접기' : ''}</span>
-                    {showAllScales ? (
-                        <ChevronUp className="w-4 h-4" />
-                    ) : (
-                        <ChevronDown className="w-4 h-4" />
-                    )}
-                </button>
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+                {/* 좌측: 다른 카테고리 이동 버튼 */}
+                <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0 hide-scrollbar">
+                    {VIBES.filter(v => v.id !== selectedVibe.id).map(vibe => (
+                        <button
+                            key={vibe.id}
+                            onClick={() => onChangeVibe(vibe)}
+                            className="whitespace-nowrap px-4 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600 transition-all"
+                        >
+                            {vibe.title}
+                        </button>
+                    ))}
+                </div>
+
+                {/* 우측: 기능 버튼 */}
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => setShowClassificationCriteria(!showClassificationCriteria)}
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600 transition-all"
+                    >
+                        <span>스케일 분류기준 {showClassificationCriteria ? '접기' : ''}</span>
+                        {showClassificationCriteria ? (
+                            <ChevronUp className="w-4 h-4" />
+                        ) : (
+                            <ChevronDown className="w-4 h-4" />
+                        )}
+                    </button>
+                    <button
+                        onClick={() => setShowAllScales(!showAllScales)}
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600 transition-all"
+                    >
+                        <span>전체 스케일 {showAllScales ? '접기' : ''}</span>
+                        {showAllScales ? (
+                            <ChevronUp className="w-4 h-4" />
+                        ) : (
+                            <ChevronDown className="w-4 h-4" />
+                        )}
+                    </button>
+                </div>
             </div>
 
             {/* 스케일 분류기준 섹션 */}
