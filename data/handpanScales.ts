@@ -71,7 +71,7 @@ export const SCALES: Scale[] = [
             bottom: []
         },
         vector: { minorMajor: -0.8, pureSpicy: 0.1, rarePopular: 0.98 },
-        tags: ["마이너", "대중적", "고음확장", "멜로디"],
+        tags: ["마이너", "대중적", "연습곡 제일 많음", "유튜브에 교재도 많음"],
         description: "D Kurd 9에 고음(C5)을 추가한 확장 버전입니다. 더 넓은 음역대로 화려한 멜로디 연주가 가능합니다.",
         videoUrl: "https://youtu.be/uL40C1bqKik?si=DpqHwPB_RLpcA5mc",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/7514024868"
@@ -84,7 +84,7 @@ export const SCALES: Scale[] = [
         notes: {
             ding: "E3",
             top: ["G3", "B3", "C4", "D4", "E4", "F#4", "G4", "B4", "C5"],
-            bottom: ["C3", "D3", "D5", "E5"] // Assuming lower notes are bottom/mutant based on context, but user will verify
+            bottom: ["C3", "D3", "D5", "E5"]
         },
         vector: { minorMajor: -0.4, pureSpicy: 0.4, rarePopular: 0.5 },
         tags: ["하이브리드", "시네마틱", "상급자용", "달콤씁쓸한"],
@@ -103,7 +103,7 @@ export const SCALES: Scale[] = [
             bottom: ["D3", "E3"]
         },
         vector: { minorMajor: -0.6, pureSpicy: 0.25, rarePopular: 0.95 },
-        tags: ["Bestseller", "Deep", "Storytelling", "Malte Marten Style"],
+        tags: ["Malte Marten Style", "Bestseller", "Deep", "Storytelling"],
         description: "전 세계적으로 가장 사랑받는 스케일 중 하나입니다. G#으로 시작하는 독특한 구조가 풍부한 스토리텔링을 가능하게 합니다.",
         videoUrl: "https://youtu.be/SthKlH686Pc?si=_YG050uZwcbIoP0X",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12070387231"
@@ -135,7 +135,7 @@ export const SCALES: Scale[] = [
             bottom: []
         },
         vector: { minorMajor: -0.5, pureSpicy: 0.75, rarePopular: 0.35 },
-        tags: ["이국적", "집시", "독특함", "미스터리"],
+        tags: ["이국적", "집시", "독특함", "보헤미안"],
         description: "남들과 다른 독특함을 추구하는 분들을 위한 스케일입니다. 집시 음악을 연상시키는 강렬하고 신비로운 분위기를 자아냅니다.",
         videoUrl: "https://youtu.be/gTEsQG3dfKQ?si=IJcS8SYJe9468WgP",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8681747137"
@@ -276,10 +276,10 @@ export const SCALES: Scale[] = [
         notes: {
             ding: "F#3",
             top: ["G#3", "A3", "C#4", "E4", "F#4", "G#4", "A4", "B4", "C#5", "E5", "F#5", "G#5"],
-            bottom: ["D3", "E3", "B3", "D5"] // Approximate distribution, user to verify
+            bottom: ["D3", "E3", "B3", "D5"]
         },
         vector: { minorMajor: -0.6, pureSpicy: 0.25, rarePopular: 0.9 },
-        tags: ["뮤턴트", "초고음역", "피그미", "전문가용"],
+        tags: ["Malte Marten Style", "뮤턴트", "초고음역", "피그미", "전문가용"],
         description: "Low Pygmy의 확장판으로, 18개의 노트를 통해 광활한 음역대를 제공합니다. 섬세한 고음 표현과 깊은 저음이 어우러진 전문가용 모델입니다.",
         videoUrl: "https://youtu.be/UxsvhXeDok0?si=GnSeCzBk0qe8snYr",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689630331"
@@ -327,7 +327,7 @@ export const SCALES: Scale[] = [
             bottom: ["E3", "F3"]
         },
         vector: { minorMajor: -0.8, pureSpicy: 0.1, rarePopular: 0.95 },
-        tags: ["마이너", "저음보강", "표준확장", "풍성함"],
+        tags: ["마이너", "저음보강", "표준확장", "풍성함", "딩베이스", "화성연주"],
         description: "가장 인기 있는 D Kurd 스케일에 저음(E, F)을 추가하여 더욱 풍성한 연주가 가능합니다. 초보자부터 전문가까지 만족할 수 있는 구성입니다.",
         videoUrl: "https://youtu.be/KXDSbCdPjTM?si=3GD2eOil-5WsmVHa",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12070396728"
@@ -439,7 +439,7 @@ export const SCALES: Scale[] = [
             bottom: []
         },
         vector: { minorMajor: 0.5, pureSpicy: 0.2, rarePopular: 0.3 },
-        tags: ["무주", "평화", "자연", "치유"],
+        tags: ["무주", "평화", "자연", "치유", "아리랑음계", "국악스케일"],
         description: "무주의 자연을 닮은 평화로운 스케일입니다. 부드럽고 따뜻한 음색으로 마음을 치유하는 힘이 있습니다.",
         videoUrl: "https://youtu.be/0IGtmQlb1X4?si=y9oZiE4w-_Zkyih6",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8513504905"
