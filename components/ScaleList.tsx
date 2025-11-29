@@ -20,6 +20,51 @@ const getVideoId = (url: string) => {
 const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const videoId = getVideoId(url);
+    // Start with hqdefault (Safe Start) - almost always available
+    const [thumbnailUrl, setThumbnailUrl] = useState<string>(
+        videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : ''
+    );
+
+    useEffect(() => {
+        if (!videoId) return;
+
+        // Reset to safe default when videoId changes
+        setThumbnailUrl(`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`);
+
+        // Try to upgrade to maxresdefault
+        const tryMaxRes = new Image();
+        tryMaxRes.src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+        tryMaxRes.onload = () => {
+            // Check if it's the "deleted video" placeholder (120px width)
+            if (tryMaxRes.width > 120) {
+                setThumbnailUrl(`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`);
+            } else {
+                // If maxres is placeholder, try sddefault
+                trySdDefault();
+            }
+        };
+        tryMaxRes.onerror = () => {
+            trySdDefault();
+        };
+
+        const trySdDefault = () => {
+            const trySd = new Image();
+            trySd.src = `https://img.youtube.com/vi/${videoId}/sddefault.jpg`;
+            trySd.onload = () => {
+                if (trySd.width > 120) {
+                    setThumbnailUrl(`https://img.youtube.com/vi/${videoId}/sddefault.jpg`);
+                }
+            };
+        };
+    }, [videoId]);
+
+    // No need for onError handler anymore as we pre-check
+    const handleImageError = () => {
+        // Fallback just in case even hqdefault fails (rare)
+        if (!thumbnailUrl.includes('hqdefault')) {
+            setThumbnailUrl(`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`);
+        }
+    };
 
     if (!videoId) {
         return (
@@ -49,12 +94,10 @@ const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
             aria-label="Play video"
         >
             <img
-                src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+                src={thumbnailUrl}
                 alt={title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                onError={(e) => {
-                    (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-                }}
+                onError={handleImageError}
             />
             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
             <div className="absolute inset-0 flex items-center justify-center">

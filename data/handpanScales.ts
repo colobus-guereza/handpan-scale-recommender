@@ -205,22 +205,6 @@ export const SCALES: Scale[] = [
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8521877785"
     },
 
-    // 13. C# Yisha Savita 9 (The Energetic Major / Annapurna)
-    {
-        id: "cs_yisha_savita_9",
-        name: "C# Yisha Savita 9",
-        notes: {
-            ding: "C#3",
-            top: ["G#3", "C4", "C#4", "D#4", "F4", "F#4", "G#4", "C#5"],
-            bottom: []
-        },
-        vector: { minorMajor: 0.8, pureSpicy: 0.35, rarePopular: 0.5 },
-        tags: ["메이저", "상쾌함", "에너지", "안나푸르나"],
-        description: "상쾌하고 에너지가 넘치는 메이저 스케일입니다. 뚜렷한 멜로디 라인과 활기찬 분위기를 만들어냅니다.",
-        videoUrl: "",
-        productUrl: ""
-    },
-
     // 14. D Asha 15 (2-Octave Major) - Mutant
     {
         id: "d_asha_15_mutant",

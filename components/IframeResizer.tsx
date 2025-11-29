@@ -4,6 +4,9 @@ import { useEffect } from 'react';
 
 export default function IframeResizer() {
     useEffect(() => {
+        // PC 웹(독립 실행)에서는 리사이저 로직을 아예 실행하지 않음 -> 성능 오버헤드 0
+        if (typeof window === 'undefined' || window.self === window.top) return;
+
         let lastHeight = 0;
         let timeoutId: NodeJS.Timeout;
 
@@ -22,53 +25,47 @@ export default function IframeResizer() {
             timeoutId = setTimeout(() => sendHeight(height), 100);
         };
 
-        // 초기 높이 전송 (Initial check still needs to query DOM, but only once)
+        // 초기 높이 전송 (Initial check)
         const initialHeight = Math.max(
             document.body.scrollHeight,
             document.documentElement.scrollHeight
         );
         sendHeight(initialHeight);
 
-        // 모바일 중복 스크롤 방지를 위한 스타일 강제 적용 (iframe 내부일 때만)
+        // 모바일 중복 스크롤 방지를 위한 스타일 강제 적용
         if (window.self !== window.top) {
             document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
             document.documentElement.style.width = '100%';
             document.body.style.width = '100%';
-            document.body.style.minHeight = 'auto'; // 100vh로 인한 강제 늘어남 방지
+            document.body.style.minHeight = 'auto';
         }
 
         // DOM 변화 감지를 위한 Observer
         const resizeObserver = new ResizeObserver((entries) => {
             for (const entry of entries) {
-                // Use contentRect or borderBoxSize to get height without forcing reflow
+                // Use contentRect to get height without forcing reflow
                 const height = entry.contentRect.height;
-                // Add some padding if needed, or use scrollHeight if body overflow is hidden
-                // Since we observe document.body, contentRect.height should be close to what we want
-                // But let's be safe and use a slightly larger value if needed, or just trust it.
-                // Actually, for body, we might want to check if scrollHeight is larger?
-                // But checking scrollHeight forces reflow.
-                // Let's trust contentRect.height for the stream of updates.
                 debouncedSendHeight(height);
             }
         });
 
         resizeObserver.observe(document.body);
 
-        // 윈도우 리사이즈 이벤트 리스너 (Fallback)
-        const handleResize = () => {
+        // Fallback for window resize
+        const onWindowResize = () => {
             const height = Math.max(
                 document.body.scrollHeight,
                 document.documentElement.scrollHeight
             );
             debouncedSendHeight(height);
         };
-        window.addEventListener('resize', handleResize);
+        window.addEventListener('resize', onWindowResize);
 
         return () => {
             clearTimeout(timeoutId);
             resizeObserver.disconnect();
-            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('resize', onWindowResize);
         };
     }, []);
 
