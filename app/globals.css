@@ -20,10 +20,10 @@ body {
   /* Light Mode Variables (Default) */
   --foreground-rgb: 15, 23, 42;
   /* Slate-900 for maximum contrast */
-  --background-start-rgb: 248, 250, 252;
-  /* Slate-50 */
-  --background-end-rgb: 226, 232, 240;
-  /* Slate-200 */
+  --background-start-rgb: 255, 255, 255;
+  /* Pure White */
+  --background-end-rgb: 255, 255, 255;
+  /* Pure White */
 
   --glass-bg: rgba(255, 255, 255, 0.95);
   /* Almost solid for clarity */
