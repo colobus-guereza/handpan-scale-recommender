@@ -18,38 +18,38 @@ body {
 
 :root {
   /* Light Mode Variables (Default) */
-  --foreground-rgb: 30, 41, 59;
-  /* Slate-800 for sharper text */
-  --background-start-rgb: 255, 255, 255;
-  /* Pure White */
-  --background-end-rgb: 241, 245, 249;
-  /* Slate-100 */
+  --foreground-rgb: 15, 23, 42;
+  /* Slate-900 for maximum contrast */
+  --background-start-rgb: 248, 250, 252;
+  /* Slate-50 */
+  --background-end-rgb: 226, 232, 240;
+  /* Slate-200 */
 
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  /* More opaque for better readability */
-  --glass-border: rgba(15, 23, 42, 0.08);
-  /* Dark border for definition */
-  --glass-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
-  /* Soft but deep shadow */
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  /* Almost solid for clarity */
+  --glass-border: rgba(15, 23, 42, 0.12);
+  /* Distinct border */
+  --glass-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  /* Stronger elevation */
 
-  --text-primary: #0f172a;
-  /* Slate-900 */
+  --text-primary: #020617;
+  /* Slate-950 */
   --text-secondary: #475569;
   /* Slate-600 */
-  --accent-color: #4f46e5;
-  /* Indigo-600 */
+  --accent-color: #4338ca;
+  /* Indigo-700 */
 }
 
 .dark {
   /* Dark Mode Variables */
   --foreground-rgb: 226, 232, 240;
   /* Slate-200 */
-  --background-start-rgb: 5, 5, 5;
-  /* Void */
-  --background-end-rgb: 15, 23, 42;
-  /* Nebula */
+  --background-start-rgb: 0, 0, 0;
+  /* Pure Black */
+  --background-end-rgb: 0, 0, 0;
+  /* Pure Black */
 
-  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-bg: rgba(0, 0, 0, 0.6);
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
 
@@ -57,8 +57,8 @@ body {
   /* Slate-200 */
   --text-secondary: #94a3b8;
   /* Slate-400 */
-  --accent-color: #22d3ee;
-  /* Cosmic Cyan */
+  --accent-color: #48FF00;
+  /* Harmonic Green (1순위) */
 }
 
 body {
@@ -94,8 +94,8 @@ body {
 }
 
 .glass-card:hover {
-  border: 1px solid var(--accent-color);
-  box-shadow: 0 0 15px rgba(var(--accent-color), 0.15);
+  border: 1px solid rgba(72, 255, 0, 0.15);
+  box-shadow: 0 0 8px rgba(72, 255, 0, 0.08);
 }
 
 @keyframes shimmer {

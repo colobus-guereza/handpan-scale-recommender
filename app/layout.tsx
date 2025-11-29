@@ -32,7 +32,7 @@ export default function RootLayout({
                                 </div>
 
                                 <header className="text-center space-y-1 pt-2">
-                                    <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-stardust dark:via-white dark:to-cosmic drop-shadow-sm">
+                                    <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-slate-400 drop-shadow-sm">
                                         나에게 맞는 핸드팬 찾기
                                     </h1>
                                 </header>

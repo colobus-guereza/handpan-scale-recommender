@@ -12,8 +12,8 @@ const config: Config = {
                 // Deep Dark Palette
                 void: '#050505',      // Absolute Black
                 nebula: '#0f172a',    // Deep Blue Grey
-                stardust: '#fbbf24',  // Warm Gold
-                cosmic: '#22d3ee',    // Cyan Glow
+                stardust: '#FCFF48',  // Harmonic Yellow (2순위)
+                cosmic: '#48FF00',   // Harmonic Green (1순위)
 
                 // Glass Colors
                 'glass-dark': 'rgba(10, 10, 10, 0.7)',
@@ -23,6 +23,7 @@ const config: Config = {
             backgroundImage: {
                 "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
                 "deep-space": "linear-gradient(to bottom, #050505, #0f172a)",
+                "exotic-gradient": "linear-gradient(to bottom right, #FFB6C1, #8A2BE2)",
             },
             animation: {
                 'float': 'float 6s ease-in-out infinite',
@@ -35,8 +36,8 @@ const config: Config = {
                     '50%': { transform: 'translateY(-10px)' },
                 },
                 glow: {
-                    '0%': { boxShadow: '0 0 5px rgba(34, 211, 238, 0.2)' },
-                    '100%': { boxShadow: '0 0 20px rgba(34, 211, 238, 0.6), 0 0 10px rgba(34, 211, 238, 0.4)' },
+                    '0%': { boxShadow: '0 0 5px rgba(72, 255, 0, 0.2)' },
+                    '100%': { boxShadow: '0 0 20px rgba(72, 255, 0, 0.6), 0 0 10px rgba(72, 255, 0, 0.4)' },
                 }
             }
         },
