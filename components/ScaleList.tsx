@@ -184,7 +184,7 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
     const currentScale = displayScales[currentIndex];
 
     return (
-        <div className="w-full max-w-4xl mx-auto">
+        <div className="w-full max-w-full mx-auto">
             {/* Header */}
             <div className="mb-6">
                 <button
@@ -230,7 +230,7 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                             transition={{ duration: 0.2 }}
                             className="bg-white border border-slate-200 rounded-2xl p-4 shadow-lg mb-4"
                         >
-                            <div className="grid grid-cols-1 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                                 {/* Video Section */}
                                 <div className="w-full aspect-video bg-slate-100 rounded-xl overflow-hidden shadow-inner relative group">
                                     {currentScale.videoUrl ? (
@@ -279,6 +279,18 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                                                 ))}
                                             </div>
                                         )}
+                                        <a
+                                            href={currentScale.productUrl || "#"}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md transition-all translate-y-16 ${currentScale.productUrl
+                                                ? 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg hover:translate-y-14'
+                                                : 'bg-slate-300 cursor-not-allowed'
+                                                }`}
+                                            title={currentScale.productUrl ? '구매하기' : '준비중'}
+                                        >
+                                            <ExternalLink className="w-5 h-5" />
+                                        </a>
                                     </div>
 
                                     <div className="flex items-center mb-2 gap-3">
@@ -357,18 +369,7 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                                                 이전
                                             </button>
                                         )}
-                                        <a
-                                            href={currentScale.productUrl || "#"}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className={`flex-[2] md:flex-1 flex items-center justify-center px-6 py-3.5 rounded-xl text-white font-bold shadow-md transition-all ${currentScale.productUrl
-                                                ? 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg hover:-translate-y-0.5'
-                                                : 'bg-slate-300 cursor-not-allowed'
-                                                }`}
-                                        >
-                                            {currentScale.productUrl ? '구매하기' : '준비중'}
-                                            <ExternalLink className="w-4 h-4 ml-2" />
-                                        </a>
+
                                         {displayScales.length > 1 && currentIndex < displayScales.length - 1 && (
                                             <button
                                                 onClick={nextSlide}
