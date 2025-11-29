@@ -16,12 +16,12 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="ko" className="h-full">
-            <body className={`${inter.className} bg-slate-50 text-slate-900 min-h-full m-0 p-0 overflow-y-auto`}>
-                <div className="min-h-screen flex items-start justify-center w-full py-8 px-4">
+            <body className={`${inter.className} bg-white text-slate-900 min-h-full m-0 p-0 overflow-y-auto`}>
+                <div className="min-h-screen flex items-start justify-center w-full py-4 px-2">
                     <div className="w-full max-w-3xl">
-                        <div className="flex flex-col items-center space-y-10 bg-white/50 backdrop-blur-sm p-8 rounded-3xl border border-slate-100 shadow-2xl shadow-slate-200/50">
-                            <header className="text-center space-y-3">
-                                <h1 className="text-3xl md:text-5xl font-black tracking-tighter text-slate-900">
+                        <div className="flex flex-col items-center space-y-4 bg-white/50 backdrop-blur-sm p-4 rounded-3xl border border-slate-100 shadow-2xl shadow-slate-200/50">
+                            <header className="text-center space-y-1">
+                                <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900">
                                     나에게 맞는 핸드팬 찾기
                                 </h1>
                             </header>

@@ -228,9 +228,9 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.2 }}
-                            className="bg-white border border-slate-200 rounded-2xl p-6 shadow-lg mb-8"
+                            className="bg-white border border-slate-200 rounded-2xl p-4 shadow-lg mb-4"
                         >
-                            <div className="grid grid-cols-1 gap-8">
+                            <div className="grid grid-cols-1 gap-4">
                                 {/* Video Section */}
                                 <div className="w-full aspect-video bg-slate-100 rounded-xl overflow-hidden shadow-inner relative group">
                                     {currentScale.videoUrl ? (
@@ -251,7 +251,7 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
 
                                 {/* Info Section */}
                                 <div className="flex flex-col justify-center">
-                                    <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center space-x-2">
                                             <span className="px-3 py-1 rounded-full bg-indigo-600 text-white text-sm font-bold shadow-sm">
                                                 {currentIndex + 1}위 추천
@@ -281,8 +281,8 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                                         )}
                                     </div>
 
-                                    <div className="flex items-center mb-4 gap-3">
-                                        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+                                    <div className="flex items-center mb-2 gap-3">
+                                        <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
                                             {currentScale.name}
                                         </h1>
                                         <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-medium self-center">
@@ -290,13 +290,13 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                                         </span>
                                     </div>
 
-                                    <div className="mb-6">
-                                        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center">
+                                    <div className="mb-4">
+                                        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center">
                                             <Music2 className="w-4 h-4 mr-1.5" /> 구성음 (Notes)
                                         </h3>
-                                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 font-mono text-sm text-slate-700 font-medium">
+                                        <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 font-mono text-sm text-slate-700 font-medium">
                                             {/* Ding */}
-                                            <div className="flex items-center mb-2">
+                                            <div className="flex items-center mb-1">
                                                 <span className="w-16 text-xs text-slate-400 font-bold uppercase flex items-center gap-1">
                                                     Ding
                                                     <span className="text-slate-300 font-normal">(1)</span>
@@ -307,7 +307,7 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                                             </div>
 
                                             {/* Top Notes */}
-                                            <div className="flex items-start mb-2">
+                                            <div className="flex items-start mb-1">
                                                 <span className="w-16 text-xs text-slate-400 font-bold uppercase mt-1.5 flex items-center gap-1">
                                                     Top
                                                     <span className="text-slate-300 font-normal">({currentScale.notes.top.length})</span>
@@ -403,106 +403,106 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
             {/* List Section */}
             {showAllScales && (
                 <div className="space-y-3">
-                <div className="flex items-center justify-between px-1">
-                    <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">
-                        전체 스케일
-                    </h3>
-                    <button
-                        onClick={() => setShowFilter(!showFilter)}
-                        className={`flex items-center space-x-1.5 px-3 py-1.5 text-sm font-medium border rounded-lg transition-all ${showFilter
-                            ? 'bg-indigo-50 border-indigo-200 text-indigo-700'
-                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600'
-                            }`}
-                    >
-                        <Filter className="w-4 h-4" />
-                        <span>필터</span>
-                    </button>
-                </div>
+                    <div className="flex items-center justify-between px-1">
+                        <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">
+                            전체 스케일
+                        </h3>
+                        <button
+                            onClick={() => setShowFilter(!showFilter)}
+                            className={`flex items-center space-x-1.5 px-3 py-1.5 text-sm font-medium border rounded-lg transition-all ${showFilter
+                                ? 'bg-indigo-50 border-indigo-200 text-indigo-700'
+                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600'
+                                }`}
+                        >
+                            <Filter className="w-4 h-4" />
+                            <span>필터</span>
+                        </button>
+                    </div>
 
-                {/* Filter UI */}
-                {showFilter && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="bg-white border border-slate-200 rounded-xl p-4 mb-4"
-                    >
-                        <h4 className="text-xs font-bold text-slate-500 uppercase mb-3">딩 (Ding) 선택</h4>
-                        <div className="flex flex-wrap gap-2">
-                            {allPitches.map(pitch => (
+                    {/* Filter UI */}
+                    {showFilter && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="bg-white border border-slate-200 rounded-xl p-4 mb-4"
+                        >
+                            <h4 className="text-xs font-bold text-slate-500 uppercase mb-3">딩 (Ding) 선택</h4>
+                            <div className="flex flex-wrap gap-2">
+                                {allPitches.map(pitch => (
+                                    <button
+                                        key={pitch}
+                                        onClick={() => togglePitch(pitch)}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedPitches.has(pitch)
+                                            ? 'bg-indigo-600 text-white shadow-sm'
+                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                            }`}
+                                    >
+                                        {pitch}
+                                    </button>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {[...SCALES]
+                            .filter(s => {
+                                // Filter by selected pitches if any (딩 노트 기준)
+                                if (selectedPitches.size > 0) {
+                                    const pitch = getPitchFromNote(s.notes.ding);
+                                    // Db는 C#과 동일하게 처리 (Db 필터가 없으므로 C# 선택 시 Db도 표시)
+                                    if (pitch === 'Db') {
+                                        return selectedPitches.has('C#');
+                                    }
+                                    return selectedPitches.has(pitch);
+                                }
+                                return true;
+                            })
+                            .sort((a, b) => {
+                                // 딩 노트의 알파벳 순서로 정렬 - CDEFGAB 순서
+                                const pitchA = getPitchFromNote(a.notes.ding);
+                                const pitchB = getPitchFromNote(b.notes.ding);
+                                // 피치에서 첫 글자만 추출 (예: "C" -> "C", "C#" -> "C", "Bb" -> "B")
+                                const letterA = pitchA.charAt(0).toUpperCase();
+                                const letterB = pitchB.charAt(0).toUpperCase();
+
+                                // CDEFGAB 순서 정의
+                                const order = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+                                const indexA = order.indexOf(letterA);
+                                const indexB = order.indexOf(letterB);
+
+                                // 순서에 없는 경우(예: 잘못된 노트)는 뒤로
+                                if (indexA === -1 && indexB === -1) return 0;
+                                if (indexA === -1) return 1;
+                                if (indexB === -1) return -1;
+
+                                return indexA - indexB;
+                            })
+                            .map((scale) => (
                                 <button
-                                    key={pitch}
-                                    onClick={() => togglePitch(pitch)}
-                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedPitches.has(pitch)
-                                        ? 'bg-indigo-600 text-white shadow-sm'
-                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                    key={scale.name}
+                                    onClick={() => {
+                                        setDisplayScales([scale]);
+                                        setCurrentIndex(0);
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    className={`flex items-center justify-between p-4 border rounded-xl transition-all group text-left ${currentScale.name === scale.name
+                                        ? 'bg-indigo-50 border-indigo-200 ring-1 ring-indigo-200'
+                                        : 'bg-white border-slate-200 hover:border-indigo-500/50 hover:shadow-md'
                                         }`}
                                 >
-                                    {pitch}
+                                    <span className={`font-semibold transition-colors ${currentScale.name === scale.name ? 'text-indigo-700' : 'text-slate-700 group-hover:text-indigo-700'
+                                        }`}>
+                                        {scale.name}
+                                    </span>
+                                    <span className={`text-xs ${currentScale.name === scale.name ? 'text-indigo-500' : 'text-slate-400 group-hover:text-indigo-400'
+                                        }`}>
+                                        {currentScale.name === scale.name ? '보고있음' : '선택'}
+                                    </span>
                                 </button>
                             ))}
-                        </div>
-                    </motion.div>
-                )}
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {[...SCALES]
-                        .filter(s => {
-                            // Filter by selected pitches if any (딩 노트 기준)
-                            if (selectedPitches.size > 0) {
-                                const pitch = getPitchFromNote(s.notes.ding);
-                                // Db는 C#과 동일하게 처리 (Db 필터가 없으므로 C# 선택 시 Db도 표시)
-                                if (pitch === 'Db') {
-                                    return selectedPitches.has('C#');
-                                }
-                                return selectedPitches.has(pitch);
-                            }
-                            return true;
-                        })
-                        .sort((a, b) => {
-                            // 딩 노트의 알파벳 순서로 정렬 - CDEFGAB 순서
-                            const pitchA = getPitchFromNote(a.notes.ding);
-                            const pitchB = getPitchFromNote(b.notes.ding);
-                            // 피치에서 첫 글자만 추출 (예: "C" -> "C", "C#" -> "C", "Bb" -> "B")
-                            const letterA = pitchA.charAt(0).toUpperCase();
-                            const letterB = pitchB.charAt(0).toUpperCase();
-
-                            // CDEFGAB 순서 정의
-                            const order = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-                            const indexA = order.indexOf(letterA);
-                            const indexB = order.indexOf(letterB);
-
-                            // 순서에 없는 경우(예: 잘못된 노트)는 뒤로
-                            if (indexA === -1 && indexB === -1) return 0;
-                            if (indexA === -1) return 1;
-                            if (indexB === -1) return -1;
-
-                            return indexA - indexB;
-                        })
-                        .map((scale) => (
-                            <button
-                                key={scale.name}
-                                onClick={() => {
-                                    setDisplayScales([scale]);
-                                    setCurrentIndex(0);
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                }}
-                                className={`flex items-center justify-between p-4 border rounded-xl transition-all group text-left ${currentScale.name === scale.name
-                                    ? 'bg-indigo-50 border-indigo-200 ring-1 ring-indigo-200'
-                                    : 'bg-white border-slate-200 hover:border-indigo-500/50 hover:shadow-md'
-                                    }`}
-                            >
-                                <span className={`font-semibold transition-colors ${currentScale.name === scale.name ? 'text-indigo-700' : 'text-slate-700 group-hover:text-indigo-700'
-                                    }`}>
-                                    {scale.name}
-                                </span>
-                                <span className={`text-xs ${currentScale.name === scale.name ? 'text-indigo-500' : 'text-slate-400 group-hover:text-indigo-400'
-                                    }`}>
-                                    {currentScale.name === scale.name ? '보고있음' : '선택'}
-                                </span>
-                            </button>
-                        ))}
-                </div>
+                    </div>
                 </div>
             )}
         </div>
