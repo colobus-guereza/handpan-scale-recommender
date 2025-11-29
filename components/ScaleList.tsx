@@ -133,6 +133,29 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
         return scale.tags.some(tag => category.tags.includes(tag));
     };
 
+    // VIBE ID를 카테고리 ID로 매핑
+    const getCategoryIdFromVibeId = (vibeId: string): string => {
+        const mapping: Record<string, string> = {
+            'jamming': 'beginner',
+            'meditation': 'healing',
+            'uplift': 'bright',
+            'exotic': 'ethnic'
+        };
+        return mapping[vibeId] || 'beginner';
+    };
+
+    // 카테고리 ID를 VIBE로 변환
+    const getVibeFromCategoryId = (categoryId: string): Vibe | null => {
+        const mapping: Record<string, string> = {
+            'beginner': 'jamming',
+            'healing': 'meditation',
+            'bright': 'uplift',
+            'ethnic': 'exotic'
+        };
+        const vibeId = mapping[categoryId];
+        return VIBES.find(v => v.id === vibeId) || null;
+    };
+
     // Recommendation Logic
     const recommendedScales = useMemo(() => {
         const target = selectedVibe.target;
@@ -338,6 +361,28 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                     <ArrowLeft className="w-4 h-4 mr-1.5" />
                     다시 선택
                 </button>
+                
+                {/* 카테고리 버튼 */}
+                <div className="flex gap-2 mt-4 overflow-x-auto pb-1 md:pb-0 hide-scrollbar">
+                    {CATEGORIES.map(category => {
+                        const isActive = getCategoryIdFromVibeId(selectedVibe.id) === category.id;
+                        const vibe = getVibeFromCategoryId(category.id);
+                        
+                        return (
+                            <button
+                                key={category.id}
+                                onClick={() => vibe && onChangeVibe(vibe)}
+                                className={`whitespace-nowrap px-3 md:px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition-all shadow-sm ${
+                                    isActive
+                                        ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-indigo-300 dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.3)]'
+                                        : 'text-slate-600 dark:text-slate-400 bg-white dark:bg-glass-light border border-slate-200 dark:border-glass-border hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic'
+                                }`}
+                            >
+                                {category.label}
+                            </button>
+                        );
+                    })}
+                </div>
             </div>
 
 
@@ -367,15 +412,9 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                 )}
 
                 <div className="overflow-hidden">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={currentScale.name}
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            transition={{ duration: 0.2 }}
-                            className="glass-card rounded-2xl p-4 mb-4 relative overflow-hidden"
-                        >
+                    {/* AnimatePresence 제거 - 카드 구조 고정 */}
+                    <div className="glass-card rounded-2xl p-4 mb-4 relative overflow-hidden">
+                        {/* 변경: motion.div → div, 애니메이션 제거 */}
                             {/* Glow Effect Background (Dark Mode Only) */}
                             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent pointer-events-none opacity-0 dark:opacity-100 transition-opacity" />
 
@@ -477,8 +516,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
 
                                             {/* Bottom Notes */}
                                             {currentScale.notes.bottom.length > 0 && (
-                                                <div className="flex flex-col md:flex-row md:items-start">
-                                                    <span className="w-auto md:w-16 text-xs text-slate-600 font-bold uppercase mt-1.5 mb-1 md:mb-0 flex items-center gap-1">
+                                                <div className="flex items-start">
+                                                    <span className="w-16 text-xs text-slate-600 font-bold uppercase mt-1.5 flex items-center gap-1">
                                                         Bottom
                                                         <span className="text-slate-500 dark:text-slate-600 font-normal">({currentScale.notes.bottom.length})</span>
                                                     </span>
@@ -529,20 +568,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
             </div>
 
             {/* 스케일 분류기준 및 전체 스케일 토글 버튼 */}
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-                {/* 좌측: 다른 카테고리 이동 버튼 */}
-                <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0 hide-scrollbar">
-                    {VIBES.filter(v => v.id !== selectedVibe.id).map(vibe => (
-                        <button
-                            key={vibe.id}
-                            onClick={() => onChangeVibe(vibe)}
-                            className="whitespace-nowrap px-3 md:px-4 py-2 text-xs md:text-sm font-bold text-slate-600 dark:text-slate-400 bg-white dark:bg-glass-light border border-slate-200 dark:border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all shadow-sm"
-                        >
-                            {vibe.title}
-                        </button>
-                    ))}
-                </div>
-
+            <div className="flex flex-wrap items-center justify-end gap-4 mb-4">
                 {/* 우측: 기능 버튼 */}
                 <div className="flex gap-3">
                     <button
