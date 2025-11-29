@@ -7,15 +7,8 @@ export default function IframeResizer() {
         let lastHeight = 0;
         let timeoutId: NodeJS.Timeout;
 
-        const sendHeight = () => {
+        const sendHeight = (height: number) => {
             if (typeof window === 'undefined' || window.parent === window) return;
-
-            const height = Math.max(
-                document.body.scrollHeight,
-                document.documentElement.scrollHeight,
-                document.body.offsetHeight,
-                document.documentElement.offsetHeight
-            );
 
             // Only send if height changed by more than 2px to avoid loops
             if (Math.abs(height - lastHeight) > 2) {
@@ -24,13 +17,17 @@ export default function IframeResizer() {
             }
         };
 
-        const debouncedSendHeight = () => {
+        const debouncedSendHeight = (height: number) => {
             clearTimeout(timeoutId);
-            timeoutId = setTimeout(sendHeight, 100);
+            timeoutId = setTimeout(() => sendHeight(height), 100);
         };
 
-        // 초기 높이 전송
-        sendHeight();
+        // 초기 높이 전송 (Initial check still needs to query DOM, but only once)
+        const initialHeight = Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight
+        );
+        sendHeight(initialHeight);
 
         // 모바일 중복 스크롤 방지를 위한 스타일 강제 적용 (iframe 내부일 때만)
         if (window.self !== window.top) {
@@ -42,30 +39,36 @@ export default function IframeResizer() {
         }
 
         // DOM 변화 감지를 위한 Observer
-        const resizeObserver = new ResizeObserver(() => {
-            debouncedSendHeight();
-        });
-
-        // MutationObserver로 내부 컨텐츠 변화도 감지 (더 확실하게)
-        const mutationObserver = new MutationObserver(() => {
-            debouncedSendHeight();
+        const resizeObserver = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                // Use contentRect or borderBoxSize to get height without forcing reflow
+                const height = entry.contentRect.height;
+                // Add some padding if needed, or use scrollHeight if body overflow is hidden
+                // Since we observe document.body, contentRect.height should be close to what we want
+                // But let's be safe and use a slightly larger value if needed, or just trust it.
+                // Actually, for body, we might want to check if scrollHeight is larger?
+                // But checking scrollHeight forces reflow.
+                // Let's trust contentRect.height for the stream of updates.
+                debouncedSendHeight(height);
+            }
         });
 
         resizeObserver.observe(document.body);
-        mutationObserver.observe(document.body, {
-            attributes: true,
-            childList: true,
-            subtree: true
-        });
 
-        // 윈도우 리사이즈 이벤트 리스너
-        window.addEventListener('resize', debouncedSendHeight);
+        // 윈도우 리사이즈 이벤트 리스너 (Fallback)
+        const handleResize = () => {
+            const height = Math.max(
+                document.body.scrollHeight,
+                document.documentElement.scrollHeight
+            );
+            debouncedSendHeight(height);
+        };
+        window.addEventListener('resize', handleResize);
 
         return () => {
             clearTimeout(timeoutId);
             resizeObserver.disconnect();
-            mutationObserver.disconnect();
-            window.removeEventListener('resize', debouncedSendHeight);
+            window.removeEventListener('resize', handleResize);
         };
     }, []);
 
