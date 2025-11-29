@@ -245,7 +245,7 @@ export const SCALES: Scale[] = [
     // 17. F# Low Pygmy 18 (Mutant)
     {
         id: "fs_low_pygmy_18_mutant",
-        name: "F# Low Pygmy 18 Mutant",
+        name: "F# Low Pygmy 18",
         notes: {
             ding: "F#3",
             top: ["G#3", "A3", "C#4", "E4", "F#4", "G#4", "A4", "B4", "C#5", "E5", "F#5", "G#5"],

@@ -230,7 +230,7 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                             transition={{ duration: 0.2 }}
                             className="bg-white border border-slate-200 rounded-2xl p-4 shadow-lg mb-4"
                         >
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center">
                                 {/* Video Section */}
                                 <div className="w-full aspect-video bg-slate-100 rounded-xl overflow-hidden shadow-inner relative group">
                                     {currentScale.videoUrl ? (
@@ -250,7 +250,7 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                                 </div>
 
                                 {/* Info Section */}
-                                <div className="flex flex-col justify-center">
+                                <div className="flex flex-col justify-center self-center">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center space-x-2">
                                             <span className="px-3 py-1 rounded-full bg-indigo-600 text-white text-sm font-bold shadow-sm">
@@ -283,8 +283,8 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                                             href={currentScale.productUrl || "#"}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md transition-all translate-y-16 ${currentScale.productUrl
-                                                ? 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg hover:translate-y-14'
+                                            className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md transition-all ${currentScale.productUrl
+                                                ? 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg hover:-translate-y-0.5'
                                                 : 'bg-slate-300 cursor-not-allowed'
                                                 }`}
                                             title={currentScale.productUrl ? '구매하기' : '준비중'}
@@ -303,9 +303,6 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                                     </div>
 
                                     <div className="mb-4">
-                                        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center">
-                                            <Music2 className="w-4 h-4 mr-1.5" /> 구성음 (Notes)
-                                        </h3>
                                         <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 font-mono text-sm text-slate-700 font-medium">
                                             {/* Ding */}
                                             <div className="flex items-center mb-1">
