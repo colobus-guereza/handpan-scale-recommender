@@ -17,6 +17,33 @@ export interface Scale {
     productUrl?: string;
 }
 
+export const VECTOR_AXES = {
+    minorMajor: {
+        id: 'minorMajor',
+        label: '조성 (Mood)',
+        description: '스케일이 주는 전체적인 감정적 분위기를 나타냅니다.',
+        minLabel: 'Minor (단조)',
+        maxLabel: 'Major (장조)',
+        range: '-1.0 ~ +1.0'
+    },
+    pureSpicy: {
+        id: 'pureSpicy',
+        label: '음향 질감 (Tone)',
+        description: '소리의 담백함과 화려함의 정도를 나타냅니다.',
+        minLabel: 'Pure (담백함)',
+        maxLabel: 'Spicy (화려함)',
+        range: '0.0 ~ 1.0'
+    },
+    rarePopular: {
+        id: 'rarePopular',
+        label: '대중성 (Popularity)',
+        description: '시장에서의 희소성과 대중적인 인기를 나타냅니다.',
+        minLabel: 'Rare (희소함)',
+        maxLabel: 'Popular (대중적)',
+        range: '0.0 ~ 1.0'
+    }
+} as const;
+
 export const SCALES: Scale[] = [
     // 1. D Kurd 9 (The Standard Minor)
     {
@@ -236,7 +263,7 @@ export const SCALES: Scale[] = [
             bottom: []
         },
         vector: { minorMajor: -0.3, pureSpicy: 0.3, rarePopular: 0.7 },
-        tags: ["하이브리드", "표준", "감성적", "입문추천"],
+        tags: ["하이브리드", "표준", "감성적"],
         description: "Equinox 스케일의 표준 모델입니다. 적절한 음역대와 감성적인 멜로디 라인으로 입문자부터 숙련자까지 모두에게 추천됩니다.",
         videoUrl: "https://youtu.be/8t8MqTelD9k?si=4gbYwCubpVxb_URT",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12320275460"

@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { SCALES, Scale } from '../data/handpanScales';
+import { SCALES, Scale, VECTOR_AXES } from '../data/handpanScales';
 import { Vibe } from './VibeSelector';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
@@ -15,6 +15,7 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
     const [showFilter, setShowFilter] = useState(false);
     const [selectedPitches, setSelectedPitches] = useState<Set<string>>(new Set());
     const [showAllScales, setShowAllScales] = useState(false);
+    const [showClassificationCriteria, setShowClassificationCriteria] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedNoteCount, setSelectedNoteCount] = useState<number | null>(null);
     const [selectedType, setSelectedType] = useState<'normal' | 'mutant' | null>(null);
@@ -59,7 +60,8 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
     }, [selectedVibe]);
 
     // Initialize displayScales with top 3 results (카테고리별 하드코딩된 순위)
-    useEffect(() => {
+    // Top 3 Scales Logic (Memoized for reuse in rendering)
+    const topRankedScales = useMemo(() => {
         let topScales: Scale[] = [];
 
         // 카테고리별 1위, 2위, 3위 하드코딩
@@ -108,12 +110,16 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                 topScales.push(scale);
             }
         }
+        return topScales;
+    }, [recommendedScales, selectedVibe.id]);
 
-        if (topScales.length > 0) {
-            setDisplayScales(topScales);
+    // Initialize displayScales with top 3 results
+    useEffect(() => {
+        if (topRankedScales.length > 0) {
+            setDisplayScales(topRankedScales);
             setCurrentIndex(0);
         }
-    }, [recommendedScales, selectedVibe.id]);
+    }, [topRankedScales]);
 
     // 딩의 피치 추출 함수 (예: "C3" -> "C", "C#3" -> "C#", "Db3" -> "Db")
     const getPitchFromNote = (note: string): string => {
@@ -290,20 +296,34 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                                 {/* Info Section */}
                                 <div className="flex flex-col justify-center self-center">
                                     <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-2 flex-wrap">
-                                            <span className="px-3 py-1 rounded-full bg-indigo-600 text-white text-sm font-bold shadow-sm whitespace-nowrap">
-                                                {currentIndex + 1}위 추천
-                                            </span>
-                                            {currentIndex === 0 && (
-                                                <span className="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wide whitespace-nowrap">
-                                                    Best Match
-                                                </span>
-                                            )}
-                                            {currentScale.vector.rarePopular > 0.7 && (
-                                                <span className="flex items-center text-amber-500 text-xs font-medium whitespace-nowrap">
-                                                    <Star className="w-3 h-3 fill-current mr-1" /> 인기 스케일
-                                                </span>
-                                            )}
+                                        <div className="flex items-center space-x-2">
+                                            {(() => {
+                                                // topRankedScales에서 현재 스케일의 순위 찾기
+                                                const rankIndex = topRankedScales.findIndex(s => s.id === currentScale.id);
+                                                const rank = rankIndex + 1;
+
+                                                // topRankedScales에 포함되어 있고 1~3위인 경우에만 라벨 표시
+                                                if (rankIndex >= 0 && rank <= 3) {
+                                                    return (
+                                                        <>
+                                                            <span className="px-3 py-1 rounded-full bg-indigo-600 text-white text-sm font-bold shadow-sm">
+                                                                {rank}위 추천
+                                                            </span>
+                                                            {rank === 1 && (
+                                                                <span className="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wide">
+                                                                    Best Match
+                                                                </span>
+                                                            )}
+                                                            {currentScale.vector.rarePopular > 0.7 && (
+                                                                <span className="flex items-center text-amber-500 text-xs font-medium">
+                                                                    <Star className="w-3 h-3 fill-current mr-1" /> 인기 스케일
+                                                                </span>
+                                                            )}
+                                                        </>
+                                                    );
+                                                }
+                                                return null;
+                                            })()}
                                         </div>
 
                                         {/* Mobile Navigation Indicators */}
@@ -421,13 +441,24 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                 </div>
             </div>
 
-            {/* 전체 스케일 토글 버튼 */}
-            <div className="flex justify-end mb-4">
+            {/* 스케일 분류기준 및 전체 스케일 토글 버튼 */}
+            <div className="flex justify-end gap-3 mb-4">
+                <button
+                    onClick={() => setShowClassificationCriteria(!showClassificationCriteria)}
+                    className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600 transition-all"
+                >
+                    <span>스케일 분류기준 {showClassificationCriteria ? '접기' : ''}</span>
+                    {showClassificationCriteria ? (
+                        <ChevronUp className="w-4 h-4" />
+                    ) : (
+                        <ChevronDown className="w-4 h-4" />
+                    )}
+                </button>
                 <button
                     onClick={() => setShowAllScales(!showAllScales)}
                     className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600 transition-all"
                 >
-                    <span>전체 스케일 {showAllScales ? '접기' : '펼치기'}</span>
+                    <span>전체 스케일 {showAllScales ? '접기' : ''}</span>
                     {showAllScales ? (
                         <ChevronUp className="w-4 h-4" />
                     ) : (
@@ -435,6 +466,48 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                     )}
                 </button>
             </div>
+
+            {/* 스케일 분류기준 섹션 */}
+            {showClassificationCriteria && (
+                <div className="mb-4 p-6 bg-white border border-slate-200 rounded-xl shadow-sm">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {Object.values(VECTOR_AXES).map((axis) => {
+                            const value = currentScale.vector[axis.id as keyof typeof currentScale.vector];
+                            const percentage = axis.id === 'minorMajor'
+                                ? ((value + 1) / 2) * 100
+                                : value * 100;
+
+                            return (
+                                <div key={axis.id} className="flex flex-col space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <h4 className="font-bold text-slate-700">{axis.label}</h4>
+                                        <span className="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                                            {value.toFixed(2)}
+                                        </span>
+                                    </div>
+                                    <p className="text-sm text-slate-600 leading-relaxed min-h-[40px]">
+                                        {axis.description}
+                                    </p>
+                                    <div className="relative h-6 flex items-center">
+                                        <div className="absolute left-0 right-0 h-2 bg-slate-100 rounded-full overflow-hidden">
+                                            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-slate-300"></div>
+                                        </div>
+                                        <div
+                                            className="absolute w-4 h-4 bg-indigo-600 border-2 border-white rounded-full shadow-md transition-all duration-500 z-10"
+                                            style={{ left: `calc(${percentage}% - 8px)` }}
+                                            title={`${axis.label}: ${value}`}
+                                        />
+                                    </div>
+                                    <div className="flex justify-between text-xs font-medium text-slate-500">
+                                        <span>{axis.minLabel}</span>
+                                        <span>{axis.maxLabel}</span>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
 
             {/* List Section */}
             {showAllScales && (
@@ -489,6 +562,26 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
 
 
 
+                            <h4 className="text-xs font-bold text-slate-500 uppercase mb-3">노트 개수 (Note Count) 선택</h4>
+                            <div className="flex flex-wrap gap-2 mb-6">
+                                {allNoteCounts.map(count => (
+                                    <button
+                                        key={count}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setSelectedNoteCount(selectedNoteCount === count ? null : count);
+                                        }}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedNoteCount === count
+                                            ? 'bg-indigo-600 text-white shadow-sm'
+                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                            }`}
+                                    >
+                                        {count}
+                                    </button>
+                                ))}
+                            </div>
+
                             <h4 className="text-xs font-bold text-slate-500 uppercase mb-3">타입 (Type) 선택</h4>
                             <div className="flex flex-wrap gap-2 mb-6">
                                 {['normal', 'mutant'].map(type => (
@@ -498,10 +591,6 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             setSelectedType(selectedType === type ? null : type as 'normal' | 'mutant');
-                                            // 뮤턴트 선택 시 노트 개수가 12 미만이면 선택 해제
-                                            if (type === 'mutant' && selectedNoteCount && selectedNoteCount < 12) {
-                                                setSelectedNoteCount(null);
-                                            }
                                         }}
                                         className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedType === type
                                             ? 'bg-indigo-600 text-white shadow-sm'
@@ -511,28 +600,6 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                                         {type === 'normal' ? '일반 (Normal)' : '뮤턴트 (Mutant)'}
                                     </button>
                                 ))}
-                            </div>
-
-                            <h4 className="text-xs font-bold text-slate-500 uppercase mb-3">노트 개수 (Note Count) 선택</h4>
-                            <div className="flex flex-wrap gap-2 mb-6">
-                                {allNoteCounts
-                                    .filter(count => !selectedType || selectedType !== 'mutant' || count >= 12)
-                                    .map(count => (
-                                        <button
-                                            key={count}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                setSelectedNoteCount(selectedNoteCount === count ? null : count);
-                                            }}
-                                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedNoteCount === count
-                                                ? 'bg-indigo-600 text-white shadow-sm'
-                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                                                }`}
-                                        >
-                                            {count}
-                                        </button>
-                                    ))}
                             </div>
 
                             <h4 className="text-xs font-bold text-slate-500 uppercase mb-3">딩 (Ding) 선택</h4>

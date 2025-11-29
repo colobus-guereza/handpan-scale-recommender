@@ -20,6 +20,13 @@ export default function IframeResizer() {
         // 초기 높이 전송
         sendHeight();
 
+        // 모바일 중복 스크롤 방지를 위한 스타일 강제 적용
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.width = '100%';
+        document.body.style.width = '100%';
+        document.body.style.minHeight = 'auto'; // 100vh로 인한 강제 늘어남 방지
+
         // DOM 변화 감지를 위한 Observer
         const resizeObserver = new ResizeObserver(() => {
             sendHeight();
