@@ -47,41 +47,41 @@ interface Props {
 
 export default function VibeSelector({ onSelect }: Props) {
     const getHoverStyles = (vibeId: string) => {
-        // 각 버튼별 다크모드 호버 색상
-        const darkHoverColors: Record<string, { border: string; icon: string; text: string; shadow: string }> = {
+        // 각 버튼별 라이트/다크모드 공통 호버 색상
+        const hoverColors: Record<string, { border: string; icon: string; text: string; shadow: string; bg?: string }> = {
             'jamming': {
-                border: 'dark:hover:border-[#48FF00]/10',
-                icon: 'dark:group-hover:text-[#48FF00]',
-                text: 'dark:group-hover:text-white',
-                shadow: 'dark:group-hover:drop-shadow-[0_0_8px_rgba(72,255,0,0.5)]'
+                border: 'hover:border-[#48FF00]/20 dark:hover:border-[#48FF00]/10',
+                icon: 'group-hover:text-[#48FF00]',
+                text: 'group-hover:text-slate-900 dark:group-hover:text-white',
+                shadow: 'group-hover:drop-shadow-[0_0_8px_rgba(72,255,0,0.5)]'
             },
             'meditation': {
-                border: 'dark:hover:border-[#DDA0DD]/10',
-                icon: 'dark:group-hover:text-[#DDA0DD]',
-                text: 'dark:group-hover:text-white',
-                shadow: 'dark:group-hover:drop-shadow-[0_0_8px_rgba(221,160,221,0.5)]'
+                border: 'hover:border-[#DDA0DD]/20 dark:hover:border-[#DDA0DD]/10',
+                icon: 'group-hover:text-[#DDA0DD]',
+                text: 'group-hover:text-slate-900 dark:group-hover:text-white',
+                shadow: 'group-hover:drop-shadow-[0_0_8px_rgba(221,160,221,0.5)]'
             },
             'uplift': {
-                border: 'dark:hover:border-[#FCFF48]/10',
-                icon: 'dark:group-hover:text-[#FCFF48]',
-                text: 'dark:group-hover:text-white',
-                shadow: 'dark:group-hover:drop-shadow-[0_0_8px_rgba(252,255,72,0.5)]'
+                border: 'hover:border-[#FCFF48]/20 dark:hover:border-[#FCFF48]/10',
+                icon: 'group-hover:text-[#FCFF48]',
+                text: 'group-hover:text-slate-900 dark:group-hover:text-white',
+                shadow: 'group-hover:drop-shadow-[0_0_8px_rgba(252,255,72,0.5)]'
             },
             'exotic': {
-                border: 'dark:hover:border-[#FFB6C1]/20',
-                icon: 'dark:group-hover:text-[#FFB6C1]',
-                text: 'dark:group-hover:text-white',
-                shadow: 'dark:group-hover:drop-shadow-[0_0_8px_rgba(255,182,193,0.6)]'
+                border: 'hover:border-[#DC2626]/20 dark:hover:border-[#DC2626]/20',
+                icon: 'group-hover:text-[#DC2626]',
+                text: 'group-hover:text-slate-900 dark:group-hover:text-white',
+                shadow: 'group-hover:drop-shadow-[0_0_8px_rgba(220,38,38,0.6)]'
             }
         };
 
-        const darkColors = darkHoverColors[vibeId] || darkHoverColors['jamming'];
+        const colors = hoverColors[vibeId] || hoverColors['jamming'];
 
         return {
-            bg: 'glass-card hover:bg-indigo-50 dark:hover:bg-white/5',
-            border: `border-glass-border hover:border-indigo-300 ${darkColors.border}`,
-            iconColor: `text-slate-400 dark:text-slate-400 group-hover:text-indigo-600 ${darkColors.icon} group-hover:drop-shadow-sm ${darkColors.shadow}`,
-            textColor: `text-slate-600 dark:text-slate-300 group-hover:text-slate-900 ${darkColors.text} group-hover:drop-shadow-sm dark:group-hover:drop-shadow-md`
+            bg: `glass-card hover:bg-indigo-50 dark:hover:bg-white/5 ${colors.bg || ''}`,
+            border: `border-glass-border ${colors.border}`,
+            iconColor: `text-slate-400 dark:text-slate-400 ${colors.icon} group-hover:drop-shadow-sm ${colors.shadow}`,
+            textColor: `text-slate-600 dark:text-slate-300 ${colors.text} group-hover:drop-shadow-sm dark:group-hover:drop-shadow-md`
         };
     };
 
@@ -99,7 +99,7 @@ export default function VibeSelector({ onSelect }: Props) {
                             whileHover={{ y: -2, scale: 1.01 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => onSelect(vibe)}
-                            className={`group relative flex flex-col items-center justify-center p-9 ${hoverStyles.bg} border-2 ${hoverStyles.border} rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden ${vibe.id === 'exotic' ? 'dark:group-hover:bg-exotic-gradient/20' : ''}`}
+                            className={`group relative flex flex-col items-center justify-center p-9 ${hoverStyles.bg} border-2 ${hoverStyles.border} rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden`}
                         >
                             {/* 반짝이는 이펙트 */}
                             <div className="absolute inset-0 overflow-hidden rounded-xl">

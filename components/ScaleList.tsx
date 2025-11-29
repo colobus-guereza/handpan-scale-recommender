@@ -557,82 +557,94 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                             exit={{ opacity: 0, height: 0 }}
                             className="glass-card border border-glass-border rounded-xl p-4 mb-4"
                         >
-                            <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-3">카테고리 선택</h4>
-                            <div className="grid grid-cols-2 gap-2 mb-6">
-                                {CATEGORIES.map(category => (
-                                    <button
-                                        key={category.id}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            setSelectedCategory(selectedCategory === category.id ? null : category.id);
-                                        }}
-                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedCategory === category.id
-                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                                            }`}
-                                    >
-                                        {category.label}
-                                    </button>
-                                ))}
-                            </div>
+                            <div className="grid grid-cols-4 gap-4">
+                                {/* 카테고리 선택 */}
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">카테고리 선택</h4>
+                                    <div className="grid grid-cols-1 gap-1.5">
+                                        {CATEGORIES.map(category => (
+                                            <button
+                                                key={category.id}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setSelectedCategory(selectedCategory === category.id ? null : category.id);
+                                                }}
+                                                className={`w-fit px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${selectedCategory === category.id
+                                                    ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                                    : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                                    }`}
+                                            >
+                                                {category.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
 
+                                {/* 타입 선택 */}
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">타입 선택</h4>
+                                    <div className="flex flex-col gap-1.5">
+                                        {['normal', 'mutant'].map(type => (
+                                            <button
+                                                key={type}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setSelectedType(selectedType === type ? null : type as 'normal' | 'mutant');
+                                                }}
+                                                className={`w-fit px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${selectedType === type
+                                                    ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                                    : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                                    }`}
+                                            >
+                                                {type === 'normal' ? '일반' : '뮤턴트'}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
 
+                                {/* 노트 개수 선택 */}
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">노트 개수</h4>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {allNoteCounts.map(count => (
+                                            <button
+                                                key={count}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setSelectedNoteCount(selectedNoteCount === count ? null : count);
+                                                }}
+                                                className={`px-2 py-1 rounded-lg text-xs font-medium transition-colors ${selectedNoteCount === count
+                                                    ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                                    : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                                    }`}
+                                            >
+                                                {count}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
 
-                            <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-3">노트 개수 (Note Count) 선택</h4>
-                            <div className="flex flex-wrap gap-2 mb-6">
-                                {allNoteCounts.map(count => (
-                                    <button
-                                        key={count}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            setSelectedNoteCount(selectedNoteCount === count ? null : count);
-                                        }}
-                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedNoteCount === count
-                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                                            }`}
-                                    >
-                                        {count}
-                                    </button>
-                                ))}
-                            </div>
-
-                            <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-3">타입 (Type) 선택</h4>
-                            <div className="flex flex-wrap gap-2 mb-6">
-                                {['normal', 'mutant'].map(type => (
-                                    <button
-                                        key={type}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            setSelectedType(selectedType === type ? null : type as 'normal' | 'mutant');
-                                        }}
-                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedType === type
-                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                                            }`}
-                                    >
-                                        {type === 'normal' ? '일반 (Normal)' : '뮤턴트 (Mutant)'}
-                                    </button>
-                                ))}
-                            </div>
-
-                            <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-3">딩 (Ding) 선택</h4>
-                            <div className="flex flex-wrap gap-2">
-                                {allPitches.map(pitch => (
-                                    <button
-                                        key={pitch}
-                                        onClick={(e) => handlePitchToggle(e, pitch)}
-                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedPitches.has(pitch)
-                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                                            }`}
-                                    >
-                                        {pitch}
-                                    </button>
-                                ))}
+                                {/* 딩 선택 */}
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">딩 선택</h4>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {allPitches.map(pitch => (
+                                            <button
+                                                key={pitch}
+                                                onClick={(e) => handlePitchToggle(e, pitch)}
+                                                className={`px-2 py-1 rounded-lg text-xs font-medium transition-colors ${selectedPitches.has(pitch)
+                                                    ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                                    : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                                    }`}
+                                            >
+                                                {pitch}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         </motion.div>
                     )}
