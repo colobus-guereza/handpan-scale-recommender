@@ -4,8 +4,12 @@ import { useEffect } from 'react';
 
 export default function IframeResizer() {
     useEffect(() => {
+        let lastHeight = 0;
+        let timeoutId: NodeJS.Timeout;
+
         const sendHeight = () => {
-            // body의 전체 높이 또는 documentElement의 높이 중 큰 값을 사용
+            if (typeof window === 'undefined' || window.parent === window) return;
+
             const height = Math.max(
                 document.body.scrollHeight,
                 document.documentElement.scrollHeight,
@@ -13,8 +17,16 @@ export default function IframeResizer() {
                 document.documentElement.offsetHeight
             );
 
-            // 부모 윈도우로 메시지 전송
-            window.parent.postMessage({ type: 'setHeight', height }, '*');
+            // Only send if height changed by more than 2px to avoid loops
+            if (Math.abs(height - lastHeight) > 2) {
+                lastHeight = height;
+                window.parent.postMessage({ type: 'setHeight', height }, '*');
+            }
+        };
+
+        const debouncedSendHeight = () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(sendHeight, 100);
         };
 
         // 초기 높이 전송
@@ -31,12 +43,12 @@ export default function IframeResizer() {
 
         // DOM 변화 감지를 위한 Observer
         const resizeObserver = new ResizeObserver(() => {
-            sendHeight();
+            debouncedSendHeight();
         });
 
         // MutationObserver로 내부 컨텐츠 변화도 감지 (더 확실하게)
         const mutationObserver = new MutationObserver(() => {
-            sendHeight();
+            debouncedSendHeight();
         });
 
         resizeObserver.observe(document.body);
@@ -47,12 +59,13 @@ export default function IframeResizer() {
         });
 
         // 윈도우 리사이즈 이벤트 리스너
-        window.addEventListener('resize', sendHeight);
+        window.addEventListener('resize', debouncedSendHeight);
 
         return () => {
+            clearTimeout(timeoutId);
             resizeObserver.disconnect();
             mutationObserver.disconnect();
-            window.removeEventListener('resize', sendHeight);
+            window.removeEventListener('resize', debouncedSendHeight);
         };
     }, []);
 

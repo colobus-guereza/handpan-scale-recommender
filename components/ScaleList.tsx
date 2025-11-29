@@ -10,6 +10,62 @@ interface Props {
     onChangeVibe: (vibe: Vibe) => void;
 }
 
+const getVideoId = (url: string) => {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+};
+
+const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const videoId = getVideoId(url);
+
+    if (!videoId) {
+        return (
+            <div className="w-full h-full flex flex-col items-center justify-center text-slate-400">
+                <Play className="w-12 h-12 mb-2 opacity-50" />
+                <span className="text-sm">영상 준비중</span>
+            </div>
+        );
+    }
+
+    if (isPlaying) {
+        return (
+            <iframe
+                src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                title={title}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+            />
+        );
+    }
+
+    return (
+        <button
+            onClick={() => setIsPlaying(true)}
+            className="w-full h-full relative group cursor-pointer"
+            aria-label="Play video"
+        >
+            <img
+                src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+                alt={title}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                onError={(e) => {
+                    (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                }}
+            />
+            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+            <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-16 h-16 bg-white/90 dark:bg-black/60 rounded-full flex items-center justify-center backdrop-blur-sm shadow-lg group-hover:scale-110 transition-all duration-300">
+                    <Play className="w-8 h-8 text-indigo-600 dark:text-white ml-1" fill="currentColor" />
+                </div>
+            </div>
+        </button>
+    );
+};
+
 export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props) {
     const [displayScales, setDisplayScales] = useState<Scale[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -283,20 +339,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center relative z-10">
                                 {/* Video Section */}
                                 <div className="w-full aspect-video bg-slate-100 dark:bg-black/40 rounded-xl overflow-hidden shadow-inner relative group border border-slate-200 dark:border-white/10">
-                                    {currentScale.videoUrl ? (
-                                        <iframe
-                                            src={getEmbedUrl(currentScale.videoUrl) || ""}
-                                            title={currentScale.name}
-                                            className="w-full h-full"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowFullScreen
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-400">
-                                            <Play className="w-12 h-12 mb-2 opacity-50" />
-                                            <span className="text-sm">영상 준비중</span>
-                                        </div>
-                                    )}
+                                    <VideoPlayer url={currentScale.videoUrl || ""} title={currentScale.name} />
                                 </div>
 
                                 {/* Info Section */}
