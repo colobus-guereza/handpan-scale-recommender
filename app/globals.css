@@ -17,20 +17,92 @@ body {
 }
 
 :root {
+  /* Light Mode Variables (Default) */
   --foreground-rgb: 30, 41, 59;
+  /* Slate-800 for sharper text */
   --background-start-rgb: 255, 255, 255;
+  /* Pure White */
   --background-end-rgb: 241, 245, 249;
+  /* Slate-100 */
+
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  /* More opaque for better readability */
+  --glass-border: rgba(15, 23, 42, 0.08);
+  /* Dark border for definition */
+  --glass-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+  /* Soft but deep shadow */
+
+  --text-primary: #0f172a;
+  /* Slate-900 */
+  --text-secondary: #475569;
+  /* Slate-600 */
+  --accent-color: #4f46e5;
+  /* Indigo-600 */
+}
+
+.dark {
+  /* Dark Mode Variables */
+  --foreground-rgb: 226, 232, 240;
+  /* Slate-200 */
+  --background-start-rgb: 5, 5, 5;
+  /* Void */
+  --background-end-rgb: 15, 23, 42;
+  /* Nebula */
+
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+
+  --text-primary: #e2e8f0;
+  /* Slate-200 */
+  --text-secondary: #94a3b8;
+  /* Slate-400 */
+  --accent-color: #22d3ee;
+  /* Cosmic Cyan */
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-end-rgb));
+  background: linear-gradient(to bottom, rgb(var(--background-start-rgb)), rgb(var(--background-end-rgb)));
+  min-height: 100vh;
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-secondary);
+  border-radius: 4px;
+  opacity: 0.5;
+}
+
+/* Glassmorphism Utilities */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  border: 1px solid var(--accent-color);
+  box-shadow: 0 0 15px rgba(var(--accent-color), 0.15);
 }
 
 @keyframes shimmer {
   0% {
     transform: translateX(-100%);
   }
+
   100% {
     transform: translateX(100%);
   }

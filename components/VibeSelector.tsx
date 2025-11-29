@@ -47,43 +47,13 @@ interface Props {
 
 export default function VibeSelector({ onSelect }: Props) {
     const getHoverStyles = (vibeId: string) => {
-        switch (vibeId) {
-            case 'jamming':
-                return {
-                    bg: 'bg-gradient-to-br from-emerald-50/50 to-white group-hover:from-emerald-50 group-hover:to-emerald-100/50',
-                    border: 'border-emerald-200/50 hover:border-emerald-400/60',
-                    iconColor: 'text-emerald-600 group-hover:text-emerald-700',
-                    textColor: 'text-slate-700 group-hover:text-emerald-800'
-                };
-            case 'meditation':
-                return {
-                    bg: 'bg-gradient-to-br from-purple-50/50 to-white group-hover:from-purple-50 group-hover:to-purple-100/50',
-                    border: 'border-purple-200/50 hover:border-purple-400/60',
-                    iconColor: 'text-purple-600 group-hover:text-purple-700',
-                    textColor: 'text-slate-700 group-hover:text-purple-800'
-                };
-            case 'uplift':
-                return {
-                    bg: 'bg-gradient-to-br from-amber-50/50 to-white group-hover:from-amber-50 group-hover:to-amber-100/50',
-                    border: 'border-amber-200/50 hover:border-amber-400/60',
-                    iconColor: 'text-amber-600 group-hover:text-amber-700',
-                    textColor: 'text-slate-700 group-hover:text-amber-800'
-                };
-            case 'exotic':
-                return {
-                    bg: 'bg-gradient-to-br from-rose-50/30 via-pink-50/30 to-orange-50/30 group-hover:from-rose-50/60 group-hover:via-pink-50/60 group-hover:to-orange-50/60',
-                    border: 'border-rose-200/50 hover:border-rose-400/60',
-                    iconColor: 'text-rose-600 group-hover:text-rose-700',
-                    textColor: 'text-slate-700 group-hover:text-rose-800'
-                };
-            default:
-                return {
-                    bg: 'bg-gradient-to-br from-slate-50/50 to-white group-hover:from-slate-100/50 group-hover:to-slate-50',
-                    border: 'border-slate-200 hover:border-slate-300',
-                    iconColor: 'text-slate-600 group-hover:text-slate-700',
-                    textColor: 'text-slate-700 group-hover:text-slate-900'
-                };
-        }
+        // Unified Glass Style for all vibes (Light & Dark)
+        return {
+            bg: 'glass-card hover:bg-indigo-50 dark:hover:bg-white/5',
+            border: 'border-glass-border hover:border-indigo-300 dark:hover:border-cosmic/50',
+            iconColor: 'text-slate-400 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-cosmic group-hover:drop-shadow-sm dark:group-hover:drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]',
+            textColor: 'text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white group-hover:drop-shadow-sm dark:group-hover:drop-shadow-md'
+        };
     };
 
     return (
@@ -104,7 +74,7 @@ export default function VibeSelector({ onSelect }: Props) {
                         >
                             {/* 반짝이는 이펙트 */}
                             <div className="absolute inset-0 overflow-hidden rounded-xl">
-                                <div className="shimmer-effect absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                <div className="shimmer-effect absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                             </div>
 
                             <div className="relative z-10 mb-4 transition-all duration-300">

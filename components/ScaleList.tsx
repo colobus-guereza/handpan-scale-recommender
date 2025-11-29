@@ -234,7 +234,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
             <div className="mb-6">
                 <button
                     onClick={onBack}
-                    className="flex items-center text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-indigo-50"
+                    className="flex items-center text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-700 dark:hover:text-cosmic transition-colors px-3 py-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5"
                 >
                     <ArrowLeft className="w-4 h-4 mr-1.5" />
                     다시 선택
@@ -251,7 +251,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                         {currentIndex > 0 && (
                             <button
                                 onClick={prevSlide}
-                                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 p-2 bg-white rounded-full shadow-lg border border-slate-100 text-slate-400 hover:text-indigo-600 hover:scale-110 transition-all hidden md:block"
+                                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 p-2 glass-card rounded-full text-slate-500 dark:text-slate-300 hover:text-indigo-700 dark:hover:text-cosmic hover:scale-110 transition-all hidden md:block shadow-sm"
                             >
                                 <ChevronLeft className="w-6 h-6" />
                             </button>
@@ -259,7 +259,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                         {currentIndex < displayScales.length - 1 && (
                             <button
                                 onClick={nextSlide}
-                                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 p-2 bg-white rounded-full shadow-lg border border-slate-100 text-slate-400 hover:text-indigo-600 hover:scale-110 transition-all hidden md:block"
+                                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 p-2 glass-card rounded-full text-slate-500 dark:text-slate-300 hover:text-indigo-700 dark:hover:text-cosmic hover:scale-110 transition-all hidden md:block shadow-sm"
                             >
                                 <ChevronRight className="w-6 h-6" />
                             </button>
@@ -275,11 +275,14 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.2 }}
-                            className="bg-white border border-slate-200 rounded-2xl p-4 shadow-lg mb-4"
+                            className="glass-card rounded-2xl p-4 mb-4 relative overflow-hidden"
                         >
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center">
+                            {/* Glow Effect Background (Dark Mode Only) */}
+                            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent pointer-events-none opacity-0 dark:opacity-100 transition-opacity" />
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center relative z-10">
                                 {/* Video Section */}
-                                <div className="w-full aspect-video bg-slate-100 rounded-xl overflow-hidden shadow-inner relative group">
+                                <div className="w-full aspect-video bg-slate-100 dark:bg-black/40 rounded-xl overflow-hidden shadow-inner relative group border border-slate-200 dark:border-white/10">
                                     {currentScale.videoUrl ? (
                                         <iframe
                                             src={getEmbedUrl(currentScale.videoUrl) || ""}
@@ -309,12 +312,12 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                                 if (rankIndex >= 0 && rank <= 3) {
                                                     return (
                                                         <>
-                                                            <span className="px-3 py-1 rounded-full bg-indigo-600 text-white text-sm font-bold shadow-sm">
+                                                            <span className="px-3 py-1 rounded-full bg-indigo-100 dark:bg-cosmic/20 text-indigo-700 dark:text-cosmic border border-indigo-200 dark:border-cosmic/30 text-sm font-bold shadow-sm dark:shadow-[0_0_10px_rgba(34,211,238,0.3)]">
                                                                 {rank}위 추천
                                                             </span>
                                                             {currentScale.vector.rarePopular > 0.7 && (
-                                                                <span className="flex items-center text-amber-500 text-xs font-medium">
-                                                                    <Star className="w-3 h-3 fill-current mr-1" /> 인기 스케일
+                                                                <span className="flex items-center text-amber-600 dark:text-stardust text-xs font-medium drop-shadow-sm">
+                                                                    <Star className="w-3 h-3 fill-current mr-1 animate-pulse-slow" /> 인기 스케일
                                                                 </span>
                                                             )}
                                                         </>
@@ -340,8 +343,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md transition-all ${currentScale.productUrl
-                                                ? 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg hover:-translate-y-0.5'
-                                                : 'bg-slate-300 cursor-not-allowed'
+                                                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:shadow-lg hover:-translate-y-0.5'
+                                                : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50'
                                                 }`}
                                             title={currentScale.productUrl ? '구매하기' : '준비중'}
                                         >
@@ -350,36 +353,36 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                     </div>
 
                                     <div className="flex items-center mb-2 gap-3">
-                                        <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+                                        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight drop-shadow-sm">
                                             {currentScale.name}
                                         </h1>
-                                        <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-medium self-center">
+                                        <span className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 text-xs font-medium self-center">
                                             {currentScale.id.includes('mutant') ? '뮤턴트' : '일반'}
                                         </span>
                                     </div>
 
                                     <div className="mb-4">
-                                        <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 font-mono text-sm text-slate-700 font-medium">
+                                        <div className="p-3 bg-slate-100/80 dark:bg-black/20 rounded-xl border border-slate-200 dark:border-white/5 font-mono text-sm text-slate-700 dark:text-slate-300 font-medium backdrop-blur-sm">
                                             {/* Ding */}
                                             <div className="flex items-center mb-1">
-                                                <span className="w-16 text-xs text-slate-400 font-bold uppercase flex items-center gap-1">
+                                                <span className="w-16 text-xs text-slate-500 font-bold uppercase flex items-center gap-1">
                                                     Ding
-                                                    <span className="text-slate-300 font-normal">(1)</span>
+                                                    <span className="text-slate-500 dark:text-slate-600 font-normal">(1)</span>
                                                 </span>
-                                                <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-md font-bold">
+                                                <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-500/20 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 rounded-md font-bold shadow-sm">
                                                     {currentScale.notes.ding}
                                                 </span>
                                             </div>
 
                                             {/* Top Notes */}
                                             <div className="flex items-start mb-1">
-                                                <span className="w-16 text-xs text-slate-400 font-bold uppercase mt-1.5 flex items-center gap-1">
+                                                <span className="w-16 text-xs text-slate-500 font-bold uppercase mt-1.5 flex items-center gap-1">
                                                     Top
-                                                    <span className="text-slate-300 font-normal">({currentScale.notes.top.length})</span>
+                                                    <span className="text-slate-500 dark:text-slate-600 font-normal">({currentScale.notes.top.length})</span>
                                                 </span>
                                                 <div className="flex flex-wrap gap-1.5 flex-1">
                                                     {currentScale.notes.top.map((note, i) => (
-                                                        <span key={i} className="px-2 py-1 bg-white border border-slate-200 rounded-md text-slate-600">
+                                                        <span key={i} className="px-2 py-1 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-md text-slate-700 dark:text-slate-300 shadow-sm">
                                                             {note}
                                                         </span>
                                                     ))}
@@ -389,13 +392,13 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                             {/* Bottom Notes */}
                                             {currentScale.notes.bottom.length > 0 && (
                                                 <div className="flex items-start">
-                                                    <span className="w-16 text-xs text-slate-400 font-bold uppercase mt-1.5 flex items-center gap-1">
+                                                    <span className="w-16 text-xs text-slate-500 font-bold uppercase mt-1.5 flex items-center gap-1">
                                                         Bottom
-                                                        <span className="text-slate-300 font-normal">({currentScale.notes.bottom.length})</span>
+                                                        <span className="text-slate-500 dark:text-slate-600 font-normal">({currentScale.notes.bottom.length})</span>
                                                     </span>
                                                     <div className="flex flex-wrap gap-1.5 flex-1">
                                                         {currentScale.notes.bottom.map((note, i) => (
-                                                            <span key={i} className="px-2 py-1 bg-slate-200 text-slate-600 rounded-md">
+                                                            <span key={i} className="px-2 py-1 bg-slate-200/70 dark:bg-white/10 text-slate-600 dark:text-slate-400 rounded-md border border-slate-300/50 dark:border-white/5 shadow-sm">
                                                                 {note}
                                                             </span>
                                                         ))}
@@ -407,7 +410,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
 
                                     <div className="flex flex-wrap gap-2 mb-8">
                                         {currentScale.tags.map(tag => (
-                                            <span key={tag} className="px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-medium text-slate-600 shadow-sm">
+                                            <span key={tag} className="px-3 py-1 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-700 dark:hover:text-white hover:border-indigo-400 dark:hover:border-white/30 transition-colors cursor-default shadow-sm">
                                                 #{translateTag(tag)}
                                             </span>
                                         ))}
@@ -417,7 +420,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                         {displayScales.length > 1 && currentIndex > 0 && (
                                             <button
                                                 onClick={prevSlide}
-                                                className="flex-1 md:hidden py-3.5 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-colors"
+                                                className="flex-1 md:hidden py-3.5 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
                                             >
                                                 이전
                                             </button>
@@ -426,7 +429,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                         {displayScales.length > 1 && currentIndex < displayScales.length - 1 && (
                                             <button
                                                 onClick={nextSlide}
-                                                className="flex-1 md:hidden py-3.5 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-colors"
+                                                className="flex-1 md:hidden py-3.5 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
                                             >
                                                 다음
                                             </button>
@@ -447,7 +450,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                         <button
                             key={vibe.id}
                             onClick={() => onChangeVibe(vibe)}
-                            className="whitespace-nowrap px-4 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600 transition-all"
+                            className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/30 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
                         >
                             {vibe.title}
                         </button>
@@ -458,7 +461,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                 <div className="flex gap-3">
                     <button
                         onClick={() => setShowClassificationCriteria(!showClassificationCriteria)}
-                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600 transition-all"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/30 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
                     >
                         <span>스케일 분류기준 {showClassificationCriteria ? '접기' : ''}</span>
                         {showClassificationCriteria ? (
@@ -469,7 +472,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                     </button>
                     <button
                         onClick={() => setShowAllScales(!showAllScales)}
-                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600 transition-all"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/30 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
                     >
                         <span>전체 스케일 {showAllScales ? '접기' : ''}</span>
                         {showAllScales ? (
@@ -483,7 +486,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
 
             {/* 스케일 분류기준 섹션 */}
             {showClassificationCriteria && (
-                <div className="mb-4 p-6 bg-white border border-slate-200 rounded-xl shadow-sm">
+                <div className="mb-4 p-6 glass-card border border-glass-border rounded-xl shadow-sm">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {Object.values(VECTOR_AXES).map((axis) => {
                             const value = currentScale.vector[axis.id as keyof typeof currentScale.vector];
@@ -494,20 +497,20 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                             return (
                                 <div key={axis.id} className="flex flex-col space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <h4 className="font-bold text-slate-700">{axis.label}</h4>
-                                        <span className="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                                        <h4 className="font-bold text-slate-800 dark:text-slate-200">{axis.label}</h4>
+                                        <span className="text-xs font-mono text-indigo-700 dark:text-cosmic bg-indigo-50 dark:bg-cosmic/10 px-2 py-0.5 rounded border border-indigo-200 dark:border-cosmic/20">
                                             {value.toFixed(2)}
                                         </span>
                                     </div>
-                                    <p className="text-sm text-slate-600 leading-relaxed min-h-[40px]">
+                                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed min-h-[40px]">
                                         {axis.description}
                                     </p>
                                     <div className="relative h-6 flex items-center">
-                                        <div className="absolute left-0 right-0 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-slate-300"></div>
+                                        <div className="absolute left-0 right-0 h-2 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden">
+                                            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-slate-400 dark:bg-white/20"></div>
                                         </div>
                                         <div
-                                            className="absolute w-4 h-4 bg-indigo-600 border-2 border-white rounded-full shadow-md transition-all duration-500 z-10"
+                                            className="absolute w-4 h-4 bg-indigo-600 dark:bg-cosmic border-2 border-white rounded-full shadow-md dark:shadow-[0_0_10px_rgba(34,211,238,0.5)] transition-all duration-500 z-10"
                                             style={{ left: `calc(${percentage}% - 8px)` }}
                                             title={`${axis.label}: ${value}`}
                                         />
@@ -527,7 +530,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
             {showAllScales && (
                 <div className="space-y-3">
                     <div className="flex items-center justify-between px-1">
-                        <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">
+                        <h3 className="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                             전체 스케일
                         </h3>
                         <button
@@ -537,8 +540,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                 setShowFilter(!showFilter);
                             }}
                             className={`flex items-center space-x-1.5 px-3 py-1.5 text-sm font-medium border rounded-lg transition-all ${showFilter
-                                ? 'bg-indigo-50 border-indigo-200 text-indigo-700'
-                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600'
+                                ? 'bg-indigo-50 dark:bg-cosmic/20 border-indigo-200 dark:border-cosmic/30 text-indigo-700 dark:text-cosmic'
+                                : 'bg-glass-light border-glass-border text-slate-600 dark:text-slate-400 hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/30 hover:text-indigo-700 dark:hover:text-cosmic'
                                 }`}
                         >
                             <Filter className="w-4 h-4" />
@@ -552,10 +555,10 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="bg-white border border-slate-200 rounded-xl p-4 mb-4"
+                            className="glass-card border border-glass-border rounded-xl p-4 mb-4"
                         >
-                            <h4 className="text-xs font-bold text-slate-500 uppercase mb-3">카테고리 선택</h4>
-                            <div className="flex flex-wrap gap-2 mb-6">
+                            <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-3">카테고리 선택</h4>
+                            <div className="grid grid-cols-2 gap-2 mb-6">
                                 {CATEGORIES.map(category => (
                                     <button
                                         key={category.id}
@@ -565,8 +568,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                             setSelectedCategory(selectedCategory === category.id ? null : category.id);
                                         }}
                                         className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedCategory === category.id
-                                            ? 'bg-indigo-600 text-white shadow-sm'
-                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(34,211,238,0.2)]'
+                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
                                             }`}
                                     >
                                         {category.label}
@@ -576,7 +579,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
 
 
 
-                            <h4 className="text-xs font-bold text-slate-500 uppercase mb-3">노트 개수 (Note Count) 선택</h4>
+                            <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-3">노트 개수 (Note Count) 선택</h4>
                             <div className="flex flex-wrap gap-2 mb-6">
                                 {allNoteCounts.map(count => (
                                     <button
@@ -587,8 +590,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                             setSelectedNoteCount(selectedNoteCount === count ? null : count);
                                         }}
                                         className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedNoteCount === count
-                                            ? 'bg-indigo-600 text-white shadow-sm'
-                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(34,211,238,0.2)]'
+                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
                                             }`}
                                     >
                                         {count}
@@ -596,7 +599,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                 ))}
                             </div>
 
-                            <h4 className="text-xs font-bold text-slate-500 uppercase mb-3">타입 (Type) 선택</h4>
+                            <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-3">타입 (Type) 선택</h4>
                             <div className="flex flex-wrap gap-2 mb-6">
                                 {['normal', 'mutant'].map(type => (
                                     <button
@@ -607,8 +610,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                             setSelectedType(selectedType === type ? null : type as 'normal' | 'mutant');
                                         }}
                                         className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedType === type
-                                            ? 'bg-indigo-600 text-white shadow-sm'
-                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(34,211,238,0.2)]'
+                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
                                             }`}
                                     >
                                         {type === 'normal' ? '일반 (Normal)' : '뮤턴트 (Mutant)'}
@@ -616,15 +619,15 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                 ))}
                             </div>
 
-                            <h4 className="text-xs font-bold text-slate-500 uppercase mb-3">딩 (Ding) 선택</h4>
+                            <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-3">딩 (Ding) 선택</h4>
                             <div className="flex flex-wrap gap-2">
                                 {allPitches.map(pitch => (
                                     <button
                                         key={pitch}
                                         onClick={(e) => handlePitchToggle(e, pitch)}
                                         className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedPitches.has(pitch)
-                                            ? 'bg-indigo-600 text-white shadow-sm'
-                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(34,211,238,0.2)]'
+                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
                                             }`}
                                     >
                                         {pitch}
@@ -695,15 +698,15 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                         window.scrollTo({ top: 0, behavior: 'smooth' });
                                     }}
                                     className={`flex items-center justify-between p-4 border rounded-xl transition-all group text-left ${currentScale.name === scale.name
-                                        ? 'bg-indigo-50 border-indigo-200 ring-1 ring-indigo-200'
-                                        : 'bg-white border-slate-200 hover:border-indigo-500/50 hover:shadow-md'
+                                        ? 'bg-indigo-50 dark:bg-cosmic/10 border-indigo-200 dark:border-cosmic/30 ring-1 ring-indigo-200 dark:ring-cosmic/20'
+                                        : 'bg-glass-light border-glass-border hover:border-indigo-300 dark:hover:border-cosmic/30 hover:bg-indigo-50 dark:hover:bg-white/5'
                                         }`}
                                 >
-                                    <span className={`font-semibold transition-colors ${currentScale.name === scale.name ? 'text-indigo-700' : 'text-slate-700 group-hover:text-indigo-700'
+                                    <span className={`font-semibold transition-colors ${currentScale.name === scale.name ? 'text-indigo-700 dark:text-cosmic' : 'text-slate-700 dark:text-slate-300 group-hover:text-indigo-700 dark:group-hover:text-cosmic'
                                         }`}>
                                         {scale.name}
                                     </span>
-                                    <span className={`text-xs ${currentScale.name === scale.name ? 'text-indigo-500' : 'text-slate-400 group-hover:text-indigo-400'
+                                    <span className={`text-xs ${currentScale.name === scale.name ? 'text-indigo-600 dark:text-cosmic/70' : 'text-slate-500 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-cosmic/70'
                                         }`}>
                                         {currentScale.name === scale.name ? '보고있음' : '선택'}
                                     </span>
