@@ -450,7 +450,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                         <button
                             key={vibe.id}
                             onClick={() => onChangeVibe(vibe)}
-                            className="whitespace-nowrap px-4 py-2 text-sm font-bold text-slate-600 dark:text-slate-400 bg-white dark:bg-glass-light border border-slate-200 dark:border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all shadow-sm"
+                            className="whitespace-nowrap px-3 md:px-4 py-2 text-xs md:text-sm font-bold text-slate-600 dark:text-slate-400 bg-white dark:bg-glass-light border border-slate-200 dark:border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all shadow-sm"
                         >
                             {vibe.title}
                         </button>
