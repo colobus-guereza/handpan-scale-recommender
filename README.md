@@ -41,7 +41,8 @@ npm start
 
 ## 웹사이트 임베드 방법 (Iframe)
 
-이 애플리케이션을 다른 웹사이트(Wix, Squarespace, WordPress 등)에 임베드하려면 아래의 HTML 코드를 사용하세요.
+### 1. 기본 임베드 (고정 높이)
+간단하게 삽입하려면 아래 코드를 사용하세요.
 
 ```html
 <iframe 
@@ -53,6 +54,32 @@ npm start
 ></iframe>
 ```
 
-### 사이즈 조절
-- **width**: `100%`로 설정하면 부모 컨테이너의 너비에 맞춰집니다. 고정 픽셀(예: `600px`)로 설정할 수도 있습니다.
-- **height**: `800px`은 권장 높이입니다. 필요에 따라 조절하세요.
+### 2. 자동 높이 조절 (스크롤 문제 해결)
+내부 컨텐츠 길이에 따라 Iframe 높이가 자동으로 조절되게 하려면, **부모 웹사이트(삽입하는 곳)**에 아래 스크립트를 추가해야 합니다.
+
+**HTML 코드:**
+```html
+<iframe 
+  id="handpan-frame"
+  src="https://handpan-scale-recommender.vercel.app/" 
+  width="100%" 
+  style="border: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden;"
+  scrolling="no"
+  title="Handpan Scale Recommender"
+></iframe>
+
+<script>
+  window.addEventListener('message', function(e) {
+    // 메시지 타입 확인
+    if (e.data && e.data.type === 'setHeight') {
+      const iframe = document.getElementById('handpan-frame');
+      if (iframe) {
+        // 전달받은 높이로 Iframe 높이 설정
+        iframe.style.height = e.data.height + 'px';
+      }
+    }
+  });
+</script>
+```
+
+이 방식을 사용하면 내부 페이지가 길어질 때 Iframe도 같이 길어져서 중복 스크롤바가 생기지 않습니다.
