@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { SCALES, Scale, VECTOR_AXES } from '../data/handpanScales';
 import { Vibe, VIBES } from './VibeSelector';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface Props {
@@ -20,51 +20,12 @@ const getVideoId = (url: string) => {
 const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const videoId = getVideoId(url);
-    // Start with hqdefault (Safe Start) - almost always available
-    const [thumbnailUrl, setThumbnailUrl] = useState<string>(
-        videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : ''
-    );
-
-    useEffect(() => {
-        if (!videoId) return;
-
-        // Reset to safe default when videoId changes
-        setThumbnailUrl(`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`);
-
-        // Try to upgrade to maxresdefault
-        const tryMaxRes = new Image();
-        tryMaxRes.src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-        tryMaxRes.onload = () => {
-            // Check if it's the "deleted video" placeholder (120px width)
-            if (tryMaxRes.width > 120) {
-                setThumbnailUrl(`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`);
-            } else {
-                // If maxres is placeholder, try sddefault
-                trySdDefault();
-            }
-        };
-        tryMaxRes.onerror = () => {
-            trySdDefault();
-        };
-
-        const trySdDefault = () => {
-            const trySd = new Image();
-            trySd.src = `https://img.youtube.com/vi/${videoId}/sddefault.jpg`;
-            trySd.onload = () => {
-                if (trySd.width > 120) {
-                    setThumbnailUrl(`https://img.youtube.com/vi/${videoId}/sddefault.jpg`);
-                }
-            };
-        };
-    }, [videoId]);
-
-    // No need for onError handler anymore as we pre-check
-    const handleImageError = () => {
-        // Fallback just in case even hqdefault fails (rare)
-        if (!thumbnailUrl.includes('hqdefault')) {
-            setThumbnailUrl(`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`);
-        }
-    };
+    
+    // 최적화: 단순화 - hqdefault만 사용, useEffect 제거
+    // 네트워크 요청 0개, setState 0개 = 즉각 로딩
+    const thumbnailUrl = videoId 
+        ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+        : '';
 
     if (!videoId) {
         return (
@@ -97,7 +58,6 @@ const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
                 src={thumbnailUrl}
                 alt={title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                onError={handleImageError}
             />
             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
             <div className="absolute inset-0 flex items-center justify-center">
@@ -413,8 +373,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
 
                 <div className="overflow-hidden">
                     {/* AnimatePresence 제거 - 카드 구조 고정 */}
-                    <div className="glass-card rounded-2xl p-4 mb-4 relative overflow-hidden">
-                        {/* 변경: motion.div → div, 애니메이션 제거 */}
+                    <div className="glass-card rounded-2xl p-4 mb-4 relative overflow-hidden transition-opacity duration-150">
+                        {/* 변경: motion.div → div, 부드러운 CSS transition만 추가 */}
                             {/* Glow Effect Background (Dark Mode Only) */}
                             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent pointer-events-none opacity-0 dark:opacity-100 transition-opacity" />
 
@@ -562,8 +522,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
-                    </AnimatePresence>
+                    </div>
+                    {/* 변경: motion.div, AnimatePresence 닫기 태그 제거 */}
                 </div>
             </div>
 
