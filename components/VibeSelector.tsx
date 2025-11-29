@@ -10,7 +10,7 @@ export interface Vibe {
     target: { minorMajor: number; pureSpicy: number };
 }
 
-const VIBES: Vibe[] = [
+export const VIBES: Vibe[] = [
     {
         id: 'jamming',
         title: '입문용',
@@ -50,38 +50,38 @@ export default function VibeSelector({ onSelect }: Props) {
         switch (vibeId) {
             case 'jamming':
                 return {
-                    border: 'hover:border-emerald-500/30',
-                    iconBg: 'group-hover:bg-gradient-to-br group-hover:from-emerald-50 group-hover:to-emerald-100',
-                    iconColor: 'group-hover:text-emerald-600',
-                    textColor: 'group-hover:text-emerald-700'
+                    bg: 'bg-gradient-to-br from-emerald-50/50 to-white group-hover:from-emerald-50 group-hover:to-emerald-100/50',
+                    border: 'border-emerald-200/50 hover:border-emerald-400/60',
+                    iconColor: 'text-emerald-600 group-hover:text-emerald-700',
+                    textColor: 'text-slate-700 group-hover:text-emerald-800'
                 };
             case 'meditation':
                 return {
-                    border: 'hover:border-purple-500/30',
-                    iconBg: 'group-hover:bg-gradient-to-br group-hover:from-purple-50 group-hover:to-purple-100',
-                    iconColor: 'group-hover:text-purple-600',
-                    textColor: 'group-hover:text-purple-700'
+                    bg: 'bg-gradient-to-br from-purple-50/50 to-white group-hover:from-purple-50 group-hover:to-purple-100/50',
+                    border: 'border-purple-200/50 hover:border-purple-400/60',
+                    iconColor: 'text-purple-600 group-hover:text-purple-700',
+                    textColor: 'text-slate-700 group-hover:text-purple-800'
                 };
             case 'uplift':
                 return {
-                    border: 'hover:border-amber-500/30',
-                    iconBg: 'group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-amber-100',
-                    iconColor: 'group-hover:text-amber-600',
-                    textColor: 'group-hover:text-amber-700'
+                    bg: 'bg-gradient-to-br from-amber-50/50 to-white group-hover:from-amber-50 group-hover:to-amber-100/50',
+                    border: 'border-amber-200/50 hover:border-amber-400/60',
+                    iconColor: 'text-amber-600 group-hover:text-amber-700',
+                    textColor: 'text-slate-700 group-hover:text-amber-800'
                 };
             case 'exotic':
                 return {
-                    border: 'hover:border-rose-500/30',
-                    iconBg: 'group-hover:bg-gradient-to-br group-hover:from-rose-50 group-hover:via-pink-50 group-hover:to-orange-50',
-                    iconColor: 'group-hover:text-rose-600',
-                    textColor: 'group-hover:text-rose-700'
+                    bg: 'bg-gradient-to-br from-rose-50/30 via-pink-50/30 to-orange-50/30 group-hover:from-rose-50/60 group-hover:via-pink-50/60 group-hover:to-orange-50/60',
+                    border: 'border-rose-200/50 hover:border-rose-400/60',
+                    iconColor: 'text-rose-600 group-hover:text-rose-700',
+                    textColor: 'text-slate-700 group-hover:text-rose-800'
                 };
             default:
                 return {
-                    border: 'hover:border-indigo-500/30',
-                    iconBg: 'group-hover:bg-gradient-to-br group-hover:from-slate-100 group-hover:to-slate-50',
-                    iconColor: 'group-hover:text-slate-600',
-                    textColor: 'group-hover:text-slate-900'
+                    bg: 'bg-gradient-to-br from-slate-50/50 to-white group-hover:from-slate-100/50 group-hover:to-slate-50',
+                    border: 'border-slate-200 hover:border-slate-300',
+                    iconColor: 'text-slate-600 group-hover:text-slate-700',
+                    textColor: 'text-slate-700 group-hover:text-slate-900'
                 };
         }
     };
@@ -99,24 +99,22 @@ export default function VibeSelector({ onSelect }: Props) {
                             transition={{ duration: 0.5 }}
                             whileHover={{ y: -2, scale: 1.01 }}
                             whileTap={{ scale: 0.98 }}
-                        onClick={() => onSelect(vibe)}
-                        className={`group relative flex flex-col items-center justify-center p-9 bg-white border border-slate-200 rounded-lg shadow-sm hover:shadow-md ${hoverStyles.border} transition-all duration-300 overflow-hidden`}
-                    >
-                        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                        
-                        {/* 반짝이는 이펙트 */}
-                        <div className="absolute inset-0 overflow-hidden rounded-lg">
-                            <div className="shimmer-effect absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        </div>
-
-                        <div className={`relative z-10 mb-5 p-5 bg-slate-50 rounded-lg ${hoverStyles.iconBg} transition-all duration-300`}>
-                            <div className="group-hover:scale-110 transition-transform duration-300">
-                                {React.cloneElement(vibe.icon as React.ReactElement, { className: `w-16 h-16 text-slate-400 ${hoverStyles.iconColor} transition-all duration-300` })}
+                            onClick={() => onSelect(vibe)}
+                            className={`group relative flex flex-col items-center justify-center p-9 ${hoverStyles.bg} border-2 ${hoverStyles.border} rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden`}
+                        >
+                            {/* 반짝이는 이펙트 */}
+                            <div className="absolute inset-0 overflow-hidden rounded-xl">
+                                <div className="shimmer-effect absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                             </div>
-                        </div>
-                        <h3 className={`relative z-10 text-2xl font-bold text-slate-700 ${hoverStyles.textColor} tracking-tight transition-colors`}>
-                            {vibe.title}
-                        </h3>
+
+                            <div className="relative z-10 mb-4 transition-all duration-300">
+                                <div className="group-hover:scale-110 transition-transform duration-300">
+                                    {React.cloneElement(vibe.icon as React.ReactElement, { className: `w-16 h-16 ${hoverStyles.iconColor} transition-all duration-300` })}
+                                </div>
+                            </div>
+                            <h3 className={`relative z-10 text-2xl font-bold ${hoverStyles.textColor} tracking-tight transition-colors duration-300`}>
+                                {vibe.title}
+                            </h3>
                         </motion.button>
                     );
                 })}

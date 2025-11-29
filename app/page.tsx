@@ -42,7 +42,11 @@ export default function Home() {
                     transition={{ duration: 0.3 }}
                 >
                     {selectedVibe && (
-                        <ScaleList selectedVibe={selectedVibe} onBack={handleBack} />
+                        <ScaleList
+                            selectedVibe={selectedVibe}
+                            onBack={handleBack}
+                            onChangeVibe={handleVibeSelect}
+                        />
                     )}
                 </motion.div>
             )}

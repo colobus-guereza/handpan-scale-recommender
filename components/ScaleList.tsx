@@ -1,15 +1,16 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { SCALES, Scale, VECTOR_AXES } from '../data/handpanScales';
-import { Vibe } from './VibeSelector';
+import { Vibe, VIBES } from './VibeSelector';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface Props {
     selectedVibe: Vibe;
     onBack: () => void;
+    onChangeVibe: (vibe: Vibe) => void;
 }
 
-export default function ScaleList({ selectedVibe, onBack }: Props) {
+export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props) {
     const [displayScales, setDisplayScales] = useState<Scale[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showFilter, setShowFilter] = useState(false);
@@ -238,6 +239,19 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                     <ArrowLeft className="w-4 h-4 mr-1.5" />
                     다시 선택
                 </button>
+            </div>
+
+            {/* Sidebar Navigation */}
+            <div className="fixed left-4 top-1/2 -translate-y-1/2 z-50 hidden xl:flex flex-col gap-3">
+                {VIBES.filter(v => v.id !== selectedVibe.id).map(vibe => (
+                    <button
+                        key={vibe.id}
+                        onClick={() => onChangeVibe(vibe)}
+                        className="w-32 py-3 px-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm font-medium text-slate-600 text-left"
+                    >
+                        {vibe.title}
+                    </button>
+                ))}
             </div>
 
             {/* Main Carousel Section */}
