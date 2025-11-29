@@ -15,6 +15,22 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
     const [showFilter, setShowFilter] = useState(false);
     const [selectedPitches, setSelectedPitches] = useState<Set<string>>(new Set());
     const [showAllScales, setShowAllScales] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [selectedNoteCount, setSelectedNoteCount] = useState<number | null>(null);
+    const [selectedType, setSelectedType] = useState<'normal' | 'mutant' | null>(null);
+
+    const CATEGORIES = [
+        { id: 'beginner', label: '입문용', tags: ['대중적', '입문추천', '국내인기', 'Bestseller', '기본', '표준', '표준확장'] },
+        { id: 'healing', label: '요가명상힐링', tags: ['명상', '힐링', '치유', '차분한', '평화', 'Deep', '피그미', '트랜스', '몽환적', '깊음', '깊은울림'] },
+        { id: 'bright', label: '밝은 분위기', tags: ['메이저', '밝음', '상쾌함', '희망적', '행복한', '윤슬', '사파이어', '청량함', '에너지'] },
+        { id: 'ethnic', label: '딥 에스닉', tags: ['이국적', '집시', '아라비안', '중동풍', '독특함', '인도풍', '동양적', '하이브리드', '도리안', '블루스', '신비', '매니아', '라사발리', '딥아시아', '신비로움'] }
+    ];
+
+    const matchesCategory = (scale: Scale, categoryId: string) => {
+        const category = CATEGORIES.find(c => c.id === categoryId);
+        if (!category) return true;
+        return scale.tags.some(tag => category.tags.includes(tag));
+    };
 
     // Recommendation Logic
     const recommendedScales = useMemo(() => {
@@ -65,7 +81,7 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
             if (scale3) topScales.push(scale3);
         } else if (selectedVibe.id === 'uplift') {
             // 밝은 Major: 1위 D Asha 15, 3위 Eb MUJU 10
-            const scale1 = SCALES.find(s => s.id === 'd_asha_15');
+            const scale1 = SCALES.find(s => s.id === 'd_asha_15_mutant');
             const scale3 = SCALES.find(s => s.id === 'eb_muju_10');
             if (scale1) topScales.push(scale1);
             // 2위는 추천 알고리즘에서 채움
@@ -127,6 +143,22 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
             });
     }, []);
 
+    // 스케일 이름에서 노트 개수 추출 (예: "D Kurd 9" -> 9)
+    const getNoteCount = (name: string): number | null => {
+        const match = name.match(/(\d+)$/);
+        return match ? parseInt(match[1], 10) : null;
+    };
+
+    // 모든 가능한 노트 개수 추출
+    const allNoteCounts = useMemo(() => {
+        const counts = new Set<number>();
+        SCALES.forEach(scale => {
+            const count = getNoteCount(scale.name);
+            if (count) counts.add(count);
+        });
+        return Array.from(counts).sort((a, b) => a - b);
+    }, []);
+
     // 피치 토글 함수
     const togglePitch = (pitch: string) => {
         const newSelected = new Set(selectedPitches);
@@ -136,6 +168,12 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
             newSelected.add(pitch);
         }
         setSelectedPitches(newSelected);
+    };
+
+    const handlePitchToggle = (e: React.MouseEvent<HTMLButtonElement>, pitch: string) => {
+        e.preventDefault();
+        e.stopPropagation();
+        togglePitch(pitch);
     };
 
     const translateTag = (tag: string) => {
@@ -406,7 +444,11 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                             전체 스케일
                         </h3>
                         <button
-                            onClick={() => setShowFilter(!showFilter)}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setShowFilter(!showFilter);
+                            }}
                             className={`flex items-center space-x-1.5 px-3 py-1.5 text-sm font-medium border rounded-lg transition-all ${showFilter
                                 ? 'bg-indigo-50 border-indigo-200 text-indigo-700'
                                 : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600'
@@ -425,12 +467,80 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                             exit={{ opacity: 0, height: 0 }}
                             className="bg-white border border-slate-200 rounded-xl p-4 mb-4"
                         >
+                            <h4 className="text-xs font-bold text-slate-500 uppercase mb-3">카테고리 선택</h4>
+                            <div className="flex flex-wrap gap-2 mb-6">
+                                {CATEGORIES.map(category => (
+                                    <button
+                                        key={category.id}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setSelectedCategory(selectedCategory === category.id ? null : category.id);
+                                        }}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedCategory === category.id
+                                            ? 'bg-indigo-600 text-white shadow-sm'
+                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                            }`}
+                                    >
+                                        {category.label}
+                                    </button>
+                                ))}
+                            </div>
+
+
+
+                            <h4 className="text-xs font-bold text-slate-500 uppercase mb-3">타입 (Type) 선택</h4>
+                            <div className="flex flex-wrap gap-2 mb-6">
+                                {['normal', 'mutant'].map(type => (
+                                    <button
+                                        key={type}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setSelectedType(selectedType === type ? null : type as 'normal' | 'mutant');
+                                            // 뮤턴트 선택 시 노트 개수가 12 미만이면 선택 해제
+                                            if (type === 'mutant' && selectedNoteCount && selectedNoteCount < 12) {
+                                                setSelectedNoteCount(null);
+                                            }
+                                        }}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedType === type
+                                            ? 'bg-indigo-600 text-white shadow-sm'
+                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                            }`}
+                                    >
+                                        {type === 'normal' ? '일반 (Normal)' : '뮤턴트 (Mutant)'}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <h4 className="text-xs font-bold text-slate-500 uppercase mb-3">노트 개수 (Note Count) 선택</h4>
+                            <div className="flex flex-wrap gap-2 mb-6">
+                                {allNoteCounts
+                                    .filter(count => !selectedType || selectedType !== 'mutant' || count >= 12)
+                                    .map(count => (
+                                        <button
+                                            key={count}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                setSelectedNoteCount(selectedNoteCount === count ? null : count);
+                                            }}
+                                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedNoteCount === count
+                                                ? 'bg-indigo-600 text-white shadow-sm'
+                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                                }`}
+                                        >
+                                            {count}
+                                        </button>
+                                    ))}
+                            </div>
+
                             <h4 className="text-xs font-bold text-slate-500 uppercase mb-3">딩 (Ding) 선택</h4>
                             <div className="flex flex-wrap gap-2">
                                 {allPitches.map(pitch => (
                                     <button
                                         key={pitch}
-                                        onClick={() => togglePitch(pitch)}
+                                        onClick={(e) => handlePitchToggle(e, pitch)}
                                         className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedPitches.has(pitch)
                                             ? 'bg-indigo-600 text-white shadow-sm'
                                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -446,6 +556,24 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         {[...SCALES]
                             .filter(s => {
+                                // Filter by category
+                                if (selectedCategory && !matchesCategory(s, selectedCategory)) {
+                                    return false;
+                                }
+
+                                // Filter by note count
+                                if (selectedNoteCount) {
+                                    const count = getNoteCount(s.name);
+                                    if (count !== selectedNoteCount) return false;
+                                }
+
+                                // Filter by type
+                                if (selectedType) {
+                                    const isMutant = s.id.includes('mutant');
+                                    if (selectedType === 'mutant' && !isMutant) return false;
+                                    if (selectedType === 'normal' && isMutant) return false;
+                                }
+
                                 // Filter by selected pitches if any (딩 노트 기준)
                                 if (selectedPitches.size > 0) {
                                     const pitch = getPitchFromNote(s.notes.ding);
@@ -502,7 +630,8 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                             ))}
                     </div>
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }

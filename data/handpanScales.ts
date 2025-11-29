@@ -194,9 +194,9 @@ export const SCALES: Scale[] = [
         productUrl: ""
     },
 
-    // 14. D Asha 15 (2-Octave Major)
+    // 14. D Asha 15 (2-Octave Major) - Mutant
     {
-        id: "d_asha_15",
+        id: "d_asha_15_mutant",
         name: "D Asha 15",
         notes: {
             ding: "D3",
