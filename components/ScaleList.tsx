@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { SCALES, Scale } from '../data/handpanScales';
 import { Vibe } from './VibeSelector';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface Props {
     selectedVibe: Vibe;
@@ -14,6 +14,7 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showFilter, setShowFilter] = useState(false);
     const [selectedPitches, setSelectedPitches] = useState<Set<string>>(new Set());
+    const [showAllScales, setShowAllScales] = useState(false);
 
     // Recommendation Logic
     const recommendedScales = useMemo(() => {
@@ -63,16 +64,19 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
             if (scale2) topScales.push(scale2);
             if (scale3) topScales.push(scale3);
         } else if (selectedVibe.id === 'uplift') {
-            // 밝은 Major: 1위 D Asha 15
+            // 밝은 Major: 1위 D Asha 15, 3위 Eb MUJU 10
             const scale1 = SCALES.find(s => s.id === 'd_asha_15');
+            const scale3 = SCALES.find(s => s.id === 'eb_muju_10');
             if (scale1) topScales.push(scale1);
-            // 나머지는 추천 알고리즘에서 채움
+            // 2위는 추천 알고리즘에서 채움
             for (const scale of recommendedScales) {
-                if (topScales.length >= 3) break;
-                if (!topScales.find(s => s.id === scale.id)) {
+                if (topScales.length >= 2) break;
+                if (!topScales.find(s => s.id === scale.id) && scale.id !== 'eb_muju_10') {
                     topScales.push(scale);
                 }
             }
+            // 3위는 Eb MUJU 10
+            if (scale3) topScales.push(scale3);
         } else if (selectedVibe.id === 'exotic') {
             // 개성강한분위기: 1위 E Equinox 10, 2위 E Romanian Hijaz 10, 3위 E La Sirena 10
             const scale1 = SCALES.find(s => s.id === 'e_equinox_10');
@@ -95,37 +99,18 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
         }
     }, [recommendedScales, selectedVibe.id]);
 
-    // 스케일 이름에서 키(피치) 추출 함수 (예: "C Major 9" -> "C", "C# Pygmy 9" -> "C#", "Bb Celtic" -> "Bb", "E Equinox 14" -> "E")
-    const getPitchFromScaleName = (scaleName: string): string => {
-        if (!scaleName) return '';
-        // 스케일 이름의 첫 부분에서 피치 추출
-        // 예: "C Major 9" -> "C", "C# Pygmy 9" -> "C#", "Bb Celtic" -> "Bb", "E Equinox 14" -> "E"
-        const match = scaleName.match(/^([A-G][#b]?)/);
-        if (match) {
-            return match[1];
-        }
-        return scaleName.charAt(0).toUpperCase();
-    };
-
-    // 딩의 피치 추출 함수 (노트에서 추출, 참고용)
+    // 딩의 피치 추출 함수 (예: "C3" -> "C", "C#3" -> "C#", "Db3" -> "Db")
     const getPitchFromNote = (note: string): string => {
         if (!note) return '';
-        // 두 글자 패턴 먼저 확인 (Bb, Db, Eb, Ab, Gb, C#, D#, F#, G#, A#)
-        if (note.length >= 2) {
-            const twoChar = note.substring(0, 2);
-            if (twoChar.match(/^[A-G][#b]$/)) {
-                return twoChar;
-            }
-        }
-        // 한 글자 패턴 (C, D, E, F, G, A, B)
-        return note.charAt(0).toUpperCase();
+        const match = note.match(/^([A-G][#b]?)/);
+        return match ? match[1] : note.charAt(0);
     };
 
-    // 모든 가능한 피치 추출 (스케일 이름 기준)
+    // 모든 가능한 피치 추출 (딩 노트 기준)
     const allPitches = useMemo(() => {
         const pitches = new Set<string>();
         SCALES.forEach(scale => {
-            const pitch = getPitchFromScaleName(scale.name);
+            const pitch = getPitchFromNote(scale.notes.ding);
             if (pitch) pitches.add(pitch);
         });
         // CDEFGAB 순서로 정렬 (Db 제외)
@@ -309,14 +294,48 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                                         <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center">
                                             <Music2 className="w-4 h-4 mr-1.5" /> 구성음 (Notes)
                                         </h3>
-                                        <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 font-mono text-sm text-slate-700 font-medium break-all">
-                                            {currentScale.notes.length > 0 && (
-                                                <>
-                                                    {currentScale.notes[0]}
-                                                    {currentScale.notes.length > 1 && (
-                                                        <> / {currentScale.notes.slice(1).join(' ')}</>
-                                                    )}
-                                                </>
+                                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 font-mono text-sm text-slate-700 font-medium">
+                                            {/* Ding */}
+                                            <div className="flex items-center mb-2">
+                                                <span className="w-16 text-xs text-slate-400 font-bold uppercase flex items-center gap-1">
+                                                    Ding
+                                                    <span className="text-slate-300 font-normal">(1)</span>
+                                                </span>
+                                                <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-md font-bold">
+                                                    {currentScale.notes.ding}
+                                                </span>
+                                            </div>
+
+                                            {/* Top Notes */}
+                                            <div className="flex items-start mb-2">
+                                                <span className="w-16 text-xs text-slate-400 font-bold uppercase mt-1.5 flex items-center gap-1">
+                                                    Top
+                                                    <span className="text-slate-300 font-normal">({currentScale.notes.top.length})</span>
+                                                </span>
+                                                <div className="flex flex-wrap gap-1.5 flex-1">
+                                                    {currentScale.notes.top.map((note, i) => (
+                                                        <span key={i} className="px-2 py-1 bg-white border border-slate-200 rounded-md text-slate-600">
+                                                            {note}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            {/* Bottom Notes */}
+                                            {currentScale.notes.bottom.length > 0 && (
+                                                <div className="flex items-start">
+                                                    <span className="w-16 text-xs text-slate-400 font-bold uppercase mt-1.5 flex items-center gap-1">
+                                                        Bottom
+                                                        <span className="text-slate-300 font-normal">({currentScale.notes.bottom.length})</span>
+                                                    </span>
+                                                    <div className="flex flex-wrap gap-1.5 flex-1">
+                                                        {currentScale.notes.bottom.map((note, i) => (
+                                                            <span key={i} className="px-2 py-1 bg-slate-200 text-slate-600 rounded-md">
+                                                                {note}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
                                             )}
                                         </div>
                                     </div>
@@ -366,8 +385,24 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                 </div>
             </div>
 
+            {/* 전체 스케일 토글 버튼 */}
+            <div className="flex justify-end mb-4">
+                <button
+                    onClick={() => setShowAllScales(!showAllScales)}
+                    className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-indigo-300 hover:text-indigo-600 transition-all"
+                >
+                    <span>전체 스케일 {showAllScales ? '접기' : '펼치기'}</span>
+                    {showAllScales ? (
+                        <ChevronUp className="w-4 h-4" />
+                    ) : (
+                        <ChevronDown className="w-4 h-4" />
+                    )}
+                </button>
+            </div>
+
             {/* List Section */}
-            <div className="space-y-3">
+            {showAllScales && (
+                <div className="space-y-3">
                 <div className="flex items-center justify-between px-1">
                     <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">
                         전체 스케일
@@ -413,9 +448,9 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {[...SCALES]
                         .filter(s => {
-                            // Filter by selected pitches if any (스케일 이름 기준)
+                            // Filter by selected pitches if any (딩 노트 기준)
                             if (selectedPitches.size > 0) {
-                                const pitch = getPitchFromScaleName(s.name);
+                                const pitch = getPitchFromNote(s.notes.ding);
                                 // Db는 C#과 동일하게 처리 (Db 필터가 없으므로 C# 선택 시 Db도 표시)
                                 if (pitch === 'Db') {
                                     return selectedPitches.has('C#');
@@ -425,9 +460,9 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                             return true;
                         })
                         .sort((a, b) => {
-                            // 스케일 이름의 첫 글자 알파벳 순서로 정렬 - CDEFGAB 순서
-                            const pitchA = getPitchFromScaleName(a.name);
-                            const pitchB = getPitchFromScaleName(b.name);
+                            // 딩 노트의 알파벳 순서로 정렬 - CDEFGAB 순서
+                            const pitchA = getPitchFromNote(a.notes.ding);
+                            const pitchB = getPitchFromNote(b.notes.ding);
                             // 피치에서 첫 글자만 추출 (예: "C" -> "C", "C#" -> "C", "Bb" -> "B")
                             const letterA = pitchA.charAt(0).toUpperCase();
                             const letterB = pitchB.charAt(0).toUpperCase();
@@ -468,7 +503,8 @@ export default function ScaleList({ selectedVibe, onBack }: Props) {
                             </button>
                         ))}
                 </div>
-            </div>
+                </div>
+            )}
         </div>
     );
 }

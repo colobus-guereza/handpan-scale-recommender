@@ -35,5 +35,24 @@ npm start
 
 이 프로젝트는 Vercel에 배포되어 있습니다.
 
+**배포 주소:** [https://handpan-scale-recommender.vercel.app/](https://handpan-scale-recommender.vercel.app/)
+
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/colobus-guereza/handpan-scale-recommender)
 
+## 웹사이트 임베드 방법 (Iframe)
+
+이 애플리케이션을 다른 웹사이트(Wix, Squarespace, WordPress 등)에 임베드하려면 아래의 HTML 코드를 사용하세요.
+
+```html
+<iframe 
+  src="https://handpan-scale-recommender.vercel.app/" 
+  width="100%" 
+  height="800px" 
+  style="border: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);"
+  title="Handpan Scale Recommender"
+></iframe>
+```
+
+### 사이즈 조절
+- **width**: `100%`로 설정하면 부모 컨테이너의 너비에 맞춰집니다. 고정 픽셀(예: `600px`)로 설정할 수도 있습니다.
+- **height**: `800px`은 권장 높이입니다. 필요에 따라 조절하세요.
