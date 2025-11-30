@@ -16,6 +16,11 @@ body {
   overflow-y: auto;
 }
 
+/* Light mode: Pure white background for html */
+html.light {
+  background: #ffffff;
+}
+
 :root {
   /* Light Mode Variables (Default) */
   --foreground-rgb: 15, 23, 42;
@@ -25,12 +30,12 @@ body {
   --background-end-rgb: 255, 255, 255;
   /* Pure White */
 
-  --glass-bg: rgba(255, 255, 255, 0.95);
-  /* Almost solid for clarity */
-  --glass-border: rgba(15, 23, 42, 0.12);
+  --glass-bg: rgba(255, 255, 255, 0.98);
+  /* Solid for performance */
+  --glass-border: rgba(15, 23, 42, 0.1);
   /* Distinct border */
-  --glass-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-  /* Stronger elevation */
+  --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  /* Standard shadow */
 
   --text-primary: #020617;
   /* Slate-950 */
@@ -44,28 +49,35 @@ body {
   /* Dark Mode Variables */
   --foreground-rgb: 226, 232, 240;
   /* Slate-200 */
-  --background-start-rgb: 0, 0, 0;
-  /* Pure Black */
-  --background-end-rgb: 0, 0, 0;
-  /* Pure Black */
+  --background-start-rgb: 2, 6, 23;
+  /* Slate-950 (Deep Background) */
+  --background-end-rgb: 2, 6, 23;
+  /* Slate-950 */
 
-  --glass-bg: rgba(0, 0, 0, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  --glass-bg: #1e293b;
+  /* Slate-800 (Card Surface - Lighter than BG) */
+  --glass-border: rgba(148, 163, 184, 0.15);
+  /* Slate-400 at 15% (Distinct Border) */
+  --glass-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  /* Deep Shadow */
 
-  --text-primary: #e2e8f0;
-  /* Slate-200 */
+  --text-primary: #f1f5f9;
+  /* Slate-100 (Brighter Text) */
   --text-secondary: #94a3b8;
   /* Slate-400 */
   --accent-color: #48FF00;
-  /* Harmonic Green (1순위) */
+  /* Harmonic Green */
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(to bottom, rgb(var(--background-start-rgb)), rgb(var(--background-end-rgb)));
   min-height: 100vh;
-  transition: background 0.5s ease, color 0.5s ease;
+}
+
+/* Light mode: Pure white background */
+html.light body {
+  background: #ffffff;
 }
 
 /* Custom Scrollbar */
@@ -83,19 +95,19 @@ body {
   opacity: 0.5;
 }
 
-/* Glassmorphism Utilities */
+/* High Performance Card Utilities (No Blur) */
 .glass-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* Removed backdrop-filter: blur(12px); for performance */
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
-  transition: all 0.3s ease;
+  /* Optimized transition: specific properties only */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .glass-card:hover {
-  border: 1px solid rgba(72, 255, 0, 0.15);
-  box-shadow: 0 0 8px rgba(72, 255, 0, 0.08);
+  border-color: rgba(72, 255, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes shimmer {

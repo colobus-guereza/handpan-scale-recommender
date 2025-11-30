@@ -20,14 +20,14 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="ko" className="h-full">
-            <body className={`${inter.className} min-h-full m-0 p-0 overflow-y-auto transition-colors duration-500`}>
+            <body className={`${inter.className} min-h-full m-0 p-0 overflow-y-auto`}>
                 <ThemeProvider>
                     <IframeResizer />
                     <div className="min-h-screen flex items-start justify-center w-full py-4 px-2">
                         <div className="w-full max-w-full px-2 md:px-4">
                             <div className="flex flex-col items-center space-y-4 glass-card p-4 rounded-3xl border border-glass-border relative min-h-[600px]">
-                                {/* Theme Toggle Button (Top Right) */}
-                                <div className="absolute top-4 right-4 z-50">
+                                {/* Theme Toggle Button (Top Right) - Hidden as requested */}
+                                <div className="absolute top-4 right-4 z-50 hidden">
                                     <ThemeToggle />
                                 </div>
 

@@ -20,10 +20,10 @@ const getVideoId = (url: string) => {
 const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const videoId = getVideoId(url);
-    
+
     // 최적화: 단순화 - hqdefault만 사용, useEffect 제거
     // 네트워크 요청 0개, setState 0개 = 즉각 로딩
-    const thumbnailUrl = videoId 
+    const thumbnailUrl = videoId
         ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
         : '';
 
@@ -57,11 +57,11 @@ const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
             <img
                 src={thumbnailUrl}
                 alt={title}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
             <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 bg-white/90 dark:bg-black/60 rounded-full flex items-center justify-center backdrop-blur-sm shadow-lg group-hover:scale-110 transition-all duration-300">
+                <div className="w-16 h-16 bg-white/90 dark:bg-black/60 rounded-full flex items-center justify-center backdrop-blur-sm shadow-lg transition-colors duration-300">
                     <Play className="w-8 h-8 text-indigo-600 dark:text-white ml-1" fill="currentColor" />
                 </div>
             </div>
@@ -321,22 +321,21 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                     <ArrowLeft className="w-4 h-4 mr-1.5" />
                     다시 선택
                 </button>
-                
+
                 {/* 카테고리 버튼 */}
                 <div className="flex gap-2 mt-4 overflow-x-auto pb-1 md:pb-0 hide-scrollbar">
                     {CATEGORIES.map(category => {
                         const isActive = getCategoryIdFromVibeId(selectedVibe.id) === category.id;
                         const vibe = getVibeFromCategoryId(category.id);
-                        
+
                         return (
                             <button
                                 key={category.id}
                                 onClick={() => vibe && onChangeVibe(vibe)}
-                                className={`whitespace-nowrap px-3 md:px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition-all shadow-sm ${
-                                    isActive
-                                        ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-indigo-300 dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.3)]'
-                                        : 'text-slate-600 dark:text-slate-400 bg-white dark:bg-glass-light border border-slate-200 dark:border-glass-border hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic'
-                                }`}
+                                className={`whitespace-nowrap px-3 md:px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition-all shadow-sm ${isActive
+                                    ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-indigo-300 dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.3)]'
+                                    : 'text-slate-600 dark:text-slate-400 bg-white dark:bg-glass-light border border-slate-200 dark:border-glass-border hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic'
+                                    }`}
                             >
                                 {category.label}
                             </button>
@@ -355,7 +354,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                         {currentIndex > 0 && (
                             <button
                                 onClick={prevSlide}
-                                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 p-2 glass-card rounded-full text-slate-500 dark:text-slate-300 hover:text-indigo-700 dark:hover:text-cosmic hover:scale-110 transition-all hidden md:block shadow-sm"
+                                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 z-10 p-2 glass-card rounded-full text-slate-500 dark:text-slate-300 hover:text-indigo-700 dark:hover:text-cosmic transition-colors hidden md:block shadow-sm"
                             >
                                 <ChevronLeft className="w-6 h-6" />
                             </button>
@@ -363,7 +362,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                         {currentIndex < displayScales.length - 1 && (
                             <button
                                 onClick={nextSlide}
-                                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 p-2 glass-card rounded-full text-slate-500 dark:text-slate-300 hover:text-indigo-700 dark:hover:text-cosmic hover:scale-110 transition-all hidden md:block shadow-sm"
+                                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 z-10 p-2 glass-card rounded-full text-slate-500 dark:text-slate-300 hover:text-indigo-700 dark:hover:text-cosmic transition-colors hidden md:block shadow-sm"
                             >
                                 <ChevronRight className="w-6 h-6" />
                             </button>
@@ -375,153 +374,153 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                     {/* AnimatePresence 제거 - 카드 구조 고정 */}
                     <div className="glass-card rounded-2xl p-4 mb-4 relative overflow-hidden transition-opacity duration-150">
                         {/* 변경: motion.div → div, 부드러운 CSS transition만 추가 */}
-                            {/* Glow Effect Background (Dark Mode Only) */}
-                            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent pointer-events-none opacity-0 dark:opacity-100 transition-opacity" />
+                        {/* Glow Effect Background (Dark Mode Only) */}
+                        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent pointer-events-none opacity-0 dark:opacity-100 transition-opacity" />
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center relative z-10">
-                                {/* Video Section */}
-                                <div className="w-full aspect-video bg-slate-100 dark:bg-black/40 rounded-xl overflow-hidden shadow-inner relative group border border-slate-200 dark:border-white/10">
-                                    <VideoPlayer url={currentScale.videoUrl || ""} title={currentScale.name} />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center relative z-10">
+                            {/* Video Section */}
+                            <div className="w-full aspect-video bg-slate-100 dark:bg-slate-950 rounded-xl overflow-hidden shadow-inner relative group border border-slate-200 dark:border-slate-700">
+                                <VideoPlayer url={currentScale.videoUrl || ""} title={currentScale.name} />
+                            </div>
+
+                            {/* Info Section */}
+                            <div className="flex flex-col justify-center self-center">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center space-x-2">
+                                        {(() => {
+                                            // topRankedScales에서 현재 스케일의 순위 찾기
+                                            const rankIndex = topRankedScales.findIndex(s => s.id === currentScale.id);
+                                            const rank = rankIndex + 1;
+
+                                            // topRankedScales에 포함되어 있고 1~3위인 경우에만 라벨 표시
+                                            if (rankIndex >= 0 && rank <= 3) {
+                                                return (
+                                                    <>
+                                                        <span className="px-3 py-1 rounded-full bg-indigo-100 dark:bg-cosmic/20 text-indigo-700 dark:text-cosmic border border-indigo-200 dark:border-cosmic/30 text-sm font-bold shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.3)]">
+                                                            {rank}위 추천
+                                                        </span>
+                                                        {currentScale.vector.rarePopular > 0.7 && (
+                                                            <span className="flex items-center text-amber-600 dark:text-stardust text-xs font-medium drop-shadow-sm">
+                                                                <Star className="w-3 h-3 fill-current mr-1 animate-pulse-slow" /> 인기 스케일
+                                                            </span>
+                                                        )}
+                                                    </>
+                                                );
+                                            }
+                                            return null;
+                                        })()}
+                                    </div>
+
+                                    {/* Mobile Navigation Indicators */}
+                                    {displayScales.length > 1 && (
+                                        <div className="flex space-x-1 md:hidden">
+                                            {displayScales.map((_, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    className={`w-2 h-2 rounded-full transition-colors ${idx === currentIndex ? 'bg-indigo-600' : 'bg-slate-200'}`}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
 
-                                {/* Info Section */}
-                                <div className="flex flex-col justify-center self-center">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center space-x-2">
-                                            {(() => {
-                                                // topRankedScales에서 현재 스케일의 순위 찾기
-                                                const rankIndex = topRankedScales.findIndex(s => s.id === currentScale.id);
-                                                const rank = rankIndex + 1;
+                                <div className="flex items-center mb-2 gap-3">
+                                    <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight drop-shadow-sm">
+                                        {currentScale.name}
+                                    </h1>
+                                    <span className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 text-xs font-medium self-center">
+                                        {currentScale.id.includes('mutant') ? '뮤턴트' : '일반'}
+                                    </span>
+                                    <a
+                                        href={currentScale.productUrl || "#"}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md transition-all ${currentScale.productUrl
+                                            ? 'bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 hover:shadow-lg hover:-translate-y-0.5'
+                                            : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50'
+                                            }`}
+                                        title={currentScale.productUrl ? '구매하기' : '준비중'}
+                                    >
+                                        <ExternalLink className="w-5 h-5" />
+                                    </a>
+                                </div>
 
-                                                // topRankedScales에 포함되어 있고 1~3위인 경우에만 라벨 표시
-                                                if (rankIndex >= 0 && rank <= 3) {
-                                                    return (
-                                                        <>
-                                                            <span className="px-3 py-1 rounded-full bg-indigo-100 dark:bg-cosmic/20 text-indigo-700 dark:text-cosmic border border-indigo-200 dark:border-cosmic/30 text-sm font-bold shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.3)]">
-                                                                {rank}위 추천
-                                                            </span>
-                                                            {currentScale.vector.rarePopular > 0.7 && (
-                                                                <span className="flex items-center text-amber-600 dark:text-stardust text-xs font-medium drop-shadow-sm">
-                                                                    <Star className="w-3 h-3 fill-current mr-1 animate-pulse-slow" /> 인기 스케일
-                                                                </span>
-                                                            )}
-                                                        </>
-                                                    );
-                                                }
-                                                return null;
-                                            })()}
+                                <div className="mb-4">
+                                    <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-700 font-mono text-sm text-slate-800 dark:text-slate-300 font-medium shadow-inner">
+                                        {/* Ding */}
+                                        <div className="flex items-center mb-1">
+                                            <span className="w-16 text-xs text-slate-600 font-bold uppercase flex items-center gap-1">
+                                                Ding
+                                                <span className="text-slate-500 dark:text-slate-600 font-normal">(1)</span>
+                                            </span>
+                                            <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-500/20 text-indigo-900 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 rounded-md font-bold shadow-sm">
+                                                {currentScale.notes.ding}
+                                            </span>
                                         </div>
 
-                                        {/* Mobile Navigation Indicators */}
-                                        {displayScales.length > 1 && (
-                                            <div className="flex space-x-1 md:hidden">
-                                                {displayScales.map((_, idx) => (
-                                                    <div
-                                                        key={idx}
-                                                        className={`w-2 h-2 rounded-full transition-colors ${idx === currentIndex ? 'bg-indigo-600' : 'bg-slate-200'}`}
-                                                    />
+                                        {/* Top Notes */}
+                                        <div className="flex items-start mb-1">
+                                            <span className="w-16 text-xs text-slate-600 font-bold uppercase mt-1.5 flex items-center gap-1">
+                                                Top
+                                                <span className="text-slate-500 dark:text-slate-600 font-normal">({currentScale.notes.top.length})</span>
+                                            </span>
+                                            <div className="flex flex-wrap gap-1.5 flex-1">
+                                                {currentScale.notes.top.map((note, i) => (
+                                                    <span key={i} className="px-2 py-1 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-md text-slate-800 dark:text-slate-300 shadow-sm font-semibold">
+                                                        {note}
+                                                    </span>
                                                 ))}
                                             </div>
-                                        )}
-                                    </div>
+                                        </div>
 
-                                    <div className="flex items-center mb-2 gap-3">
-                                        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight drop-shadow-sm">
-                                            {currentScale.name}
-                                        </h1>
-                                        <span className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 text-xs font-medium self-center">
-                                            {currentScale.id.includes('mutant') ? '뮤턴트' : '일반'}
-                                        </span>
-                                        <a
-                                            href={currentScale.productUrl || "#"}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md transition-all ${currentScale.productUrl
-                                                ? 'bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 hover:shadow-lg hover:-translate-y-0.5'
-                                                : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50'
-                                                }`}
-                                            title={currentScale.productUrl ? '구매하기' : '준비중'}
-                                        >
-                                            <ExternalLink className="w-5 h-5" />
-                                        </a>
-                                    </div>
-
-                                    <div className="mb-4">
-                                        <div className="p-3 bg-slate-50 dark:bg-black/20 rounded-xl border border-slate-200 dark:border-white/5 font-mono text-sm text-slate-800 dark:text-slate-300 font-medium backdrop-blur-sm shadow-inner">
-                                            {/* Ding */}
-                                            <div className="flex items-center mb-1">
-                                                <span className="w-16 text-xs text-slate-600 font-bold uppercase flex items-center gap-1">
-                                                    Ding
-                                                    <span className="text-slate-500 dark:text-slate-600 font-normal">(1)</span>
-                                                </span>
-                                                <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-500/20 text-indigo-900 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 rounded-md font-bold shadow-sm">
-                                                    {currentScale.notes.ding}
-                                                </span>
-                                            </div>
-
-                                            {/* Top Notes */}
-                                            <div className="flex items-start mb-1">
+                                        {/* Bottom Notes */}
+                                        {currentScale.notes.bottom.length > 0 && (
+                                            <div className="flex items-start">
                                                 <span className="w-16 text-xs text-slate-600 font-bold uppercase mt-1.5 flex items-center gap-1">
-                                                    Top
-                                                    <span className="text-slate-500 dark:text-slate-600 font-normal">({currentScale.notes.top.length})</span>
+                                                    Bottom
+                                                    <span className="text-slate-500 dark:text-slate-600 font-normal">({currentScale.notes.bottom.length})</span>
                                                 </span>
                                                 <div className="flex flex-wrap gap-1.5 flex-1">
-                                                    {currentScale.notes.top.map((note, i) => (
-                                                        <span key={i} className="px-2 py-1 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-md text-slate-800 dark:text-slate-300 shadow-sm font-semibold">
+                                                    {currentScale.notes.bottom.map((note, i) => (
+                                                        <span key={i} className="px-2 py-1 bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-400 rounded-md border border-slate-200 dark:border-white/5 shadow-sm font-medium">
                                                             {note}
                                                         </span>
                                                     ))}
                                                 </div>
                                             </div>
-
-                                            {/* Bottom Notes */}
-                                            {currentScale.notes.bottom.length > 0 && (
-                                                <div className="flex items-start">
-                                                    <span className="w-16 text-xs text-slate-600 font-bold uppercase mt-1.5 flex items-center gap-1">
-                                                        Bottom
-                                                        <span className="text-slate-500 dark:text-slate-600 font-normal">({currentScale.notes.bottom.length})</span>
-                                                    </span>
-                                                    <div className="flex flex-wrap gap-1.5 flex-1">
-                                                        {currentScale.notes.bottom.map((note, i) => (
-                                                            <span key={i} className="px-2 py-1 bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-400 rounded-md border border-slate-200 dark:border-white/5 shadow-sm font-medium">
-                                                                {note}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="flex flex-wrap gap-2 mb-8">
-                                        {currentScale.tags.map(tag => (
-                                            <span key={tag} className="px-3 py-1 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-indigo-700 dark:hover:text-white hover:border-indigo-400 dark:hover:border-white/30 transition-colors cursor-default shadow-sm">
-                                                #{translateTag(tag)}
-                                            </span>
-                                        ))}
-                                    </div>
-
-                                    <div className="flex gap-3">
-                                        {displayScales.length > 1 && currentIndex > 0 && (
-                                            <button
-                                                onClick={prevSlide}
-                                                className="flex-1 md:hidden py-3.5 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
-                                            >
-                                                이전
-                                            </button>
-                                        )}
-
-                                        {displayScales.length > 1 && currentIndex < displayScales.length - 1 && (
-                                            <button
-                                                onClick={nextSlide}
-                                                className="flex-1 md:hidden py-3.5 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
-                                            >
-                                                다음
-                                            </button>
                                         )}
                                     </div>
                                 </div>
+
+                                <div className="flex flex-wrap gap-2 mb-8">
+                                    {currentScale.tags.map(tag => (
+                                        <span key={tag} className="px-3 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:border-indigo-400 dark:hover:border-indigo-500/50 transition-colors cursor-default shadow-sm">
+                                            #{translateTag(tag)}
+                                        </span>
+                                    ))}
+                                </div>
+
+                                <div className="flex gap-3">
+                                    {displayScales.length > 1 && currentIndex > 0 && (
+                                        <button
+                                            onClick={prevSlide}
+                                            className="flex-1 md:hidden py-3.5 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                                        >
+                                            이전
+                                        </button>
+                                    )}
+
+                                    {displayScales.length > 1 && currentIndex < displayScales.length - 1 && (
+                                        <button
+                                            onClick={nextSlide}
+                                            className="flex-1 md:hidden py-3.5 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                                        >
+                                            다음
+                                        </button>
+                                    )}
+                                </div>
                             </div>
+                        </div>
                     </div>
                     {/* 변경: motion.div, AnimatePresence 닫기 태그 제거 */}
                 </div>
