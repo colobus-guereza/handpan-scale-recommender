@@ -110,6 +110,12 @@ html.light body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* Light mode: 무채색 호버 효과 */
+html.light .glass-card:hover {
+  border-color: rgba(15, 23, 42, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
 @keyframes shimmer {
   0% {
     transform: translateX(-100%);

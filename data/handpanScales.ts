@@ -183,7 +183,7 @@ export const SCALES: Scale[] = [
             bottom: []
         },
         vector: { minorMajor: -0.3, pureSpicy: 0.6, rarePopular: 0.4 },
-        tags: ["도리안", "물", "중급자용", "풍부한색채"],
+        tags: ["도리안", "중급자용", "세이렌", "C#4활용이포인트"],
         description: "'사이렌'이라는 이름처럼 신비롭고 깊은 물속을 유영하는 듯한 느낌을 줍니다. 메이저와 마이너를 오가는 묘한 매력이 있습니다.",
         videoUrl: "https://youtu.be/B-7jukbN3hw?si=ci_6mlElCZvu_WGH",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8490886007"

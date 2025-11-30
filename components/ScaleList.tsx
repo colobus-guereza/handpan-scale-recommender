@@ -79,6 +79,9 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedNoteCount, setSelectedNoteCount] = useState<number | null>(null);
     const [selectedType, setSelectedType] = useState<'normal' | 'mutant' | null>(null);
+    const [selectedMood, setSelectedMood] = useState<'minor' | 'major' | null>(null);
+    const [selectedTone, setSelectedTone] = useState<'pure' | 'spicy' | null>(null);
+    const [selectedPopularity, setSelectedPopularity] = useState<'rare' | 'popular' | null>(null);
 
     const CATEGORIES = [
         { id: 'beginner', label: '입문용', tags: ['대중적', '입문추천', '국내인기', 'Bestseller', '기본', '표준', '표준확장'] },
@@ -264,6 +267,61 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
         e.stopPropagation();
         togglePitch(pitch);
     };
+
+    // 필터링된 스케일 개수 계산
+    const filteredScaleCount = useMemo(() => {
+        return SCALES.filter(s => {
+            // Filter by category
+            if (selectedCategory && !matchesCategory(s, selectedCategory)) {
+                return false;
+            }
+
+            // Filter by note count
+            if (selectedNoteCount) {
+                const count = getNoteCount(s.name);
+                if (count !== selectedNoteCount) return false;
+            }
+
+            // Filter by type
+            if (selectedType) {
+                const isMutant = s.id.includes('mutant');
+                if (selectedType === 'mutant' && !isMutant) return false;
+                if (selectedType === 'normal' && isMutant) return false;
+            }
+
+            // Filter by selected pitches if any (딩 노트 기준)
+            if (selectedPitches.size > 0) {
+                const pitch = getPitchFromNote(s.notes.ding);
+                if (pitch === 'Db') {
+                    return selectedPitches.has('C#');
+                }
+                return selectedPitches.has(pitch);
+            }
+
+            // Filter by mood (조성)
+            if (selectedMood) {
+                if (selectedMood === 'minor' && s.vector.minorMajor >= 0) return false;
+                if (selectedMood === 'major' && s.vector.minorMajor < 0) return false;
+            }
+
+            // Filter by tone (음향질감)
+            if (selectedTone) {
+                if (selectedTone === 'pure' && s.vector.pureSpicy >= 0.5) return false;
+                if (selectedTone === 'spicy' && s.vector.pureSpicy < 0.5) return false;
+            }
+
+            // Filter by popularity (대중성)
+            if (selectedPopularity) {
+                if (selectedPopularity === 'rare' && s.vector.rarePopular >= 0.5) return false;
+                if (selectedPopularity === 'popular' && s.vector.rarePopular < 0.5) return false;
+            }
+
+            return true;
+        }).length;
+    }, [selectedCategory, selectedNoteCount, selectedType, selectedPitches, selectedMood, selectedTone, selectedPopularity, matchesCategory, getNoteCount, getPitchFromNote]);
+
+    const totalScaleCount = SCALES.length;
+    const hasActiveFilters = selectedCategory || selectedNoteCount || selectedType || selectedPitches.size > 0 || selectedMood || selectedTone || selectedPopularity;
 
     const translateTag = (tag: string) => {
         switch (tag) {
@@ -601,9 +659,14 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
             {showAllScales && (
                 <div className="space-y-3">
                     <div className="flex items-center justify-between px-1">
-                        <h3 className="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                            전체 스케일
-                        </h3>
+                        <div className="flex items-center gap-2">
+                            <h3 className="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                                전체 스케일
+                            </h3>
+                            <span className="text-sm font-medium text-slate-500 dark:text-slate-500">
+                                {hasActiveFilters ? `${filteredScaleCount} / ${totalScaleCount}` : totalScaleCount}
+                            </span>
+                        </div>
                         <button
                             onClick={(e) => {
                                 e.preventDefault();
@@ -628,7 +691,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                             exit={{ opacity: 0, height: 0 }}
                             className="glass-card border border-glass-border rounded-xl p-4 mb-4"
                         >
-                            <div className="grid grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
                                 {/* 카테고리 선택 */}
                                 <div>
                                     <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">카테고리 선택</h4>
@@ -716,6 +779,84 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                         ))}
                                     </div>
                                 </div>
+
+                                {/* 조성 선택 */}
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">조성</h4>
+                                    <div className="flex flex-col gap-1.5">
+                                        {[
+                                            { id: 'minor', label: '마이너' },
+                                            { id: 'major', label: '메이저' }
+                                        ].map(mood => (
+                                            <button
+                                                key={mood.id}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setSelectedMood(selectedMood === mood.id ? null : mood.id as 'minor' | 'major');
+                                                }}
+                                                className={`w-fit px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${selectedMood === mood.id
+                                                    ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                                    : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                                    }`}
+                                            >
+                                                {mood.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* 음향질감 선택 */}
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">음향질감</h4>
+                                    <div className="flex flex-col gap-1.5">
+                                        {[
+                                            { id: 'pure', label: '담백함' },
+                                            { id: 'spicy', label: '화려함' }
+                                        ].map(tone => (
+                                            <button
+                                                key={tone.id}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setSelectedTone(selectedTone === tone.id ? null : tone.id as 'pure' | 'spicy');
+                                                }}
+                                                className={`w-fit px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${selectedTone === tone.id
+                                                    ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                                    : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                                    }`}
+                                            >
+                                                {tone.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* 대중성 선택 */}
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">대중성</h4>
+                                    <div className="flex flex-col gap-1.5">
+                                        {[
+                                            { id: 'rare', label: '희소함' },
+                                            { id: 'popular', label: '대중적' }
+                                        ].map(pop => (
+                                            <button
+                                                key={pop.id}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setSelectedPopularity(selectedPopularity === pop.id ? null : pop.id as 'rare' | 'popular');
+                                                }}
+                                                className={`w-fit px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${selectedPopularity === pop.id
+                                                    ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                                    : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                                    }`}
+                                            >
+                                                {pop.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         </motion.div>
                     )}
@@ -726,6 +867,9 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                         selectedNoteCount={selectedNoteCount}
                         selectedType={selectedType}
                         selectedPitches={selectedPitches}
+                        selectedMood={selectedMood}
+                        selectedTone={selectedTone}
+                        selectedPopularity={selectedPopularity}
                         currentScaleName={currentScale.name}
                         matchesCategory={matchesCategory}
                         getNoteCount={getNoteCount}
@@ -749,6 +893,9 @@ const ScaleGrid = React.memo(({
     selectedNoteCount,
     selectedType,
     selectedPitches,
+    selectedMood,
+    selectedTone,
+    selectedPopularity,
     currentScaleName,
     matchesCategory,
     getNoteCount,
@@ -760,6 +907,9 @@ const ScaleGrid = React.memo(({
     selectedNoteCount: number | null;
     selectedType: 'normal' | 'mutant' | null;
     selectedPitches: Set<string>;
+    selectedMood: 'minor' | 'major' | null;
+    selectedTone: 'pure' | 'spicy' | null;
+    selectedPopularity: 'rare' | 'popular' | null;
     currentScaleName: string;
     matchesCategory: (scale: Scale, categoryId: string) => boolean;
     getNoteCount: (name: string) => number | null;
@@ -796,6 +946,25 @@ const ScaleGrid = React.memo(({
                     }
                     return selectedPitches.has(pitch);
                 }
+
+                // Filter by mood (조성)
+                if (selectedMood) {
+                    if (selectedMood === 'minor' && s.vector.minorMajor >= 0) return false;
+                    if (selectedMood === 'major' && s.vector.minorMajor < 0) return false;
+                }
+
+                // Filter by tone (음향질감)
+                if (selectedTone) {
+                    if (selectedTone === 'pure' && s.vector.pureSpicy >= 0.5) return false;
+                    if (selectedTone === 'spicy' && s.vector.pureSpicy < 0.5) return false;
+                }
+
+                // Filter by popularity (대중성)
+                if (selectedPopularity) {
+                    if (selectedPopularity === 'rare' && s.vector.rarePopular >= 0.5) return false;
+                    if (selectedPopularity === 'popular' && s.vector.rarePopular < 0.5) return false;
+                }
+
                 return true;
             })
             .sort((a, b) => {
