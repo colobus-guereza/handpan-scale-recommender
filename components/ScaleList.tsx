@@ -380,7 +380,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center relative z-10">
                             {/* Video Section */}
                             <div className="w-full aspect-video bg-slate-100 dark:bg-slate-950 rounded-xl overflow-hidden shadow-inner relative group border border-slate-200 dark:border-slate-700">
-                                <VideoPlayer url={currentScale.videoUrl || ""} title={currentScale.name} />
+                                <VideoPlayer key={currentScale.id} url={currentScale.videoUrl || ""} title={currentScale.name} />
                             </div>
 
                             {/* Info Section */}
@@ -449,7 +449,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                     <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-700 font-mono text-sm text-slate-800 dark:text-slate-300 font-medium shadow-inner">
                                         {/* Ding */}
                                         <div className="flex items-center mb-1">
-                                            <span className="w-16 text-xs text-slate-600 font-bold uppercase flex items-center gap-1">
+                                            <span className="w-24 text-xs text-slate-600 font-bold uppercase flex items-center gap-1">
                                                 Ding
                                                 <span className="text-slate-500 dark:text-slate-600 font-normal">(1)</span>
                                             </span>
@@ -460,7 +460,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
 
                                         {/* Top Notes */}
                                         <div className="flex items-start mb-1">
-                                            <span className="w-16 text-xs text-slate-600 font-bold uppercase mt-1.5 flex items-center gap-1">
+                                            <span className="w-24 text-xs text-slate-600 font-bold uppercase mt-1.5 flex items-center gap-1">
                                                 Top
                                                 <span className="text-slate-500 dark:text-slate-600 font-normal">({currentScale.notes.top.length})</span>
                                             </span>
@@ -476,7 +476,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                         {/* Bottom Notes */}
                                         {currentScale.notes.bottom.length > 0 && (
                                             <div className="flex items-start">
-                                                <span className="w-16 text-xs text-slate-600 font-bold uppercase mt-1.5 flex items-center gap-1">
+                                                <span className="w-24 text-xs text-slate-600 font-bold uppercase mt-1.5 flex items-center gap-1">
                                                     Bottom
                                                     <span className="text-slate-500 dark:text-slate-600 font-normal">({currentScale.notes.bottom.length})</span>
                                                 </span>
@@ -720,85 +720,128 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                         </motion.div>
                     )}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        {[...SCALES]
-                            .filter(s => {
-                                // Filter by category
-                                if (selectedCategory && !matchesCategory(s, selectedCategory)) {
-                                    return false;
-                                }
-
-                                // Filter by note count
-                                if (selectedNoteCount) {
-                                    const count = getNoteCount(s.name);
-                                    if (count !== selectedNoteCount) return false;
-                                }
-
-                                // Filter by type
-                                if (selectedType) {
-                                    const isMutant = s.id.includes('mutant');
-                                    if (selectedType === 'mutant' && !isMutant) return false;
-                                    if (selectedType === 'normal' && isMutant) return false;
-                                }
-
-                                // Filter by selected pitches if any (딩 노트 기준)
-                                if (selectedPitches.size > 0) {
-                                    const pitch = getPitchFromNote(s.notes.ding);
-                                    // Db는 C#과 동일하게 처리 (Db 필터가 없으므로 C# 선택 시 Db도 표시)
-                                    if (pitch === 'Db') {
-                                        return selectedPitches.has('C#');
-                                    }
-                                    return selectedPitches.has(pitch);
-                                }
-                                return true;
-                            })
-                            .sort((a, b) => {
-                                // 딩 노트의 알파벳 순서로 정렬 - CDEFGAB 순서
-                                const pitchA = getPitchFromNote(a.notes.ding);
-                                const pitchB = getPitchFromNote(b.notes.ding);
-                                // 피치에서 첫 글자만 추출 (예: "C" -> "C", "C#" -> "C", "Bb" -> "B")
-                                const letterA = pitchA.charAt(0).toUpperCase();
-                                const letterB = pitchB.charAt(0).toUpperCase();
-
-                                // CDEFGAB 순서 정의
-                                const order = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-                                const indexA = order.indexOf(letterA);
-                                const indexB = order.indexOf(letterB);
-
-                                // 순서에 없는 경우(예: 잘못된 노트)는 뒤로
-                                if (indexA === -1 && indexB === -1) return 0;
-                                if (indexA === -1) return 1;
-                                if (indexB === -1) return -1;
-
-                                return indexA - indexB;
-                            })
-                            .map((scale) => (
-                                <button
-                                    key={scale.name}
-                                    onClick={() => {
-                                        setDisplayScales([scale]);
-                                        setCurrentIndex(0);
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
-                                    className={`flex items-center justify-between p-4 border rounded-xl transition-all group text-left ${currentScale.name === scale.name
-                                        ? 'bg-indigo-50 dark:bg-cosmic/10 border-indigo-200 dark:border-cosmic/30 ring-1 ring-indigo-200 dark:ring-cosmic/20'
-                                        : 'bg-glass-light border-glass-border hover:border-indigo-300 dark:hover:border-cosmic/10 hover:bg-indigo-50 dark:hover:bg-white/5'
-                                        }`}
-                                >
-                                    <span className={`font-semibold transition-colors ${currentScale.name === scale.name ? 'text-indigo-700 dark:text-cosmic' : 'text-slate-700 dark:text-slate-300 group-hover:text-indigo-700 dark:group-hover:text-cosmic'
-                                        }`}>
-                                        {scale.name}
-                                    </span>
-                                    <span className={`text-xs ${currentScale.name === scale.name ? 'text-indigo-600 dark:text-cosmic/70' : 'text-slate-500 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-cosmic/70'
-                                        }`}>
-                                        {currentScale.name === scale.name ? '보고있음' : '선택'}
-                                    </span>
-                                </button>
-                            ))}
-                    </div>
+                    <ScaleGrid
+                        scales={SCALES}
+                        selectedCategory={selectedCategory}
+                        selectedNoteCount={selectedNoteCount}
+                        selectedType={selectedType}
+                        selectedPitches={selectedPitches}
+                        currentScaleName={currentScale.name}
+                        matchesCategory={matchesCategory}
+                        getNoteCount={getNoteCount}
+                        getPitchFromNote={getPitchFromNote}
+                        onScaleSelect={(scale) => {
+                            setDisplayScales([scale]);
+                            setCurrentIndex(0);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                    />
                 </div>
-            )
-            }
-        </div >
+            )}
+        </div>
     );
 }
+
+// Memoized Scale Grid Component to prevent unnecessary re-renders
+const ScaleGrid = React.memo(({
+    scales,
+    selectedCategory,
+    selectedNoteCount,
+    selectedType,
+    selectedPitches,
+    currentScaleName,
+    matchesCategory,
+    getNoteCount,
+    getPitchFromNote,
+    onScaleSelect
+}: {
+    scales: Scale[];
+    selectedCategory: string | null;
+    selectedNoteCount: number | null;
+    selectedType: 'normal' | 'mutant' | null;
+    selectedPitches: Set<string>;
+    currentScaleName: string;
+    matchesCategory: (scale: Scale, categoryId: string) => boolean;
+    getNoteCount: (name: string) => number | null;
+    getPitchFromNote: (note: string) => string;
+    onScaleSelect: (scale: Scale) => void;
+}) => {
+    const filteredScales = useMemo(() => {
+        return [...scales]
+            .filter(s => {
+                // Filter by category
+                if (selectedCategory && !matchesCategory(s, selectedCategory)) {
+                    return false;
+                }
+
+                // Filter by note count
+                if (selectedNoteCount) {
+                    const count = getNoteCount(s.name);
+                    if (count !== selectedNoteCount) return false;
+                }
+
+                // Filter by type
+                if (selectedType) {
+                    const isMutant = s.id.includes('mutant');
+                    if (selectedType === 'mutant' && !isMutant) return false;
+                    if (selectedType === 'normal' && isMutant) return false;
+                }
+
+                // Filter by selected pitches if any (딩 노트 기준)
+                if (selectedPitches.size > 0) {
+                    const pitch = getPitchFromNote(s.notes.ding);
+                    // Db는 C#과 동일하게 처리 (Db 필터가 없으므로 C# 선택 시 Db도 표시)
+                    if (pitch === 'Db') {
+                        return selectedPitches.has('C#');
+                    }
+                    return selectedPitches.has(pitch);
+                }
+                return true;
+            })
+            .sort((a, b) => {
+                // 딩 노트의 알파벳 순서로 정렬 - CDEFGAB 순서
+                const pitchA = getPitchFromNote(a.notes.ding);
+                const pitchB = getPitchFromNote(b.notes.ding);
+                // 피치에서 첫 글자만 추출 (예: "C" -> "C", "C#" -> "C", "Bb" -> "B")
+                const letterA = pitchA.charAt(0).toUpperCase();
+                const letterB = pitchB.charAt(0).toUpperCase();
+
+                // CDEFGAB 순서 정의
+                const order = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+                const indexA = order.indexOf(letterA);
+                const indexB = order.indexOf(letterB);
+
+                // 순서에 없는 경우(예: 잘못된 노트)는 뒤로
+                if (indexA === -1 && indexB === -1) return 0;
+                if (indexA === -1) return 1;
+                if (indexB === -1) return -1;
+
+                return indexA - indexB;
+            });
+    }, [scales, selectedCategory, selectedNoteCount, selectedType, selectedPitches, matchesCategory, getNoteCount, getPitchFromNote]);
+
+    return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {filteredScales.map((scale) => (
+                <button
+                    key={scale.name}
+                    onClick={() => onScaleSelect(scale)}
+                    className={`flex items-center justify-between p-4 border rounded-xl transition-all group text-left ${currentScaleName === scale.name
+                        ? 'bg-indigo-50 dark:bg-cosmic/10 border-indigo-200 dark:border-cosmic/30 ring-1 ring-indigo-200 dark:ring-cosmic/20'
+                        : 'bg-glass-light border-glass-border hover:border-indigo-300 dark:hover:border-cosmic/10 hover:bg-indigo-50 dark:hover:bg-white/5'
+                        }`}
+                >
+                    <span className={`font-semibold transition-colors ${currentScaleName === scale.name ? 'text-indigo-700 dark:text-cosmic' : 'text-slate-700 dark:text-slate-300 group-hover:text-indigo-700 dark:group-hover:text-cosmic'
+                        }`}>
+                        {scale.name}
+                    </span>
+                    <span className={`text-xs ${currentScaleName === scale.name ? 'text-indigo-600 dark:text-cosmic/70' : 'text-slate-500 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-cosmic/70'
+                        }`}>
+                        {currentScaleName === scale.name ? '보고있음' : '선택'}
+                    </span>
+                </button>
+            ))}
+        </div>
+    );
+});
+
