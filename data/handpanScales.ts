@@ -93,9 +93,9 @@ export const SCALES: Scale[] = [
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12351119980"
     },
 
-    // 6. F# Low Pygmy 14 (The Global Bestseller)
+    // 6. F# Low Pygmy 14 (The Global Bestseller) - Mutant
     {
-        id: "fs_low_pygmy_14",
+        id: "fs_low_pygmy_14_mutant",
         name: "F# Low Pygmy 14",
         notes: {
             ding: "F#3",
@@ -160,14 +160,14 @@ export const SCALES: Scale[] = [
     // 10. D Asha 9 (The Gentle Major / Sabye)
     {
         id: "d_asha_9",
-        name: "D Asha 9 (Sabye)",
+        name: "D Asha 9",
         notes: {
             ding: "D3",
             top: ["G3", "A3", "B3", "C#4", "D4", "E4", "F#4", "A4"],
             bottom: []
         },
         vector: { minorMajor: 0.9, pureSpicy: 0.1, rarePopular: 0.9 },
-        tags: ["메이저", "젠틀", "세컨드핸드팬", "Sabye", "희망적"],
+        tags: ["D메이저", "세컨드핸드팬인기", "젠틀소프트", "Sabye", "Ashakiran"],
         description: "Sabye라고도 불리는 부드럽고 온화한 메이저 스케일입니다. 순수한 빛과 희망을 담고 있으며, 마이너 스케일과 함께 연주하기 좋은 최고의 세컨드 악기로 추천됩니다.",
         videoUrl: "https://youtu.be/4tgdyOhT-RI?si=9SQ66sdPiwvgxoP7",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8497384066"
@@ -215,7 +215,7 @@ export const SCALES: Scale[] = [
             bottom: ["E3", "F#3", "G3"]
         },
         vector: { minorMajor: 0.9, pureSpicy: 0.1, rarePopular: 0.8 },
-        tags: ["메이저", "2옥타브", "범용성", "협연추천"],
+        tags: ["D메이저", "2옥타브", "범용성", "협연추천"],
         description: "2옥타브 음역을 완벽하게 커버하는 D Major 스케일입니다. 메이저 조성이 대다수인 일반 대중음악에서의 활용도가 매우 높으며, 다른 악기와의 협연에서도 강력한 강점을 발휘합니다.",
         videoUrl: "https://youtu.be/aGKx4zLFvRo",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12655523545"
@@ -423,7 +423,7 @@ export const SCALES: Scale[] = [
             bottom: []
         },
         vector: { minorMajor: 0.5, pureSpicy: 0.2, rarePopular: 0.3 },
-        tags: ["무주", "평화", "자연", "치유", "아리랑음계", "국악스케일"],
+        tags: ["Eb메이저", "국악평조", "아리랑음계", "무주자연"],
         description: "무주의 자연을 닮은 평화로운 스케일입니다. 부드럽고 따뜻한 음색으로 마음을 치유하는 힘이 있습니다.",
         videoUrl: "https://youtu.be/0IGtmQlb1X4?si=y9oZiE4w-_Zkyih6",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8513504905"

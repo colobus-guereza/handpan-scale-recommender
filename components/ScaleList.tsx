@@ -158,7 +158,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
             if (scale3) topScales.push(scale3);
         } else if (selectedVibe.id === 'meditation') {
             // 요가명상힐링: 1위 F# Low Pygmy 14, 2위 C# Pygmy 11, 3위 F# Low Pygmy 18 Mutant
-            const scale1 = SCALES.find(s => s.id === 'fs_low_pygmy_14');
+            const scale1 = SCALES.find(s => s.id === 'fs_low_pygmy_14_mutant');
             const scale2 = SCALES.find(s => s.id === 'cs_pygmy_11');
             const scale3 = SCALES.find(s => s.id === 'fs_low_pygmy_18_mutant');
             if (scale1) topScales.push(scale1);
