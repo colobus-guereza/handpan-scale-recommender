@@ -247,7 +247,7 @@ export const SCALES: Scale[] = [
             bottom: []
         },
         vector: { minorMajor: -0.3, pureSpicy: 0.3, rarePopular: 0.7 },
-        tags: ["하이브리드", "표준", "감성적"],
+        tags: ["메이저마이너", "그사이어딘가", "미묘한느낌", "색다른감성추천"],
         description: "Equinox 스케일의 표준 모델입니다. 적절한 음역대와 감성적인 멜로디 라인으로 입문자부터 숙련자까지 모두에게 추천됩니다.",
         videoUrl: "https://youtu.be/8t8MqTelD9k?si=4gbYwCubpVxb_URT",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12320275460"

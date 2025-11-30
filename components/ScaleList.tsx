@@ -316,7 +316,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
             <div className="mb-6">
                 <button
                     onClick={onBack}
-                    className="flex items-center text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-700 dark:hover:text-cosmic transition-colors px-3 py-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5"
+                    className="flex items-center text-sm font-medium text-slate-600/50 dark:text-slate-400/50 hover:text-indigo-700 dark:hover:text-cosmic transition-colors px-3 py-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5"
                 >
                     <ArrowLeft className="w-4 h-4 mr-1.5" />
                     다시 선택
@@ -334,7 +334,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                 onClick={() => vibe && onChangeVibe(vibe)}
                                 className={`whitespace-nowrap px-3 md:px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition-all shadow-sm ${isActive
                                     ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-indigo-300 dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.3)]'
-                                    : 'text-slate-600 dark:text-slate-400 bg-white dark:bg-glass-light border border-slate-200 dark:border-glass-border hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic'
+                                    : 'text-slate-600/50 dark:text-slate-400/50 bg-white dark:bg-glass-light border border-slate-200 dark:border-glass-border hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic'
                                     }`}
                             >
                                 {category.label}
@@ -396,11 +396,11 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                             if (rankIndex >= 0 && rank <= 3) {
                                                 return (
                                                     <>
-                                                        <span className="px-3 py-1 rounded-full bg-indigo-100 dark:bg-cosmic/20 text-indigo-700 dark:text-cosmic border border-indigo-200 dark:border-cosmic/30 text-sm font-bold shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.3)]">
+                                                        <span className="px-3 py-1 rounded-full bg-indigo-100 dark:bg-cosmic/20 text-indigo-700/80 dark:text-cosmic/80 border border-indigo-200 dark:border-cosmic/30 text-sm font-bold shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.3)]">
                                                             {rank}위 추천
                                                         </span>
                                                         {currentScale.vector.rarePopular > 0.7 && (
-                                                            <span className="flex items-center text-amber-600 dark:text-stardust text-xs font-medium drop-shadow-sm">
+                                                            <span className="flex items-center text-amber-600/80 dark:text-stardust/80 text-xs font-medium drop-shadow-sm">
                                                                 <Star className="w-3 h-3 fill-current mr-1 animate-pulse-slow" /> 인기 스케일
                                                             </span>
                                                         )}
@@ -532,7 +532,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                 <div className="flex gap-3">
                     <button
                         onClick={() => setShowClassificationCriteria(!showClassificationCriteria)}
-                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
                     >
                         <span>스케일 분류기준 {showClassificationCriteria ? '접기' : ''}</span>
                         {showClassificationCriteria ? (
@@ -543,7 +543,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                     </button>
                     <button
                         onClick={() => setShowAllScales(!showAllScales)}
-                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
                     >
                         <span>전체 스케일 {showAllScales ? '접기' : ''}</span>
                         {showAllScales ? (
