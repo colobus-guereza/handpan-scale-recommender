@@ -20,27 +20,13 @@ export default function Home() {
     };
 
     return (
-        <AnimatePresence mode="wait">
+        <div className="w-full">
             {step === 'selection' ? (
-                <motion.div
-                    key="selection"
-                    className="w-full"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    transition={{ duration: 0.3 }}
-                >
+                <div className="w-full">
                     <VibeSelector onSelect={handleVibeSelect} />
-                </motion.div>
+                </div>
             ) : (
-                <motion.div
-                    key="result"
-                    className="w-full"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                >
+                <div className="w-full">
                     {selectedVibe && (
                         <ScaleList
                             selectedVibe={selectedVibe}
@@ -48,8 +34,9 @@ export default function Home() {
                             onChangeVibe={handleVibeSelect}
                         />
                     )}
-                </motion.div>
+                </div>
             )}
-        </AnimatePresence>
+        </div>
     );
+
 }

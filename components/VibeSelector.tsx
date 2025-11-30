@@ -93,9 +93,6 @@ export default function VibeSelector({ onSelect }: Props) {
                     return (
                         <motion.button
                             key={vibe.id}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.5 }}
                             whileHover={{ y: -2, scale: 1.01 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => onSelect(vibe)}
