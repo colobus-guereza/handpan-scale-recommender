@@ -311,7 +311,7 @@ export const SCALES: Scale[] = [
             bottom: ["E3", "F3"]
         },
         vector: { minorMajor: -0.8, pureSpicy: 0.1, rarePopular: 0.95 },
-        tags: ["마이너", "저음보강", "표준확장", "풍성함", "딩베이스", "화성연주"],
+        tags: ["마이너", "저음보강", "표준확장", "딩베이스", "화성연주"],
         description: "가장 인기 있는 D Kurd 스케일에 저음(E, F)을 추가하여 더욱 풍성한 연주가 가능합니다. 초보자부터 전문가까지 만족할 수 있는 구성입니다.",
         videoUrl: "https://youtu.be/KXDSbCdPjTM?si=3GD2eOil-5WsmVHa",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12070396728"
