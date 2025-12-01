@@ -92,8 +92,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
 
     // VibeSelector와 동일한 호버 스타일 함수
     const getHoverStyles = (categoryId: string) => {
-        // 각 버튼별 라이트/다크모드 공통 호버 색상
-        const hoverColors: Record<string, { border: string; icon: string; text: string; shadow: string; bg?: string }> = {
+        const hoverColors: Record<string, { border: string; icon: string; text: string; shadow: string }> = {
             'beginner': {
                 border: 'hover:border-[#48FF00]/20 dark:hover:border-[#48FF00]/10',
                 icon: 'group-hover:text-[#48FF00]',
@@ -123,8 +122,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
         const colors = hoverColors[categoryId] || hoverColors['beginner'];
 
         return {
-            bg: `glass-card hover:bg-indigo-50 dark:hover:bg-white/5 ${colors.bg || ''}`,
-            border: `border-glass-border ${colors.border}`,
+            bg: `glass-card hover:bg-indigo-50 dark:hover:bg-white/5`,
+            border: `border-2 border-glass-border ${colors.border}`,
             iconColor: `text-slate-400 dark:text-slate-400 ${colors.icon} group-hover:drop-shadow-sm ${colors.shadow}`,
             textColor: `text-slate-600 dark:text-slate-300 ${colors.text} group-hover:drop-shadow-sm dark:group-hover:drop-shadow-md`
         };
@@ -425,62 +424,18 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                     {CATEGORIES.map(category => {
                         const isActive = getCategoryIdFromVibeId(selectedVibe.id) === category.id;
                         const vibe = getVibeFromCategoryId(category.id);
-                        const hoverStyles = getHoverStyles(category.id);
-
-                        // Active state styles (mimicking hover state of VibeSelector)
-                        const activeClass = (() => {
-                            switch (category.id) {
-                                case 'beginner': return 'bg-indigo-50 dark:bg-white/5 border-[#48FF00]/20 dark:border-[#48FF00]/10';
-                                case 'healing': return 'bg-indigo-50 dark:bg-white/5 border-[#DDA0DD]/20 dark:border-[#DDA0DD]/10';
-                                case 'bright': return 'bg-indigo-50 dark:bg-white/5 border-[#FCFF48]/20 dark:border-[#FCFF48]/10';
-                                case 'ethnic': return 'bg-indigo-50 dark:bg-white/5 border-[#DC2626]/20 dark:border-[#DC2626]/20';
-                                default: return '';
-                            }
-                        })();
-
-                        const activeIconClass = (() => {
-                            switch (category.id) {
-                                case 'beginner': return 'text-[#48FF00] drop-shadow-[0_0_8px_rgba(72,255,0,0.5)]';
-                                case 'healing': return 'text-[#DDA0DD] drop-shadow-[0_0_8px_rgba(221,160,221,0.5)]';
-                                case 'bright': return 'text-[#FCFF48] drop-shadow-[0_0_8px_rgba(252,255,72,0.5)]';
-                                case 'ethnic': return 'text-[#DC2626] drop-shadow-[0_0_8px_rgba(220,38,38,0.6)]';
-                                default: return '';
-                            }
-                        })();
-
-                        const activeTextClass = 'text-slate-900 dark:text-white drop-shadow-sm';
 
                         return (
-                            <motion.button
+                            <button
                                 key={category.id}
-                                whileHover={{ y: -2, scale: 1.01 }}
-                                whileTap={{ scale: 0.98 }}
                                 onClick={() => vibe && onChangeVibe(vibe)}
-                                className={`group relative flex flex-col items-center justify-center p-9 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border-2
-                                    ${isActive
-                                        ? `glass-card ${activeClass}`
-                                        : `${hoverStyles.bg} ${hoverStyles.border}`
+                                className={`whitespace-nowrap px-4 md:px-5 py-2.5 md:py-3 text-base md:text-lg font-bold rounded-lg transition-all shadow-sm ${isActive
+                                    ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border-2 border-indigo-300 dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.3)]'
+                                    : 'text-slate-600/50 dark:text-slate-400/50 bg-white dark:bg-glass-light border-2 border-slate-200 dark:border-glass-border hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic'
                                     }`}
                             >
-                                {/* 반짝이는 이펙트 */}
-                                <div className="absolute inset-0 overflow-hidden rounded-xl">
-                                    <div className="shimmer-effect absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                </div>
-
-                                {/* 아이콘 */}
-                                <div className="relative z-10 mb-4 transition-all duration-300">
-                                    <div className="group-hover:scale-110 transition-transform duration-300">
-                                        {React.cloneElement(category.icon as React.ReactElement, {
-                                            className: `w-16 h-16 transition-all duration-300 ${isActive ? activeIconClass : hoverStyles.iconColor}`
-                                        })}
-                                    </div>
-                                </div>
-
-                                {/* 텍스트 */}
-                                <h3 className={`relative z-10 text-2xl font-bold tracking-tight transition-colors duration-300 ${isActive ? activeTextClass : hoverStyles.textColor}`}>
-                                    {category.label}
-                                </h3>
-                            </motion.button>
+                                {category.label}
+                            </button>
                         );
                     })}
                 </div>
