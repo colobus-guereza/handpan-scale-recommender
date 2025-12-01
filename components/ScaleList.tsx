@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { SCALES, Scale, VECTOR_AXES } from '../data/handpanScales';
 import { Vibe, VIBES } from './VibeSelector';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Sparkles, Moon, Sun, Flame } from 'lucide-react';
 
 interface Props {
     selectedVibe: Vibe;
@@ -37,13 +37,15 @@ const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
     }
 
     if (isPlaying) {
-        <iframe
-            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`}
-            title={title}
-            className="w-full h-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-        />
+        return (
+            <iframe
+                src={`https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`}
+                title={title}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+            />
+        );
     }
 
     return (
@@ -82,11 +84,51 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
     const [selectedPopularity, setSelectedPopularity] = useState<'rare' | 'popular' | null>(null);
 
     const CATEGORIES = [
-        { id: 'beginner', label: '입문용', tags: ['대중적', '입문추천', '국내인기', 'Bestseller', '기본', '표준', '표준확장'] },
-        { id: 'healing', label: '요가명상힐링', tags: ['명상', '힐링', '치유', '차분한', '평화', 'Deep', '피그미', '트랜스', '몽환적', '깊음', '깊은울림'] },
-        { id: 'bright', label: '밝은 분위기', tags: ['메이저', '밝음', '상쾌함', '희망적', '행복한', '윤슬', '사파이어', '청량함', '에너지'] },
-        { id: 'ethnic', label: '딥 에스닉', tags: ['이국적', '집시', '아라비안', '중동풍', '독특함', '인도풍', '동양적', '하이브리드', '도리안', '블루스', '신비', '매니아', '라사발리', '딥아시아', '신비로움'] }
+        { id: 'beginner', label: '입문용', tags: ['대중적', '입문추천', '국내인기', 'Bestseller', '기본', '표준', '표준확장'], icon: <Sparkles className="w-6 h-6 text-slate-400" /> },
+        { id: 'healing', label: '요가명상힐링', tags: ['명상', '힐링', '치유', '차분한', '평화', 'Deep', '피그미', '트랜스', '몽환적', '깊음', '깊은울림'], icon: <Moon className="w-6 h-6 text-slate-400" /> },
+        { id: 'bright', label: '밝은 분위기', tags: ['메이저', '밝음', '상쾌함', '희망적', '행복한', '윤슬', '사파이어', '청량함', '에너지'], icon: <Sun className="w-6 h-6 text-slate-400" /> },
+        { id: 'ethnic', label: '딥 에스닉', tags: ['이국적', '집시', '아라비안', '중동풍', '독특함', '인도풍', '동양적', '하이브리드', '도리안', '블루스', '신비', '매니아', '라사발리', '딥아시아', '신비로움'], icon: <Flame className="w-6 h-6 text-slate-400" /> }
     ];
+
+    // VibeSelector와 동일한 호버 스타일 함수
+    const getHoverStyles = (categoryId: string) => {
+        // 각 버튼별 라이트/다크모드 공통 호버 색상
+        const hoverColors: Record<string, { border: string; icon: string; text: string; shadow: string; bg?: string }> = {
+            'beginner': {
+                border: 'hover:border-[#48FF00]/20 dark:hover:border-[#48FF00]/10',
+                icon: 'group-hover:text-[#48FF00]',
+                text: 'group-hover:text-slate-900 dark:group-hover:text-white',
+                shadow: 'group-hover:drop-shadow-[0_0_8px_rgba(72,255,0,0.5)]'
+            },
+            'healing': {
+                border: 'hover:border-[#DDA0DD]/20 dark:hover:border-[#DDA0DD]/10',
+                icon: 'group-hover:text-[#DDA0DD]',
+                text: 'group-hover:text-slate-900 dark:group-hover:text-white',
+                shadow: 'group-hover:drop-shadow-[0_0_8px_rgba(221,160,221,0.5)]'
+            },
+            'bright': {
+                border: 'hover:border-[#FCFF48]/20 dark:hover:border-[#FCFF48]/10',
+                icon: 'group-hover:text-[#FCFF48]',
+                text: 'group-hover:text-slate-900 dark:group-hover:text-white',
+                shadow: 'group-hover:drop-shadow-[0_0_8px_rgba(252,255,72,0.5)]'
+            },
+            'ethnic': {
+                border: 'hover:border-[#DC2626]/20 dark:hover:border-[#DC2626]/20',
+                icon: 'group-hover:text-[#DC2626]',
+                text: 'group-hover:text-slate-900 dark:group-hover:text-white',
+                shadow: 'group-hover:drop-shadow-[0_0_8px_rgba(220,38,38,0.6)]'
+            }
+        };
+
+        const colors = hoverColors[categoryId] || hoverColors['beginner'];
+
+        return {
+            bg: `glass-card hover:bg-indigo-50 dark:hover:bg-white/5 ${colors.bg || ''}`,
+            border: `border-glass-border ${colors.border}`,
+            iconColor: `text-slate-400 dark:text-slate-400 ${colors.icon} group-hover:drop-shadow-sm ${colors.shadow}`,
+            textColor: `text-slate-600 dark:text-slate-300 ${colors.text} group-hover:drop-shadow-sm dark:group-hover:drop-shadow-md`
+        };
+    };
 
     const matchesCategory = (scale: Scale, categoryId: string) => {
         const category = CATEGORIES.find(c => c.id === categoryId);
@@ -372,29 +414,73 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
             <div className="mb-6">
                 <button
                     onClick={onBack}
-                    className="flex items-center text-sm font-medium text-slate-600/50 dark:text-slate-400/50 hover:text-indigo-700 dark:hover:text-cosmic transition-colors px-3 py-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5"
+                    className="hidden flex items-center text-sm font-medium text-slate-600/50 dark:text-slate-400/50 hover:text-indigo-700 dark:hover:text-cosmic transition-colors px-3 py-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5"
                 >
                     <ArrowLeft className="w-4 h-4 mr-1.5" />
                     다시 선택
                 </button>
 
                 {/* 카테고리 버튼 */}
-                <div className="flex gap-2 mt-4 overflow-x-auto pb-1 md:pb-0 hide-scrollbar">
+                <div className="flex gap-6 mt-4 overflow-x-auto pb-1 md:pb-0 hide-scrollbar">
                     {CATEGORIES.map(category => {
                         const isActive = getCategoryIdFromVibeId(selectedVibe.id) === category.id;
                         const vibe = getVibeFromCategoryId(category.id);
+                        const hoverStyles = getHoverStyles(category.id);
+
+                        // Active state styles (mimicking hover state of VibeSelector)
+                        const activeClass = (() => {
+                            switch (category.id) {
+                                case 'beginner': return 'bg-indigo-50 dark:bg-white/5 border-[#48FF00]/20 dark:border-[#48FF00]/10';
+                                case 'healing': return 'bg-indigo-50 dark:bg-white/5 border-[#DDA0DD]/20 dark:border-[#DDA0DD]/10';
+                                case 'bright': return 'bg-indigo-50 dark:bg-white/5 border-[#FCFF48]/20 dark:border-[#FCFF48]/10';
+                                case 'ethnic': return 'bg-indigo-50 dark:bg-white/5 border-[#DC2626]/20 dark:border-[#DC2626]/20';
+                                default: return '';
+                            }
+                        })();
+
+                        const activeIconClass = (() => {
+                            switch (category.id) {
+                                case 'beginner': return 'text-[#48FF00] drop-shadow-[0_0_8px_rgba(72,255,0,0.5)]';
+                                case 'healing': return 'text-[#DDA0DD] drop-shadow-[0_0_8px_rgba(221,160,221,0.5)]';
+                                case 'bright': return 'text-[#FCFF48] drop-shadow-[0_0_8px_rgba(252,255,72,0.5)]';
+                                case 'ethnic': return 'text-[#DC2626] drop-shadow-[0_0_8px_rgba(220,38,38,0.6)]';
+                                default: return '';
+                            }
+                        })();
+
+                        const activeTextClass = 'text-slate-900 dark:text-white drop-shadow-sm';
 
                         return (
-                            <button
+                            <motion.button
                                 key={category.id}
+                                whileHover={{ y: -2, scale: 1.01 }}
+                                whileTap={{ scale: 0.98 }}
                                 onClick={() => vibe && onChangeVibe(vibe)}
-                                className={`whitespace-nowrap px-3 md:px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition-all shadow-sm ${isActive
-                                    ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-indigo-300 dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.3)]'
-                                    : 'text-slate-600/50 dark:text-slate-400/50 bg-white dark:bg-glass-light border border-slate-200 dark:border-glass-border hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic'
+                                className={`group relative flex flex-col items-center justify-center p-9 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border-2
+                                    ${isActive
+                                        ? `glass-card ${activeClass}`
+                                        : `${hoverStyles.bg} ${hoverStyles.border}`
                                     }`}
                             >
-                                {category.label}
-                            </button>
+                                {/* 반짝이는 이펙트 */}
+                                <div className="absolute inset-0 overflow-hidden rounded-xl">
+                                    <div className="shimmer-effect absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                </div>
+
+                                {/* 아이콘 */}
+                                <div className="relative z-10 mb-4 transition-all duration-300">
+                                    <div className="group-hover:scale-110 transition-transform duration-300">
+                                        {React.cloneElement(category.icon as React.ReactElement, {
+                                            className: `w-16 h-16 transition-all duration-300 ${isActive ? activeIconClass : hoverStyles.iconColor}`
+                                        })}
+                                    </div>
+                                </div>
+
+                                {/* 텍스트 */}
+                                <h3 className={`relative z-10 text-2xl font-bold tracking-tight transition-colors duration-300 ${isActive ? activeTextClass : hoverStyles.textColor}`}>
+                                    {category.label}
+                                </h3>
+                            </motion.button>
                         );
                     })}
                 </div>
