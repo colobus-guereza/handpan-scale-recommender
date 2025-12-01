@@ -37,15 +37,13 @@ const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
     }
 
     if (isPlaying) {
-        return (
-            <iframe
-                src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-                title={title}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-            />
-        );
+        <iframe
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`}
+            title={title}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+        />
     }
 
     return (
@@ -74,8 +72,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showFilter, setShowFilter] = useState(false);
     const [selectedPitches, setSelectedPitches] = useState<Set<string>>(new Set());
-    const [showAllScales, setShowAllScales] = useState(false);
-    const [showClassificationCriteria, setShowClassificationCriteria] = useState(false);
+    const [showAllScales, setShowAllScales] = useState(true);
+    const [showClassificationCriteria, setShowClassificationCriteria] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedNoteCount, setSelectedNoteCount] = useState<number | null>(null);
     const [selectedType, setSelectedType] = useState<'normal' | 'mutant' | null>(null);

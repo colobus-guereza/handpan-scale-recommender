@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import VibeSelector, { Vibe } from "@/components/VibeSelector";
+import VibeSelector, { Vibe, VIBES } from "@/components/VibeSelector";
 import ScaleList from "@/components/ScaleList";
 
 export default function Home() {
-    const [step, setStep] = useState<'selection' | 'result'>('selection');
-    const [selectedVibe, setSelectedVibe] = useState<Vibe | null>(null);
+    // 초기값을 '요가명상힐링' (meditation)으로 설정
+    const initialVibe = VIBES.find(v => v.id === 'meditation') || null;
+    const [step, setStep] = useState<'selection' | 'result'>('result');
+    const [selectedVibe, setSelectedVibe] = useState<Vibe | null>(initialVibe);
 
     const handleVibeSelect = (vibe: Vibe) => {
         setSelectedVibe(vibe);
