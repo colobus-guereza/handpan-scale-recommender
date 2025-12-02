@@ -32,13 +32,26 @@ export default function IframeResizer() {
         );
         sendHeight(initialHeight);
 
-        // 모바일 중복 스크롤 방지를 위한 스타일 강제 적용
+        // 모바일 중복 스크롤 방지 및 높이 자동 조절을 위한 스타일 강제 적용
         if (window.self !== window.top) {
             document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
             document.documentElement.style.width = '100%';
             document.body.style.width = '100%';
             document.body.style.minHeight = 'auto';
+
+            // min-h-screen 및 h-full 등의 스타일이 iframe 높이를 강제로 늘리는 것을 방지
+            const style = document.createElement('style');
+            style.textContent = `
+                .min-h-screen {
+                    min-height: auto !important;
+                }
+                html, body {
+                    height: auto !important;
+                    min-height: auto !important;
+                }
+            `;
+            document.head.appendChild(style);
         }
 
         // DOM 변화 감지를 위한 Observer
