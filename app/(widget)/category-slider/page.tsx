@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { SCALES } from '@/data/handpanScales';
+import IframeResizer from '@/components/IframeResizer';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -347,8 +348,11 @@ export default function CategorySliderPage() {
         );
     }
 
+
+
     return (
         <>
+            <IframeResizer />
             <style dangerouslySetInnerHTML={{ __html: hideContainerStyle }} />
             <div className="w-full min-h-screen bg-white flex flex-col items-center justify-center p-4 gap-8">
                 <div className="w-full max-w-[1400px]">
@@ -380,10 +384,10 @@ export default function CategorySliderPage() {
                     >
                         {PRODUCTS.map((product) => {
                             const productUrl = getProductUrl(product.name);
-                            
+
                             return (
                                 <SwiperSlide key={product.id}>
-                                    <div 
+                                    <div
                                         className="flex flex-col group cursor-pointer"
                                         onClick={() => {
                                             if (productUrl) {
@@ -391,9 +395,9 @@ export default function CategorySliderPage() {
                                             }
                                         }}
                                     >
-                                        <div 
+                                        <div
                                             className="relative overflow-hidden rounded-xl bg-white mb-5"
-                                            style={{ 
+                                            style={{
                                                 width: '100%',
                                                 aspectRatio: '1 / 1',
                                                 minHeight: '200px'
@@ -405,7 +409,7 @@ export default function CategorySliderPage() {
                                                 loading="lazy"
                                                 decoding="async"
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                                style={{ 
+                                                style={{
                                                     width: '100%',
                                                     height: '100%',
                                                     display: 'block',
@@ -459,10 +463,10 @@ export default function CategorySliderPage() {
                     >
                         {HEALING_PRODUCTS.map((product) => {
                             const productUrl = getProductUrl(product.name);
-                            
+
                             return (
                                 <SwiperSlide key={product.id}>
-                                    <div 
+                                    <div
                                         className="flex flex-col group cursor-pointer"
                                         onClick={() => {
                                             if (productUrl) {
@@ -470,9 +474,9 @@ export default function CategorySliderPage() {
                                             }
                                         }}
                                     >
-                                        <div 
+                                        <div
                                             className="relative overflow-hidden rounded-xl bg-white mb-5"
-                                            style={{ 
+                                            style={{
                                                 width: '100%',
                                                 aspectRatio: '1 / 1',
                                                 minHeight: '200px'
@@ -484,7 +488,7 @@ export default function CategorySliderPage() {
                                                 loading="lazy"
                                                 decoding="async"
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                                style={{ 
+                                                style={{
                                                     width: '100%',
                                                     height: '100%',
                                                     display: 'block',
@@ -538,10 +542,10 @@ export default function CategorySliderPage() {
                     >
                         {MAJOR_SCALE_PRODUCTS.map((product) => {
                             const productUrl = getProductUrl(product.name);
-                            
+
                             return (
                                 <SwiperSlide key={product.id}>
-                                    <div 
+                                    <div
                                         className="flex flex-col group cursor-pointer"
                                         onClick={() => {
                                             if (productUrl) {
@@ -549,9 +553,9 @@ export default function CategorySliderPage() {
                                             }
                                         }}
                                     >
-                                        <div 
+                                        <div
                                             className="relative overflow-hidden rounded-xl bg-white mb-5"
-                                            style={{ 
+                                            style={{
                                                 width: '100%',
                                                 aspectRatio: '1 / 1',
                                                 minHeight: '200px'
@@ -563,7 +567,7 @@ export default function CategorySliderPage() {
                                                 loading="lazy"
                                                 decoding="async"
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                                style={{ 
+                                                style={{
                                                     width: '100%',
                                                     height: '100%',
                                                     display: 'block',
@@ -617,10 +621,10 @@ export default function CategorySliderPage() {
                     >
                         {DEEP_ETHNIC_PRODUCTS.map((product) => {
                             const productUrl = getProductUrl(product.name);
-                            
+
                             return (
                                 <SwiperSlide key={product.id}>
-                                    <div 
+                                    <div
                                         className="flex flex-col group cursor-pointer"
                                         onClick={() => {
                                             if (productUrl) {
@@ -628,9 +632,9 @@ export default function CategorySliderPage() {
                                             }
                                         }}
                                     >
-                                        <div 
+                                        <div
                                             className="relative overflow-hidden rounded-xl bg-white mb-5"
-                                            style={{ 
+                                            style={{
                                                 width: '100%',
                                                 aspectRatio: '1 / 1',
                                                 minHeight: '200px'
@@ -642,7 +646,7 @@ export default function CategorySliderPage() {
                                                 loading="lazy"
                                                 decoding="async"
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                                style={{ 
+                                                style={{
                                                     width: '100%',
                                                     height: '100%',
                                                     display: 'block',
@@ -697,9 +701,9 @@ export default function CategorySliderPage() {
                         {CASE_PRODUCTS.map((product) => (
                             <SwiperSlide key={product.id}>
                                 <div className="flex flex-col group cursor-pointer">
-                                    <div 
+                                    <div
                                         className="relative overflow-hidden rounded-xl bg-white mb-5"
-                                        style={{ 
+                                        style={{
                                             width: '100%',
                                             aspectRatio: '1 / 1',
                                             minHeight: '200px'
@@ -711,7 +715,7 @@ export default function CategorySliderPage() {
                                             loading="lazy"
                                             decoding="async"
                                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                            style={{ 
+                                            style={{
                                                 width: '100%',
                                                 height: '100%',
                                                 display: 'block',
@@ -765,9 +769,9 @@ export default function CategorySliderPage() {
                         {STAND_PRODUCTS.map((product) => (
                             <SwiperSlide key={product.id}>
                                 <div className="flex flex-col group cursor-pointer">
-                                    <div 
+                                    <div
                                         className="relative overflow-hidden rounded-xl bg-white mb-5"
-                                        style={{ 
+                                        style={{
                                             width: '100%',
                                             aspectRatio: '1 / 1',
                                             minHeight: '200px'
@@ -779,7 +783,7 @@ export default function CategorySliderPage() {
                                             loading="lazy"
                                             decoding="async"
                                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                            style={{ 
+                                            style={{
                                                 width: '100%',
                                                 height: '100%',
                                                 display: 'block',
