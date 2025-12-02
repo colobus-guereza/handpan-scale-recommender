@@ -18,14 +18,7 @@ const getVideoId = (url: string) => {
 };
 
 const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
-    const [isPlaying, setIsPlaying] = useState(false);
     const videoId = getVideoId(url);
-
-    // 최적화: 단순화 - hqdefault만 사용, useEffect 제거
-    // 네트워크 요청 0개, setState 0개 = 즉각 로딩
-    const thumbnailUrl = videoId
-        ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
-        : '';
 
     if (!videoId) {
         return (
@@ -36,36 +29,14 @@ const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
         );
     }
 
-    if (isPlaying) {
-        return (
-            <iframe
-                src={`https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`}
-                title={title}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-            />
-        );
-    }
-
     return (
-        <button
-            onClick={() => setIsPlaying(true)}
-            className="w-full h-full relative group cursor-pointer"
-            aria-label="Play video"
-        >
-            <img
-                src={thumbnailUrl}
-                alt={title}
-                className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-            <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 bg-white/90 dark:bg-black/60 rounded-full flex items-center justify-center backdrop-blur-sm shadow-lg transition-colors duration-300">
-                    <Play className="w-8 h-8 text-indigo-600 dark:text-white ml-1" fill="currentColor" />
-                </div>
-            </div>
-        </button>
+        <iframe
+            src={`https://www.youtube.com/embed/${videoId}?playsinline=1&rel=0`}
+            title={title}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+        />
     );
 };
 
@@ -528,18 +499,44 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                     <span className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 text-xs font-medium self-center flex-shrink-0">
                                         {currentScale.id.includes('mutant') ? '뮤턴트' : '일반'}
                                     </span>
-                                    <a
-                                        href={currentScale.productUrl || "#"}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className={`px-4 py-2 rounded-lg text-sm font-medium shadow-md transition-all ${currentScale.productUrl
-                                            ? 'bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 hover:shadow-lg hover:-translate-y-0.5 text-white'
-                                            : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50 text-slate-500'
-                                            }`}
-                                        title={currentScale.productUrl ? 'Buy' : '준비중'}
-                                    >
-                                        Buy
-                                    </a>
+                                    <div className="flex gap-2">
+                                        {/* Naver Smart Store Button */}
+                                        {currentScale.naverUrl && (
+                                            <a
+                                                href={currentScale.naverUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-[#03C75A] hover:bg-[#02b351] text-white hover:shadow-lg hover:-translate-y-0.5"
+                                                title="네이버 스마트스토어에서 구매하기"
+                                            >
+                                                <span className="font-extrabold">N</span>
+                                                <span>스토어</span>
+                                            </a>
+                                        )}
+
+                                        {/* Official Mall Button */}
+                                        {currentScale.ownUrl && (
+                                            <a
+                                                href={currentScale.ownUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 text-white hover:shadow-lg hover:-translate-y-0.5"
+                                                title="공식 쇼핑몰에서 구매하기"
+                                            >
+                                                <span>공식몰</span>
+                                            </a>
+                                        )}
+
+                                        {/* Fallback if no links */}
+                                        {!currentScale.naverUrl && !currentScale.ownUrl && (
+                                            <button
+                                                disabled
+                                                className="px-4 py-2 rounded-lg text-sm font-medium shadow-md bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50 text-slate-500"
+                                            >
+                                                준비중
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="mb-4">

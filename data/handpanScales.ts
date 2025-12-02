@@ -56,7 +56,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.8, pureSpicy: 0.1, rarePopular: 1.0 },
         tags: ["마이너", "대중적", "감성적"],
-        description: "가장 대중적인 스케일입니다. 깊고 감성적이며 완벽한 균형을 이룹니다.",
+        description: "가장 대중적인 마이너 스케일입니다. 깊고 감성적인 울림으로 완벽한 균형을 이룹니다.",
         videoUrl: "https://youtu.be/IvdeC_YuSIg",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/9206864886"
     },
@@ -88,7 +88,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.4, pureSpicy: 0.4, rarePopular: 0.5 },
         tags: ["하이브리드", "시네마틱", "상급자용", "달콤씁쓸한"],
-        description: "메이저와 마이너의 경계에 있습니다. 복잡하고 감성적이며, 묵직한 저음을 포함한 14개의 노트로 풍성함을 자랑합니다.",
+        description: "메이저와 마이너의 경계에 있는 하이브리드 스케일입니다. 시네마틱한 감성과 달콤씁쓸한 매력이 특징이며, 묵직한 저음을 포함한 14개의 노트로 풍성함을 자랑합니다. 상급자용 모델로 복잡하고 감성적인 연주에 적합합니다.",
         videoUrl: "https://youtu.be/v9pXYwhylPg?si=Em_dHnMGyeU19YkE",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12351119980"
     },
@@ -120,7 +120,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.8, pureSpicy: 0.15, rarePopular: 0.7 },
         tags: ["국내인기", "안정적", "우울함", "변신가능", "바텀업그레이드", "가성비최고"],
-        description: "국내 시장에서 꾸준히 사랑받는 스테디셀러입니다. 기본적으로 우울하고 차분하지만, 확장을 통해 다양한 분위기로 변신할 수 있습니다.",
+        description: "국내 시장에서 꾸준히 사랑받는 국내인기 스테디셀러입니다. 안정적이고 우울한 감성이 특징이며, 바텀 업그레이드를 통해 다양한 분위기로 변신이 가능합니다. 가성비 최고의 모델로 추천됩니다.",
         videoUrl: "https://youtu.be/BH45TEboAgE?si=SLlNpG-5vTLSWAsx",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/9561986680"
     },
@@ -136,7 +136,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.5, pureSpicy: 0.75, rarePopular: 0.35 },
         tags: ["이국적", "집시", "독특함", "보헤미안"],
-        description: "남들과 다른 독특함을 추구하는 분들을 위한 스케일입니다. 집시 음악을 연상시키는 강렬하고 신비로운 분위기를 자아냅니다.",
+        description: "남들과 다른 독특함을 추구하는 분들을 위한 이국적인 스케일입니다. 집시와 보헤미안 음악을 연상시키는 강렬하고 신비로운 분위기를 자아냅니다.",
         videoUrl: "https://youtu.be/gTEsQG3dfKQ?si=IJcS8SYJe9468WgP",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8681747137"
     },
@@ -152,7 +152,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.2, pureSpicy: 0.85, rarePopular: 0.1 },
         tags: ["아라비안", "희귀함", "매운맛", "프리지안"],
-        description: "아라비안 나이트를 연상시키는 매우 이국적이고 강렬한 스케일입니다. 희소성이 높아 독보적인 개성을 표현하기 좋습니다.",
+        description: "아라비안 나이트를 연상시키는 매우 이국적이고 강렬한 프리지안 스케일입니다. 희귀함과 매운맛이 특징이며, 희소성이 높아 독보적인 개성을 표현하기 좋습니다.",
         videoUrl: "https://youtu.be/OJWGyT1OxIg?si=RM_0FkjjEuxaWPJu",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8669289024"
     },
@@ -168,7 +168,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: 0.9, pureSpicy: 0.1, rarePopular: 0.9 },
         tags: ["D메이저", "세컨드핸드팬인기", "젠틀소프트", "Sabye", "Ashakiran"],
-        description: "Sabye라고도 불리는 부드럽고 온화한 메이저 스케일입니다. 순수한 빛과 희망을 담고 있으며, 마이너 스케일과 함께 연주하기 좋은 최고의 세컨드 악기로 추천됩니다.",
+        description: "Sabye 또는 Ashakiran이라고도 불리는 부드럽고 온화한 D 메이저 스케일입니다. 젠틀하고 소프트한 음색으로 순수한 빛과 희망을 담고 있으며, 마이너 스케일과 함께 연주하기 좋은 최고의 세컨드 핸드팬으로 인기가 높습니다.",
         videoUrl: "https://youtu.be/4tgdyOhT-RI?si=9SQ66sdPiwvgxoP7",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8497384066"
     },
@@ -184,7 +184,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.3, pureSpicy: 0.6, rarePopular: 0.4 },
         tags: ["도리안", "중급자용", "세이렌", "C#4활용이포인트"],
-        description: "'사이렌'이라는 이름처럼 신비롭고 깊은 물속을 유영하는 듯한 느낌을 줍니다. 메이저와 마이너를 오가는 묘한 매력이 있습니다.",
+        description: "'세이렌'이라는 이름처럼 신비롭고 깊은 물속을 유영하는 듯한 느낌을 주는 도리안 스케일입니다. 메이저와 마이너를 오가는 묘한 매력이 있으며, C#4 노트의 활용이 포인트입니다. 중급자용 모델로 추천됩니다.",
         videoUrl: "https://youtu.be/B-7jukbN3hw?si=ci_6mlElCZvu_WGH",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8490886007"
     },
@@ -200,7 +200,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.7, pureSpicy: 0.05, rarePopular: 0.85 },
         tags: ["피그미", "트랜스", "깊음", "클래식"],
-        description: "핸드팬의 고전이자 명작입니다. 특유의 공허하고 몽환적인 울림은 깊은 명상과 트랜스 상태로 인도합니다.",
+        description: "핸드팬의 고전이자 명작인 클래식 피그미 스케일입니다. 특유의 공허하고 몽환적인 깊은 울림은 깊은 명상과 트랜스 상태로 인도합니다.",
         videoUrl: "https://youtu.be/WcREkpJ5I_0?si=YUyV1CEIOLyXWesW",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8521877785"
     },
@@ -216,7 +216,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: 0.9, pureSpicy: 0.1, rarePopular: 0.8 },
         tags: ["D메이저", "2옥타브", "범용성", "협연추천"],
-        description: "2옥타브 음역을 완벽하게 커버하는 D Major 스케일입니다. 메이저 조성이 대다수인 일반 대중음악에서의 활용도가 매우 높으며, 다른 악기와의 협연에서도 강력한 강점을 발휘합니다.",
+        description: "2옥타브 음역을 완벽하게 커버하는 D 메이저 스케일입니다. 범용성이 뛰어나 메이저 조성이 대다수인 일반 대중음악에서의 활용도가 매우 높으며, 다른 악기와의 협연에서도 강력한 강점을 발휘하는 협연 추천 모델입니다.",
         videoUrl: "https://youtu.be/aGKx4zLFvRo",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12655523545"
     },
@@ -232,7 +232,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.3, pureSpicy: 0.3, rarePopular: 0.6 },
         tags: ["하이브리드", "저음보강", "감성적", "밸런스"],
-        description: "기존 Equinox에 저음(C3, D3)을 보강하여 더욱 풍성한 울림을 제공합니다. 감성적인 연주에 최적화된 밸런스를 자랑합니다.",
+        description: "하이브리드 스케일인 기존 Equinox에 저음(C3, D3)을 보강하여 더욱 풍성한 울림을 제공합니다. 감성적인 연주에 최적화된 완벽한 밸런스를 자랑합니다.",
         videoUrl: "https://youtu.be/OcQ64DyA9xM?si=40_8I1KnB_rxCNQO",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12320335441"
     },
@@ -248,7 +248,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.3, pureSpicy: 0.3, rarePopular: 0.7 },
         tags: ["메이저마이너", "그사이어딘가", "미묘한느낌", "색다른감성추천"],
-        description: "Equinox 스케일의 표준 모델입니다. 적절한 음역대와 감성적인 멜로디 라인으로 입문자부터 숙련자까지 모두에게 추천됩니다.",
+        description: "Equinox 스케일의 표준 모델로, 메이저와 마이너 그 사이 어딘가의 미묘한 느낌이 특징입니다. 색다른 감성을 추구하는 분들에게 추천되며, 적절한 음역대와 감성적인 멜로디 라인으로 입문자부터 숙련자까지 모두에게 적합합니다.",
         videoUrl: "https://youtu.be/8t8MqTelD9k?si=4gbYwCubpVxb_URT",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12320275460"
     },
@@ -264,7 +264,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.6, pureSpicy: 0.25, rarePopular: 0.9 },
         tags: ["Malte Marten Style", "뮤턴트", "초고음역", "피그미", "전문가용"],
-        description: "Low Pygmy의 확장판으로, 18개의 노트를 통해 광활한 음역대를 제공합니다. 섬세한 고음 표현과 깊은 저음이 어우러진 전문가용 모델입니다.",
+        description: "Malte Marten 스타일의 뮤턴트 피그미 스케일로, Low Pygmy의 확장판입니다. 18개의 노트를 통해 광활한 음역대와 초고음역을 제공하며, 섬세한 고음 표현과 깊은 저음이 어우러진 전문가용 모델입니다.",
         videoUrl: "https://youtu.be/UxsvhXeDok0?si=GnSeCzBk0qe8snYr",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689630331"
     },
@@ -280,7 +280,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.7, pureSpicy: 0.05, rarePopular: 0.8 },
         tags: ["피그미", "저음보강", "트랜스", "깊은울림"],
-        description: "클래식 C# Pygmy에 저음(D3, E3)을 추가하여 더욱 깊고 웅장한 사운드를 만들어냅니다. 명상과 힐링에 탁월합니다.",
+        description: "클래식 피그미 스케일인 C# Pygmy에 저음(D3, E3)을 보강하여 더욱 깊고 웅장한 깊은 울림을 만들어냅니다. 트랜스와 명상, 힐링 연주에 탁월합니다.",
         videoUrl: "https://youtu.be/QoUbOkhGGR8?si=TIKXYdCKX4RiuaLY",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12276307998"
     },
@@ -296,7 +296,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.6, pureSpicy: 0.1, rarePopular: 0.75 },
         tags: ["피그미", "저음보강", "따뜻함", "몽환적"],
-        description: "F Pygmy의 부드러움에 저음의 깊이를 더했습니다. 따뜻하고 몽환적인 분위기를 연출하기에 좋습니다.",
+        description: "피그미 스케일인 F Pygmy의 부드러움에 저음을 보강하여 깊이를 더했습니다. 따뜻하고 몽환적인 분위기를 연출하기에 좋습니다.",
         videoUrl: "https://youtu.be/_3jpTdVfOBc?si=W9bAL_AqZ5e25Rj8",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8611436986"
     },
@@ -312,7 +312,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.8, pureSpicy: 0.1, rarePopular: 0.95 },
         tags: ["마이너", "저음보강", "표준확장", "딩베이스", "화성연주"],
-        description: "D Kurd 10 악기에 바텀 업그레이드 한 표준확장형으로, 하단 두개의 베이스 딩으로 화성 연주가 가능한 모델입니다.",
+        description: "마이너 스케일인 D Kurd 10 악기에 바텀 업그레이드 한 표준확장형으로, 저음을 보강하여 하단 두개의 딩 베이스로 화성 연주가 가능한 모델입니다.",
         videoUrl: "https://youtu.be/KXDSbCdPjTM?si=3GD2eOil-5WsmVHa",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12070396728"
     },
@@ -344,7 +344,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: 0.8, pureSpicy: 0.35, rarePopular: 0.5 },
         tags: ["메이저", "안나푸르나", "상쾌함", "에너지"],
-        description: "Yisha Savita와 동일한 구성으로, 안나푸르나의 웅장함과 상쾌함을 담은 메이저 스케일입니다.",
+        description: "Yisha Savita와 동일한 구성으로, 안나푸르나의 웅장함과 상쾌함, 에너지를 담은 메이저 스케일입니다.",
         videoUrl: "https://youtu.be/HSHDfm9PEM4?si=930q4Eu3DT2URi50",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8513450652"
     },
@@ -360,7 +360,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: 1.0, pureSpicy: 0.0, rarePopular: 0.6 },
         tags: ["메이저", "기본", "밝음", "동요"],
-        description: "가장 기본적이고 순수한 C Major 스케일입니다. 밝고 명랑하며, 누구나 아는 멜로디를 연주하기에 좋습니다.",
+        description: "가장 기본적이고 순수한 메이저 스케일인 C Major입니다. 밝고 명랑하며, 동요와 같이 누구나 아는 멜로디를 연주하기에 좋습니다.",
         videoUrl: "https://youtu.be/2peCXnJP2U0?si=bVePs8DvAlPEwI7v",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12751985321"
     },
@@ -376,7 +376,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.2, pureSpicy: 0.6, rarePopular: 0.3 },
         tags: ["라사발리", "인도풍", "신비로움", "독특함"],
-        description: "인도 음악의 색채를 지닌 신비로운 스케일입니다. 독특한 음계가 만들어내는 묘한 분위기가 매력적입니다.",
+        description: "라사발리 스케일로, 인도풍의 색채를 지닌 신비로운 스케일입니다. 독특한 음계가 만들어내는 묘한 분위기가 매력적입니다.",
         videoUrl: "https://youtu.be/u9dsmUSd_SY?si=rMBMQOFvj5Yec7vs",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12751991029"
     },
@@ -392,7 +392,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.5, pureSpicy: 0.5, rarePopular: 0.4 },
         tags: ["딥아시아", "동양적", "확장형", "깊음"],
-        description: "동양적인 깊은 울림을 가진 스케일입니다. 14개의 노트로 확장되어 더욱 풍성하고 명상적인 연주가 가능합니다.",
+        description: "딥아시아 스케일로, 동양적인 깊은 울림을 가진 확장형 모델입니다. 14개의 노트로 확장되어 더욱 풍성하고 명상적인 연주가 가능합니다.",
         videoUrl: "https://youtu.be/pMKoFUicrFw?si=5HPgyOp8NM0qXMNU",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689651421"
     },
@@ -408,7 +408,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.1, pureSpicy: 0.6, rarePopular: 0.4 },
         tags: ["블루스", "재즈", "감성적", "그루브"],
-        description: "블루지한 감성을 담은 스케일입니다. 재즈나 소울풀한 연주에 적합하며, 특유의 그루브가 살아있습니다.",
+        description: "블루스 스케일로, 블루지한 감성을 담은 스케일입니다. 재즈나 소울풀한 연주에 적합하며, 특유의 그루브가 살아있는 감성적인 모델입니다.",
         videoUrl: "https://youtu.be/mY-Uvw-VKO4?si=Ail972LckjNWKp8S",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689712335"
     },
@@ -424,7 +424,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: 0.5, pureSpicy: 0.2, rarePopular: 0.3 },
         tags: ["Eb메이저", "국악평조", "아리랑음계", "무주자연"],
-        description: "무주의 자연을 닮은 평화로운 스케일입니다. 부드럽고 따뜻한 음색으로 마음을 치유하는 힘이 있습니다.",
+        description: "Eb 메이저 스케일로, 국악 평조와 아리랑 음계를 담고 있습니다. 무주의 자연을 닮은 평화로운 스케일이며, 부드럽고 따뜻한 음색으로 마음을 치유하는 힘이 있습니다.",
         videoUrl: "https://youtu.be/0IGtmQlb1X4?si=y9oZiE4w-_Zkyih6",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8513504905"
     },
@@ -440,7 +440,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: 0.8, pureSpicy: 0.1, rarePopular: 0.5 },
         tags: ["윤슬", "반짝임", "맑음", "서정적"],
-        description: "물결에 비치는 햇살(윤슬)처럼 맑고 반짝이는 소리를 가졌습니다. 서정적이고 아름다운 멜로디 연주에 좋습니다.",
+        description: "윤슬 스케일로, 물결에 비치는 햇살처럼 맑고 반짝이는 소리를 가졌습니다. 서정적이고 아름다운 멜로디 연주에 좋습니다.",
         videoUrl: "https://youtu.be/_fB5VHpE1f0?si=v6RDSBTJJUsiAZXK",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12752009418"
     },
@@ -456,7 +456,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.2, pureSpicy: 0.4, rarePopular: 0.4 },
         tags: ["사파이어", "청량함", "보석", "세련됨"],
-        description: "사파이어 보석처럼 청량하고 세련된 울림을 줍니다. 깔끔하고 모던한 느낌의 연주를 선호하는 분들께 추천합니다.",
+        description: "사파이어 스케일로, 사파이어 보석처럼 청량하고 세련된 울림을 줍니다. 깔끔하고 모던한 느낌의 연주를 선호하는 분들께 추천합니다.",
         videoUrl: "https://youtu.be/V1bfHlVl9VY?si=yREB5-6dey1kvC_4",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12752029521"
     },
@@ -472,7 +472,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.4, pureSpicy: 0.5, rarePopular: 0.2 },
         tags: ["이국적", "긴장감", "신비", "매니아"],
-        description: "신비롭고 약간의 긴장감을 주는 이국적인 스케일입니다. 독특한 분위기를 연출하고 싶은 연주자에게 적합합니다.",
+        description: "신비롭고 약간의 긴장감을 주는 이국적인 스케일입니다. 독특한 분위기를 연출하고 싶은 매니아 연주자에게 적합합니다.",
         videoUrl: "https://youtu.be/Z3bVZYykphA?si=zJAD4lmQPxMQ0xq8",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12085316070"
     },
@@ -488,7 +488,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.3, pureSpicy: 0.7, rarePopular: 0.5 },
         tags: ["이국적", "중동풍", "정열적", "스파이시"],
-        description: "E 키의 히자즈 스케일로, 중동의 정열적이고 스파이시한 느낌을 강하게 전달합니다.",
+        description: "E 키의 히자즈 스케일로, 이국적이고 중동풍의 정열적이며 스파이시한 느낌을 강하게 전달합니다.",
         videoUrl: "https://youtu.be/MRyGVe5k4Y8?si=VEoopVqXSO9gJ6Rd",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12085332035"
     }
