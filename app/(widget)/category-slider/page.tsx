@@ -109,7 +109,7 @@ const HEALING_PRODUCTS = [
     {
         id: 101,
         name: 'F# Low Pygmy 14',
-        price: '4,500,000원',
+        price: '4,400,000원',
         rating: 5.0,
         reviewCount: 280,
         image: '/images/products/14_silver.png',
@@ -316,12 +316,12 @@ const productNameMap: Record<string, string> = {
 
 
 
-// 제품명으로 ownUrl을 찾는 헬퍼 함수
+// 제품명으로 productUrl을 찾는 헬퍼 함수
 const getProductUrl = (productName: string): string | null => {
     // 먼저 스케일에서 찾기
     const scale = SCALES.find(s => s.name === productName);
-    if (scale?.ownUrl) {
-        return scale.ownUrl;
+    if (scale?.productUrl) {
+        return scale.productUrl;
     }
 
     // 제품명 매핑 적용
