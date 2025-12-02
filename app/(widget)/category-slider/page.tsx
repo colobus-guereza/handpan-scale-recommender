@@ -378,8 +378,8 @@ export default function CategorySliderPage() {
         <>
             <IframeResizer />
             <style dangerouslySetInnerHTML={{ __html: hideContainerStyle }} />
-            <div className="w-full min-h-screen bg-white flex flex-col items-center justify-center p-4 gap-8">
-                <div className="w-full max-w-[1400px]">
+            <div className="w-full min-h-screen bg-white flex flex-col items-center justify-center p-0 gap-8">
+                <div className="w-full max-w-full">
                     <h2 className="text-xl font-bold text-gray-900 mb-4 px-2">입문용</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
@@ -458,7 +458,7 @@ export default function CategorySliderPage() {
                     </Swiper>
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
-                <div className="w-full max-w-[1400px]">
+                <div className="w-full max-w-full">
                     <h2 className="text-xl font-bold text-gray-900 mb-4 px-2">요가명상힐링</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
@@ -537,7 +537,7 @@ export default function CategorySliderPage() {
                     </Swiper>
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
-                <div className="w-full max-w-[1400px]">
+                <div className="w-full max-w-full">
                     <h2 className="text-xl font-bold text-gray-900 mb-4 px-2">메이저 스케일</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
@@ -616,7 +616,7 @@ export default function CategorySliderPage() {
                     </Swiper>
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
-                <div className="w-full max-w-[1400px]">
+                <div className="w-full max-w-full">
                     <h2 className="text-xl font-bold text-gray-900 mb-4 px-2">딥 에스닉</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
@@ -695,7 +695,7 @@ export default function CategorySliderPage() {
                     </Swiper>
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
-                <div className="w-full max-w-[1400px]">
+                <div className="w-full max-w-full">
                     <h2 className="text-xl font-bold text-gray-900 mb-4 px-2">Case</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
@@ -774,7 +774,7 @@ export default function CategorySliderPage() {
                     </Swiper>
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
-                <div className="w-full max-w-[1400px]">
+                <div className="w-full max-w-full">
                     <h2 className="text-xl font-bold text-gray-900 mb-4 px-2">Stand</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
