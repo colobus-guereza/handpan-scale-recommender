@@ -349,13 +349,13 @@ export const SCALES: Scale[] = [
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8513450652"
     },
 
-    // 23. C Major 9
+    // 23. C Major 10
     {
-        id: "c_major_9",
-        name: "C Major 9",
+        id: "c_major_10",
+        name: "C Major 10",
         notes: {
             ding: "C3",
-            top: ["G3", "A3", "B3", "C4", "D4", "E4", "F4", "G4", "A4"],
+            top: ["G3", "A3", "B3", "C4", "D4", "E4", "F4", "G4", "A4", "C5"],
             bottom: []
         },
         vector: { minorMajor: 1.0, pureSpicy: 0.0, rarePopular: 0.6 },

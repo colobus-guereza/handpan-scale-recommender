@@ -168,7 +168,7 @@ const MAJOR_SCALE_PRODUCTS = [
     },
     {
         id: 203,
-        name: 'Eb Muju 10',
+        name: 'Eb MUJU 10',
         price: '2,860,000원',
         rating: 4.8,
         reviewCount: 120,
@@ -317,11 +317,12 @@ const productNameMap: Record<string, string> = {
 
 
 // 제품명으로 productUrl을 찾는 헬퍼 함수
+// 제품명으로 productUrl을 찾는 헬퍼 함수
 const getProductUrl = (productName: string): string | null => {
     // 먼저 스케일에서 찾기
     const scale = SCALES.find(s => s.name === productName);
-    if (scale?.productUrl) {
-        return scale.productUrl;
+    if (scale?.ownUrl) {
+        return scale.ownUrl;
     }
 
     // 제품명 매핑 적용
