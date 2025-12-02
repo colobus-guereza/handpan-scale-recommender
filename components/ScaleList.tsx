@@ -420,7 +420,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                 </button>
 
                 {/* 카테고리 버튼 */}
-                <div className="flex gap-6 mt-4 overflow-x-auto pb-1 md:pb-0 hide-scrollbar">
+                <div className="flex gap-2 mt-4 overflow-x-auto pb-1 md:pb-0 hide-scrollbar">
                     {CATEGORIES.map(category => {
                         const isActive = getCategoryIdFromVibeId(selectedVibe.id) === category.id;
                         const vibe = getVibeFromCategoryId(category.id);
@@ -429,7 +429,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                             <button
                                 key={category.id}
                                 onClick={() => vibe && onChangeVibe(vibe)}
-                                className={`whitespace-nowrap px-4 md:px-5 py-2.5 md:py-3 text-base md:text-lg font-bold rounded-lg transition-all shadow-sm ${isActive
+                                className={`whitespace-nowrap px-3 md:px-4 py-2 md:py-2.5 text-sm md:text-base font-bold rounded-lg transition-all shadow-sm ${isActive
                                     ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border-2 border-indigo-300 dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.3)]'
                                     : 'text-slate-600/50 dark:text-slate-400/50 bg-white dark:bg-glass-light border-2 border-slate-200 dark:border-glass-border hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic'
                                     }`}
@@ -521,24 +521,24 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                     )}
                                 </div>
 
-                                <div className="flex items-center mb-2 gap-3">
-                                    <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight drop-shadow-sm">
+                                <div className="flex items-center mb-2 gap-3 flex-nowrap md:flex-wrap">
+                                    <h1 className="text-lg md:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight drop-shadow-sm whitespace-nowrap md:whitespace-normal truncate md:truncate-none">
                                         {currentScale.name}
                                     </h1>
-                                    <span className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 text-xs font-medium self-center">
+                                    <span className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 text-xs font-medium self-center flex-shrink-0">
                                         {currentScale.id.includes('mutant') ? '뮤턴트' : '일반'}
                                     </span>
                                     <a
                                         href={currentScale.productUrl || "#"}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md transition-all ${currentScale.productUrl
-                                            ? 'bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 hover:shadow-lg hover:-translate-y-0.5'
-                                            : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50'
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium shadow-md transition-all ${currentScale.productUrl
+                                            ? 'bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 hover:shadow-lg hover:-translate-y-0.5 text-white'
+                                            : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50 text-slate-500'
                                             }`}
-                                        title={currentScale.productUrl ? '구매하기' : '준비중'}
+                                        title={currentScale.productUrl ? 'Buy' : '준비중'}
                                     >
-                                        <ExternalLink className="w-5 h-5" />
+                                        Buy
                                     </a>
                                 </div>
 
@@ -629,23 +629,15 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                         onClick={() => setShowClassificationCriteria(!showClassificationCriteria)}
                         className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
                     >
-                        <span>스케일 분류기준 {showClassificationCriteria ? '접기' : ''}</span>
-                        {showClassificationCriteria ? (
-                            <ChevronUp className="w-4 h-4" />
-                        ) : (
-                            <ChevronDown className="w-4 h-4" />
-                        )}
+                        <span>스케일 분류기준</span>
+                        <ChevronRight className={`w-4 h-4 transition-transform ${showClassificationCriteria ? 'rotate-90' : ''}`} />
                     </button>
                     <button
                         onClick={() => setShowAllScales(!showAllScales)}
                         className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
                     >
-                        <span>전체 스케일 {showAllScales ? '접기' : ''}</span>
-                        {showAllScales ? (
-                            <ChevronUp className="w-4 h-4" />
-                        ) : (
-                            <ChevronDown className="w-4 h-4" />
-                        )}
+                        <span>전체 스케일</span>
+                        <ChevronRight className={`w-4 h-4 transition-transform ${showAllScales ? 'rotate-90' : ''}`} />
                     </button>
                 </div>
             </div>

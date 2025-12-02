@@ -72,7 +72,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.8, pureSpicy: 0.1, rarePopular: 0.98 },
         tags: ["마이너", "대중적", "연습곡 제일 많음", "유튜브에 교재도 많음"],
-        description: "D Kurd 9에 고음(C5)을 추가한 확장 버전입니다. 더 넓은 음역대로 화려한 멜로디 연주가 가능하며, 악보와 유튜브 연습곡이 많아 학습하기에 유리합니다.",
+        description: "대중적인 D minor와 같은 음계인 D Kurd 10으로, 유튜브에 악보와 연습곡이 가장 많은 입문용에 적합한 모델입니다.",
         videoUrl: "https://youtu.be/uL40C1bqKik?si=DpqHwPB_RLpcA5mc",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/7514024868"
     },
@@ -104,7 +104,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.6, pureSpicy: 0.25, rarePopular: 0.95 },
         tags: ["Malte Marten Style", "Bestseller", "Deep", "Storytelling"],
-        description: "전 세계적으로 가장 사랑받는 스케일 중 하나입니다. G#으로 시작하는 독특한 구조가 풍부한 스토리텔링을 가능하게 합니다.",
+        description: "전 세계적으로 가장 인기 있는 베스트셀러 스케일입니다. 낮은 저음 노트들이 조화로운 이야기를 만들어내는 스토리텔링이 특징이며, 깊은 울림을 자랑합니다. Malte Marten 같은 연주자들에 의해 널리 알려진 스타일입니다.",
         videoUrl: "https://youtu.be/SthKlH686Pc?si=_YG050uZwcbIoP0X",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12070387231"
     },
@@ -328,7 +328,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.6, pureSpicy: 0.1, rarePopular: 0.7 },
         tags: ["피그미", "기본", "차분함", "명상"],
-        description: "차분하고 안정적인 F Pygmy 스케일의 기본형입니다. 명상과 힐링 연주에 적합한 부드러운 음색을 가졌습니다.",
+        description: "차분하고 안정적인 Pygmy 스케일의 기본형입니다. 명상과 힐링 연주에 적합한 부드러운 음색을 가졌습니다.",
         videoUrl: "https://youtu.be/61g8qreUeJk?si=NgBTdfaU51SV__5O",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12085324936"
     },
