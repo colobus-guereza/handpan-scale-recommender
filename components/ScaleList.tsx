@@ -100,6 +100,29 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
         };
     };
 
+    // 현재 보여줄 스케일 (Effect용)
+    const currentScaleForEffect = displayScales[currentIndex];
+
+    // 내부 상태 변경 시 높이 재계산을 위한 Effect
+    useEffect(() => {
+        if (typeof window === 'undefined' || window.self === window.top) return;
+
+        const sendHeight = () => {
+            const height = document.documentElement.offsetHeight;
+            window.parent.postMessage({ type: 'setHeight', height }, '*');
+        };
+
+        // 상태 변경 직후 및 약간의 지연 후 높이 전송 (애니메이션 고려)
+        sendHeight();
+        const timer = setTimeout(sendHeight, 100);
+        const timer2 = setTimeout(sendHeight, 300); // 애니메이션이 긴 경우를 대비
+
+        return () => {
+            clearTimeout(timer);
+            clearTimeout(timer2);
+        };
+    }, [showClassificationCriteria, showAllScales, showFilter, displayScales, currentScaleForEffect?.name]);
+
     const matchesCategory = (scale: Scale, categoryId: string) => {
         const category = CATEGORIES.find(c => c.id === categoryId);
         if (!category) return true;
@@ -214,6 +237,14 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
         if (topRankedScales.length > 0) {
             setDisplayScales(topRankedScales);
             setCurrentIndex(0);
+
+            // 데이터 로드 및 렌더링 후 높이 재전송 (초기 로딩 시 높이 문제 해결)
+            if (typeof window !== 'undefined' && window.self !== window.top) {
+                setTimeout(() => {
+                    const height = document.documentElement.offsetHeight;
+                    window.parent.postMessage({ type: 'setHeight', height }, '*');
+                }, 100);
+            }
         }
     }, [topRankedScales]);
 
@@ -376,7 +407,10 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
 
     if (displayScales.length === 0) return null;
 
-    const currentScale = displayScales[currentIndex];
+    // currentScale을 직접 계산하여 항상 최신 값 보장
+    const currentScale = displayScales[currentIndex] || null;
+    
+    if (!currentScale || currentIndex < 0 || currentIndex >= displayScales.length) return null;
 
     return (
         <div className="w-full max-w-full mx-auto">
@@ -501,27 +535,42 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                     </span>
                                     <div className="flex gap-2">
                                         {/* Official Mall Button */}
-                                        {currentScale.ownUrl && (
-                                            <a
-                                                href={currentScale.ownUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 text-white hover:shadow-lg hover:-translate-y-0.5"
-                                                title="공식 쇼핑몰에서 구매하기"
-                                            >
-                                                <span>구매</span>
-                                            </a>
-                                        )}
-
-                                        {/* Fallback if no links */}
-                                        {!currentScale.ownUrl && (
-                                            <button
-                                                disabled
-                                                className="px-4 py-2 rounded-lg text-sm font-medium shadow-md bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50 text-slate-500"
-                                            >
-                                                준비중
-                                            </button>
-                                        )}
+                                        {(() => {
+                                            // currentScale의 ownUrl을 직접 참조하여 항상 최신 값 사용
+                                            const purchaseUrl = displayScales[currentIndex]?.ownUrl;
+                                            const scaleId = displayScales[currentIndex]?.id;
+                                            const scaleName = displayScales[currentIndex]?.name;
+                                            
+                                            return purchaseUrl ? (
+                                                <a
+                                                    key={`purchase-${scaleId}-${currentIndex}`}
+                                                    href={purchaseUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 text-white hover:shadow-lg hover:-translate-y-0.5"
+                                                    title={`${scaleName} - 공식 쇼핑몰에서 구매하기`}
+                                                    onClick={(e) => {
+                                                        // 디버깅: 클릭 시 현재 스케일 정보 확인
+                                                        console.log('구매 버튼 클릭:', {
+                                                            scaleId,
+                                                            scaleName,
+                                                            purchaseUrl,
+                                                            currentIndex
+                                                        });
+                                                    }}
+                                                >
+                                                    <span>구매</span>
+                                                </a>
+                                            ) : (
+                                                <button
+                                                    key={`purchase-disabled-${scaleId}-${currentIndex}`}
+                                                    disabled
+                                                    className="px-4 py-2 rounded-lg text-sm font-medium shadow-md bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50 text-slate-500"
+                                                >
+                                                    준비중
+                                                </button>
+                                            );
+                                        })()}
                                     </div>
                                 </div>
 
