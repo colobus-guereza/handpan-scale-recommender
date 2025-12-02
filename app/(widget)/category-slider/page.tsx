@@ -324,6 +324,10 @@ const getProductUrl = (productName: string): string | null => {
     if (scale?.ownUrl) {
         return scale.ownUrl;
     }
+    // ownUrl이 없으면 productUrl 사용
+    if (scale?.productUrl) {
+        return scale.productUrl;
+    }
 
     // 제품명 매핑 적용
     const mappedName = productNameMap[productName] || productName;
