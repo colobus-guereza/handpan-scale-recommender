@@ -111,7 +111,7 @@ export const SCALES: Scale[] = [
         description: "전 세계적으로 가장 인기 있는 베스트셀러 스케일입니다. 낮은 저음 노트들이 조화로운 이야기를 만들어내는 스토리텔링이 특징이며, 깊은 울림을 자랑합니다. Malte Marten 같은 연주자들에 의해 널리 알려진 스타일입니다.",
         videoUrl: "https://youtu.be/SthKlH686Pc?si=_YG050uZwcbIoP0X",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12070387231",
-        ownUrl: "https://handpan.co.kr/shop/?idx=78"
+        ownUrl: "https://handpan.co.kr/shop/?idx=74"
     },
 
     // 7. F Aeolian 10 (Domestic Steady Seller)
@@ -128,7 +128,7 @@ export const SCALES: Scale[] = [
         description: "국내 시장에서 꾸준히 사랑받는 국내인기 스테디셀러입니다. 안정적이고 우울한 감성이 특징이며, 바텀 업그레이드를 통해 다양한 분위기로 변신이 가능합니다. 가성비 최고의 모델로 추천됩니다.",
         videoUrl: "https://youtu.be/BH45TEboAgE?si=SLlNpG-5vTLSWAsx",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/9561986680",
-        ownUrl: "https://handpan.co.kr/shop/?idx=97"
+        ownUrl: "https://handpan.co.kr/shop/?idx=78"
     },
 
     // 8. E Romanian Hijaz 10 (The Exotic Individualist)
@@ -145,7 +145,7 @@ export const SCALES: Scale[] = [
         description: "남들과 다른 독특함을 추구하는 분들을 위한 이국적인 스케일입니다. 집시와 보헤미안 음악을 연상시키는 강렬하고 신비로운 분위기를 자아냅니다.",
         videoUrl: "https://youtu.be/gTEsQG3dfKQ?si=IJcS8SYJe9468WgP",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8681747137",
-        ownUrl: "https://handpan.co.kr/shop/?idx=71"
+        ownUrl: "https://handpan.co.kr/shop/?idx=97"
     },
 
     // 9. D Saladin 9 (The Extreme Niche)
@@ -162,7 +162,7 @@ export const SCALES: Scale[] = [
         description: "아라비안 나이트를 연상시키는 매우 이국적이고 강렬한 프리지안 스케일입니다. 희귀함과 매운맛이 특징이며, 희소성이 높아 독보적인 개성을 표현하기 좋습니다.",
         videoUrl: "https://youtu.be/OJWGyT1OxIg?si=RM_0FkjjEuxaWPJu",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8669289024",
-        ownUrl: "https://handpan.co.kr/shop/?idx=72"
+        ownUrl: "https://handpan.co.kr/shop/?idx=71"
     },
 
     // 10. D Asha 9 (The Gentle Major / Sabye)
@@ -179,7 +179,7 @@ export const SCALES: Scale[] = [
         description: "Sabye 또는 Ashakiran이라고도 불리는 부드럽고 온화한 D 메이저 스케일입니다. 젠틀하고 소프트한 음색으로 순수한 빛과 희망을 담고 있으며, 마이너 스케일과 함께 연주하기 좋은 최고의 세컨드 핸드팬으로 인기가 높습니다.",
         videoUrl: "https://youtu.be/4tgdyOhT-RI?si=9SQ66sdPiwvgxoP7",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8497384066",
-        ownUrl: "https://handpan.co.kr/shop/?idx=85"
+        ownUrl: "https://handpan.co.kr/shop/?idx=72"
     },
 
     // 11. E La Sirena 10 (The Siren / Dorian)
@@ -196,7 +196,7 @@ export const SCALES: Scale[] = [
         description: "'세이렌'이라는 이름처럼 신비롭고 깊은 물속을 유영하는 듯한 느낌을 주는 도리안 스케일입니다. 메이저와 마이너를 오가는 묘한 매력이 있으며, C#4 노트의 활용이 포인트입니다. 중급자용 모델로 추천됩니다.",
         videoUrl: "https://youtu.be/B-7jukbN3hw?si=ci_6mlElCZvu_WGH",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8490886007",
-        ownUrl: "https://handpan.co.kr/shop/?idx=87"
+        ownUrl: "https://handpan.co.kr/shop/?idx=85"
     },
 
     // 12. C# Pygmy 9 (The Original Trance Classic)
@@ -213,7 +213,7 @@ export const SCALES: Scale[] = [
         description: "핸드팬의 고전이자 명작인 클래식 피그미 스케일입니다. 특유의 공허하고 몽환적인 깊은 울림은 깊은 명상과 트랜스 상태로 인도합니다.",
         videoUrl: "https://youtu.be/WcREkpJ5I_0?si=YUyV1CEIOLyXWesW",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8521877785",
-        ownUrl: "https://handpan.co.kr/shop/?idx=73"
+        ownUrl: "https://handpan.co.kr/shop/?idx=87"
     },
 
     // 14. D Asha 15 (2-Octave Major) - Mutant
@@ -230,7 +230,7 @@ export const SCALES: Scale[] = [
         description: "2옥타브 음역을 완벽하게 커버하는 D 메이저 스케일입니다. 범용성이 뛰어나 메이저 조성이 대다수인 일반 대중음악에서의 활용도가 매우 높으며, 다른 악기와의 협연에서도 강력한 강점을 발휘하는 협연 추천 모델입니다.",
         videoUrl: "https://youtu.be/aGKx4zLFvRo",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12655523545",
-        ownUrl: "https://handpan.co.kr/shop/?idx=88"
+        ownUrl: "https://handpan.co.kr/shop/?idx=73"
     },
 
     // 15. E Equinox 12 (Normal, Bass 2 Dings)
@@ -247,7 +247,7 @@ export const SCALES: Scale[] = [
         description: "하이브리드 스케일인 기존 Equinox에 저음(C3, D3)을 보강하여 더욱 풍성한 울림을 제공합니다. 감성적인 연주에 최적화된 완벽한 밸런스를 자랑합니다.",
         videoUrl: "https://youtu.be/OcQ64DyA9xM?si=40_8I1KnB_rxCNQO",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12320335441",
-        ownUrl: "https://handpan.co.kr/shop/?idx=77"
+        ownUrl: "https://handpan.co.kr/shop/?idx=88"
     },
 
     // 16. E Equinox 10 (Normal)
@@ -264,7 +264,7 @@ export const SCALES: Scale[] = [
         description: "Equinox 스케일의 표준 모델로, 메이저와 마이너 그 사이 어딘가의 미묘한 느낌이 특징입니다. 색다른 감성을 추구하는 분들에게 추천되며, 적절한 음역대와 감성적인 멜로디 라인으로 입문자부터 숙련자까지 모두에게 적합합니다.",
         videoUrl: "https://youtu.be/8t8MqTelD9k?si=4gbYwCubpVxb_URT",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12320275460",
-        ownUrl: "https://handpan.co.kr/shop/?idx=79"
+        ownUrl: "https://handpan.co.kr/shop/?idx=77"
     },
 
     // 17. F# Low Pygmy 18 (Mutant)
@@ -281,7 +281,7 @@ export const SCALES: Scale[] = [
         description: "Malte Marten 스타일의 뮤턴트 피그미 스케일로, Low Pygmy의 확장판입니다. 18개의 노트를 통해 광활한 음역대와 초고음역을 제공하며, 섬세한 고음 표현과 깊은 저음이 어우러진 전문가용 모델입니다.",
         videoUrl: "https://youtu.be/UxsvhXeDok0?si=GnSeCzBk0qe8snYr",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689630331",
-        ownUrl: "https://handpan.co.kr/shop/?idx=80"
+        ownUrl: "https://handpan.co.kr/shop/?idx=79"
     },
 
     // 18. C# Pygmy 11 (Normal, Bass 2 Dings)
@@ -298,7 +298,7 @@ export const SCALES: Scale[] = [
         description: "클래식 피그미 스케일인 C# Pygmy에 저음(D3, E3)을 보강하여 더욱 깊고 웅장한 깊은 울림을 만들어냅니다. 트랜스와 명상, 힐링 연주에 탁월합니다.",
         videoUrl: "https://youtu.be/QoUbOkhGGR8?si=TIKXYdCKX4RiuaLY",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12276307998",
-        ownUrl: "https://handpan.co.kr/shop/?idx=76"
+        ownUrl: "https://handpan.co.kr/shop/?idx=80"
     },
 
     // 19. F Low Pygmy 12 (Normal, Bass 2 Dings)
@@ -315,7 +315,7 @@ export const SCALES: Scale[] = [
         description: "피그미 스케일인 F Pygmy의 부드러움에 저음을 보강하여 깊이를 더했습니다. 따뜻하고 몽환적인 분위기를 연출하기에 좋습니다.",
         videoUrl: "https://youtu.be/_3jpTdVfOBc?si=W9bAL_AqZ5e25Rj8",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8611436986",
-        ownUrl: "https://handpan.co.kr/shop/?idx=81"
+        ownUrl: "https://handpan.co.kr/shop/?idx=76"
     },
 
     // 20. D Kurd 12 (Normal, Bass 2 Dings)
@@ -332,7 +332,7 @@ export const SCALES: Scale[] = [
         description: "마이너 스케일인 D Kurd 10 악기에 바텀 업그레이드 한 표준확장형으로, 저음을 보강하여 하단 두개의 딩 베이스로 화성 연주가 가능한 모델입니다.",
         videoUrl: "https://youtu.be/KXDSbCdPjTM?si=3GD2eOil-5WsmVHa",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12070396728",
-        ownUrl: "https://handpan.co.kr/shop/?idx=82"
+        ownUrl: "https://handpan.co.kr/shop/?idx=81"
     },
 
     // 21. F Low Pygmy 9 (Normal)
@@ -349,7 +349,7 @@ export const SCALES: Scale[] = [
         description: "차분하고 안정적인 Pygmy 스케일의 기본형입니다. 명상과 힐링 연주에 적합한 부드러운 음색을 가졌습니다.",
         videoUrl: "https://youtu.be/61g8qreUeJk?si=NgBTdfaU51SV__5O",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12085324936",
-        ownUrl: "https://handpan.co.kr/shop/?idx=83"
+        ownUrl: "https://handpan.co.kr/shop/?idx=82"
     },
 
     // 22. C# Annapurna 9 (Normal)
@@ -366,7 +366,7 @@ export const SCALES: Scale[] = [
         description: "Yisha Savita와 동일한 구성으로, 안나푸르나의 웅장함과 상쾌함, 에너지를 담은 메이저 스케일입니다.",
         videoUrl: "https://youtu.be/HSHDfm9PEM4?si=930q4Eu3DT2URi50",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8513450652",
-        ownUrl: "https://handpan.co.kr/shop/?idx=86"
+        ownUrl: "https://handpan.co.kr/shop/?idx=83"
     },
 
     // 23. C Major 10
@@ -383,7 +383,7 @@ export const SCALES: Scale[] = [
         description: "가장 기본적이고 순수한 메이저 스케일인 C Major입니다. 밝고 명랑하며, 동요와 같이 누구나 아는 멜로디를 연주하기에 좋습니다.",
         videoUrl: "https://youtu.be/2peCXnJP2U0?si=bVePs8DvAlPEwI7v",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12751985321",
-        ownUrl: "https://handpan.co.kr/shop/?idx=89"
+        ownUrl: "https://handpan.co.kr/shop/?idx=86"
     },
 
     // 24. C Rasavali 9
@@ -400,7 +400,7 @@ export const SCALES: Scale[] = [
         description: "라사발리 스케일로, 인도풍의 색채를 지닌 신비로운 스케일입니다. 독특한 음계가 만들어내는 묘한 분위기가 매력적입니다.",
         videoUrl: "https://youtu.be/u9dsmUSd_SY?si=rMBMQOFvj5Yec7vs",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12751991029",
-        ownUrl: "https://handpan.co.kr/shop/?idx=91"
+        ownUrl: "https://handpan.co.kr/shop/?idx=89"
     },
 
     // 25. C# Deepasia 14 (Normal)
@@ -417,7 +417,7 @@ export const SCALES: Scale[] = [
         description: "딥아시아 스케일로, 동양적인 깊은 울림을 가진 확장형 모델입니다. 14개의 노트로 확장되어 더욱 풍성하고 명상적인 연주가 가능합니다.",
         videoUrl: "https://youtu.be/pMKoFUicrFw?si=5HPgyOp8NM0qXMNU",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689651421",
-        ownUrl: "https://handpan.co.kr/shop/?idx=92"
+        ownUrl: "https://handpan.co.kr/shop/?idx=91"
     },
 
     // 26. C# Blues 9 (Normal)
@@ -434,7 +434,7 @@ export const SCALES: Scale[] = [
         description: "블루스 스케일로, 블루지한 감성을 담은 스케일입니다. 재즈나 소울풀한 연주에 적합하며, 특유의 그루브가 살아있는 감성적인 모델입니다.",
         videoUrl: "https://youtu.be/mY-Uvw-VKO4?si=Ail972LckjNWKp8S",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689712335",
-        ownUrl: "https://handpan.co.kr/shop/?idx=84"
+        ownUrl: "https://handpan.co.kr/shop/?idx=92"
     },
 
     // 27. Eb MUJU 10 (Normal)
@@ -451,7 +451,7 @@ export const SCALES: Scale[] = [
         description: "Eb 메이저 스케일로, 국악 평조와 아리랑 음계를 담고 있습니다. 무주의 자연을 닮은 평화로운 스케일이며, 부드럽고 따뜻한 음색으로 마음을 치유하는 힘이 있습니다.",
         videoUrl: "https://youtu.be/0IGtmQlb1X4?si=y9oZiE4w-_Zkyih6",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8513504905",
-        ownUrl: "https://handpan.co.kr/shop/?idx=90"
+        ownUrl: "https://handpan.co.kr/shop/?idx=84"
     },
 
     // 28. C Yunsl 9 (Normal)
@@ -468,7 +468,7 @@ export const SCALES: Scale[] = [
         description: "윤슬 스케일로, 물결에 비치는 햇살처럼 맑고 반짝이는 소리를 가졌습니다. 서정적이고 아름다운 멜로디 연주에 좋습니다.",
         videoUrl: "https://youtu.be/_fB5VHpE1f0?si=v6RDSBTJJUsiAZXK",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12752009418",
-        ownUrl: "https://handpan.co.kr/shop/?idx=96"
+        ownUrl: "https://handpan.co.kr/shop/?idx=90"
     },
 
     // 29. C# Sapphire 9 (Normal)
@@ -485,7 +485,7 @@ export const SCALES: Scale[] = [
         description: "사파이어 스케일로, 사파이어 보석처럼 청량하고 세련된 울림을 줍니다. 깔끔하고 모던한 느낌의 연주를 선호하는 분들께 추천합니다.",
         videoUrl: "https://youtu.be/V1bfHlVl9VY?si=yREB5-6dey1kvC_4",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12752029521",
-        ownUrl: "https://handpan.co.kr/shop/?idx=102"
+        ownUrl: "https://handpan.co.kr/shop/?idx=96"
     },
 
     // 30. C# Annaziska 9 (Normal)
@@ -502,7 +502,7 @@ export const SCALES: Scale[] = [
         description: "신비롭고 약간의 긴장감을 주는 이국적인 스케일입니다. 독특한 분위기를 연출하고 싶은 매니아 연주자에게 적합합니다.",
         videoUrl: "https://youtu.be/Z3bVZYykphA?si=zJAD4lmQPxMQ0xq8",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12085316070",
-        ownUrl: "https://handpan.co.kr/shop/?idx=93"
+        ownUrl: "https://handpan.co.kr/shop/?idx=102"
     },
 
     // 31. E Hijaz 9 (Normal)
@@ -519,6 +519,6 @@ export const SCALES: Scale[] = [
         description: "E 키의 히자즈 스케일로, 이국적이고 중동풍의 정열적이며 스파이시한 느낌을 강하게 전달합니다.",
         videoUrl: "https://youtu.be/MRyGVe5k4Y8?si=VEoopVqXSO9gJ6Rd",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12085332035",
-        ownUrl: "https://handpan.co.kr/shop/?idx=94"
+        ownUrl: "https://handpan.co.kr/shop/?idx=93"
     }
 ];
