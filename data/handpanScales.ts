@@ -72,7 +72,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.8, pureSpicy: 0.1, rarePopular: 0.98 },
         tags: ["마이너", "대중적", "연습곡 제일 많음", "유튜브에 교재도 많음"],
-        description: "D Kurd 9에 고음(C5)을 추가한 확장 버전입니다. 더 넓은 음역대로 화려한 멜로디 연주가 가능합니다.",
+        description: "D Kurd 9에 고음(C5)을 추가한 확장 버전입니다. 더 넓은 음역대로 화려한 멜로디 연주가 가능하며, 악보와 유튜브 연습곡이 많아 학습하기에 유리합니다.",
         videoUrl: "https://youtu.be/uL40C1bqKik?si=DpqHwPB_RLpcA5mc",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/7514024868"
     },
@@ -312,7 +312,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.8, pureSpicy: 0.1, rarePopular: 0.95 },
         tags: ["마이너", "저음보강", "표준확장", "딩베이스", "화성연주"],
-        description: "가장 인기 있는 D Kurd 스케일에 저음(E, F)을 추가하여 더욱 풍성한 연주가 가능합니다. 초보자부터 전문가까지 만족할 수 있는 구성입니다.",
+        description: "D Kurd 10 악기에 바텀 업그레이드 한 표준확장형으로, 하단 두개의 베이스 딩으로 화성 연주가 가능한 모델입니다.",
         videoUrl: "https://youtu.be/KXDSbCdPjTM?si=3GD2eOil-5WsmVHa",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12070396728"
     },

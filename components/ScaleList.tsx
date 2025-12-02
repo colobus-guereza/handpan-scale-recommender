@@ -589,12 +589,10 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                     </div>
                                 </div>
 
-                                <div className="flex flex-wrap gap-2 mb-8">
-                                    {currentScale.tags.map(tag => (
-                                        <span key={tag} className="px-3 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:border-indigo-400 dark:hover:border-indigo-500/50 transition-colors cursor-default shadow-sm">
-                                            #{translateTag(tag)}
-                                        </span>
-                                    ))}
+                                <div className="mb-8">
+                                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-base md:text-lg break-keep">
+                                        {currentScale.description}
+                                    </p>
                                 </div>
 
                                 <div className="flex gap-3">
