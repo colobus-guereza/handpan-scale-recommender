@@ -15,6 +15,7 @@ export interface Scale {
     description: string;
     videoUrl?: string;
     productUrl?: string;
+    ownUrl?: string;
 }
 
 export const VECTOR_AXES = {
