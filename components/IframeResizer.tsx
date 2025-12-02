@@ -43,34 +43,36 @@ export default function IframeResizer() {
             // min-h-screen 및 h-full 등의 스타일이 iframe 높이를 강제로 늘리는 것을 방지
             const style = document.createElement('style');
             style.textContent = `
-                .min-h-screen {
-                    min-height: auto !important;
-                }
+                .min-h-screen { min-height: 0 !important; }
+                .min-h-\\[600px\\] { min-height: 0 !important; }
                 html, body {
                     height: auto !important;
-                    min-height: auto !important;
+                    min-height: 0 !important;
+                    overflow: hidden !important;
+                }
+                /* 레이아웃 패딩 제거 */
+                body > div {
+                    padding-top: 0 !important;
+                    padding-bottom: 0 !important;
+                    min-height: 0 !important;
                 }
             `;
             document.head.appendChild(style);
         }
 
         // DOM 변화 감지를 위한 Observer
-        const resizeObserver = new ResizeObserver((entries) => {
-            for (const entry of entries) {
-                // Use contentRect to get height without forcing reflow
-                const height = entry.contentRect.height;
-                debouncedSendHeight(height);
-            }
+        const resizeObserver = new ResizeObserver(() => {
+            // document.documentElement.offsetHeight를 사용하여 전체 콘텐츠 높이 측정
+            const height = document.documentElement.offsetHeight;
+            debouncedSendHeight(height);
         });
 
         resizeObserver.observe(document.body);
+        resizeObserver.observe(document.documentElement);
 
         // Fallback for window resize
         const onWindowResize = () => {
-            const height = Math.max(
-                document.body.scrollHeight,
-                document.documentElement.scrollHeight
-            );
+            const height = document.documentElement.offsetHeight;
             debouncedSendHeight(height);
         };
         window.addEventListener('resize', onWindowResize);

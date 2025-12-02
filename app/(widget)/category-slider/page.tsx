@@ -400,7 +400,7 @@ export default function CategorySliderPage() {
                                 spaceBetween: 20,
                             },
                             1280: {
-                                slidesPerView: 5,
+                                slidesPerView: 4,
                                 spaceBetween: 20,
                             },
                         }}
@@ -479,7 +479,7 @@ export default function CategorySliderPage() {
                                 spaceBetween: 20,
                             },
                             1280: {
-                                slidesPerView: 5,
+                                slidesPerView: 4,
                                 spaceBetween: 20,
                             },
                         }}
@@ -558,7 +558,7 @@ export default function CategorySliderPage() {
                                 spaceBetween: 20,
                             },
                             1280: {
-                                slidesPerView: 5,
+                                slidesPerView: 4,
                                 spaceBetween: 20,
                             },
                         }}
@@ -637,7 +637,7 @@ export default function CategorySliderPage() {
                                 spaceBetween: 20,
                             },
                             1280: {
-                                slidesPerView: 5,
+                                slidesPerView: 4,
                                 spaceBetween: 20,
                             },
                         }}
@@ -716,7 +716,7 @@ export default function CategorySliderPage() {
                                 spaceBetween: 20,
                             },
                             1280: {
-                                slidesPerView: 5,
+                                slidesPerView: 4,
                                 spaceBetween: 20,
                             },
                         }}
@@ -795,7 +795,7 @@ export default function CategorySliderPage() {
                                 spaceBetween: 20,
                             },
                             1280: {
-                                slidesPerView: 5,
+                                slidesPerView: 4,
                                 spaceBetween: 20,
                             },
                         }}
