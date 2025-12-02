@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { SCALES } from '@/data/handpanScales';
+import { PRODUCTS as ACCESSORY_PRODUCTS } from '@/data/products';
 import IframeResizer from '@/components/IframeResizer';
 
 import 'swiper/css';
@@ -307,10 +308,28 @@ const STAND_PRODUCTS = [
     },
 ];
 
+// 제품명 매핑 (페이지 제품명 -> DB 제품명)
+const productNameMap: Record<string, string> = {
+    '고급 원목스탠드 S': '원목 핸드팬스탠드 S',
+    '고급 원목스탠드 M': '원목 핸드팬스탠드 M',
+};
+
+
+
 // 제품명으로 ownUrl을 찾는 헬퍼 함수
 const getProductUrl = (productName: string): string | null => {
+    // 먼저 스케일에서 찾기
     const scale = SCALES.find(s => s.name === productName);
-    return scale?.ownUrl || null;
+    if (scale?.ownUrl) {
+        return scale.ownUrl;
+    }
+
+    // 제품명 매핑 적용
+    const mappedName = productNameMap[productName] || productName;
+
+    // PRODUCTS에서 찾기
+    const product = ACCESSORY_PRODUCTS.find(p => p.name === mappedName || p.name === productName);
+    return product?.ownUrl || null;
 };
 
 export default function CategorySliderPage() {
@@ -391,7 +410,7 @@ export default function CategorySliderPage() {
                                         className="flex flex-col group cursor-pointer"
                                         onClick={() => {
                                             if (productUrl) {
-                                                window.location.href = productUrl;
+                                                window.open(productUrl, '_top');
                                             }
                                         }}
                                     >
@@ -470,7 +489,7 @@ export default function CategorySliderPage() {
                                         className="flex flex-col group cursor-pointer"
                                         onClick={() => {
                                             if (productUrl) {
-                                                window.location.href = productUrl;
+                                                window.open(productUrl, '_top');
                                             }
                                         }}
                                     >
@@ -549,7 +568,7 @@ export default function CategorySliderPage() {
                                         className="flex flex-col group cursor-pointer"
                                         onClick={() => {
                                             if (productUrl) {
-                                                window.location.href = productUrl;
+                                                window.open(productUrl, '_top');
                                             }
                                         }}
                                     >
@@ -628,7 +647,7 @@ export default function CategorySliderPage() {
                                         className="flex flex-col group cursor-pointer"
                                         onClick={() => {
                                             if (productUrl) {
-                                                window.location.href = productUrl;
+                                                window.open(productUrl, '_top');
                                             }
                                         }}
                                     >
@@ -698,44 +717,55 @@ export default function CategorySliderPage() {
                         }}
                         className="mySwiper !pb-10 !px-2"
                     >
-                        {CASE_PRODUCTS.map((product) => (
-                            <SwiperSlide key={product.id}>
-                                <div className="flex flex-col group cursor-pointer">
+                        {CASE_PRODUCTS.map((product) => {
+                            const productUrl = getProductUrl(product.name);
+
+                            return (
+                                <SwiperSlide key={product.id}>
                                     <div
-                                        className="relative overflow-hidden rounded-xl bg-white mb-5"
-                                        style={{
-                                            width: '100%',
-                                            aspectRatio: '1 / 1',
-                                            minHeight: '200px'
+                                        className="flex flex-col group cursor-pointer"
+                                        onClick={() => {
+                                            if (productUrl) {
+                                                window.open(productUrl, '_top');
+                                            }
                                         }}
                                     >
-                                        <img
-                                            src={product.image}
-                                            alt={product.name}
-                                            loading="lazy"
-                                            decoding="async"
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        <div
+                                            className="relative overflow-hidden rounded-xl bg-white mb-5"
                                             style={{
                                                 width: '100%',
-                                                height: '100%',
-                                                display: 'block',
-                                                objectFit: 'cover'
+                                                aspectRatio: '1 / 1',
+                                                minHeight: '200px'
                                             }}
-                                        />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                            {product.name}
-                                        </h3>
-                                        <div className="flex items-baseline gap-2">
-                                            <span className="text-lg font-bold text-gray-900">
-                                                {product.price}
-                                            </span>
+                                        >
+                                            <img
+                                                src={product.image}
+                                                alt={product.name}
+                                                loading="lazy"
+                                                decoding="async"
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    display: 'block',
+                                                    objectFit: 'cover'
+                                                }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
+                                                {product.name}
+                                            </h3>
+                                            <div className="flex items-baseline gap-2">
+                                                <span className="text-lg font-bold text-gray-900">
+                                                    {product.price}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </SwiperSlide>
-                        ))}
+                                </SwiperSlide>
+                            );
+                        })}
                     </Swiper>
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
@@ -766,44 +796,55 @@ export default function CategorySliderPage() {
                         }}
                         className="mySwiper !pb-10 !px-2"
                     >
-                        {STAND_PRODUCTS.map((product) => (
-                            <SwiperSlide key={product.id}>
-                                <div className="flex flex-col group cursor-pointer">
+                        {STAND_PRODUCTS.map((product) => {
+                            const productUrl = getProductUrl(product.name);
+
+                            return (
+                                <SwiperSlide key={product.id}>
                                     <div
-                                        className="relative overflow-hidden rounded-xl bg-white mb-5"
-                                        style={{
-                                            width: '100%',
-                                            aspectRatio: '1 / 1',
-                                            minHeight: '200px'
+                                        className="flex flex-col group cursor-pointer"
+                                        onClick={() => {
+                                            if (productUrl) {
+                                                window.open(productUrl, '_top');
+                                            }
                                         }}
                                     >
-                                        <img
-                                            src={product.image}
-                                            alt={product.name}
-                                            loading="lazy"
-                                            decoding="async"
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        <div
+                                            className="relative overflow-hidden rounded-xl bg-white mb-5"
                                             style={{
                                                 width: '100%',
-                                                height: '100%',
-                                                display: 'block',
-                                                objectFit: 'cover'
+                                                aspectRatio: '1 / 1',
+                                                minHeight: '200px'
                                             }}
-                                        />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                            {product.name}
-                                        </h3>
-                                        <div className="flex items-baseline gap-2">
-                                            <span className="text-lg font-bold text-gray-900">
-                                                {product.price}
-                                            </span>
+                                        >
+                                            <img
+                                                src={product.image}
+                                                alt={product.name}
+                                                loading="lazy"
+                                                decoding="async"
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    display: 'block',
+                                                    objectFit: 'cover'
+                                                }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
+                                                {product.name}
+                                            </h3>
+                                            <div className="flex items-baseline gap-2">
+                                                <span className="text-lg font-bold text-gray-900">
+                                                    {product.price}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </SwiperSlide>
-                        ))}
+                                </SwiperSlide>
+                            );
+                        })}
                     </Swiper>
                 </div>
             </div>

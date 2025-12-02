@@ -500,20 +500,6 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                         {currentScale.id.includes('mutant') ? '뮤턴트' : '일반'}
                                     </span>
                                     <div className="flex gap-2">
-                                        {/* Naver Smart Store Button */}
-                                        {currentScale.naverUrl && (
-                                            <a
-                                                href={currentScale.naverUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-[#03C75A] hover:bg-[#02b351] text-white hover:shadow-lg hover:-translate-y-0.5"
-                                                title="네이버 스마트스토어에서 구매하기"
-                                            >
-                                                <span className="font-extrabold">N</span>
-                                                <span>스토어</span>
-                                            </a>
-                                        )}
-
                                         {/* Official Mall Button */}
                                         {currentScale.ownUrl && (
                                             <a
@@ -523,12 +509,12 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                                 className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 text-white hover:shadow-lg hover:-translate-y-0.5"
                                                 title="공식 쇼핑몰에서 구매하기"
                                             >
-                                                <span>공식몰</span>
+                                                <span>구매</span>
                                             </a>
                                         )}
 
                                         {/* Fallback if no links */}
-                                        {!currentScale.naverUrl && !currentScale.ownUrl && (
+                                        {!currentScale.ownUrl && (
                                             <button
                                                 disabled
                                                 className="px-4 py-2 rounded-lg text-sm font-medium shadow-md bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50 text-slate-500"
