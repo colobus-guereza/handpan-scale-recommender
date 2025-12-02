@@ -75,7 +75,8 @@ export const SCALES: Scale[] = [
         tags: ["마이너", "대중적", "연습곡 제일 많음", "유튜브에 교재도 많음"],
         description: "대중적인 D minor와 같은 음계인 D Kurd 10으로, 유튜브에 악보와 연습곡이 가장 많은 입문용에 적합한 모델입니다.",
         videoUrl: "https://youtu.be/uL40C1bqKik?si=DpqHwPB_RLpcA5mc",
-        productUrl: "https://smartstore.naver.com/sndhandpan/products/7514024868"
+        productUrl: "https://smartstore.naver.com/sndhandpan/products/7514024868",
+        ownUrl: "https://handpan.co.kr/shop/?idx=74"
     },
 
     // 5. E Equinox 14 (Mutant/Extended)
@@ -91,7 +92,8 @@ export const SCALES: Scale[] = [
         tags: ["하이브리드", "시네마틱", "상급자용", "달콤씁쓸한"],
         description: "메이저와 마이너의 경계에 있는 하이브리드 스케일입니다. 시네마틱한 감성과 달콤씁쓸한 매력이 특징이며, 묵직한 저음을 포함한 14개의 노트로 풍성함을 자랑합니다. 상급자용 모델로 복잡하고 감성적인 연주에 적합합니다.",
         videoUrl: "https://youtu.be/v9pXYwhylPg?si=Em_dHnMGyeU19YkE",
-        productUrl: "https://smartstore.naver.com/sndhandpan/products/12351119980"
+        productUrl: "https://smartstore.naver.com/sndhandpan/products/12351119980",
+        ownUrl: "https://handpan.co.kr/shop/?idx=74"
     },
 
     // 6. F# Low Pygmy 14 (The Global Bestseller) - Mutant
