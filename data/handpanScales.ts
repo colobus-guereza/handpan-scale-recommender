@@ -63,7 +63,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=75"
     },
 
-    // 2. D Kurd 10 (The Standard Minor Extended)
+    // 1-1. D Kurd 10 (The Standard Minor Extended)
     {
         id: "d_kurd_10",
         name: "D Kurd 10",
@@ -80,7 +80,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=74"
     },
 
-    // 3. E Equinox 14 (Mutant/Extended)
+    // 5. E Equinox 14 (Mutant/Extended)
     {
         id: "e_equinox_14_mutant",
         name: "E Equinox 14",
@@ -97,7 +97,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=78"
     },
 
-    // 4. F# Low Pygmy 14 (The Global Bestseller) - Mutant
+    // 6. F# Low Pygmy 14 (The Global Bestseller) - Mutant
     {
         id: "fs_low_pygmy_14_mutant",
         name: "F# Low Pygmy 14",
@@ -114,7 +114,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=97"
     },
 
-    // 5. F Aeolian 10 (Domestic Steady Seller)
+    // 7. F Aeolian 10 (Domestic Steady Seller)
     {
         id: "f_aeolian_10",
         name: "F Aeolian 10",
@@ -131,7 +131,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=71"
     },
 
-    // 6. E Romanian Hijaz 10 (The Exotic Individualist)
+    // 8. E Romanian Hijaz 10 (The Exotic Individualist)
     {
         id: "e_romanian_hijaz_10",
         name: "E Romanian Hijaz 10",
@@ -148,7 +148,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=72"
     },
 
-    // 7. D Saladin 9 (The Extreme Niche)
+    // 9. D Saladin 9 (The Extreme Niche)
     {
         id: "d_saladin_9",
         name: "D Saladin 9",
@@ -165,7 +165,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=85"
     },
 
-    // 8. D Asha 9 (The Gentle Major / Sabye)
+    // 10. D Asha 9 (The Gentle Major / Sabye)
     {
         id: "d_asha_9",
         name: "D Asha 9",
@@ -182,7 +182,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=87"
     },
 
-    // 9. E La Sirena 10 (The Siren / Dorian)
+    // 11. E La Sirena 10 (The Siren / Dorian)
     {
         id: "e_la_sirena_10",
         name: "E La Sirena 10",
@@ -199,7 +199,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=73"
     },
 
-    // 10. C# Pygmy 9 (The Original Trance Classic)
+    // 12. C# Pygmy 9 (The Original Trance Classic)
     {
         id: "cs_pygmy_9",
         name: "C# Pygmy 9",
@@ -216,7 +216,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=88"
     },
 
-    // 11. D Asha 15 (2-Octave Major) - Mutant
+    // 14. D Asha 15 (2-Octave Major) - Mutant
     {
         id: "d_asha_15_mutant",
         name: "D Asha 15",
@@ -233,7 +233,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=77"
     },
 
-    // 12. E Equinox 12 (Normal, Bass 2 Dings)
+    // 15. E Equinox 12 (Normal, Bass 2 Dings)
     {
         id: "e_equinox_12",
         name: "E Equinox 12",
@@ -250,7 +250,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=79"
     },
 
-    // 13. E Equinox 10 (Normal)
+    // 16. E Equinox 10 (Normal)
     {
         id: "e_equinox_10",
         name: "E Equinox 10",
@@ -267,7 +267,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=80"
     },
 
-    // 14. F# Low Pygmy 18 (Mutant)
+    // 17. F# Low Pygmy 18 (Mutant)
     {
         id: "fs_low_pygmy_18_mutant",
         name: "F# Low Pygmy 18",
@@ -284,7 +284,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=76"
     },
 
-    // 15. C# Pygmy 11 (Normal, Bass 2 Dings)
+    // 18. C# Pygmy 11 (Normal, Bass 2 Dings)
     {
         id: "cs_pygmy_11",
         name: "C# Pygmy 11",
@@ -301,7 +301,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=81"
     },
 
-    // 16. F Low Pygmy 12 (Normal, Bass 2 Dings)
+    // 19. F Low Pygmy 12 (Normal, Bass 2 Dings)
     {
         id: "f_low_pygmy_12",
         name: "F Low Pygmy 12",
@@ -318,7 +318,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=82"
     },
 
-    // 17. D Kurd 12 (Normal, Bass 2 Dings)
+    // 20. D Kurd 12 (Normal, Bass 2 Dings)
     {
         id: "d_kurd_12",
         name: "D Kurd 12",
@@ -335,7 +335,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=83"
     },
 
-    // 18. F Low Pygmy 9 (Normal)
+    // 21. F Low Pygmy 9 (Normal)
     {
         id: "f_low_pygmy_9",
         name: "F Low Pygmy 9",
@@ -352,7 +352,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=86"
     },
 
-    // 19. C# Annapurna 9 (Normal)
+    // 22. C# Annapurna 9 (Normal)
     {
         id: "cs_annapurna_9",
         name: "C# Annapurna 9",
@@ -369,7 +369,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=89"
     },
 
-    // 20. C Major 10
+    // 23. C Major 10
     {
         id: "c_major_10",
         name: "C Major 10",
@@ -386,7 +386,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=91"
     },
 
-    // 21. C Rasavali 9
+    // 24. C Rasavali 9
     {
         id: "c_rasavali_9",
         name: "C Rasavali 9",
@@ -403,7 +403,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=92"
     },
 
-    // 22. C# Deepasia 14 (Normal)
+    // 25. C# Deepasia 14 (Normal)
     {
         id: "cs_deepasia_14",
         name: "C# Deepasia 14",
@@ -420,7 +420,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=84"
     },
 
-    // 23. C# Blues 9 (Normal)
+    // 26. C# Blues 9 (Normal)
     {
         id: "cs_blues_9",
         name: "C# Blues 9",
@@ -437,7 +437,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=90"
     },
 
-    // 24. Eb MUJU 10 (Normal)
+    // 27. Eb MUJU 10 (Normal)
     {
         id: "eb_muju_10",
         name: "Eb MUJU 10",
@@ -454,7 +454,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=96"
     },
 
-    // 25. C Yunsl 9 (Normal)
+    // 28. C Yunsl 9 (Normal)
     {
         id: "c_yunsl_9",
         name: "C 윤슬 9",
@@ -471,7 +471,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=102"
     },
 
-    // 26. C# Sapphire 9 (Normal)
+    // 29. C# Sapphire 9 (Normal)
     {
         id: "cs_sapphire_9",
         name: "C# Sapphire 9",
@@ -488,7 +488,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=93"
     },
 
-    // 27. C# Annaziska 9 (Normal)
+    // 30. C# Annaziska 9 (Normal)
     {
         id: "cs_annaziska_9",
         name: "C# Annaziska 9",
@@ -505,7 +505,7 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=94"
     },
 
-    // 28. E Hijaz 9 (Normal)
+    // 31. E Hijaz 9 (Normal)
     {
         id: "e_hijaz_9",
         name: "E Hijaz 9",
@@ -522,4 +522,3 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=95"
     }
 ];
-

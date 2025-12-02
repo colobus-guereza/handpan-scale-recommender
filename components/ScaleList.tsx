@@ -545,21 +545,10 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                                 <a
                                                     key={`purchase-${scaleId}-${currentIndex}`}
                                                     href={purchaseUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
                                                     className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 text-white hover:shadow-lg hover:-translate-y-0.5"
                                                     title={`${scaleName} - 공식 쇼핑몰에서 구매하기`}
-                                                    onClick={(e) => {
-                                                        // 디버깅: 클릭 시 현재 스케일 정보 확인
-                                                        console.log('구매 버튼 클릭:', {
-                                                            scaleId,
-                                                            scaleName,
-                                                            purchaseUrl,
-                                                            currentIndex
-                                                        });
-                                                    }}
                                                 >
-                                                    <span>구매</span>
+                                                    <span>구매하기</span>
                                                 </a>
                                             ) : (
                                                 <button
