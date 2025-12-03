@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, Fragment } from "react";
-import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import VibeSelector, { Vibe, VIBES } from "@/components/VibeSelector";
 import ScaleList from "@/components/ScaleList";
@@ -315,18 +314,14 @@ const getProductUrl = (productName: string): string | null => {
 import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Home() {
-    const searchParams = useSearchParams();
     const [scaleIdFromUrl, setScaleIdFromUrl] = useState<string | null>(null);
     
-    // 클라이언트 측에서 URL 파라미터 읽기 (useSearchParams가 제대로 작동하지 않을 수 있음)
+    // 클라이언트 측에서 URL 파라미터 읽기
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const params = new URLSearchParams(window.location.search);
             const scaleId = params.get('scale');
             setScaleIdFromUrl(scaleId);
-            if (scaleId) {
-                console.log('Scale ID from URL:', scaleId);
-            }
         }
     }, []);
     
