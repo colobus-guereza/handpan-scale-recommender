@@ -311,6 +311,8 @@ const getProductUrl = (productName: string): string | null => {
     return product?.ownUrl || null;
 };
 
+import ThemeToggle from "@/components/ThemeToggle";
+
 export default function Home() {
     // 초기값을 '요가명상힐링' (meditation)으로 설정
     const initialVibe = VIBES.find(v => v.id === 'meditation') || null;
@@ -357,24 +359,43 @@ export default function Home() {
     }
 
     return (
-        <Fragment>
-            {step === 'selection' ? (
-                <div className="w-full">
-                    <VibeSelector onSelect={handleVibeSelect} />
+        <div className="flex flex-col items-center w-full">
+            {/* Main Service Container - Preserving Original Styles */}
+            <div className="w-full max-w-full px-2 md:px-4">
+                <div className="flex flex-col items-center space-y-4 glass-card p-4 rounded-3xl border border-glass-border relative min-h-[600px]">
+                    {/* Theme Toggle Button (Top Right) - Hidden as requested */}
+                    <div className="absolute top-4 right-4 z-50 hidden">
+                        <ThemeToggle />
+                    </div>
+
+                    <header className="text-center space-y-1 pt-2">
+                        <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-slate-400 drop-shadow-sm">
+                            나에게 맞는 핸드팬 찾기
+                        </h1>
+                    </header>
+
+                    <main className="w-full">
+                        {step === 'selection' ? (
+                            <div className="w-full">
+                                <VibeSelector onSelect={handleVibeSelect} />
+                            </div>
+                        ) : (
+                            <section className="w-full bg-white dark:bg-slate-950 py-8">
+                                {selectedVibe && (
+                                    <ScaleList
+                                        selectedVibe={selectedVibe}
+                                        onBack={handleBack}
+                                        onChangeVibe={handleVibeSelect}
+                                    />
+                                )}
+                            </section>
+                        )}
+                    </main>
                 </div>
-            ) : (
-                <section className="w-full bg-gray-50 dark:bg-slate-900 py-8">
-                    {selectedVibe && (
-                        <ScaleList
-                            selectedVibe={selectedVibe}
-                            onBack={handleBack}
-                            onChangeVibe={handleVibeSelect}
-                        />
-                    )}
-                </section>
-            )}
-            {/* 카테고리 슬라이더 컨테이너 - 완전히 독립적인 컨테이너 */}
-            <section className="w-full bg-white dark:bg-slate-950 py-8 mt-0">
+            </div>
+
+            {/* Category Slider Container - Full Width */}
+            <section className="w-full bg-white dark:bg-slate-950 py-8 mt-8">
                 <div className="w-full max-w-full">
                     <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2">입문용</h2>
                     <Swiper
@@ -849,7 +870,6 @@ export default function Home() {
                     </Swiper>
                 </div>
             </section>
-        </Fragment>
+        </div>
     );
-
 }

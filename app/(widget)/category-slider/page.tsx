@@ -11,31 +11,6 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-// CSS 스타일 추가
-const hideContainerStyle = `
-  header {
-    display: none !important;
-  }
-  .glass-card {
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    min-height: auto !important;
-    box-shadow: none !important;
-  }
-  .min-h-screen.flex.items-start {
-    padding: 0 !important;
-    min-height: 100vh !important;
-  }
-  .w-full.max-w-full {
-    padding: 0 !important;
-  }
-  main {
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-`;
-
 // Mock Data
 const PRODUCTS = [
     {
@@ -341,11 +316,6 @@ export default function CategorySliderPage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // 스타일 태그 추가
-        const style = document.createElement('style');
-        style.textContent = hideContainerStyle;
-        document.head.appendChild(style);
-
         // 페이지 로드 완료 후 로딩 상태 해제
         const timer = setTimeout(() => {
             setIsLoading(false);
@@ -353,10 +323,6 @@ export default function CategorySliderPage() {
 
         return () => {
             clearTimeout(timer);
-            // cleanup
-            if (document.head.contains(style)) {
-                document.head.removeChild(style);
-            }
         };
     }, []);
 
@@ -364,7 +330,6 @@ export default function CategorySliderPage() {
     if (isLoading) {
         return (
             <>
-                <style dangerouslySetInnerHTML={{ __html: hideContainerStyle }} />
                 <div className="w-full min-h-screen bg-white flex items-center justify-center">
                     <div className="w-12 h-12 border-3 border-gray-100 border-t-gray-300 rounded-full animate-spin opacity-50"></div>
                 </div>
@@ -377,7 +342,6 @@ export default function CategorySliderPage() {
     return (
         <>
             <IframeResizer />
-            <style dangerouslySetInnerHTML={{ __html: hideContainerStyle }} />
             <div className="w-full min-h-screen bg-white flex flex-col items-center justify-center p-0 gap-8">
                 <div className="w-full max-w-full">
                     <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2">입문용</h2>
