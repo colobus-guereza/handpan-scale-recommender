@@ -397,7 +397,7 @@ export default function Home() {
             {/* Category Slider Container - Full Width */}
             <section className="w-full bg-white dark:bg-slate-950 py-8 mt-8">
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2">입문용</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">입문용</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -476,7 +476,7 @@ export default function Home() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2">요가명상힐링</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">요가명상힐링</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -555,7 +555,7 @@ export default function Home() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2">메이저 스케일</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">메이저 스케일</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -634,7 +634,7 @@ export default function Home() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2">딥 에스닉</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">딥 에스닉</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -713,7 +713,7 @@ export default function Home() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2">Case</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">Case</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -792,7 +792,7 @@ export default function Home() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2">Stand</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">Stand</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
