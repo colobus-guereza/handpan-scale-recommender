@@ -167,7 +167,7 @@ const MAJOR_SCALE_PRODUCTS = [
     },
     {
         id: 205,
-        name: 'C 윤슬 9',
+        name: 'C Yunsl 9',
         price: '2,640,000원',
         rating: 4.9,
         reviewCount: 85,

@@ -2,12 +2,13 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { SCALES, Scale, VECTOR_AXES } from '../data/handpanScales';
 import { Vibe, VIBES } from './VibeSelector';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Sparkles, Moon, Sun, Flame } from 'lucide-react';
+import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Sparkles, Moon, Sun, Flame, Share2, Check } from 'lucide-react';
 
 interface Props {
     selectedVibe: Vibe;
     onBack: () => void;
     onChangeVibe: (vibe: Vibe) => void;
+    initialScaleId?: string;
 }
 
 const getVideoId = (url: string) => {
@@ -40,9 +41,16 @@ const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
     );
 };
 
-export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props) {
+export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialScaleId }: Props) {
     const [displayScales, setDisplayScales] = useState<Scale[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+    
+    // 디버깅: initialScaleId 확인
+    useEffect(() => {
+        if (initialScaleId) {
+            console.log('Initial Scale ID from URL:', initialScaleId);
+        }
+    }, [initialScaleId]);
     const [showFilter, setShowFilter] = useState(false);
     const [selectedPitches, setSelectedPitches] = useState<Set<string>>(new Set());
     const [showAllScales, setShowAllScales] = useState(true);
@@ -53,6 +61,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
     const [selectedMood, setSelectedMood] = useState<'minor' | 'major' | null>(null);
     const [selectedTone, setSelectedTone] = useState<'pure' | 'spicy' | null>(null);
     const [selectedPopularity, setSelectedPopularity] = useState<'rare' | 'popular' | null>(null);
+    const [isCopied, setIsCopied] = useState(false);
 
     const CATEGORIES = [
         { id: 'beginner', label: '입문용', tags: ['대중적', '입문추천', '국내인기', 'Bestseller', '기본', '표준', '표준확장'], icon: <Sparkles className="w-6 h-6 text-slate-400" /> },
@@ -103,6 +112,44 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
     // 현재 보여줄 스케일 (Effect용)
     const currentScaleForEffect = displayScales[currentIndex];
 
+    // URL 복사 함수 - 현재 선택된 스케일 ID를 포함한 URL 생성
+    const handleShare = async () => {
+        try {
+            const currentScale = displayScales[currentIndex];
+            if (!currentScale) return;
+            
+            // 현재 URL의 기본 경로 가져오기
+            const baseUrl = window.location.origin + window.location.pathname;
+            // 스케일 ID를 쿼리 파라미터로 추가
+            const shareUrl = `${baseUrl}?scale=${currentScale.id}`;
+            
+            await navigator.clipboard.writeText(shareUrl);
+            setIsCopied(true);
+            setTimeout(() => {
+                setIsCopied(false);
+            }, 2000); // 2초 후 원래 아이콘으로 복귀
+        } catch (err) {
+            console.error('URL 복사 실패:', err);
+            // Fallback: 구형 브라우저 지원
+            const currentScale = displayScales[currentIndex];
+            if (!currentScale) return;
+            
+            const baseUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${baseUrl}?scale=${currentScale.id}`;
+            
+            const textArea = document.createElement('textarea');
+            textArea.value = shareUrl;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            setIsCopied(true);
+            setTimeout(() => {
+                setIsCopied(false);
+            }, 2000);
+        }
+    };
+
     // 내부 상태 변경 시 높이 재계산을 위한 Effect
     useEffect(() => {
         if (typeof window === 'undefined' || window.self === window.top) return;
@@ -122,6 +169,11 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
             clearTimeout(timer2);
         };
     }, [showClassificationCriteria, showAllScales, showFilter, displayScales, currentScaleForEffect?.name]);
+
+    // 스케일 변경 시 복사 상태 초기화
+    useEffect(() => {
+        setIsCopied(false);
+    }, [currentIndex]);
 
     const matchesCategory = (scale: Scale, categoryId: string) => {
         const category = CATEGORIES.find(c => c.id === categoryId);
@@ -234,9 +286,40 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
 
     // Initialize displayScales with top 3 results
     useEffect(() => {
+        // initialScaleId가 있으면 우선 처리 (URL 파라미터로 지정된 경우)
+        if (initialScaleId && topRankedScales.length === 0) {
+            const targetScale = SCALES.find(s => s.id === initialScaleId);
+            if (targetScale) {
+                setDisplayScales([targetScale]);
+                setCurrentIndex(0);
+                return;
+            }
+        }
+        
         if (topRankedScales.length > 0) {
-            setDisplayScales(topRankedScales);
-            setCurrentIndex(0);
+            let finalScales = topRankedScales;
+            let finalIndex = 0;
+            
+            // initialScaleId가 있으면 해당 스케일을 찾아서 선택
+            if (initialScaleId) {
+                const scaleIndex = topRankedScales.findIndex(s => s.id === initialScaleId);
+                if (scaleIndex !== -1) {
+                    // topRankedScales에 이미 있으면 해당 인덱스 사용
+                    finalIndex = scaleIndex;
+                } else {
+                    // topRankedScales에 없으면 전체 SCALES에서 찾아서 추가
+                    // URL 파라미터로 지정된 경우 카테고리 체크 무시하고 무조건 표시
+                    const targetScale = SCALES.find(s => s.id === initialScaleId);
+                    if (targetScale) {
+                        // 해당 스케일을 첫 번째로 추가 (카테고리 체크 없이)
+                        finalScales = [targetScale, ...topRankedScales.filter(s => s.id !== targetScale.id)];
+                        finalIndex = 0;
+                    }
+                }
+            }
+            
+            setDisplayScales(finalScales);
+            setCurrentIndex(finalIndex);
 
             // 데이터 로드 및 렌더링 후 높이 재전송 (초기 로딩 시 높이 문제 해결)
             if (typeof window !== 'undefined' && window.self !== window.top) {
@@ -246,7 +329,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                 }, 100);
             }
         }
-    }, [topRankedScales]);
+    }, [topRankedScales, initialScaleId, selectedVibe.id]);
 
     // 딩의 피치 추출 함수 (예: "C3" -> "C", "C#3" -> "C#", "Db3" -> "Db")
     const getPitchFromNote = (note: string): string => {
@@ -560,6 +643,24 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe }: Props)
                                                 </button>
                                             );
                                         })()}
+                                        {/* Share Button */}
+                                        <button
+                                            onClick={handleShare}
+                                            className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:shadow-lg hover:-translate-y-0.5 border border-slate-200 dark:border-slate-700"
+                                            title="링크 공유하기"
+                                        >
+                                            {isCopied ? (
+                                                <>
+                                                    <Check className="w-4 h-4" />
+                                                    <span>복사됨</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Share2 className="w-4 h-4" />
+                                                    <span>공유하기</span>
+                                                </>
+                                            )}
+                                        </button>
                                     </div>
                                 </div>
 

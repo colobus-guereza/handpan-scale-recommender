@@ -432,7 +432,7 @@ export const SCALES: Scale[] = [
     // 28. C Yunsl 9 (Normal)
     {
         id: "c_yunsl_9",
-        name: "C 윤슬 9",
+        name: "C Yunsl 9",
         notes: {
             ding: "C3",
             top: ["C4", "D4", "E4", "F4", "G4", "B4", "C5"],
