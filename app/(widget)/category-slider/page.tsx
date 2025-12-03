@@ -247,7 +247,7 @@ const DEEP_ETHNIC_PRODUCTS = [
 const CASE_PRODUCTS = [
     {
         id: 1,
-        name: 'Evatek 하드케이스',
+        name: 'HTC Evatek 하드케이스',
         price: '484,000원',
         rating: 4.8,
         reviewCount: 120,

@@ -14,7 +14,7 @@ export const PRODUCTS: Product[] = [
     // 1. Evatek Hardcase
     {
         id: "evatek_hardcase",
-        name: "Evatek 하드케이스",
+        name: "HTC Evatek 하드케이스",
         category: "Case",
         price: 484000,
         manufacturer: "Hardcase Technologies",
