@@ -1,10 +1,11 @@
 import React from 'react';
 import { Sparkles, Flame, Moon, Sun } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { TRANSLATIONS, Language } from '@/constants/translations';
 
 export interface Vibe {
     id: string;
-    title: string;
+    title: string; // Deprecated: Use translation key instead
     description: string;
     icon: React.ReactNode;
     target: { minorMajor: number; pureSpicy: number };
@@ -43,9 +44,12 @@ export const VIBES: Vibe[] = [
 
 interface Props {
     onSelect: (vibe: Vibe) => void;
+    language: Language;
 }
 
-export default function VibeSelector({ onSelect }: Props) {
+export default function VibeSelector({ onSelect, language }: Props) {
+    const t = TRANSLATIONS[language];
+
     const getHoverStyles = (vibeId: string) => {
         // 각 버튼별 라이트/다크모드 공통 호버 색상
         const hoverColors: Record<string, { border: string; icon: string; text: string; shadow: string; bg?: string }> = {
@@ -90,6 +94,9 @@ export default function VibeSelector({ onSelect }: Props) {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {VIBES.map((vibe) => {
                     const hoverStyles = getHoverStyles(vibe.id);
+                    // Use translation based on vibe.id
+                    const title = t.vibeSelector[vibe.id as keyof typeof t.vibeSelector] || vibe.title;
+
                     return (
                         <motion.button
                             key={vibe.id}
@@ -109,7 +116,7 @@ export default function VibeSelector({ onSelect }: Props) {
                                 </div>
                             </div>
                             <h3 className={`relative z-10 text-2xl font-bold ${hoverStyles.textColor} tracking-tight transition-colors duration-300`}>
-                                {vibe.title}
+                                {title}
                             </h3>
                         </motion.button>
                     );

@@ -1,6 +1,7 @@
 export interface Product {
     id: string;
     name: string;
+    nameEn?: string;
     category: string; // 'Case', 'Stand', 'Accessory', etc.
     price?: number;
     manufacturer?: string;
@@ -15,6 +16,7 @@ export const PRODUCTS: Product[] = [
     {
         id: "evatek_hardcase",
         name: "HTC Evatek 하드케이스",
+        nameEn: "HTC Evatek Hardcase",
         category: "Case",
         price: 484000,
         manufacturer: "Hardcase Technologies",
@@ -27,6 +29,7 @@ export const PRODUCTS: Product[] = [
     {
         id: "avaja_softcase",
         name: "Avaja 고급 소프트케이스",
+        nameEn: "Avaja Premium Softcase",
         category: "Case",
         price: 484000,
         manufacturer: "Avaja case",
@@ -40,6 +43,7 @@ export const PRODUCTS: Product[] = [
     {
         id: "wood_stand_s",
         name: "원목 핸드팬스탠드 S",
+        nameEn: "Wood Handpan Stand S",
         category: "Stand",
         naverUrl: "https://smartstore.naver.com/sndhandpan/products/7352234142",
         ownUrl: "https://handpan.co.kr/shop_view/?idx=100"
@@ -49,6 +53,7 @@ export const PRODUCTS: Product[] = [
     {
         id: "wood_stand_m",
         name: "원목 핸드팬스탠드 M",
+        nameEn: "Wood Handpan Stand M",
         category: "Stand",
         naverUrl: "https://smartstore.naver.com/sndhandpan/products/7371144021",
         ownUrl: "https://handpan.co.kr/shop_view/?idx=101"

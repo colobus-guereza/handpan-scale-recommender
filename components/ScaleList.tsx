@@ -3,12 +3,14 @@ import { SCALES, Scale, VECTOR_AXES } from '../data/handpanScales';
 import { Vibe, VIBES } from './VibeSelector';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Sparkles, Moon, Sun, Flame, Share2, Check } from 'lucide-react';
+import { TRANSLATIONS, Language } from '@/constants/translations';
 
 interface Props {
     selectedVibe: Vibe;
     onBack: () => void;
     onChangeVibe: (vibe: Vibe) => void;
     initialScaleId?: string;
+    language: Language;
 }
 
 const getVideoId = (url: string) => {
@@ -41,10 +43,11 @@ const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
     );
 };
 
-export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialScaleId }: Props) {
+export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialScaleId, language }: Props) {
+    const t = TRANSLATIONS[language];
     const [displayScales, setDisplayScales] = useState<Scale[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
-    
+
     // 디버깅: initialScaleId 확인
     useEffect(() => {
         if (initialScaleId) {
@@ -64,10 +67,10 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
     const [isCopied, setIsCopied] = useState(false);
 
     const CATEGORIES = [
-        { id: 'beginner', label: '입문용', tags: ['대중적', '입문추천', '국내인기', 'Bestseller', '기본', '표준', '표준확장'], icon: <Sparkles className="w-6 h-6 text-slate-400" /> },
-        { id: 'healing', label: '요가명상힐링', tags: ['명상', '힐링', '치유', '차분한', '평화', 'Deep', '피그미', '트랜스', '몽환적', '깊음', '깊은울림'], icon: <Moon className="w-6 h-6 text-slate-400" /> },
-        { id: 'bright', label: '밝은 분위기', tags: ['메이저', '밝음', '상쾌함', '희망적', '행복한', '윤슬', '사파이어', '청량함', '에너지'], icon: <Sun className="w-6 h-6 text-slate-400" /> },
-        { id: 'ethnic', label: '딥 에스닉', tags: ['이국적', '집시', '아라비안', '중동풍', '독특함', '인도풍', '동양적', '하이브리드', '도리안', '블루스', '신비', '매니아', '라사발리', '딥아시아', '신비로움'], icon: <Flame className="w-6 h-6 text-slate-400" /> }
+        { id: 'beginner', label: t.categories.beginner, tags: ['대중적', '입문추천', '국내인기', 'Bestseller', '기본', '표준', '표준확장', 'Popular', 'Recommended for Beginners', 'Domestic Popular', 'Basic', 'Standard', 'Standard Extended'], icon: <Sparkles className="w-6 h-6 text-slate-400" /> },
+        { id: 'healing', label: t.categories.healing, tags: ['명상', '힐링', '치유', '차분한', '평화', 'Deep', '피그미', '트랜스', '몽환적', '깊음', '깊은울림', 'Meditation', 'Healing', 'Calm', 'Peace', 'Pygmy', 'Trance', 'Dreamy', 'Deep Resonance'], icon: <Moon className="w-6 h-6 text-slate-400" /> },
+        { id: 'bright', label: t.categories.bright, tags: ['메이저', '밝음', '상쾌함', '희망적', '행복한', '윤슬', '사파이어', '청량함', '에너지', 'Major', 'Bright', 'Refreshing', 'Hopeful', 'Happy', 'Yunsl', 'Sapphire', 'Energy'], icon: <Sun className="w-6 h-6 text-slate-400" /> },
+        { id: 'ethnic', label: t.categories.ethnic, tags: ['이국적', '집시', '아라비안', '중동풍', '독특함', '인도풍', '동양적', '하이브리드', '도리안', '블루스', '신비', '매니아', '라사발리', '딥아시아', '신비로움', 'Exotic', 'Gypsy', 'Arabian', 'Middle Eastern', 'Unique', 'Indian Style', 'Oriental', 'Hybrid', 'Dorian', 'Blues', 'Mysterious', 'Mania', 'Rasavali', 'Deep Asia'], icon: <Flame className="w-6 h-6 text-slate-400" /> }
     ];
 
     // VibeSelector와 동일한 호버 스타일 함수
@@ -117,12 +120,12 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
         try {
             const currentScale = displayScales[currentIndex];
             if (!currentScale) return;
-            
+
             // 현재 URL의 기본 경로 가져오기
             const baseUrl = window.location.origin + window.location.pathname;
             // 스케일 ID를 쿼리 파라미터로 추가
             const shareUrl = `${baseUrl}?scale=${currentScale.id}`;
-            
+
             await navigator.clipboard.writeText(shareUrl);
             setIsCopied(true);
             setTimeout(() => {
@@ -133,10 +136,10 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
             // Fallback: 구형 브라우저 지원
             const currentScale = displayScales[currentIndex];
             if (!currentScale) return;
-            
+
             const baseUrl = window.location.origin + window.location.pathname;
             const shareUrl = `${baseUrl}?scale=${currentScale.id}`;
-            
+
             const textArea = document.createElement('textarea');
             textArea.value = shareUrl;
             document.body.appendChild(textArea);
@@ -295,11 +298,11 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                 return;
             }
         }
-        
+
         if (topRankedScales.length > 0) {
             let finalScales = topRankedScales;
             let finalIndex = 0;
-            
+
             // initialScaleId가 있으면 해당 스케일을 찾아서 선택
             if (initialScaleId) {
                 const scaleIndex = topRankedScales.findIndex(s => s.id === initialScaleId);
@@ -317,7 +320,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                     }
                 }
             }
-            
+
             setDisplayScales(finalScales);
             setCurrentIndex(finalIndex);
 
@@ -448,24 +451,20 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
     const hasActiveFilters = selectedCategory || selectedNoteCount || selectedType || selectedPitches.size > 0 || selectedMood || selectedTone || selectedPopularity;
 
     const translateTag = (tag: string) => {
-        switch (tag) {
-            case 'Minor': return '마이너';
-            case 'Major': return '메이저';
-            case 'Harmonic': return '하모닉';
-            case 'Melodic': return '멜로딕';
-            case 'Pentatonic': return '펜타토닉';
-            case 'Exotic': return '이국적';
-            case 'Meditative': return '명상적';
-            case 'Bright': return '밝은';
-            case 'Dark': return '어두운';
-            case 'Mysterious': return '신비로운';
-            case 'Happy': return '행복한';
-            case 'Sad': return '슬픈';
-            case 'Uplifting': return '고양되는';
-            case 'Calm': return '차분한';
-            case 'Energetic': return '에너지 넘치는';
-            default: return tag;
+        // If language is English, return the tag itself if it's already English (or map if needed)
+        // But since we want to show English tags when lang is en, and Korean when lang is ko.
+        // The tags in data are mixed.
+        // Let's rely on the t.tags mapping for common tags.
+
+        const lowerTag = tag.toLowerCase();
+        // Try to find a matching key in t.tags
+        const key = Object.keys(t.tags).find(k => k.toLowerCase() === lowerTag || t.tags[k as keyof typeof t.tags].toLowerCase() === lowerTag);
+
+        if (key) {
+            return t.tags[key as keyof typeof t.tags];
         }
+
+        return tag;
     };
 
     const getEmbedUrl = (url?: string) => {
@@ -492,7 +491,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
     // currentScale을 직접 계산하여 항상 최신 값 보장
     const currentScale = displayScales[currentIndex] || null;
-    
+
     if (!currentScale || currentIndex < 0 || currentIndex >= displayScales.length) return null;
 
     return (
@@ -504,7 +503,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                     className="hidden flex items-center text-sm font-medium text-slate-600/50 dark:text-slate-400/50 hover:text-indigo-700 dark:hover:text-cosmic transition-colors px-3 py-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5"
                 >
                     <ArrowLeft className="w-4 h-4 mr-1.5" />
-                    다시 선택
+                    {t.scaleList.back}
                 </button>
 
                 {/* 카테고리 버튼 */}
@@ -582,11 +581,11 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                                 return (
                                                     <>
                                                         <span className="px-3 py-1 rounded-full bg-indigo-100 dark:bg-cosmic/20 text-indigo-700/80 dark:text-cosmic/80 border border-indigo-200 dark:border-cosmic/30 text-sm font-bold shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.3)]">
-                                                            {rank}위 추천
+                                                            {language === 'ko' ? `${rank}${t.scaleList.rankRecommendation}` : `#${rank} ${t.scaleList.rankRecommendation}`}
                                                         </span>
                                                         {currentScale.vector.rarePopular > 0.7 && (
                                                             <span className="flex items-center text-amber-600/80 dark:text-stardust/80 text-xs font-medium drop-shadow-sm">
-                                                                <Star className="w-3 h-3 fill-current mr-1 animate-pulse-slow" /> 인기 스케일
+                                                                <Star className="w-3 h-3 fill-current mr-1 animate-pulse-slow" /> {t.scaleList.popularScale}
                                                             </span>
                                                         )}
                                                     </>
@@ -614,7 +613,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                         {currentScale.name}
                                     </h1>
                                     <span className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 text-xs font-medium self-center flex-shrink-0">
-                                        {currentScale.id.includes('mutant') ? '뮤턴트' : '일반'}
+                                        {currentScale.id.includes('mutant') ? t.scaleList.mutant : t.scaleList.normal}
                                     </span>
                                     <div className="flex gap-2">
                                         {/* Official Mall Button */}
@@ -623,15 +622,15 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                             const purchaseUrl = displayScales[currentIndex]?.ownUrl;
                                             const scaleId = displayScales[currentIndex]?.id;
                                             const scaleName = displayScales[currentIndex]?.name;
-                                            
+
                                             return purchaseUrl ? (
                                                 <a
                                                     key={`purchase-${scaleId}-${currentIndex}`}
                                                     href={purchaseUrl}
                                                     className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 text-white hover:shadow-lg hover:-translate-y-0.5"
-                                                    title={`${scaleName} - 공식 쇼핑몰에서 구매하기`}
+                                                    title={`${language === 'en' ? (currentScale.nameEn || currentScale.name) : currentScale.name} - ${t.scaleList.purchase}`}
                                                 >
-                                                    <span>구매하기</span>
+                                                    <span>{t.scaleList.purchase}</span>
                                                 </a>
                                             ) : (
                                                 <button
@@ -639,7 +638,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                                     disabled
                                                     className="px-4 py-2 rounded-lg text-sm font-medium shadow-md bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50 text-slate-500"
                                                 >
-                                                    준비중
+                                                    {t.scaleList.preparing}
                                                 </button>
                                             );
                                         })()}
@@ -647,17 +646,17 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                         <button
                                             onClick={handleShare}
                                             className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:shadow-lg hover:-translate-y-0.5 border border-slate-200 dark:border-slate-700"
-                                            title="링크 공유하기"
+                                            title={t.scaleList.share}
                                         >
                                             {isCopied ? (
                                                 <>
                                                     <Check className="w-4 h-4" />
-                                                    <span>복사됨</span>
+                                                    <span>{t.scaleList.copied}</span>
                                                 </>
                                             ) : (
                                                 <>
                                                     <Share2 className="w-4 h-4" />
-                                                    <span>공유하기</span>
+                                                    <span>{t.scaleList.share}</span>
                                                 </>
                                             )}
                                         </button>
@@ -669,7 +668,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                         {/* Ding */}
                                         <div className="flex items-center mb-1">
                                             <span className="w-24 text-xs text-slate-600 font-bold uppercase flex items-center gap-1">
-                                                Ding
+                                                {t.scaleList.ding}
                                                 <span className="text-slate-500 dark:text-slate-600 font-normal">(1)</span>
                                             </span>
                                             <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-500/20 text-indigo-900 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 rounded-md font-bold shadow-sm">
@@ -680,7 +679,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                         {/* Top Notes */}
                                         <div className="flex items-start mb-1">
                                             <span className="w-24 text-xs text-slate-600 font-bold uppercase mt-1.5 flex items-center gap-1">
-                                                Top
+                                                {t.scaleList.top}
                                                 <span className="text-slate-500 dark:text-slate-600 font-normal">({currentScale.notes.top.length})</span>
                                             </span>
                                             <div className="flex flex-wrap gap-1.5 flex-1">
@@ -696,7 +695,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                         {currentScale.notes.bottom.length > 0 && (
                                             <div className="flex items-start">
                                                 <span className="w-24 text-xs text-slate-600 font-bold uppercase mt-1.5 flex items-center gap-1">
-                                                    Bottom
+                                                    {t.scaleList.bottom}
                                                     <span className="text-slate-500 dark:text-slate-600 font-normal">({currentScale.notes.bottom.length})</span>
                                                 </span>
                                                 <div className="flex flex-wrap gap-1.5 flex-1">
@@ -713,7 +712,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
                                 <div className="mb-8">
                                     <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-base md:text-lg break-keep">
-                                        {currentScale.description}
+                                        {language === 'en' ? (currentScale.descriptionEn || currentScale.description) : currentScale.description}
                                     </p>
                                 </div>
 
@@ -723,7 +722,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                             onClick={prevSlide}
                                             className="flex-1 md:hidden py-3.5 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
                                         >
-                                            이전
+                                            {t.scaleList.prev}
                                         </button>
                                     )}
 
@@ -732,7 +731,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                             onClick={nextSlide}
                                             className="flex-1 md:hidden py-3.5 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
                                         >
-                                            다음
+                                            {t.scaleList.next}
                                         </button>
                                     )}
                                 </div>
@@ -751,14 +750,14 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                         onClick={() => setShowClassificationCriteria(!showClassificationCriteria)}
                         className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
                     >
-                        <span>스케일 분류기준</span>
+                        <span>{t.scaleList.scaleClassification}</span>
                         <ChevronRight className={`w-4 h-4 transition-transform ${showClassificationCriteria ? 'rotate-90' : ''}`} />
                     </button>
                     <button
                         onClick={() => setShowAllScales(!showAllScales)}
                         className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
                     >
-                        <span>전체 스케일</span>
+                        <span>{t.scaleList.allScales}</span>
                         <ChevronRight className={`w-4 h-4 transition-transform ${showAllScales ? 'rotate-90' : ''}`} />
                     </button>
                 </div>
@@ -768,22 +767,39 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
             {showClassificationCriteria && (
                 <div className="mb-4 p-6 glass-card border border-glass-border rounded-xl shadow-sm">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {Object.values(VECTOR_AXES).map((axis) => {
-                            const value = currentScale.vector[axis.id as keyof typeof currentScale.vector];
-                            const percentage = axis.id === 'minorMajor'
+                        {(Object.keys(VECTOR_AXES) as Array<keyof typeof VECTOR_AXES>).map((key) => {
+                            // Explicitly type axis to avoid 'never' inference
+                            const axis = VECTOR_AXES[key] as {
+                                id: string;
+                                label: string;
+                                labelEn?: string;
+                                description: string;
+                                descriptionEn?: string;
+                                minLabel: string;
+                                minLabelEn?: string;
+                                maxLabel: string;
+                                maxLabelEn?: string;
+                            };
+                            const value = currentScale.vector[key];
+                            const percentage = key === 'minorMajor'
                                 ? ((value + 1) / 2) * 100
                                 : value * 100;
+
+                            const label = language === 'en' ? axis.labelEn || axis.label : axis.label;
+                            const description = language === 'en' ? axis.descriptionEn || axis.description : axis.description;
+                            const minLabel = language === 'en' ? axis.minLabelEn || axis.minLabel : axis.minLabel;
+                            const maxLabel = language === 'en' ? axis.maxLabelEn || axis.maxLabel : axis.maxLabel;
 
                             return (
                                 <div key={axis.id} className="flex flex-col space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <h4 className="font-bold text-slate-800 dark:text-slate-200">{axis.label}</h4>
+                                        <h4 className="font-bold text-slate-800 dark:text-slate-200">{label}</h4>
                                         <span className="text-xs font-mono text-indigo-700 dark:text-cosmic bg-indigo-50 dark:bg-cosmic/10 px-2 py-0.5 rounded border border-indigo-200 dark:border-cosmic/20">
                                             {value.toFixed(2)}
                                         </span>
                                     </div>
                                     <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed min-h-[40px]">
-                                        {axis.description}
+                                        {description}
                                     </p>
                                     <div className="relative h-6 flex items-center">
                                         <div className="absolute left-0 right-0 h-2 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden">
@@ -792,12 +808,12 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                         <div
                                             className="absolute w-4 h-4 bg-indigo-600 dark:bg-cosmic border-2 border-white rounded-full shadow-md dark:shadow-[0_0_10px_rgba(72,255,0,0.5)] transition-all duration-500 z-10"
                                             style={{ left: `calc(${percentage}% - 8px)` }}
-                                            title={`${axis.label}: ${value}`}
+                                            title={`${label}: ${value}`}
                                         />
                                     </div>
                                     <div className="flex justify-between text-xs font-medium text-slate-500">
-                                        <span>{axis.minLabel}</span>
-                                        <span>{axis.maxLabel}</span>
+                                        <span>{minLabel}</span>
+                                        <span>{maxLabel}</span>
                                     </div>
                                 </div>
                             );
@@ -812,7 +828,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                     <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-2">
                             <h3 className="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                                전체 스케일
+                                {t.scaleList.allScales}
                             </h3>
                             <span className="text-sm font-medium text-slate-500 dark:text-slate-500">
                                 {hasActiveFilters ? `${filteredScaleCount} / ${totalScaleCount}` : totalScaleCount}
@@ -830,7 +846,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                 }`}
                         >
                             <Filter className="w-4 h-4" />
-                            <span>필터</span>
+                            <span>{t.scaleList.filter}</span>
                         </button>
                     </div>
 
@@ -845,7 +861,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
                                 {/* 카테고리 선택 */}
                                 <div>
-                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">카테고리 선택</h4>
+                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">{t.scaleList.selectCategory}</h4>
                                     <div className="grid grid-cols-1 gap-1.5">
                                         {CATEGORIES.map(category => (
                                             <button
@@ -868,7 +884,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
                                 {/* 타입 선택 */}
                                 <div>
-                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">타입 선택</h4>
+                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">{t.scaleList.selectType}</h4>
                                     <div className="flex flex-col gap-1.5">
                                         {['normal', 'mutant'].map(type => (
                                             <button
@@ -883,7 +899,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                                     : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
                                                     }`}
                                             >
-                                                {type === 'normal' ? '일반' : '뮤턴트'}
+                                                {type === 'normal' ? t.scaleList.normal : t.scaleList.mutant}
                                             </button>
                                         ))}
                                     </div>
@@ -891,7 +907,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
                                 {/* 노트 개수 선택 */}
                                 <div>
-                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">노트 개수</h4>
+                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">{t.scaleList.noteCount}</h4>
                                     <div className="flex flex-wrap gap-1.5">
                                         {allNoteCounts.map(count => (
                                             <button
@@ -914,7 +930,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
                                 {/* 딩 선택 */}
                                 <div>
-                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">딩 선택</h4>
+                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">{t.scaleList.selectDing}</h4>
                                     <div className="flex flex-wrap gap-1.5">
                                         {allPitches.map(pitch => (
                                             <button
@@ -933,11 +949,11 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
                                 {/* 조성 선택 */}
                                 <div>
-                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">조성</h4>
+                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">{t.scaleList.mood}</h4>
                                     <div className="flex flex-col gap-1.5">
                                         {[
-                                            { id: 'minor', label: '마이너' },
-                                            { id: 'major', label: '메이저' }
+                                            { id: 'minor', label: t.scaleList.minor },
+                                            { id: 'major', label: t.scaleList.major }
                                         ].map(mood => (
                                             <button
                                                 key={mood.id}
@@ -959,11 +975,11 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
                                 {/* 음향질감 선택 */}
                                 <div>
-                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">음향질감</h4>
+                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">{t.scaleList.tone}</h4>
                                     <div className="flex flex-col gap-1.5">
                                         {[
-                                            { id: 'pure', label: '담백함' },
-                                            { id: 'spicy', label: '화려함' }
+                                            { id: 'pure', label: t.scaleList.pure },
+                                            { id: 'spicy', label: t.scaleList.spicy }
                                         ].map(tone => (
                                             <button
                                                 key={tone.id}
@@ -985,11 +1001,11 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
                                 {/* 대중성 선택 */}
                                 <div>
-                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">대중성</h4>
+                                    <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-2">{t.scaleList.popularity}</h4>
                                     <div className="flex flex-col gap-1.5">
                                         {[
-                                            { id: 'rare', label: '희소함' },
-                                            { id: 'popular', label: '대중적' }
+                                            { id: 'rare', label: t.scaleList.rare },
+                                            { id: 'popular', label: t.scaleList.popular }
                                         ].map(pop => (
                                             <button
                                                 key={pop.id}
@@ -1030,6 +1046,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                             setCurrentIndex(0);
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
+                        language={language}
                     />
                 </div>
             )}
@@ -1051,7 +1068,8 @@ const ScaleGrid = React.memo(({
     matchesCategory,
     getNoteCount,
     getPitchFromNote,
-    onScaleSelect
+    onScaleSelect,
+    language
 }: {
     scales: Scale[];
     selectedCategory: string | null;
@@ -1066,7 +1084,9 @@ const ScaleGrid = React.memo(({
     getNoteCount: (name: string) => number | null;
     getPitchFromNote: (note: string) => string;
     onScaleSelect: (scale: Scale) => void;
+    language: Language;
 }) => {
+    const t = TRANSLATIONS[language];
     const filteredScales = useMemo(() => {
         return [...scales]
             .filter(s => {
@@ -1153,11 +1173,11 @@ const ScaleGrid = React.memo(({
                 >
                     <span className={`font-semibold transition-colors ${currentScaleName === scale.name ? 'text-indigo-700 dark:text-cosmic' : 'text-slate-700 dark:text-slate-300 group-hover:text-indigo-700 dark:group-hover:text-cosmic'
                         }`}>
-                        {scale.name}
+                        {language === 'en' ? (scale.nameEn || scale.name) : scale.name}
                     </span>
                     <span className={`text-xs ${currentScaleName === scale.name ? 'text-indigo-600 dark:text-cosmic/70' : 'text-slate-500 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-cosmic/70'
                         }`}>
-                        {currentScaleName === scale.name ? '보고있음' : '선택'}
+                        {currentScaleName === scale.name ? t.scaleList.viewing : t.scaleList.select}
                     </span>
                 </button>
             ))}

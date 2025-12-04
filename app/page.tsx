@@ -8,6 +8,9 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { SCALES } from '@/data/handpanScales';
 import { PRODUCTS as ACCESSORY_PRODUCTS } from '@/data/products';
+import { CircleFlag } from 'react-circle-flags';
+import { TRANSLATIONS } from '@/constants/translations';
+import ThemeToggle from "@/components/ThemeToggle";
 
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -170,6 +173,7 @@ const MAJOR_SCALE_PRODUCTS = [
     {
         id: 205,
         name: 'C 윤슬 9',
+        nameEn: 'C Yunsl 9',
         price: '2,640,000원',
         rating: 4.9,
         reviewCount: 85,
@@ -250,6 +254,7 @@ const CASE_PRODUCTS = [
     {
         id: 1,
         name: 'HTC Evatek 하드케이스',
+        nameEn: 'HTC Evatek Hardcase',
         price: '484,000원',
         rating: 4.8,
         reviewCount: 120,
@@ -258,6 +263,7 @@ const CASE_PRODUCTS = [
     {
         id: 2,
         name: 'Avaja 고급 소프트케이스',
+        nameEn: 'Avaja Premium Softcase',
         price: '484,000원',
         rating: 4.8,
         reviewCount: 120,
@@ -270,6 +276,7 @@ const STAND_PRODUCTS = [
     {
         id: 1,
         name: '고급 원목스탠드 S',
+        nameEn: 'Wood Handpan Stand S',
         price: '85,000원',
         rating: 4.8,
         reviewCount: 0,
@@ -278,6 +285,7 @@ const STAND_PRODUCTS = [
     {
         id: 2,
         name: '고급 원목스탠드 M',
+        nameEn: 'Wood Handpan Stand M',
         price: '105,000원',
         rating: 4.8,
         reviewCount: 0,
@@ -311,25 +319,42 @@ const getProductUrl = (productName: string): string | null => {
     return product?.ownUrl || null;
 };
 
-import ThemeToggle from "@/components/ThemeToggle";
-
 export default function Home() {
     const [scaleIdFromUrl, setScaleIdFromUrl] = useState<string | null>(null);
-    
+    const [language, setLanguage] = useState<'ko' | 'en'>('ko');
+    const t = TRANSLATIONS[language];
+
     // 클라이언트 측에서 URL 파라미터 읽기
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const params = new URLSearchParams(window.location.search);
             const scaleId = params.get('scale');
             setScaleIdFromUrl(scaleId);
+
+            // URL에서 언어 파라미터 확인
+            const lang = params.get('lang');
+            if (lang === 'en' || lang === 'ko') {
+                setLanguage(lang);
+            }
         }
     }, []);
-    
+
     // 초기값을 '요가명상힐링' (meditation)으로 설정
     const initialVibe = VIBES.find(v => v.id === 'meditation') || null;
     const [step, setStep] = useState<'selection' | 'result'>('result');
     const [selectedVibe, setSelectedVibe] = useState<Vibe | null>(initialVibe);
     const [isLoading, setIsLoading] = useState(true);
+
+    // 언어 전환 핸들러
+    const handleLanguageChange = (lang: 'ko' | 'en') => {
+        setLanguage(lang);
+        // URL에 언어 파라미터 추가 (현재 페이지 유지)
+        if (typeof window !== 'undefined') {
+            const url = new URL(window.location.href);
+            url.searchParams.set('lang', lang);
+            window.history.pushState({}, '', url.toString());
+        }
+    };
 
     useEffect(() => {
         // 페이지 로드 완료 후 로딩 상태 해제
@@ -380,15 +405,45 @@ export default function Home() {
                     </div>
 
                     <header className="text-center space-y-1 pt-2">
-                        <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-slate-400 drop-shadow-sm">
-                            나에게 맞는 핸드팬 찾기
-                        </h1>
+                        <div className="flex items-center justify-center gap-2">
+                            <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-slate-400 drop-shadow-sm">
+                                {language === 'ko' ? '나에게 맞는 핸드팬 스케일 찾기' : "Discover your Handpan scale"}
+                            </h1>
+                            <div className="flex items-center gap-2 ml-2">
+                                {/* 한국 국기 아이콘 */}
+                                <button
+                                    onClick={() => handleLanguageChange('ko')}
+                                    className="transition-all duration-200 hover:scale-110 focus:outline-none"
+                                    aria-label="한국어"
+                                >
+                                    <div className={`w-6 h-6 md:w-7 md:h-7 rounded-full transition-all duration-200 ${language === 'ko'
+                                        ? 'ring-2 ring-indigo-600 dark:ring-cosmic shadow-lg dark:shadow-[0_0_10px_rgba(72,255,0,0.3)] scale-105'
+                                        : 'opacity-50 hover:opacity-70 ring-1 ring-gray-300 dark:ring-gray-600'
+                                        }`}>
+                                        <CircleFlag countryCode="kr" height="24" />
+                                    </div>
+                                </button>
+                                {/* 미국 국기 아이콘 */}
+                                <button
+                                    onClick={() => handleLanguageChange('en')}
+                                    className="transition-all duration-200 hover:scale-110 focus:outline-none"
+                                    aria-label="English"
+                                >
+                                    <div className={`w-6 h-6 md:w-7 md:h-7 rounded-full transition-all duration-200 ${language === 'en'
+                                        ? 'ring-2 ring-indigo-600 dark:ring-cosmic shadow-lg dark:shadow-[0_0_10px_rgba(72,255,0,0.3)] scale-105'
+                                        : 'opacity-50 hover:opacity-70 ring-1 ring-gray-300 dark:ring-gray-600'
+                                        }`}>
+                                        <CircleFlag countryCode="us" height="24" />
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
                     </header>
 
                     <main className="w-full">
                         {step === 'selection' ? (
                             <div className="w-full">
-                                <VibeSelector onSelect={handleVibeSelect} />
+                                <VibeSelector onSelect={handleVibeSelect} language={language} />
                             </div>
                         ) : (
                             <section className="w-full bg-white dark:bg-slate-950 py-8">
@@ -398,6 +453,7 @@ export default function Home() {
                                         onBack={handleBack}
                                         onChangeVibe={handleVibeSelect}
                                         initialScaleId={scaleIdFromUrl || undefined}
+                                        language={language}
                                     />
                                 )}
                             </section>
@@ -409,7 +465,7 @@ export default function Home() {
             {/* Category Slider Container - Full Width */}
             <section className="w-full bg-white dark:bg-slate-950 py-8 mt-8">
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">입문용</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{t.categories.beginner}</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -472,7 +528,7 @@ export default function Home() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {product.name}
+                                                {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
@@ -488,7 +544,7 @@ export default function Home() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">요가명상힐링</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{t.categories.healing}</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -551,7 +607,7 @@ export default function Home() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {product.name}
+                                                {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
@@ -567,7 +623,7 @@ export default function Home() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">메이저 스케일</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{t.categories.bright}</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -630,7 +686,7 @@ export default function Home() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {product.name}
+                                                {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
@@ -646,7 +702,7 @@ export default function Home() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">딥 에스닉</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{t.categories.ethnic}</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -709,7 +765,7 @@ export default function Home() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {product.name}
+                                                {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
@@ -725,7 +781,7 @@ export default function Home() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">Case</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{t.categories.case}</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -788,7 +844,7 @@ export default function Home() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {product.name}
+                                                {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
@@ -804,7 +860,7 @@ export default function Home() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">Stand</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{t.categories.stand}</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -867,7 +923,7 @@ export default function Home() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {product.name}
+                                                {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">

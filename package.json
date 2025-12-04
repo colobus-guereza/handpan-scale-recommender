@@ -7,8 +7,7 @@
         "dev": "next dev -p 3010",
         "build": "next build",
         "start": "next start",
-        "lint": "next lint",
-        "sync": "python3 ../../../scripts/sync_handpan_data.py"
+        "lint": "next lint"
     },
     "dependencies": {
         "clsx": "^2.1.1",
@@ -16,6 +15,7 @@
         "lucide-react": "^0.378.0",
         "next": "14.2.0",
         "react": "^18",
+        "react-circle-flags": "^0.0.25",
         "react-dom": "^18",
         "swiper": "^12.0.3",
         "tailwind-merge": "^2.3.0"

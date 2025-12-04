@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "나에게 맞는 핸드팬 찾기",
+    title: "나에게 맞는 핸드팬 스케일 찾기",
     description: "국내 사용자들의 사용 후기를 기반으로 최적의 핸드팬 스케일을 추천합니다.",
 };
 
