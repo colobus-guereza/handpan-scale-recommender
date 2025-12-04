@@ -105,15 +105,15 @@ const createInitialNotes = (centerX: number, centerY: number): NoteData[] => {
             cy: 500,
             scale: 389.7,
             rotate: 90,
-            labelX: 500,
+            labelX: null,
             labelY: 514,
             labelOffset: 25,
-            symbolX: 937,
+            symbolX: 945,
             symbolY: null,
             symbolOffset: 15,
-            symbolLeftX: 354,
-            symbolLeftY: 331,
-            symbolLeftOffset: 25,
+            symbolLeftX: 59,
+            symbolLeftY: null,
+            symbolLeftOffset: 15,
             symbolBottomX: null,
             symbolBottomY: 665,
             symbolBottomOffset: 15,
@@ -212,27 +212,34 @@ const createInitialNotes = (centerX: number, centerY: number): NoteData[] => {
     const toneFieldData = storedToneFieldCalibration || defaultCalibrationData;
 
     // 저장된 라벨 캘리브레이션이 있으면 사용, 없으면 defaultCalibrationData의 라벨 값 사용
+    // 저장된 값과 기본값을 병합하여 저장된 값이 없는 속성은 기본값 사용
     const labelCalibrationMap = new Map();
+    
+    // 먼저 기본값으로 맵 초기화
+    defaultCalibrationData.forEach((item: any) => {
+        labelCalibrationMap.set(item.id, {
+            labelX: item.labelX,
+            labelY: item.labelY,
+            labelOffset: item.labelOffset,
+            symbolX: item.symbolX,
+            symbolY: item.symbolY,
+            symbolOffset: item.symbolOffset,
+            symbolLeftX: item.symbolLeftX,
+            symbolLeftY: item.symbolLeftY,
+            symbolLeftOffset: item.symbolLeftOffset,
+            symbolBottomX: item.symbolBottomX,
+            symbolBottomY: item.symbolBottomY,
+            symbolBottomOffset: item.symbolBottomOffset,
+        });
+    });
+    
+    // 저장된 값이 있으면 병합 (저장된 값이 우선, 없는 속성은 기본값 유지)
     if (storedLabelCalibration) {
         storedLabelCalibration.forEach((item: any) => {
-            labelCalibrationMap.set(item.id, item);
-        });
-    } else {
-        // 저장된 라벨 캘리브레이션이 없으면 defaultCalibrationData의 라벨 값 사용
-        defaultCalibrationData.forEach((item: any) => {
+            const defaultItem = labelCalibrationMap.get(item.id) || {};
             labelCalibrationMap.set(item.id, {
-                labelX: item.labelX,
-                labelY: item.labelY,
-                labelOffset: item.labelOffset,
-                symbolX: item.symbolX,
-                symbolY: item.symbolY,
-                symbolOffset: item.symbolOffset,
-                symbolLeftX: item.symbolLeftX,
-                symbolLeftY: item.symbolLeftY,
-                symbolLeftOffset: item.symbolLeftOffset,
-                symbolBottomX: item.symbolBottomX,
-                symbolBottomY: item.symbolBottomY,
-                symbolBottomOffset: item.symbolBottomOffset,
+                ...defaultItem,
+                ...item, // 저장된 값이 우선
             });
         });
     }
@@ -251,20 +258,20 @@ const createInitialNotes = (centerX: number, centerY: number): NoteData[] => {
             rotate: data.rotate,
             // 라벨 캘리브레이션이 있으면 사용, 없으면 기본값 사용
             // null 값도 유효한 값으로 처리 (명시적으로 null로 설정된 경우)
-            labelX: labelData?.labelX !== undefined && labelData.labelX !== null ? labelData.labelX : undefined,
-            labelY: labelData?.labelY !== undefined && labelData.labelY !== null ? labelData.labelY : undefined,
+            labelX: labelData?.labelX !== undefined ? labelData.labelX : (data.labelX !== undefined ? data.labelX : undefined),
+            labelY: labelData?.labelY !== undefined ? labelData.labelY : (data.labelY !== undefined ? data.labelY : undefined),
             labelOffset: labelData?.labelOffset !== undefined ? labelData.labelOffset : (data.labelOffset || 25),
             // 기호 텍스트 캘리브레이션 (딩만) - RS
-            symbolX: labelData?.symbolX !== undefined && labelData.symbolX !== null ? labelData.symbolX : (data.symbolX !== undefined ? data.symbolX : undefined),
-            symbolY: labelData?.symbolY !== undefined && labelData.symbolY !== null ? labelData.symbolY : (data.symbolY !== undefined ? data.symbolY : undefined),
+            symbolX: labelData?.symbolX !== undefined ? labelData.symbolX : (data.symbolX !== undefined ? data.symbolX : undefined),
+            symbolY: labelData?.symbolY !== undefined ? labelData.symbolY : (data.symbolY !== undefined ? data.symbolY : undefined),
             symbolOffset: labelData?.symbolOffset !== undefined ? labelData.symbolOffset : (data.symbolOffset !== undefined ? data.symbolOffset : undefined),
             // 기호 텍스트 캘리브레이션 (딩만) - LS
-            symbolLeftX: labelData?.symbolLeftX !== undefined && labelData.symbolLeftX !== null ? labelData.symbolLeftX : (data.symbolLeftX !== undefined ? data.symbolLeftX : undefined),
-            symbolLeftY: labelData?.symbolLeftY !== undefined && labelData.symbolLeftY !== null ? labelData.symbolLeftY : (data.symbolLeftY !== undefined ? data.symbolLeftY : undefined),
+            symbolLeftX: labelData?.symbolLeftX !== undefined ? labelData.symbolLeftX : (data.symbolLeftX !== undefined ? data.symbolLeftX : undefined),
+            symbolLeftY: labelData?.symbolLeftY !== undefined ? labelData.symbolLeftY : (data.symbolLeftY !== undefined ? data.symbolLeftY : undefined),
             symbolLeftOffset: labelData?.symbolLeftOffset !== undefined ? labelData.symbolLeftOffset : (data.symbolLeftOffset !== undefined ? data.symbolLeftOffset : undefined),
             // 기호 텍스트 캘리브레이션 (딩만) - H
-            symbolBottomX: labelData?.symbolBottomX !== undefined && labelData.symbolBottomX !== null ? labelData.symbolBottomX : (data.symbolBottomX !== undefined ? data.symbolBottomX : undefined),
-            symbolBottomY: labelData?.symbolBottomY !== undefined && labelData.symbolBottomY !== null ? labelData.symbolBottomY : (data.symbolBottomY !== undefined ? data.symbolBottomY : undefined),
+            symbolBottomX: labelData?.symbolBottomX !== undefined ? labelData.symbolBottomX : (data.symbolBottomX !== undefined ? data.symbolBottomX : undefined),
+            symbolBottomY: labelData?.symbolBottomY !== undefined ? labelData.symbolBottomY : (data.symbolBottomY !== undefined ? data.symbolBottomY : undefined),
             symbolBottomOffset: labelData?.symbolBottomOffset !== undefined ? labelData.symbolBottomOffset : (data.symbolBottomOffset !== undefined ? data.symbolBottomOffset : undefined),
         };
     });
@@ -343,9 +350,10 @@ const ToneField: React.FC<ToneFieldProps> = ({ note, isSelected, onSelect }) => 
         onSelect();
     };
 
-    // 선택된 노트는 빨간색 테두리, 기본은 황동 톤에 맞는 테두리
-    const strokeColor = isSelected ? '#ef4444' : '#5E4B32';
-    const strokeWidth = isSelected ? '3' : '1';
+    // 선택된 노트는 빨간색 테두리, 기본은 stroke 제거하여 그라데이션만으로 자연스러운 블렌딩
+    const strokeColor = isSelected ? '#ef4444' : 'none';
+    const strokeWidth = isSelected ? '3' : '0';
+    const strokeOpacity = isSelected ? '1' : '0';
 
     // 상태에 따른 transform과 filter
     // Active 상태: scale(0.98) + brightness(1.25) sepia(0.2)
@@ -388,7 +396,8 @@ const ToneField: React.FC<ToneFieldProps> = ({ note, isSelected, onSelect }) => 
                 fill={currentFill}
                 stroke={strokeColor}
                 strokeWidth={strokeWidth}
-                className="dark:stroke-slate-300 tone-field-ellipse"
+                strokeOpacity={strokeOpacity}
+                className="tone-field-ellipse"
                 style={{
                     filter: activeFilter,
                     transition: activeTransition,
@@ -419,7 +428,7 @@ const ToneField: React.FC<ToneFieldProps> = ({ note, isSelected, onSelect }) => 
                     rx={baseRx}
                     ry={baseRy}
                     fill="none"
-                    stroke="#FFD700"
+                    stroke="#90EE90"
                     strokeWidth="4"
                     className="sound-ripple"
                     style={{
@@ -467,7 +476,7 @@ const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected
             y={labelY}
             textAnchor="middle"
             dominantBaseline="hanging"
-            fill={isSelected ? "#ef4444" : "#C2A164"}
+            fill={isSelected ? "#ef4444" : "#F5E8E0"}
             fontSize={fontSize}
             fontWeight="bold"
             opacity={isSelected ? "1" : "0.9"}
@@ -597,21 +606,21 @@ export default function MiniDigiPan() {
                 console.error('Failed to save tonefield calibration to localStorage:', error);
             }
             
-            // 라벨 캘리브레이션 자동 저장
+            // 라벨 캘리브레이션 자동 저장 (null 값도 명시적으로 저장)
             const labelData = updatedNotes.map((note) => ({
                 id: note.id,
                 label: note.label,
-                labelX: note.labelX !== undefined && note.labelX !== null ? note.labelX : null,
-                labelY: note.labelY !== undefined && note.labelY !== null ? note.labelY : null,
-                labelOffset: note.labelOffset || 25,
-                symbolX: note.symbolX !== undefined && note.symbolX !== null ? note.symbolX : null,
-                symbolY: note.symbolY !== undefined && note.symbolY !== null ? note.symbolY : null,
+                labelX: note.labelX !== undefined ? note.labelX : null,
+                labelY: note.labelY !== undefined ? note.labelY : null,
+                labelOffset: note.labelOffset !== undefined ? note.labelOffset : 25,
+                symbolX: note.symbolX !== undefined ? note.symbolX : null,
+                symbolY: note.symbolY !== undefined ? note.symbolY : null,
                 symbolOffset: note.symbolOffset !== undefined ? note.symbolOffset : null,
-                symbolLeftX: note.symbolLeftX !== undefined && note.symbolLeftX !== null ? note.symbolLeftX : null,
-                symbolLeftY: note.symbolLeftY !== undefined && note.symbolLeftY !== null ? note.symbolLeftY : null,
+                symbolLeftX: note.symbolLeftX !== undefined ? note.symbolLeftX : null,
+                symbolLeftY: note.symbolLeftY !== undefined ? note.symbolLeftY : null,
                 symbolLeftOffset: note.symbolLeftOffset !== undefined ? note.symbolLeftOffset : null,
-                symbolBottomX: note.symbolBottomX !== undefined && note.symbolBottomX !== null ? note.symbolBottomX : null,
-                symbolBottomY: note.symbolBottomY !== undefined && note.symbolBottomY !== null ? note.symbolBottomY : null,
+                symbolBottomX: note.symbolBottomX !== undefined ? note.symbolBottomX : null,
+                symbolBottomY: note.symbolBottomY !== undefined ? note.symbolBottomY : null,
                 symbolBottomOffset: note.symbolBottomOffset !== undefined ? note.symbolBottomOffset : null,
             }));
             try {
@@ -795,50 +804,52 @@ export default function MiniDigiPan() {
                     >
                         {/* 핸드팬 몸체 - 그라데이션 정의 */}
                         <defs>
-                            {/* 핸드팬 몸체 - 황동(Brass) 금속 질감 그라데이션 */}
+                            {/* 핸드팬 몸체 - 따뜻하고 은은한 파스텔 로즈-코퍼(Soft Pastel Rose-Copper) 금속 질감 그라데이션 */}
                             <radialGradient id="bodyMetalGradient" cx="50%" cy="45%" r="55%" fx="50%" fy="45%">
-                                <stop offset="0%" stopColor="#C2A164" />
-                                <stop offset="70%" stopColor="#5E4B32" />
-                                <stop offset="100%" stopColor="#2A2115" />
+                                <stop offset="0%" stopColor="#C2A89C" />
+                                <stop offset="60%" stopColor="#9C8479" />
+                                <stop offset="100%" stopColor="#3D2E29" />
                             </radialGradient>
 
-                            {/* 톤필드 - 황동(Brass) 금속 질감 그라데이션 */}
-                            <radialGradient id="toneFieldMetalGradient" cx="50%" cy="50%" r="65%" fx="30%" fy="30%">
-                                <stop offset="0%" stopColor="#F7EED6" />
-                                <stop offset="35%" stopColor="#C2A164" />
-                                <stop offset="85%" stopColor="#5E4B32" />
-                                <stop offset="100%" stopColor="#423422" />
+                            {/* 톤필드 - 따뜻하고 은은한 파스텔 로즈-코퍼(Soft Pastel Rose-Copper) 금속 질감 그라데이션 (반투명 엣지로 몸체와 자연스러운 블렌딩) */}
+                            <radialGradient id="toneFieldMetalGradient" cx="50%" cy="50%" r="75%" fx="30%" fy="30%">
+                                <stop offset="0%" stopColor="#F5E8E0" />
+                                <stop offset="25%" stopColor="#D4B8A8" />
+                                <stop offset="50%" stopColor="#B89685" />
+                                <stop offset="90%" stopColor="#7A5F52" />
+                                <stop offset="100%" stopColor="#3D2E29" stopOpacity="0.4" />
                             </radialGradient>
 
-                            {/* 딤플 - 황동(Brass) 딤플 그라데이션 */}
+                            {/* 딤플 - 따뜻하고 은은한 파스텔 로즈-코퍼(Soft Pastel Rose-Copper) 딤플 그라데이션 */}
                             <radialGradient id="dimpleGradient" cx="50%" cy="50%" r="50%">
-                                <stop offset="0%" stopColor="#423422" />
-                                <stop offset="100%" stopColor="#5E4B32" />
+                                <stop offset="0%" stopColor="#3D2E29" />
+                                <stop offset="100%" stopColor="#7A5F52" />
                             </radialGradient>
 
                             {/* 림(Rim) - 평평한 금속 테두리 그라데이션 */}
                             <radialGradient id="rimGradient" cx="50%" cy="50%" r="50%">
-                                <stop offset="85%" stopColor="#4A3B2A" />
-                                <stop offset="95%" stopColor="#8C7D64" />
-                                <stop offset="100%" stopColor="#2A2115" />
+                                <stop offset="85%" stopColor="#8B6F62" />
+                                <stop offset="95%" stopColor="#A6897A" />
+                                <stop offset="100%" stopColor="#2F241F" />
                             </radialGradient>
 
                             {/* 호환성을 위한 기존 그라데이션 ID 유지 */}
                             <radialGradient id="handpanGradient" cx="50%" cy="45%" r="55%" fx="50%" fy="45%">
-                                <stop offset="0%" stopColor="#C2A164" />
-                                <stop offset="70%" stopColor="#5E4B32" />
-                                <stop offset="100%" stopColor="#2A2115" />
+                                <stop offset="0%" stopColor="#C2A89C" />
+                                <stop offset="60%" stopColor="#9C8479" />
+                                <stop offset="100%" stopColor="#3D2E29" />
                             </radialGradient>
                             <radialGradient id="handpanGradientDark" cx="50%" cy="45%" r="55%" fx="50%" fy="45%">
-                                <stop offset="0%" stopColor="#C2A164" />
-                                <stop offset="70%" stopColor="#5E4B32" />
-                                <stop offset="100%" stopColor="#2A2115" />
+                                <stop offset="0%" stopColor="#C2A89C" />
+                                <stop offset="60%" stopColor="#9C8479" />
+                                <stop offset="100%" stopColor="#3D2E29" />
                             </radialGradient>
                             <radialGradient id="noteGradient" cx="50%" cy="50%" r="65%" fx="30%" fy="30%">
-                                <stop offset="0%" stopColor="#F7EED6" />
-                                <stop offset="35%" stopColor="#C2A164" />
-                                <stop offset="85%" stopColor="#5E4B32" />
-                                <stop offset="100%" stopColor="#423422" />
+                                <stop offset="0%" stopColor="#F5E8E0" />
+                                <stop offset="25%" stopColor="#D4B8A8" />
+                                <stop offset="50%" stopColor="#B89685" />
+                                <stop offset="90%" stopColor="#7A5F52" />
+                                <stop offset="100%" stopColor="#3D2E29" />
                             </radialGradient>
 
                             <filter id="handpanShadow">
@@ -871,7 +882,7 @@ export default function MiniDigiPan() {
                             cy={centerY}
                             r="480"
                             fill="url(#bodyMetalGradient)"
-                            stroke="#261E14"
+                            stroke="#3D2E29"
                             strokeWidth="1"
                             style={{
                                 transition: 'all 0.3s ease',
