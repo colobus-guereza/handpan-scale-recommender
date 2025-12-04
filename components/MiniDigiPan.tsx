@@ -1256,11 +1256,86 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
 
                 {/* 패널 컨테이너 */}
                 <div
-                    className="w-full flex flex-col md:flex-row gap-4 panel-container"
+                    className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 panel-container"
                     onClick={(e) => e.stopPropagation()}
                 >
+                    {/* 템플릿 선택 패널 */}
+                    <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
+                        <div className="p-4">
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-4">
+                                템플릿
+                            </h3>
+                            <div className="space-y-2">
+                                <label className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <input
+                                        type="radio"
+                                        name="template"
+                                        value="9-notes"
+                                        defaultChecked
+                                        className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                                    />
+                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">9 Notes</span>
+                                </label>
+                                <label className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <input
+                                        type="radio"
+                                        name="template"
+                                        value="10-notes"
+                                        className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                                    />
+                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">10 Notes</span>
+                                </label>
+                                <label className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <input
+                                        type="radio"
+                                        name="template"
+                                        value="11-notes"
+                                        className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                                    />
+                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">11 Notes</span>
+                                </label>
+                                <label className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <input
+                                        type="radio"
+                                        name="template"
+                                        value="12-notes"
+                                        className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                                    />
+                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">12 Notes</span>
+                                </label>
+                                <label className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <input
+                                        type="radio"
+                                        name="template"
+                                        value="14-notes"
+                                        className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                                    />
+                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">14 Notes</span>
+                                </label>
+                                <label className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <input
+                                        type="radio"
+                                        name="template"
+                                        value="15-notes"
+                                        className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                                    />
+                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">15 Notes</span>
+                                </label>
+                                <label className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <input
+                                        type="radio"
+                                        name="template"
+                                        value="18-notes"
+                                        className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                                    />
+                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">18 Notes</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
                     {/* 톤필드 캘리브레이션 패널 */}
-                    <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
+                    <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
                         <div
                             className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                             onClick={(e) => {
@@ -1433,7 +1508,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                     </div>
 
                     {/* 라벨 캘리브레이션 패널 */}
-                    <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
+                    <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
                         <div
                             className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                             onClick={(e) => {
@@ -1724,7 +1799,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                     </div>
                     
                     {/* 피치 캘리브레이션 패널 */}
-                    <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
+                    <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
                         <div
                             className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                             onClick={(e) => {
