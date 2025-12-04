@@ -747,7 +747,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
             </div>
 
             {/* MiniDigiPan 컴포넌트 */}
-            {showMiniDigiPan && <MiniDigiPan key={miniDigiPanKey} />}
+            {showMiniDigiPan && <MiniDigiPan key={miniDigiPanKey} scale={currentScale} language={language} />}
 
             {/* 스케일 분류기준 및 전체 스케일 토글 버튼 */}
             <div className="flex flex-wrap items-center justify-end gap-4 mb-4">

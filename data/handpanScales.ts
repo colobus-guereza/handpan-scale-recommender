@@ -461,11 +461,11 @@ export const SCALES: Scale[] = [
         ownUrl: "https://handpan.co.kr/shop/?idx=91"
     },
 
-    // 21. C Rasavali 9
+    // 21. C Rasavali 10
     {
-        id: "c_rasavali_9",
-        name: "C Rasavali 9",
-        nameEn: "C Rasavali 9",
+        id: "c_rasavali_10",
+        name: "C Rasavali 10",
+        nameEn: "C Rasavali 10",
         notes: {
             ding: "C3",
             top: ["G3", "Ab3", "C4", "D4", "E4", "F4", "G4", "Ab4", "C5"],
@@ -548,7 +548,7 @@ export const SCALES: Scale[] = [
         nameEn: "C Yunsl 9",
         notes: {
             ding: "C3",
-            top: ["C4", "D4", "E4", "F4", "G4", "B4", "C5"],
+            top: ["C4", "D4", "E4", "F4", "G4", "B4", "C5", "D5"],
             bottom: []
         },
         vector: { minorMajor: 0.8, pureSpicy: 0.1, rarePopular: 0.5 },

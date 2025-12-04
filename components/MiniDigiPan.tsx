@@ -2,6 +2,8 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { useTheme } from './ThemeProvider';
+import { Scale } from '../data/handpanScales';
+import { TRANSLATIONS, Language } from '../constants/translations';
 
 // 톤필드 가로세로 비율 상수
 const TONEFIELD_RATIO_X = 0.3;  // 가로 반지름 비율
@@ -48,6 +50,47 @@ interface NoteData {
 // 시계 각도를 SVG 각도로 변환하는 헬퍼 함수
 const clockToSvgAngle = (clockAngle: number): number => {
     return ((clockAngle - 90 + 360) % 360);
+};
+
+// 피치 문자열을 비교하는 헬퍼 함수 (낮은 피치부터 정렬)
+const comparePitch = (a: string, b: string): number => {
+    // 숫자 추출 (옥타브)
+    const aNum = parseInt(a.match(/\d+/)?.[0] || '0');
+    const bNum = parseInt(b.match(/\d+/)?.[0] || '0');
+    
+    // 옥타브가 다르면 옥타브로 비교
+    if (aNum !== bNum) return aNum - bNum;
+    
+    // 옥타브가 같으면 알파벳 부분 비교
+    const aNote = a.replace(/\d+/g, '').trim();
+    const bNote = b.replace(/\d+/g, '').trim();
+    
+    // 음표 순서 정의 (C, C#, D, D#, E, F, F#, G, G#, A, A#, B)
+    const noteOrder: { [key: string]: number } = {
+        'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3,
+        'E': 4, 'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8,
+        'A': 9, 'A#': 10, 'Bb': 10, 'B': 11
+    };
+    
+    // 알파벳 부분에서 음표 추출 (예: "A3" -> "A", "Bb3" -> "Bb")
+    const getNoteValue = (noteStr: string): number => {
+        // # 또는 b이 포함된 경우
+        if (noteStr.includes('#') || noteStr.includes('b')) {
+            const match = noteStr.match(/^([A-G][#b]?)/);
+            if (match) {
+                const note = match[1];
+                return noteOrder[note] ?? 999;
+            }
+        }
+        // 단순 알파벳인 경우
+        const singleNote = noteStr.charAt(0);
+        return noteOrder[singleNote] ?? 999;
+    };
+    
+    const aValue = getNoteValue(aNote);
+    const bValue = getNoteValue(bNote);
+    
+    return aValue - bValue;
 };
 
 // 톤필드 사이즈 계산 헬퍼 함수
@@ -493,10 +536,25 @@ const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected
     );
 };
 
-export default function MiniDigiPan() {
+interface MiniDigiPanProps {
+    scale?: Scale | null;
+    language?: Language;
+}
+
+export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiPanProps) {
     const { theme } = useTheme();
+    const t = TRANSLATIONS[language];
     const centerX = 500;
     const centerY = 500;
+
+    // 스케일이 9개음 템플릿에 맞는지 확인
+    const isCompatibleScale = useMemo(() => {
+        if (!scale) return false;
+        // 스케일 이름에 '9'가 있거나, Top 노트 개수가 8이고 bottom 노트 개수가 0인 경우
+        const hasNineInName = scale.name.includes('9');
+        const isEightTopZeroBottom = scale.notes.top.length === 8 && scale.notes.bottom.length === 0;
+        return hasNineInName || isEightTopZeroBottom;
+    }, [scale]);
 
     // 초기 노트 데이터를 useState로 관리
     const [notes, setNotes] = useState<NoteData[]>(() => createInitialNotes(centerX, centerY));
@@ -784,12 +842,14 @@ export default function MiniDigiPan() {
             onClick={handleOutsideClick}
         >
             <div className="flex flex-col gap-4">
-                {/* 스케일 이름 */}
-                <div className="w-full max-w-[600px] mx-auto text-center">
-                    <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                        D Kurd 9
-                    </h2>
-                </div>
+                {/* 스케일 이름 - 항상 표시 */}
+                {scale && (
+                    <div className="w-full max-w-[600px] mx-auto text-center">
+                        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                            {scale.name}
+                        </h2>
+                    </div>
+                )}
                 
                 {/* 핸드팬 SVG 영역 */}
                 <div
@@ -1100,20 +1160,34 @@ export default function MiniDigiPan() {
                         
                         {/* 피치 텍스트 렌더링 (모든 노트, 톤필드 회전과 독립적) */}
                         {notes.map((note) => {
-                            // 피치 텍스트 라벨 매핑 (1~8번 노트)
-                            const pitchLabels: { [key: number]: string } = {
-                                0: 'D3',
-                                1: 'A',
-                                2: 'Bb',
-                                3: 'C4',
-                                4: 'D',
-                                5: 'E',
-                                6: 'F',
-                                7: 'G',
-                                8: 'A',
-                            };
+                            // 스케일 데이터에서 피치 가져오기
+                            let pitchLabel: string | null = null;
                             
-                            const pitchLabel = pitchLabels[note.id];
+                            if (isCompatibleScale && scale) {
+                                if (note.id === 0) {
+                                    // 딩은 notes.ding에서 가져오기
+                                    pitchLabel = scale.notes.ding;
+                                } else if (note.id >= 1 && note.id <= 8) {
+                                    // Top 노트를 낮은 피치부터 정렬하여 1-8에 배치
+                                    const sortedTopNotes = [...scale.notes.top].sort(comparePitch);
+                                    pitchLabel = sortedTopNotes[note.id - 1] || null;
+                                }
+                            } else {
+                                // 스케일이 없거나 호환되지 않으면 기본값 사용
+                                const defaultPitchLabels: { [key: number]: string } = {
+                                    0: 'D3',
+                                    1: 'A',
+                                    2: 'Bb',
+                                    3: 'C4',
+                                    4: 'D',
+                                    5: 'E',
+                                    6: 'F',
+                                    7: 'G',
+                                    8: 'A',
+                                };
+                                pitchLabel = defaultPitchLabels[note.id] || null;
+                            }
+                            
                             if (!pitchLabel) return null;
                             
                             const cx = note.cx || 500;
@@ -1157,6 +1231,26 @@ export default function MiniDigiPan() {
                                 </g>
                             );
                         })}
+                        
+                        {/* 호환되지 않는 스케일일 경우 중앙에 '구현 예정' 메시지 표시 */}
+                        {scale && !isCompatibleScale && (
+                            <text
+                                x={centerX}
+                                y={centerY}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                fill="#ffffff"
+                                fontSize="48"
+                                fontWeight="bold"
+                                fontFamily="system-ui, -apple-system, sans-serif"
+                                style={{
+                                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.8)',
+                                    pointerEvents: 'none',
+                                }}
+                            >
+                                {t.scaleList.implementationPending}
+                            </text>
+                        )}
                     </svg>
                 </div>
 

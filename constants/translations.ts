@@ -42,7 +42,8 @@ export const TRANSLATIONS = {
             spicy: '화려함',
             rare: '희소함',
             popular: '대중적',
-            digiPan: '디지팬'
+            digiPan: '디지팬',
+            implementationPending: '구현 예정'
         },
         categories: {
             beginner: '입문용',
@@ -111,7 +112,8 @@ export const TRANSLATIONS = {
             spicy: 'Spicy',
             rare: 'Rare',
             popular: 'Popular',
-            digiPan: 'DigiPan'
+            digiPan: 'DigiPan',
+            implementationPending: 'Implementation Pending'
         },
         categories: {
             beginner: 'Beginner',
