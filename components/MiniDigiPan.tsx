@@ -13,7 +13,7 @@ const TONEFIELD_RATIO_Y = 0.425; // 세로 반지름 비율
 interface NoteData {
     id: number;
     label: string;
-    position: 'center' | 'top';
+    position: 'center' | 'top' | 'bottom';
     angle: number; // degree (시계 12시 방향을 0도로 기준, 시계방향 진행)
     radius?: number; // 중앙에서의 거리
     // 캘리브레이션 가능한 속성들
@@ -382,6 +382,146 @@ const createInitialNotes = (centerX: number, centerY: number, templateCount: num
             ];
         }
 
+        // 11 Notes 템플릿 기본값 (중앙 딩 1개 + Top 8개 + 림 바깥 좌우 딩 2개)
+        if (count === 11) {
+            return [
+                // 중앙 딩
+                {
+                    id: 0,
+                    label: '3',
+                    cx: 500,
+                    cy: 500,
+                    scale: 389.7,
+                    rotate: 90,
+                    labelX: null,
+                    labelY: 514,
+                    labelOffset: 25,
+                    symbolX: 945,
+                    symbolY: null,
+                    symbolOffset: 15,
+                    symbolLeftX: 59,
+                    symbolLeftY: null,
+                    symbolLeftOffset: 15,
+                    symbolBottomX: null,
+                    symbolBottomY: 665,
+                    symbolBottomOffset: 15,
+                },
+                // Top 노트 1-8 (11 템플릿에서는 4-11으로 표시)
+                {
+                    id: 1,
+                    label: '4',
+                    cx: 661,
+                    cy: 779,
+                    scale: 286,
+                    rotate: 121,
+                    labelX: null,
+                    labelY: 886,
+                    labelOffset: 25,
+                },
+                {
+                    id: 2,
+                    label: '5',
+                    cx: 335,
+                    cy: 776,
+                    scale: 285,
+                    rotate: 61,
+                    labelX: null,
+                    labelY: 884,
+                    labelOffset: 25,
+                },
+                {
+                    id: 3,
+                    label: '6',
+                    cx: 813,
+                    cy: 595,
+                    scale: 253,
+                    rotate: 128,
+                    labelX: null,
+                    labelY: 697,
+                    labelOffset: 25,
+                },
+                {
+                    id: 4,
+                    label: '7',
+                    cx: 195,
+                    cy: 594,
+                    scale: 249,
+                    rotate: 47,
+                    labelX: null,
+                    labelY: 699,
+                    labelOffset: 25,
+                },
+                {
+                    id: 5,
+                    label: '8',
+                    cx: 808,
+                    cy: 358,
+                    scale: 237,
+                    rotate: 55,
+                    labelX: null,
+                    labelY: 453,
+                    labelOffset: 25,
+                },
+                {
+                    id: 6,
+                    label: '9',
+                    cx: 204,
+                    cy: 366,
+                    scale: 238,
+                    rotate: 125,
+                    labelX: null,
+                    labelY: 458,
+                    labelOffset: 25,
+                },
+                {
+                    id: 7,
+                    label: '10',
+                    cx: 630,
+                    cy: 201,
+                    scale: 226,
+                    rotate: 48,
+                    labelX: null,
+                    labelY: 295,
+                    labelOffset: 25,
+                },
+                {
+                    id: 8,
+                    label: '11',
+                    cx: 363,
+                    cy: 200,
+                    scale: 232,
+                    rotate: 133,
+                    labelX: null,
+                    labelY: 295,
+                    labelOffset: 25,
+                },
+                // 림 바깥 좌측 딩
+                {
+                    id: 10,
+                    label: '1',
+                    cx: 150,
+                    cy: 500,
+                    scale: 300,
+                    rotate: 90,
+                    labelX: null,
+                    labelY: null,
+                    labelOffset: 25,
+                },
+                // 림 바깥 우측 딩
+                {
+                    id: 11,
+                    label: '2',
+                    cx: 850,
+                    cy: 500,
+                    scale: 300,
+                    rotate: 90,
+                    labelX: null,
+                    labelY: null,
+                    labelOffset: 25,
+                },
+            ];
+        }
+
         // 기본값은 9 Notes
         return default9Notes;
     };
@@ -432,7 +572,7 @@ const createInitialNotes = (centerX: number, centerY: number, templateCount: num
         return {
             id: data.id,
             label: data.label,
-            position: data.id === 0 ? 'center' : 'top',
+            position: data.id === 0 ? 'center' : (data.id === 10 || data.id === 11 ? 'bottom' : 'top'),
             angle: 0, // angle은 더 이상 사용하지 않지만 호환성을 위해 유지
             cx: data.cx,
             cy: data.cy,
@@ -464,10 +604,11 @@ interface ToneFieldProps {
     note: NoteData;
     isSelected: boolean;
     onSelect: () => void;
+    isCalibrationEnabled?: boolean;
 }
 
 // 톤필드 컴포넌트
-const ToneField: React.FC<ToneFieldProps> = ({ note, isSelected, onSelect }) => {
+const ToneField: React.FC<ToneFieldProps> = ({ note, isSelected, onSelect, isCalibrationEnabled = true }) => {
     const [isHovered, setIsHovered] = useState(false);
     const [isActive, setIsActive] = useState(false);
     const [triggerRipple, setTriggerRipple] = useState(false);
@@ -499,12 +640,15 @@ const ToneField: React.FC<ToneFieldProps> = ({ note, isSelected, onSelect }) => 
     const handleMouseUp = (e: React.MouseEvent) => {
         e.stopPropagation();
         setIsActive(false);
-        // 리플 효과 트리거
+        // 리플 효과 트리거 (캘리브레이션 Off일 때도 유지)
         setTriggerRipple(true);
         setTimeout(() => {
             setTriggerRipple(false);
         }, 800); // 애니메이션 시간(0.8s) 후 리플 제거
-        onSelect();
+        // 캘리브레이션 On일 때만 선택
+        if (isCalibrationEnabled) {
+            onSelect();
+        }
     };
 
     const handleMouseEnter = () => {
@@ -632,9 +776,10 @@ interface LabelProps {
     rotate: number;
     isSelected: boolean;
     onSelect: () => void;
+    activeTemplateCount?: number;
 }
 
-const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected, onSelect }) => {
+const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected, onSelect, isCalibrationEnabled = true, activeTemplateCount = 9 }) => {
     const cx = note.cx || 500;
     const cy = note.cy || 500;
 
@@ -648,8 +793,24 @@ const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected
     const fontSize = 28.8;
 
     const handleClick = (e: React.MouseEvent) => {
+        if (!isCalibrationEnabled) return;
         e.stopPropagation();
         onSelect();
+    };
+
+    // 11 템플릿일 때 label 매핑
+    const getDisplayLabel = (): string => {
+        if (activeTemplateCount === 11) {
+            // 11 템플릿 매핑: 왼쪽 하판 딩(10) → "1", 우측 하판 딩(11) → "2", 가운데 딩(0) → "3", Top 노트(1-8) → "4-11"
+            if (note.id === 10) return '1';
+            if (note.id === 11) return '2';
+            if (note.id === 0) return '3';
+            if (note.id >= 1 && note.id <= 8) {
+                return String(note.id + 3); // 1→4, 2→5, ..., 8→11
+            }
+        }
+        // 그 외의 경우 기본 label 사용
+        return note.label;
     };
 
     return (
@@ -670,7 +831,7 @@ const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected
             }}
             onClick={handleClick}
         >
-            {note.label}
+            {getDisplayLabel()}
         </text>
     );
 };
@@ -691,8 +852,16 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
         if (!scale) return false;
         const totalNotes = scale.notes.top.length + scale.notes.bottom.length + 1; // 딩 + Top + Bottom
         const supportedCounts = [9, 10, 11, 12, 14, 15, 18];
-        // 지원되는 노트 개수와 일치하고, bottom이 0이거나 템플릿이 지원하는 경우
-        return supportedCounts.includes(totalNotes) && scale.notes.bottom.length === 0;
+        // 지원되는 노트 개수와 일치하는 경우
+        if (!supportedCounts.includes(totalNotes)) return false;
+        
+        // 11 notes 템플릿: 딩 1개 + Top 8개 + Bottom 2개
+        if (totalNotes === 11) {
+            return scale.notes.top.length === 8 && scale.notes.bottom.length === 2;
+        }
+        
+        // 그 외 템플릿: bottom이 0이어야 함
+        return scale.notes.bottom.length === 0;
     }, [scale]);
 
     // 템플릿 선택 상태 (다른 상태보다 먼저 선언되어야 함)
@@ -705,7 +874,14 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
         }
         // 템플릿이 선택되지 않았을 때는 스케일 호환성에 따라 결정
         if (scale && isCompatibleScale) {
-            return scale.notes.top.length + 1; // 딩 + Top 노트 개수
+            // 총 노트 개수 계산 (딩 + Top + Bottom)
+            const totalNotes = scale.notes.top.length + scale.notes.bottom.length + 1;
+            // 11개 음 스케일의 경우 11 템플릿으로 설정
+            if (totalNotes === 11) {
+                return 11;
+            }
+            // 그 외의 경우 딩 + Top 노트 개수
+            return scale.notes.top.length + 1;
         }
         return 9; // 기본값
     }, [selectedTemplate, scale, isCompatibleScale]);
@@ -726,6 +902,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
     const [isToneFieldPanelExpanded, setIsToneFieldPanelExpanded] = useState<boolean>(false);
     const [isLabelPanelExpanded, setIsLabelPanelExpanded] = useState<boolean>(false);
     const [isPitchPanelExpanded, setIsPitchPanelExpanded] = useState<boolean>(false);
+    const [isCalibrationEnabled, setIsCalibrationEnabled] = useState<boolean>(true);
 
     // 선택된 노트를 useMemo로 메모이제이션하여 notes 변경 시 자동 업데이트
     const selectedNote = useMemo(() => {
@@ -1036,7 +1213,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                     onClick={(e) => e.stopPropagation()}
                 >
                     <svg
-                        viewBox="0 0 1000 1000"
+                        viewBox="-400 -400 1800 1800"
                         className="w-full h-full"
                         xmlns="http://www.w3.org/2000/svg"
                         onClick={(e) => e.stopPropagation()}
@@ -1104,6 +1281,20 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                             </filter>
                         </defs>
 
+                        {/* 캘리브레이션 영역 외곽선 표시 (캘리브레이션 On일 때만 표시) */}
+                        <rect
+                            x="-400"
+                            y="-400"
+                            width="1800"
+                            height="1800"
+                            fill="none"
+                            stroke="#1E40AF"
+                            strokeWidth="3"
+                            strokeDasharray="10,5"
+                            opacity={isCalibrationEnabled ? "0.9" : "0"}
+                            className="dark:stroke-blue-300"
+                        />
+
                         {/* 핸드팬 림(Rim) - 가장 아래 레이어 */}
                         <circle
                             cx={centerX}
@@ -1131,9 +1322,9 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
 
                         {/* 가이드라인 - 원 중앙을 가로지르는 가로선과 세로선 */}
                         <line
-                            x1="0"
+                            x1="-400"
                             y1={centerY}
-                            x2="1000"
+                            x2="1400"
                             y2={centerY}
                             stroke="#ffffff"
                             strokeWidth="1"
@@ -1143,9 +1334,9 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                         />
                         <line
                             x1={centerX}
-                            y1="0"
+                            y1="-400"
                             x2={centerX}
-                            y2="1000"
+                            y2="1400"
                             stroke="#ffffff"
                             strokeWidth="1"
                             strokeDasharray="5,5"
@@ -1166,6 +1357,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                         note={note}
                                         isSelected={note.id === selectedNoteId}
                                         onSelect={() => setSelectedNoteId(note.id)}
+                                        isCalibrationEnabled={isCalibrationEnabled}
                                     />
                                     <ToneFieldLabel
                                         note={note}
@@ -1179,6 +1371,8 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                             setSelectedLeftSymbolId(null); // LS 선택 해제
                                             setSelectedBottomSymbolId(null); // H 선택 해제
                                         }}
+                                        isCalibrationEnabled={isCalibrationEnabled}
+                                        activeTemplateCount={activeTemplateCount}
                                     />
                                 </g>
                             );
@@ -1218,11 +1412,12 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                     opacity={isSymbolSelected ? "1" : "0.9"}
                                     fontFamily="system-ui, -apple-system, sans-serif"
                                     style={{
-                                        cursor: 'pointer',
+                                        cursor: isCalibrationEnabled ? 'pointer' : 'default',
                                         transition: 'fill 0.2s ease, opacity 0.2s ease',
                                         textShadow: isSymbolSelected ? 'none' : '0 1px 2px rgba(0, 0, 0, 0.5)',
                                     }}
                                     onClick={(e) => {
+                                        if (!isCalibrationEnabled) return;
                                         e.stopPropagation();
                                         setSelectedSymbolId(0);
                                         setSelectedLabelId(null); // D 선택 해제
@@ -1269,11 +1464,12 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                     opacity={isLeftSymbolSelected ? "1" : "0.9"}
                                     fontFamily="system-ui, -apple-system, sans-serif"
                                     style={{
-                                        cursor: 'pointer',
+                                        cursor: isCalibrationEnabled ? 'pointer' : 'default',
                                         transition: 'fill 0.2s ease, opacity 0.2s ease',
                                         textShadow: isLeftSymbolSelected ? 'none' : '0 1px 2px rgba(0, 0, 0, 0.5)',
                                     }}
                                     onClick={(e) => {
+                                        if (!isCalibrationEnabled) return;
                                         e.stopPropagation();
                                         setSelectedLeftSymbolId(0);
                                         setSelectedLabelId(null); // D 선택 해제
@@ -1320,11 +1516,12 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                     opacity={isBottomSymbolSelected ? "1" : "0.9"}
                                     fontFamily="system-ui, -apple-system, sans-serif"
                                     style={{
-                                        cursor: 'pointer',
+                                        cursor: isCalibrationEnabled ? 'pointer' : 'default',
                                         transition: 'fill 0.2s ease, opacity 0.2s ease',
                                         textShadow: isBottomSymbolSelected ? 'none' : '0 1px 2px rgba(0, 0, 0, 0.5)',
                                     }}
                                     onClick={(e) => {
+                                        if (!isCalibrationEnabled) return;
                                         e.stopPropagation();
                                         setSelectedBottomSymbolId(0);
                                         setSelectedLabelId(null); // D 선택 해제
@@ -1360,8 +1557,16 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                             } else if (isCompatibleScale && scale) {
                                 // 스케일 모드: 스케일 정보와 동기화
                                 if (note.id === 0) {
-                                    // 딩은 notes.ding에서 가져오기
+                                    // 중앙 딩은 notes.ding에서 가져오기
                                     pitchLabel = scale.notes.ding;
+                                } else if (note.id === 10 || note.id === 11) {
+                                    // 림 바깥 좌우 딩 (11 템플릿): bottom 노트 사용
+                                    const bottomNotes = [...scale.notes.bottom].sort(comparePitch);
+                                    if (note.id === 10) {
+                                        pitchLabel = bottomNotes[0] || null; // 좌측 딩
+                                    } else if (note.id === 11) {
+                                        pitchLabel = bottomNotes[1] || null; // 우측 딩
+                                    }
                                 } else if (note.id >= 1) {
                                     // Top 노트를 낮은 피치부터 정렬하여 1부터 순서대로 배치 (템플릿 개수에 맞게)
                                     const sortedTopNotes = [...scale.notes.top].sort(comparePitch);
@@ -1401,10 +1606,11 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                 <g
                                     key={`pitch-${note.id}`}
                                     onClick={(e) => {
+                                        if (!isCalibrationEnabled) return;
                                         e.stopPropagation();
                                         setSelectedPitchId(note.id);
                                     }}
-                                    style={{ cursor: 'pointer' }}
+                                    style={{ cursor: isCalibrationEnabled ? 'pointer' : 'default' }}
                                 >
                                     <text
                                         x={pitchX}
@@ -1449,6 +1655,32 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                     </svg>
                 </div>
 
+                {/* 캘리브레이션 On/Off 버튼 */}
+                <div className="w-full flex justify-center mb-4">
+                    <button
+                        onClick={() => {
+                            const newValue = !isCalibrationEnabled;
+                            setIsCalibrationEnabled(newValue);
+                            // Off로 전환할 때 모든 선택 상태 초기화
+                            if (!newValue) {
+                                setSelectedNoteId(null);
+                                setSelectedLabelId(null);
+                                setSelectedSymbolId(null);
+                                setSelectedLeftSymbolId(null);
+                                setSelectedBottomSymbolId(null);
+                                setSelectedPitchId(null);
+                            }
+                        }}
+                        className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
+                            isCalibrationEnabled
+                                ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                : 'bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-white/20'
+                        }`}
+                    >
+                        캘리브레이션 {isCalibrationEnabled ? 'On' : 'Off'}
+                    </button>
+                </div>
+
                 {/* 패널 컨테이너 */}
                 <div
                     className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 panel-container"
@@ -1482,6 +1714,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                     </div>
 
                     {/* 톤필드 캘리브레이션 패널 */}
+                    {isCalibrationEnabled && (
                     <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
                         <div
                             className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
@@ -1512,8 +1745,8 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                             <div className="flex gap-2 items-center">
                                                 <input
                                                     type="range"
-                                                    min="0"
-                                                    max="1000"
+                                                    min="-400"
+                                                    max="1400"
                                                     step="1"
                                                     value={selectedNote.cx || 500}
                                                     onChange={(e) => updateNote(selectedNote.id, { cx: parseFloat(e.target.value) })}
@@ -1521,14 +1754,14 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                                 />
                                                 <input
                                                     type="number"
-                                                    min="0"
-                                                    max="1000"
+                                                    min="-400"
+                                                    max="1400"
                                                     step="0.1"
                                                     value={selectedNote.cx?.toFixed(1) || 500}
                                                     onChange={(e) => {
                                                         const value = parseFloat(e.target.value);
                                                         if (!isNaN(value)) {
-                                                            updateNote(selectedNote.id, { cx: Math.max(0, Math.min(1000, value)) });
+                                                            updateNote(selectedNote.id, { cx: Math.max(-400, Math.min(1400, value)) });
                                                         }
                                                     }}
                                                     className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
@@ -1544,8 +1777,8 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                             <div className="flex gap-2 items-center">
                                                 <input
                                                     type="range"
-                                                    min="0"
-                                                    max="1000"
+                                                    min="-400"
+                                                    max="1400"
                                                     step="1"
                                                     value={selectedNote.cy || 500}
                                                     onChange={(e) => updateNote(selectedNote.id, { cy: parseFloat(e.target.value) })}
@@ -1553,14 +1786,14 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                                 />
                                                 <input
                                                     type="number"
-                                                    min="0"
-                                                    max="1000"
+                                                    min="-400"
+                                                    max="1400"
                                                     step="0.1"
                                                     value={selectedNote.cy?.toFixed(1) || 500}
                                                     onChange={(e) => {
                                                         const value = parseFloat(e.target.value);
                                                         if (!isNaN(value)) {
-                                                            updateNote(selectedNote.id, { cy: Math.max(0, Math.min(1000, value)) });
+                                                            updateNote(selectedNote.id, { cy: Math.max(-400, Math.min(1400, value)) });
                                                         }
                                                     }}
                                                     className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
@@ -1653,8 +1886,10 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                             </div>
                         )}
                     </div>
+                    )}
 
                     {/* 라벨 캘리브레이션 패널 */}
+                    {isCalibrationEnabled && (
                     <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
                         <div
                             className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
@@ -1688,8 +1923,8 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                             <div className="flex gap-2 items-center">
                                                 <input
                                                     type="range"
-                                                    min="0"
-                                                    max="1000"
+                                                    min="-400"
+                                                    max="1400"
                                                     step="1"
                                                     value={selectedBottomSymbolId !== null
                                                         ? (selectedSymbolTextNote.symbolBottomX !== undefined && selectedSymbolTextNote.symbolBottomX !== null 
@@ -1731,8 +1966,8 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                                 />
                                                 <input
                                                     type="number"
-                                                    min="0"
-                                                    max="1000"
+                                                    min="-400"
+                                                    max="1400"
                                                     step="0.1"
                                                     value={selectedBottomSymbolId !== null
                                                         ? (selectedSymbolTextNote.symbolBottomX !== undefined && selectedSymbolTextNote.symbolBottomX !== null ? selectedSymbolTextNote.symbolBottomX.toFixed(1) : '')
@@ -1747,19 +1982,19 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                                         if (value === undefined || !isNaN(value)) {
                                                             if (selectedBottomSymbolId !== null) {
                                                                 updateNote(selectedSymbolTextNote.id, {
-                                                                    symbolBottomX: value === undefined ? undefined : Math.max(0, Math.min(1000, value))
+                                                                    symbolBottomX: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
                                                                 });
                                                             } else if (selectedLeftSymbolId !== null) {
                                                                 updateNote(selectedSymbolTextNote.id, {
-                                                                    symbolLeftX: value === undefined ? undefined : Math.max(0, Math.min(1000, value))
+                                                                    symbolLeftX: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
                                                                 });
                                                             } else if (selectedSymbolId !== null) {
                                                                 updateNote(selectedSymbolTextNote.id, {
-                                                                    symbolX: value === undefined ? undefined : Math.max(0, Math.min(1000, value))
+                                                                    symbolX: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
                                                                 });
                                                             } else {
                                                                 updateNote(selectedSymbolTextNote.id, {
-                                                                    labelX: value === undefined ? undefined : Math.max(0, Math.min(1000, value))
+                                                                    labelX: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
                                                                 });
                                                             }
                                                         }
@@ -1780,8 +2015,8 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                             <div className="flex gap-2 items-center">
                                                 <input
                                                     type="range"
-                                                    min="0"
-                                                    max="1000"
+                                                    min="-400"
+                                                    max="1400"
                                                     step="1"
                                                     value={selectedBottomSymbolId !== null
                                                         ? (selectedSymbolTextNote.symbolBottomY !== undefined && selectedSymbolTextNote.symbolBottomY !== null
@@ -1823,8 +2058,8 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                                 />
                                                 <input
                                                     type="number"
-                                                    min="0"
-                                                    max="1000"
+                                                    min="-400"
+                                                    max="1400"
                                                     step="0.1"
                                                     value={selectedBottomSymbolId !== null
                                                         ? (selectedSymbolTextNote.symbolBottomY !== undefined && selectedSymbolTextNote.symbolBottomY !== null ? selectedSymbolTextNote.symbolBottomY.toFixed(1) : '')
@@ -1839,19 +2074,19 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                                         if (value === undefined || !isNaN(value)) {
                                                             if (selectedBottomSymbolId !== null) {
                                                                 updateNote(selectedSymbolTextNote.id, {
-                                                                    symbolBottomY: value === undefined ? undefined : Math.max(0, Math.min(1000, value))
+                                                                    symbolBottomY: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
                                                                 });
                                                             } else if (selectedLeftSymbolId !== null) {
                                                                 updateNote(selectedSymbolTextNote.id, {
-                                                                    symbolLeftY: value === undefined ? undefined : Math.max(0, Math.min(1000, value))
+                                                                    symbolLeftY: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
                                                                 });
                                                             } else if (selectedSymbolId !== null) {
                                                                 updateNote(selectedSymbolTextNote.id, {
-                                                                    symbolY: value === undefined ? undefined : Math.max(0, Math.min(1000, value))
+                                                                    symbolY: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
                                                                 });
                                                             } else {
                                                                 updateNote(selectedSymbolTextNote.id, {
-                                                                    labelY: value === undefined ? undefined : Math.max(0, Math.min(1000, value))
+                                                                    labelY: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
                                                                 });
                                                             }
                                                         }
@@ -1944,8 +2179,10 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                             </div>
                         )}
                     </div>
+                    )}
                     
                     {/* 피치 캘리브레이션 패널 */}
+                    {isCalibrationEnabled && (
                     <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
                         <div
                             className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
@@ -1988,8 +2225,8 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                             <div className="flex gap-2 items-center">
                                                 <input
                                                     type="range"
-                                                    min="0"
-                                                    max="1000"
+                                                    min="-400"
+                                                    max="1400"
                                                     step="1"
                                                     value={selectedPitchNote.pitchTextX !== undefined ? selectedPitchNote.pitchTextX : (selectedPitchNote.cx || 500)}
                                                     onChange={(e) => updateNote(selectedPitchNote.id, { pitchTextX: parseFloat(e.target.value) })}
@@ -1997,14 +2234,14 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                                 />
                                                 <input
                                                     type="number"
-                                                    min="0"
-                                                    max="1000"
+                                                    min="-400"
+                                                    max="1400"
                                                     step="0.1"
                                                     value={(selectedPitchNote.pitchTextX !== undefined ? selectedPitchNote.pitchTextX : (selectedPitchNote.cx || 500)).toFixed(1)}
                                                     onChange={(e) => {
                                                         const value = parseFloat(e.target.value);
                                                         if (!isNaN(value)) {
-                                                            updateNote(selectedPitchNote.id, { pitchTextX: Math.max(0, Math.min(1000, value)) });
+                                                            updateNote(selectedPitchNote.id, { pitchTextX: Math.max(-400, Math.min(1400, value)) });
                                                         }
                                                     }}
                                                     className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
@@ -2020,8 +2257,8 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                             <div className="flex gap-2 items-center">
                                                 <input
                                                     type="range"
-                                                    min="0"
-                                                    max="1000"
+                                                    min="-400"
+                                                    max="1400"
                                                     step="1"
                                                     value={selectedPitchNote.pitchTextY !== undefined ? selectedPitchNote.pitchTextY : (selectedPitchNote.cy || 500)}
                                                     onChange={(e) => updateNote(selectedPitchNote.id, { pitchTextY: parseFloat(e.target.value) })}
@@ -2029,14 +2266,14 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                                 />
                                                 <input
                                                     type="number"
-                                                    min="0"
-                                                    max="1000"
+                                                    min="-400"
+                                                    max="1400"
                                                     step="0.1"
                                                     value={(selectedPitchNote.pitchTextY !== undefined ? selectedPitchNote.pitchTextY : (selectedPitchNote.cy || 500)).toFixed(1)}
                                                     onChange={(e) => {
                                                         const value = parseFloat(e.target.value);
                                                         if (!isNaN(value)) {
-                                                            updateNote(selectedPitchNote.id, { pitchTextY: Math.max(0, Math.min(1000, value)) });
+                                                            updateNote(selectedPitchNote.id, { pitchTextY: Math.max(-400, Math.min(1400, value)) });
                                                         }
                                                     }}
                                                     className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
@@ -2116,6 +2353,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                             </div>
                         )}
                     </div>
+                    )}
                 </div>
             </div>
         </div>
