@@ -652,19 +652,13 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                         {/* Share Button */}
                                         <button
                                             onClick={handleShare}
-                                            className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:shadow-lg hover:-translate-y-0.5 border border-slate-200 dark:border-slate-700 whitespace-nowrap"
+                                            className="w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-all bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:shadow-lg hover:-translate-y-0.5 border border-slate-200 dark:border-slate-700"
                                             title={t.scaleList.share}
                                         >
                                             {isCopied ? (
-                                                <>
-                                                    <Check className="w-4 h-4" />
-                                                    <span>{t.scaleList.copied}</span>
-                                                </>
+                                                <Check className="w-5 h-5" />
                                             ) : (
-                                                <>
-                                                    <Share2 className="w-4 h-4" />
-                                                    <span>{t.scaleList.share}</span>
-                                                </>
+                                                <Share2 className="w-5 h-5" />
                                             )}
                                         </button>
                                     </div>

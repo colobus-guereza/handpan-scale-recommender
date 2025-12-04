@@ -922,7 +922,7 @@ export default function Home() {
                                                     height: '100%',
                                                     display: 'block',
                                                     objectFit: 'contain',
-                                                    opacity: isSoldOut ? 0.75 : 1
+                                                    opacity: isSoldOut ? 0.7 : 1
                                                 }}
                                             />
                                             {isSoldOut && (
@@ -1010,7 +1010,7 @@ export default function Home() {
                                                     height: '100%',
                                                     display: 'block',
                                                     objectFit: 'cover',
-                                                    opacity: isSoldOut ? 0.75 : 1
+                                                    opacity: isSoldOut ? 0.7 : 1
                                                 }}
                                             />
                                             {isSoldOut && (
