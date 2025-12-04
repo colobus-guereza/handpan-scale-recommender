@@ -608,14 +608,14 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                     )}
                                 </div>
 
-                                <div className="flex items-center mb-2 gap-3 flex-nowrap md:flex-wrap">
+                                <div className="flex items-center mb-2 gap-3 flex-wrap">
                                     <h1 className="text-lg md:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight drop-shadow-sm whitespace-nowrap md:whitespace-normal truncate md:truncate-none">
                                         {currentScale.name}
                                     </h1>
                                     <span className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 text-xs font-medium self-center flex-shrink-0">
                                         {currentScale.id.includes('mutant') ? t.scaleList.mutant : t.scaleList.normal}
                                     </span>
-                                    <div className="flex gap-2">
+                                    <div className="flex gap-2 flex-shrink-0">
                                         {/* Official Mall Button */}
                                         {(() => {
                                             // currentScale의 ownUrl을 직접 참조하여 항상 최신 값 사용
@@ -627,7 +627,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                                 <a
                                                     key={`purchase-${scaleId}-${currentIndex}`}
                                                     href={purchaseUrl}
-                                                    className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 text-white hover:shadow-lg hover:-translate-y-0.5"
+                                                    className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 text-white hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap"
                                                     title={`${language === 'en' ? (currentScale.nameEn || currentScale.name) : currentScale.name} - ${t.scaleList.purchase}`}
                                                 >
                                                     <span>{t.scaleList.purchase}</span>
@@ -636,7 +636,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                                 <button
                                                     key={`purchase-disabled-${scaleId}-${currentIndex}`}
                                                     disabled
-                                                    className="px-4 py-2 rounded-lg text-sm font-medium shadow-md bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50 text-slate-500"
+                                                    className="px-4 py-2 rounded-lg text-sm font-medium shadow-md bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50 text-slate-500 whitespace-nowrap"
                                                 >
                                                     {t.scaleList.preparing}
                                                 </button>
@@ -645,7 +645,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                         {/* Share Button */}
                                         <button
                                             onClick={handleShare}
-                                            className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:shadow-lg hover:-translate-y-0.5 border border-slate-200 dark:border-slate-700"
+                                            className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:shadow-lg hover:-translate-y-0.5 border border-slate-200 dark:border-slate-700 whitespace-nowrap"
                                             title={t.scaleList.share}
                                         >
                                             {isCopied ? (

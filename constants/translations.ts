@@ -13,9 +13,9 @@ export const TRANSLATIONS = {
             back: '다시 선택',
             scaleClassification: '스케일 분류기준',
             allScales: '전체 스케일',
-            purchase: '구매하기',
+            purchase: '구매',
             preparing: '준비중',
-            share: '공유하기',
+            share: '공유',
             copied: '복사됨',
             rankRecommendation: '위 추천',
             popularScale: '인기 스케일',
@@ -48,8 +48,8 @@ export const TRANSLATIONS = {
             healing: '요가명상힐링',
             bright: '메이저 스케일',
             ethnic: '딥 에스닉',
-            case: 'Case',
-            stand: 'Stand'
+            case: '하드케이스',
+            stand: '스탠드'
         },
         tags: {
             minor: '마이너',

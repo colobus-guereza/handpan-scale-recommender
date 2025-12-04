@@ -253,8 +253,8 @@ const DEEP_ETHNIC_PRODUCTS = [
 const CASE_PRODUCTS = [
     {
         id: 1,
-        name: 'HTC Evatek 하드케이스',
-        nameEn: 'HTC Evatek Hardcase',
+        name: 'HTC Evatek M, Black',
+        nameEn: 'HTC Evatek M, Black',
         price: '484,000원',
         rating: 4.8,
         reviewCount: 120,
@@ -262,6 +262,50 @@ const CASE_PRODUCTS = [
     },
     {
         id: 2,
+        name: 'HTC Evatek M, Cayenne',
+        nameEn: 'HTC Evatek M, Cayenne',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/evatek_cayenne.png',
+        soldOut: true,
+    },
+    {
+        id: 3,
+        name: 'HTC Evatek M, Woodbine',
+        nameEn: 'HTC Evatek M, Woodbine',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/evatek_woodbine.png',
+        soldOut: true,
+    },
+    {
+        id: 4,
+        name: 'HTC Evatek M, Mustang',
+        nameEn: 'HTC Evatek M, Mustang',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/evatek_mustang.png',
+        soldOut: true,
+    },
+    {
+        id: 5,
+        name: 'HTC Evatek M, AJP',
+        nameEn: 'HTC Evatek M, AJP',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/evatek_ajp.png',
+        soldOut: true,
+    },
+];
+
+// 소프트케이스 카테고리용 제품 목록
+const SOFT_CASE_PRODUCTS = [
+    {
+        id: 1,
         name: 'Avaja 고급 소프트케이스',
         nameEn: 'Avaja Premium Softcase',
         price: '484,000원',
@@ -354,6 +398,16 @@ export default function Home() {
             url.searchParams.set('lang', lang);
             window.history.pushState({}, '', url.toString());
         }
+    };
+
+    // 가격 포맷 변환 함수
+    const formatPrice = (price: string): string => {
+        if (language === 'en') {
+            // "2,860,000원" -> "KRW 2,860,000"
+            return price.replace('원', '').trim() ? `KRW ${price.replace('원', '').trim()}` : price;
+        }
+        // 한글 모드: 그대로 반환
+        return price;
     };
 
     useEffect(() => {
@@ -532,7 +586,7 @@ export default function Home() {
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
-                                                    {product.price}
+                                                    {formatPrice(product.price)}
                                                 </span>
                                             </div>
                                         </div>
@@ -611,7 +665,7 @@ export default function Home() {
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
-                                                    {product.price}
+                                                    {formatPrice(product.price)}
                                                 </span>
                                             </div>
                                         </div>
@@ -690,7 +744,7 @@ export default function Home() {
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
-                                                    {product.price}
+                                                    {formatPrice(product.price)}
                                                 </span>
                                             </div>
                                         </div>
@@ -769,7 +823,7 @@ export default function Home() {
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
-                                                    {product.price}
+                                                    {formatPrice(product.price)}
                                                 </span>
                                             </div>
                                         </div>
@@ -808,6 +862,93 @@ export default function Home() {
                         className="mySwiper !pb-10 !px-2"
                     >
                         {CASE_PRODUCTS.map((product) => {
+                            const productUrl = getProductUrl(product.name);
+                            const isSoldOut = (product as any).soldOut || false;
+
+                            return (
+                                <SwiperSlide key={product.id}>
+                                    <div
+                                        className={`flex flex-col group ${isSoldOut ? 'cursor-default' : 'cursor-pointer'}`}
+                                        onClick={() => {
+                                            if (!isSoldOut && productUrl) {
+                                                window.open(productUrl, '_top');
+                                            }
+                                        }}
+                                    >
+                                        <div
+                                            className="relative overflow-hidden rounded-xl bg-white mb-5"
+                                            style={{
+                                                width: '100%',
+                                                aspectRatio: '1 / 1',
+                                                minHeight: '200px'
+                                            }}
+                                        >
+                                            <img
+                                                src={product.image}
+                                                alt={product.name}
+                                                loading="lazy"
+                                                decoding="async"
+                                                className={`w-full h-full object-cover transition-transform duration-300 ${isSoldOut ? '' : 'group-hover:scale-105'}`}
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    display: 'block',
+                                                    objectFit: 'contain'
+                                                }}
+                                            />
+                                            {isSoldOut && (
+                                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                                    <span className="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg">
+                                                        {language === 'ko' ? '품절' : 'Sold Out'}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <h3 className={`text-sm font-medium line-clamp-1 mb-0 ${isSoldOut ? 'text-gray-400' : 'text-gray-900'}`}>
+                                                {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
+                                            </h3>
+                                            <div className="flex items-baseline gap-2">
+                                                <span className={`text-lg font-bold ${isSoldOut ? 'text-gray-400' : 'text-gray-900'}`}>
+                                                    {formatPrice(product.price)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </SwiperSlide>
+                            );
+                        })}
+                    </Swiper>
+                </div>
+                <div className="w-full border-t border-gray-300 my-8"></div>
+                <div className="w-full max-w-full">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{language === 'ko' ? '소프트케이스' : 'Soft Case'}</h2>
+                    <Swiper
+                        modules={[Navigation, Pagination]}
+                        spaceBetween={20}
+                        navigation
+                        pagination={{ clickable: true }}
+                        breakpoints={{
+                            0: {
+                                slidesPerView: 2,
+                                spaceBetween: 10,
+                            },
+                            640: {
+                                slidesPerView: 3,
+                                spaceBetween: 15,
+                            },
+                            1024: {
+                                slidesPerView: 4,
+                                spaceBetween: 20,
+                            },
+                            1280: {
+                                slidesPerView: 4,
+                                spaceBetween: 20,
+                            },
+                        }}
+                        className="mySwiper !pb-10 !px-2"
+                    >
+                        {SOFT_CASE_PRODUCTS.map((product) => {
                             const productUrl = getProductUrl(product.name);
 
                             return (
@@ -848,7 +989,7 @@ export default function Home() {
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
-                                                    {product.price}
+                                                    {formatPrice(product.price)}
                                                 </span>
                                             </div>
                                         </div>
@@ -927,7 +1068,7 @@ export default function Home() {
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
-                                                    {product.price}
+                                                    {formatPrice(product.price)}
                                                 </span>
                                             </div>
                                         </div>
