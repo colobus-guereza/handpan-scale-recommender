@@ -67,6 +67,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
     const [showAllScales, setShowAllScales] = useState(true);
     const [showClassificationCriteria, setShowClassificationCriteria] = useState(true);
     const [showMiniDigiPan, setShowMiniDigiPan] = useState(false);
+    const [miniDigiPanKey, setMiniDigiPanKey] = useState(0);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedNoteCount, setSelectedNoteCount] = useState<number | null>(null);
     const [selectedType, setSelectedType] = useState<'normal' | 'mutant' | null>(null);
@@ -746,21 +747,27 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
             </div>
 
             {/* MiniDigiPan 컴포넌트 */}
-            {showMiniDigiPan && <MiniDigiPan />}
+            {showMiniDigiPan && <MiniDigiPan key={miniDigiPanKey} />}
 
             {/* 스케일 분류기준 및 전체 스케일 토글 버튼 */}
             <div className="flex flex-wrap items-center justify-end gap-4 mb-4">
                 {/* 우측: 기능 버튼 */}
                 <div className="flex gap-3">
                     <button
-                        onClick={() => setShowMiniDigiPan(!showMiniDigiPan)}
+                        onClick={() => {
+                            if (!showMiniDigiPan) {
+                                // 디지팬을 열 때마다 새로운 key로 리마운트
+                                setMiniDigiPanKey(prev => prev + 1);
+                            }
+                            setShowMiniDigiPan(!showMiniDigiPan);
+                        }}
                         className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
                     >
                         <span>{t.scaleList.digiPan}</span>
                         {showMiniDigiPan ? (
-                            <ChevronUp className="w-4 h-4 transition-transform" />
-                        ) : (
                             <ChevronDown className="w-4 h-4 transition-transform" />
+                        ) : (
+                            <ChevronUp className="w-4 h-4 transition-transform" />
                         )}
                     </button>
                     <button
@@ -768,14 +775,22 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                         className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
                     >
                         <span>{t.scaleList.scaleClassification}</span>
-                        <ChevronRight className={`w-4 h-4 transition-transform ${showClassificationCriteria ? 'rotate-90' : ''}`} />
+                        {showClassificationCriteria ? (
+                            <ChevronUp className="w-4 h-4 transition-transform" />
+                        ) : (
+                            <ChevronDown className="w-4 h-4 transition-transform" />
+                        )}
                     </button>
                     <button
                         onClick={() => setShowAllScales(!showAllScales)}
                         className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
                     >
                         <span>{t.scaleList.allScales}</span>
-                        <ChevronRight className={`w-4 h-4 transition-transform ${showAllScales ? 'rotate-90' : ''}`} />
+                        {showAllScales ? (
+                            <ChevronUp className="w-4 h-4 transition-transform" />
+                        ) : (
+                            <ChevronDown className="w-4 h-4 transition-transform" />
+                        )}
                     </button>
                 </div>
             </div>

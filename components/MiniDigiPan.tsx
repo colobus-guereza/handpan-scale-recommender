@@ -476,7 +476,7 @@ const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected
             y={labelY}
             textAnchor="middle"
             dominantBaseline="hanging"
-            fill={isSelected ? "#ef4444" : "#F5E8E0"}
+            fill={isSelected ? "#ef4444" : "#C2A164"}
             fontSize={fontSize}
             fontWeight="bold"
             opacity={isSelected ? "1" : "0.9"}
@@ -1424,7 +1424,7 @@ export default function MiniDigiPan() {
                                                         ? (selectedSymbolTextNote.symbolLeftX !== undefined && selectedSymbolTextNote.symbolLeftX !== null ? selectedSymbolTextNote.symbolLeftX.toFixed(1) : '')
                                                         : selectedSymbolId !== null
                                                         ? (selectedSymbolTextNote.symbolX !== undefined && selectedSymbolTextNote.symbolX !== null ? selectedSymbolTextNote.symbolX.toFixed(1) : '')
-                                                        : (selectedSymbolTextNote.labelX !== undefined ? selectedSymbolTextNote.labelX.toFixed(1) : '')}
+                                                        : (selectedSymbolTextNote.labelX !== undefined && selectedSymbolTextNote.labelX !== null ? selectedSymbolTextNote.labelX.toFixed(1) : '')}
                                                     placeholder="auto"
                                                     onChange={(e) => {
                                                         const value = e.target.value === '' ? undefined : parseFloat(e.target.value);
@@ -1516,7 +1516,7 @@ export default function MiniDigiPan() {
                                                         ? (selectedSymbolTextNote.symbolLeftY !== undefined && selectedSymbolTextNote.symbolLeftY !== null ? selectedSymbolTextNote.symbolLeftY.toFixed(1) : '')
                                                         : selectedSymbolId !== null
                                                         ? (selectedSymbolTextNote.symbolY !== undefined && selectedSymbolTextNote.symbolY !== null ? selectedSymbolTextNote.symbolY.toFixed(1) : '')
-                                                        : (selectedSymbolTextNote.labelY !== undefined ? selectedSymbolTextNote.labelY.toFixed(1) : '')}
+                                                        : (selectedSymbolTextNote.labelY !== undefined && selectedSymbolTextNote.labelY !== null ? selectedSymbolTextNote.labelY.toFixed(1) : '')}
                                                     placeholder="auto"
                                                     onChange={(e) => {
                                                         const value = e.target.value === '' ? undefined : parseFloat(e.target.value);
