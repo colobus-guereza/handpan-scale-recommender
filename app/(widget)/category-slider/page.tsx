@@ -243,7 +243,7 @@ const DEEP_ETHNIC_PRODUCTS = [
     },
 ];
 
-// Case 카테고리용 제품 목록
+// Hard Case 카테고리용 제품 목록
 const CASE_PRODUCTS = [
     {
         id: 1,
@@ -660,7 +660,7 @@ export default function CategorySliderPage() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">Case</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">Hard Case</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}

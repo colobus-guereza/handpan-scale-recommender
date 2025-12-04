@@ -2,7 +2,7 @@ export interface Product {
     id: string;
     name: string;
     nameEn?: string;
-    category: string; // 'Case', 'Stand', 'Accessory', etc.
+    category: string; // 'Hard Case', 'Stand', 'Accessory', etc.
     price?: number;
     manufacturer?: string;
     options?: string[];

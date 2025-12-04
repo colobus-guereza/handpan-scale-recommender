@@ -116,7 +116,7 @@ export const TRANSLATIONS = {
             healing: 'Yoga & Meditation',
             bright: 'Major Scale',
             ethnic: 'Deep Ethnic',
-            case: 'Case',
+            case: 'Hard Case',
             stand: 'Stand'
         },
         tags: {

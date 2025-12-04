@@ -20,6 +20,13 @@ const getVideoId = (url: string) => {
     return (match && match[2].length === 11) ? match[2] : null;
 };
 
+const getOrdinalSuffix = (rank: number): string => {
+    if (rank === 1) return '1st';
+    if (rank === 2) return '2nd';
+    if (rank === 3) return '3rd';
+    return `${rank}th`;
+};
+
 const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
     const videoId = getVideoId(url);
 
@@ -581,7 +588,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                                 return (
                                                     <>
                                                         <span className="px-3 py-1 rounded-full bg-indigo-100 dark:bg-cosmic/20 text-indigo-700/80 dark:text-cosmic/80 border border-indigo-200 dark:border-cosmic/30 text-sm font-bold shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.3)]">
-                                                            {language === 'ko' ? `${rank}${t.scaleList.rankRecommendation}` : `#${rank} ${t.scaleList.rankRecommendation}`}
+                                                            {language === 'ko' ? `${rank}${t.scaleList.rankRecommendation}` : getOrdinalSuffix(rank)}
                                                         </span>
                                                         {currentScale.vector.rarePopular > 0.7 && (
                                                             <span className="flex items-center text-amber-600/80 dark:text-stardust/80 text-xs font-medium drop-shadow-sm">

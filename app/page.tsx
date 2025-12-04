@@ -249,12 +249,12 @@ const DEEP_ETHNIC_PRODUCTS = [
     },
 ];
 
-// Case 카테고리용 제품 목록
+// Hard Case 카테고리용 제품 목록
 const CASE_PRODUCTS = [
     {
         id: 1,
-        name: 'HTC Evatek M, Black',
-        nameEn: 'HTC Evatek M, Black',
+        name: 'HTC Evatek (M, Black)',
+        nameEn: 'HTC Evatek (M, Black)',
         price: '484,000원',
         rating: 4.8,
         reviewCount: 120,
@@ -262,8 +262,8 @@ const CASE_PRODUCTS = [
     },
     {
         id: 2,
-        name: 'HTC Evatek M, Cayenne',
-        nameEn: 'HTC Evatek M, Cayenne',
+        name: 'HTC Evatek (M, Cayenne)',
+        nameEn: 'HTC Evatek (M, Cayenne)',
         price: '484,000원',
         rating: 4.8,
         reviewCount: 120,
@@ -272,8 +272,8 @@ const CASE_PRODUCTS = [
     },
     {
         id: 3,
-        name: 'HTC Evatek M, Woodbine',
-        nameEn: 'HTC Evatek M, Woodbine',
+        name: 'HTC Evatek (M, Woodbine)',
+        nameEn: 'HTC Evatek (M, Woodbine)',
         price: '484,000원',
         rating: 4.8,
         reviewCount: 120,
@@ -282,8 +282,8 @@ const CASE_PRODUCTS = [
     },
     {
         id: 4,
-        name: 'HTC Evatek M, Mustang',
-        nameEn: 'HTC Evatek M, Mustang',
+        name: 'HTC Evatek (M, Mustang)',
+        nameEn: 'HTC Evatek (M, Mustang)',
         price: '484,000원',
         rating: 4.8,
         reviewCount: 120,
@@ -292,8 +292,8 @@ const CASE_PRODUCTS = [
     },
     {
         id: 5,
-        name: 'HTC Evatek M, AJP',
-        nameEn: 'HTC Evatek M, AJP',
+        name: 'HTC Evatek (M, AJP)',
+        nameEn: 'HTC Evatek (M, AJP)',
         price: '484,000원',
         rating: 4.8,
         reviewCount: 120,
@@ -305,13 +305,33 @@ const CASE_PRODUCTS = [
 // 소프트케이스 카테고리용 제품 목록
 const SOFT_CASE_PRODUCTS = [
     {
-        id: 1,
-        name: 'Avaja 고급 소프트케이스',
-        nameEn: 'Avaja Premium Softcase',
+        id: 2,
+        name: 'Avaja Premium (M, Grey)',
+        nameEn: 'Avaja Premium (M, Grey)',
         price: '484,000원',
         rating: 4.8,
         reviewCount: 120,
-        image: '/images/products/avaja.png',
+        image: '/images/products/avaja_titanmid_grey.png',
+    },
+    {
+        id: 3,
+        name: 'Avaja Premium (M, Green)',
+        nameEn: 'Avaja Premium (M, Green)',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/avaja_titanmid_green.png',
+        soldOut: true,
+    },
+    {
+        id: 4,
+        name: 'Avaja Premium (M, White)',
+        nameEn: 'Avaja Premium (M, White)',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/avaja_titanmid_white.png',
+        soldOut: true,
     },
 ];
 
@@ -353,6 +373,14 @@ const getProductUrl = (productName: string): string | null => {
     // ownUrl이 없으면 productUrl 사용
     if (scale?.productUrl) {
         return scale.productUrl;
+    }
+
+    // Avaja Premium 제품들은 모두 같은 링크 사용
+    if (productName.includes('Avaja Premium')) {
+        const avajaProduct = ACCESSORY_PRODUCTS.find(p => p.name === 'Avaja 고급 소프트케이스');
+        if (avajaProduct?.ownUrl) {
+            return avajaProduct.ownUrl;
+        }
     }
 
     // 제품명 매핑 적용
@@ -893,7 +921,8 @@ export default function Home() {
                                                     width: '100%',
                                                     height: '100%',
                                                     display: 'block',
-                                                    objectFit: 'contain'
+                                                    objectFit: 'contain',
+                                                    opacity: isSoldOut ? 0.75 : 1
                                                 }}
                                             />
                                             {isSoldOut && (
@@ -950,13 +979,14 @@ export default function Home() {
                     >
                         {SOFT_CASE_PRODUCTS.map((product) => {
                             const productUrl = getProductUrl(product.name);
+                            const isSoldOut = (product as any).soldOut || false;
 
                             return (
                                 <SwiperSlide key={product.id}>
                                     <div
-                                        className="flex flex-col group cursor-pointer"
+                                        className={`flex flex-col group ${isSoldOut ? 'cursor-default' : 'cursor-pointer'}`}
                                         onClick={() => {
-                                            if (productUrl) {
+                                            if (!isSoldOut && productUrl) {
                                                 window.open(productUrl, '_top');
                                             }
                                         }}
@@ -974,21 +1004,29 @@ export default function Home() {
                                                 alt={product.name}
                                                 loading="lazy"
                                                 decoding="async"
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                className={`w-full h-full object-cover transition-transform duration-300 ${isSoldOut ? '' : 'group-hover:scale-105'}`}
                                                 style={{
                                                     width: '100%',
                                                     height: '100%',
                                                     display: 'block',
-                                                    objectFit: 'cover'
+                                                    objectFit: 'cover',
+                                                    opacity: isSoldOut ? 0.75 : 1
                                                 }}
                                             />
+                                            {isSoldOut && (
+                                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                                    <span className="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg">
+                                                        {language === 'ko' ? '품절' : 'Sold Out'}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                         <div>
-                                            <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
+                                            <h3 className={`text-sm font-medium line-clamp-1 mb-0 ${isSoldOut ? 'text-gray-400' : 'text-gray-900'}`}>
                                                 {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
-                                                <span className="text-lg font-bold text-gray-900">
+                                                <span className={`text-lg font-bold ${isSoldOut ? 'text-gray-400' : 'text-gray-900'}`}>
                                                     {formatPrice(product.price)}
                                                 </span>
                                             </div>
