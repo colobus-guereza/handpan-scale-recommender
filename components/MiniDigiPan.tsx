@@ -776,6 +776,7 @@ interface LabelProps {
     rotate: number;
     isSelected: boolean;
     onSelect: () => void;
+    isCalibrationEnabled?: boolean;
     activeTemplateCount?: number;
 }
 
