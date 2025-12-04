@@ -1,5 +1,11 @@
-import { Scale, LocalizedContent } from '@/data/handpanScales';
+import { Scale } from '@/data/handpanScales';
 import { Language } from '@/constants/translations';
+
+export interface LocalizedContent {
+    name: string;
+    description: string;
+    tags: string[];
+}
 
 /**
  * Retrieves the localized content for a given scale and language.
@@ -10,17 +16,20 @@ import { Language } from '@/constants/translations';
  * @returns The localized content object (name, description, tags)
  */
 export const getLocalizedScale = (scale: Scale, language: Language): LocalizedContent => {
-    // Try to get data for the requested language
-    const localizedData = scale.i18n[language];
-
-    // If found, return it
-    if (localizedData) {
-        return localizedData;
+    if (language === 'en') {
+        return {
+            name: scale.nameEn || scale.name,
+            description: scale.descriptionEn || scale.description,
+            tags: scale.tagsEn || scale.tags
+        };
     }
 
-    // Fallback: Return Korean data (default)
-    // We assume 'ko' always exists based on our data structure constraint
-    return scale.i18n['ko'];
+    // Default to Korean
+    return {
+        name: scale.name,
+        description: scale.description,
+        tags: scale.tags
+    };
 };
 
 /**
