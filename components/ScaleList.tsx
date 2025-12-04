@@ -4,6 +4,7 @@ import { Vibe, VIBES } from './VibeSelector';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Sparkles, Moon, Sun, Flame, Share2, Check } from 'lucide-react';
 import { TRANSLATIONS, Language } from '@/constants/translations';
+import MiniDigiPan from './MiniDigiPan';
 
 interface Props {
     selectedVibe: Vibe;
@@ -65,6 +66,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
     const [selectedPitches, setSelectedPitches] = useState<Set<string>>(new Set());
     const [showAllScales, setShowAllScales] = useState(true);
     const [showClassificationCriteria, setShowClassificationCriteria] = useState(true);
+    const [showMiniDigiPan, setShowMiniDigiPan] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedNoteCount, setSelectedNoteCount] = useState<number | null>(null);
     const [selectedType, setSelectedType] = useState<'normal' | 'mutant' | null>(null);
@@ -743,10 +745,24 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                 </div>
             </div>
 
+            {/* MiniDigiPan 컴포넌트 */}
+            {showMiniDigiPan && <MiniDigiPan />}
+
             {/* 스케일 분류기준 및 전체 스케일 토글 버튼 */}
             <div className="flex flex-wrap items-center justify-end gap-4 mb-4">
                 {/* 우측: 기능 버튼 */}
                 <div className="flex gap-3">
+                    <button
+                        onClick={() => setShowMiniDigiPan(!showMiniDigiPan)}
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
+                    >
+                        <span>{t.scaleList.digiPan}</span>
+                        {showMiniDigiPan ? (
+                            <ChevronUp className="w-4 h-4 transition-transform" />
+                        ) : (
+                            <ChevronDown className="w-4 h-4 transition-transform" />
+                        )}
+                    </button>
                     <button
                         onClick={() => setShowClassificationCriteria(!showClassificationCriteria)}
                         className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"

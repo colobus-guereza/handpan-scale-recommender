@@ -41,7 +41,8 @@ export const TRANSLATIONS = {
             pure: '담백함',
             spicy: '화려함',
             rare: '희소함',
-            popular: '대중적'
+            popular: '대중적',
+            digiPan: '디지팬'
         },
         categories: {
             beginner: '입문용',
@@ -86,7 +87,7 @@ export const TRANSLATIONS = {
             share: 'Share',
             copied: 'Copied',
             rankRecommendation: 'Recommendation',
-            popularScale: 'Popular Scale',
+            popularScale: 'Popular',
             ding: 'Ding',
             top: 'Top',
             bottom: 'Bottom',
@@ -109,7 +110,8 @@ export const TRANSLATIONS = {
             pure: 'Pure',
             spicy: 'Spicy',
             rare: 'Rare',
-            popular: 'Popular'
+            popular: 'Popular',
+            digiPan: 'DigiPan'
         },
         categories: {
             beginner: 'Beginner',
