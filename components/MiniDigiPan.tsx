@@ -569,6 +569,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
     const [isToneFieldPanelExpanded, setIsToneFieldPanelExpanded] = useState<boolean>(false);
     const [isLabelPanelExpanded, setIsLabelPanelExpanded] = useState<boolean>(false);
     const [isPitchPanelExpanded, setIsPitchPanelExpanded] = useState<boolean>(false);
+    const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
 
     // 선택된 노트를 useMemo로 메모이제이션하여 notes 변경 시 자동 업데이트
     const selectedNote = useMemo(() => {
@@ -842,14 +843,16 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
             onClick={handleOutsideClick}
         >
             <div className="flex flex-col gap-4">
-                {/* 스케일 이름 - 항상 표시 */}
-                {scale && (
-                    <div className="w-full max-w-[600px] mx-auto text-center">
-                        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                            {scale.name}
-                        </h2>
-                    </div>
-                )}
+                {/* 스케일 이름 또는 템플릿 제목 - 항상 표시 */}
+                <div className="w-full max-w-[600px] mx-auto text-center">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                        {selectedTemplate !== null 
+                            ? `${selectedTemplate} Notes 템플릿`
+                            : scale 
+                                ? scale.name 
+                                : '디지팬'}
+                    </h2>
+                </div>
                 
                 {/* 핸드팬 SVG 영역 */}
                 <div
@@ -1163,7 +1166,23 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                             // 스케일 데이터에서 피치 가져오기
                             let pitchLabel: string | null = null;
                             
-                            if (isCompatibleScale && scale) {
+                            // 템플릿이 선택된 경우 스케일 정보와 동기화하지 않음 (기본값 사용)
+                            if (selectedTemplate !== null) {
+                                // 템플릿 모드: 기본값 사용
+                                const defaultPitchLabels: { [key: number]: string } = {
+                                    0: 'D3',
+                                    1: 'A',
+                                    2: 'Bb',
+                                    3: 'C4',
+                                    4: 'D',
+                                    5: 'E',
+                                    6: 'F',
+                                    7: 'G',
+                                    8: 'A',
+                                };
+                                pitchLabel = defaultPitchLabels[note.id] || null;
+                            } else if (isCompatibleScale && scale) {
+                                // 스케일 모드: 스케일 정보와 동기화
                                 if (note.id === 0) {
                                     // 딩은 notes.ding에서 가져오기
                                     pitchLabel = scale.notes.ding;
@@ -1232,8 +1251,8 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                             );
                         })}
                         
-                        {/* 호환되지 않는 스케일일 경우 중앙에 '구현 예정' 메시지 표시 */}
-                        {scale && !isCompatibleScale && (
+                        {/* 호환되지 않는 스케일일 경우 중앙에 '구현 예정' 메시지 표시 (템플릿 모드가 아닐 때만) */}
+                        {selectedTemplate === null && scale && !isCompatibleScale && (
                             <text
                                 x={centerX}
                                 y={centerY}
@@ -1262,74 +1281,26 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                     {/* 템플릿 선택 패널 */}
                     <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
                         <div className="p-4">
-                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-4">
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-3">
                                 템플릿
                             </h3>
-                            <div className="space-y-2">
-                                <label className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                                    <input
-                                        type="radio"
-                                        name="template"
-                                        value="9-notes"
-                                        defaultChecked
-                                        className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">9 Notes</span>
-                                </label>
-                                <label className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                                    <input
-                                        type="radio"
-                                        name="template"
-                                        value="10-notes"
-                                        className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">10 Notes</span>
-                                </label>
-                                <label className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                                    <input
-                                        type="radio"
-                                        name="template"
-                                        value="11-notes"
-                                        className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">11 Notes</span>
-                                </label>
-                                <label className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                                    <input
-                                        type="radio"
-                                        name="template"
-                                        value="12-notes"
-                                        className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">12 Notes</span>
-                                </label>
-                                <label className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                                    <input
-                                        type="radio"
-                                        name="template"
-                                        value="14-notes"
-                                        className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">14 Notes</span>
-                                </label>
-                                <label className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                                    <input
-                                        type="radio"
-                                        name="template"
-                                        value="15-notes"
-                                        className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">15 Notes</span>
-                                </label>
-                                <label className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                                    <input
-                                        type="radio"
-                                        name="template"
-                                        value="18-notes"
-                                        className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">18 Notes</span>
-                                </label>
+                            <div className="flex flex-wrap gap-1.5">
+                                {[9, 10, 11, 12, 14, 15, 18].map((count) => (
+                                    <button
+                                        key={count}
+                                        onClick={() => {
+                                            // 토글: 같은 버튼 클릭 시 비활성화, 다른 버튼 클릭 시 활성화
+                                            setSelectedTemplate(selectedTemplate === count ? null : count);
+                                        }}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                                            selectedTemplate === count
+                                                ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                                : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                        }`}
+                                    >
+                                        {count}
+                                    </button>
+                                ))}
                             </div>
                         </div>
                     </div>
