@@ -133,123 +133,260 @@ const loadCalibrationFromStorage = (key: string): any[] | null => {
     return null;
 };
 
-// 초기 노트 데이터 생성 함수
-const createInitialNotes = (centerX: number, centerY: number): NoteData[] => {
+// 초기 노트 데이터 생성 함수 (템플릿 개수에 따라 생성)
+const createInitialNotes = (centerX: number, centerY: number, templateCount: number = 9): NoteData[] => {
+    // 템플릿별로 독립적인 localStorage 키 사용
+    const toneFieldKey = `minidigipan_tonefield_calibration_${templateCount}`;
+    const labelKey = `minidigipan_label_calibration_${templateCount}`;
+    
     // localStorage에서 톤필드 캘리브레이션 불러오기
-    const storedToneFieldCalibration = loadCalibrationFromStorage('minidigipan_tonefield_calibration');
-    const storedLabelCalibration = loadCalibrationFromStorage('minidigipan_label_calibration');
+    const storedToneFieldCalibration = loadCalibrationFromStorage(toneFieldKey);
+    const storedLabelCalibration = loadCalibrationFromStorage(labelKey);
 
-    // 제공된 캘리브레이션 데이터로 초기화 (톤필드 캘리브레이션 초기설정 값)
-    const defaultCalibrationData = [
-        {
-            id: 0,
-            label: 'D',
-            cx: 500,
-            cy: 500,
-            scale: 389.7,
-            rotate: 90,
-            labelX: null,
-            labelY: 514,
-            labelOffset: 25,
-            symbolX: 945,
-            symbolY: null,
-            symbolOffset: 15,
-            symbolLeftX: 59,
-            symbolLeftY: null,
-            symbolLeftOffset: 15,
-            symbolBottomX: null,
-            symbolBottomY: 665,
-            symbolBottomOffset: 15,
-        },
-        {
-            id: 1,
-            label: '1',
-            cx: 661,
-            cy: 779,
-            scale: 286,
-            rotate: 121,
-            labelX: null,
-            labelY: 886,
-            labelOffset: 25,
-        },
-        {
-            id: 2,
-            label: '2',
-            cx: 335,
-            cy: 776,
-            scale: 285,
-            rotate: 61,
-            labelX: null,
-            labelY: 884,
-            labelOffset: 25,
-        },
-        {
-            id: 3,
-            label: '3',
-            cx: 813,
-            cy: 595,
-            scale: 253,
-            rotate: 128,
-            labelX: null,
-            labelY: 697,
-            labelOffset: 25,
-        },
-        {
-            id: 4,
-            label: '4',
-            cx: 195,
-            cy: 594,
-            scale: 249,
-            rotate: 47,
-            labelX: null,
-            labelY: 699,
-            labelOffset: 25,
-        },
-        {
-            id: 5,
-            label: '5',
-            cx: 808,
-            cy: 358,
-            scale: 237,
-            rotate: 55,
-            labelX: null,
-            labelY: 453,
-            labelOffset: 25,
-        },
-        {
-            id: 6,
-            label: '6',
-            cx: 204,
-            cy: 366,
-            scale: 238,
-            rotate: 125,
-            labelX: null,
-            labelY: 458,
-            labelOffset: 25,
-        },
-        {
-            id: 7,
-            label: '7',
-            cx: 630,
-            cy: 201,
-            scale: 226,
-            rotate: 48,
-            labelX: null,
-            labelY: 295,
-            labelOffset: 25,
-        },
-        {
-            id: 8,
-            label: '8',
-            cx: 363,
-            cy: 200,
-            scale: 232,
-            rotate: 133,
-            labelX: null,
-            labelY: 295,
-            labelOffset: 25,
-        },
-    ];
+    // 템플릿별 기본 캘리브레이션 데이터
+    const getDefaultCalibrationData = (count: number): any[] => {
+        // 9 Notes 템플릿 기본값
+        const default9Notes = [
+            {
+                id: 0,
+                label: 'D',
+                cx: 500,
+                cy: 500,
+                scale: 389.7,
+                rotate: 90,
+                labelX: null,
+                labelY: 514,
+                labelOffset: 25,
+                symbolX: 945,
+                symbolY: null,
+                symbolOffset: 15,
+                symbolLeftX: 59,
+                symbolLeftY: null,
+                symbolLeftOffset: 15,
+                symbolBottomX: null,
+                symbolBottomY: 665,
+                symbolBottomOffset: 15,
+            },
+            {
+                id: 1,
+                label: '1',
+                cx: 661,
+                cy: 779,
+                scale: 286,
+                rotate: 121,
+                labelX: null,
+                labelY: 886,
+                labelOffset: 25,
+            },
+            {
+                id: 2,
+                label: '2',
+                cx: 335,
+                cy: 776,
+                scale: 285,
+                rotate: 61,
+                labelX: null,
+                labelY: 884,
+                labelOffset: 25,
+            },
+            {
+                id: 3,
+                label: '3',
+                cx: 813,
+                cy: 595,
+                scale: 253,
+                rotate: 128,
+                labelX: null,
+                labelY: 697,
+                labelOffset: 25,
+            },
+            {
+                id: 4,
+                label: '4',
+                cx: 195,
+                cy: 594,
+                scale: 249,
+                rotate: 47,
+                labelX: null,
+                labelY: 699,
+                labelOffset: 25,
+            },
+            {
+                id: 5,
+                label: '5',
+                cx: 808,
+                cy: 358,
+                scale: 237,
+                rotate: 55,
+                labelX: null,
+                labelY: 453,
+                labelOffset: 25,
+            },
+            {
+                id: 6,
+                label: '6',
+                cx: 204,
+                cy: 366,
+                scale: 238,
+                rotate: 125,
+                labelX: null,
+                labelY: 458,
+                labelOffset: 25,
+            },
+            {
+                id: 7,
+                label: '7',
+                cx: 630,
+                cy: 201,
+                scale: 226,
+                rotate: 48,
+                labelX: null,
+                labelY: 295,
+                labelOffset: 25,
+            },
+            {
+                id: 8,
+                label: '8',
+                cx: 363,
+                cy: 200,
+                scale: 232,
+                rotate: 133,
+                labelX: null,
+                labelY: 295,
+                labelOffset: 25,
+            },
+        ];
+
+        // 10 Notes 템플릿 기본값 (9 Notes + 9번 노트)
+        if (count === 10) {
+            return [
+                {
+                    id: 0,
+                    label: 'D',
+                    cx: 500,
+                    cy: 500,
+                    scale: 389.7,
+                    rotate: 90,
+                    labelX: null,
+                    labelY: 514,
+                    labelOffset: 25,
+                    symbolX: 945,
+                    symbolY: null,
+                    symbolOffset: 15,
+                    symbolLeftX: 59,
+                    symbolLeftY: null,
+                    symbolLeftOffset: 15,
+                    symbolBottomX: null,
+                    symbolBottomY: 665,
+                    symbolBottomOffset: 15,
+                },
+                {
+                    id: 1,
+                    label: '1',
+                    cx: 661,
+                    cy: 779,
+                    scale: 286,
+                    rotate: 121,
+                    labelX: null,
+                    labelY: 886,
+                    labelOffset: 25,
+                },
+                {
+                    id: 2,
+                    label: '2',
+                    cx: 335,
+                    cy: 776,
+                    scale: 285,
+                    rotate: 61,
+                    labelX: null,
+                    labelY: 884,
+                    labelOffset: 25,
+                },
+                {
+                    id: 3,
+                    label: '3',
+                    cx: 813,
+                    cy: 595,
+                    scale: 253,
+                    rotate: 128,
+                    labelX: null,
+                    labelY: 697,
+                    labelOffset: 25,
+                },
+                {
+                    id: 4,
+                    label: '4',
+                    cx: 195,
+                    cy: 594,
+                    scale: 249,
+                    rotate: 47,
+                    labelX: null,
+                    labelY: 699,
+                    labelOffset: 25,
+                },
+                {
+                    id: 5,
+                    label: '5',
+                    cx: 808,
+                    cy: 358,
+                    scale: 237,
+                    rotate: 55,
+                    labelX: null,
+                    labelY: 453,
+                    labelOffset: 25,
+                },
+                {
+                    id: 6,
+                    label: '6',
+                    cx: 204,
+                    cy: 366,
+                    scale: 238,
+                    rotate: 125,
+                    labelX: null,
+                    labelY: 458,
+                    labelOffset: 25,
+                },
+                {
+                    id: 7,
+                    label: '7',
+                    cx: 688,
+                    cy: 201,
+                    scale: 226,
+                    rotate: 48,
+                    labelX: null,
+                    labelY: 295,
+                    labelOffset: 25,
+                },
+                {
+                    id: 8,
+                    label: '8',
+                    cx: 321,
+                    cy: 203,
+                    scale: 232,
+                    rotate: 133,
+                    labelX: null,
+                    labelY: 295,
+                    labelOffset: 25,
+                },
+                {
+                    id: 9,
+                    label: '9',
+                    cx: 501,
+                    cy: 143,
+                    scale: 200,
+                    rotate: 0,
+                    labelX: null,
+                    labelY: null,
+                    labelOffset: 25,
+                },
+            ];
+        }
+
+        // 기본값은 9 Notes
+        return default9Notes;
+    };
+
+    const defaultCalibrationData = getDefaultCalibrationData(templateCount);
 
     // 저장된 톤필드 캘리브레이션이 있으면 사용, 없으면 기본값 사용
     const toneFieldData = storedToneFieldCalibration || defaultCalibrationData;
@@ -258,21 +395,23 @@ const createInitialNotes = (centerX: number, centerY: number): NoteData[] => {
     // 저장된 값과 기본값을 병합하여 저장된 값이 없는 속성은 기본값 사용
     const labelCalibrationMap = new Map();
     
-    // 먼저 기본값으로 맵 초기화
-    defaultCalibrationData.forEach((item: any) => {
+    // 먼저 기본값으로 맵 초기화 (toneFieldData를 사용하여 실제 사용되는 노트만 처리)
+    toneFieldData.forEach((item: any) => {
+        // 기본값에서 해당 id의 라벨 데이터 찾기
+        const defaultItem = defaultCalibrationData.find((d: any) => d.id === item.id);
         labelCalibrationMap.set(item.id, {
-            labelX: item.labelX,
-            labelY: item.labelY,
-            labelOffset: item.labelOffset,
-            symbolX: item.symbolX,
-            symbolY: item.symbolY,
-            symbolOffset: item.symbolOffset,
-            symbolLeftX: item.symbolLeftX,
-            symbolLeftY: item.symbolLeftY,
-            symbolLeftOffset: item.symbolLeftOffset,
-            symbolBottomX: item.symbolBottomX,
-            symbolBottomY: item.symbolBottomY,
-            symbolBottomOffset: item.symbolBottomOffset,
+            labelX: defaultItem?.labelX,
+            labelY: defaultItem?.labelY,
+            labelOffset: defaultItem?.labelOffset || 25,
+            symbolX: defaultItem?.symbolX,
+            symbolY: defaultItem?.symbolY,
+            symbolOffset: defaultItem?.symbolOffset,
+            symbolLeftX: defaultItem?.symbolLeftX,
+            symbolLeftY: defaultItem?.symbolLeftY,
+            symbolLeftOffset: defaultItem?.symbolLeftOffset,
+            symbolBottomX: defaultItem?.symbolBottomX,
+            symbolBottomY: defaultItem?.symbolBottomY,
+            symbolBottomOffset: defaultItem?.symbolBottomOffset,
         });
     });
     
@@ -547,17 +686,35 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
     const centerX = 500;
     const centerY = 500;
 
-    // 스케일이 9개음 템플릿에 맞는지 확인
+    // 스케일이 지원되는 템플릿에 맞는지 확인 (9, 10, 11, 12, 14, 15, 18 notes)
     const isCompatibleScale = useMemo(() => {
         if (!scale) return false;
-        // 스케일 이름에 '9'가 있거나, Top 노트 개수가 8이고 bottom 노트 개수가 0인 경우
-        const hasNineInName = scale.name.includes('9');
-        const isEightTopZeroBottom = scale.notes.top.length === 8 && scale.notes.bottom.length === 0;
-        return hasNineInName || isEightTopZeroBottom;
+        const totalNotes = scale.notes.top.length + scale.notes.bottom.length + 1; // 딩 + Top + Bottom
+        const supportedCounts = [9, 10, 11, 12, 14, 15, 18];
+        // 지원되는 노트 개수와 일치하고, bottom이 0이거나 템플릿이 지원하는 경우
+        return supportedCounts.includes(totalNotes) && scale.notes.bottom.length === 0;
     }, [scale]);
 
-    // 초기 노트 데이터를 useState로 관리
-    const [notes, setNotes] = useState<NoteData[]>(() => createInitialNotes(centerX, centerY));
+    // 템플릿 선택 상태 (다른 상태보다 먼저 선언되어야 함)
+    const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
+
+    // 현재 활성화된 템플릿 개수 결정 (템플릿 선택 시 템플릿 개수, 아니면 스케일 기반 또는 9)
+    const activeTemplateCount = useMemo(() => {
+        if (selectedTemplate !== null) {
+            return selectedTemplate;
+        }
+        // 템플릿이 선택되지 않았을 때는 스케일 호환성에 따라 결정
+        if (scale && isCompatibleScale) {
+            return scale.notes.top.length + 1; // 딩 + Top 노트 개수
+        }
+        return 9; // 기본값
+    }, [selectedTemplate, scale, isCompatibleScale]);
+
+    // 초기 노트 데이터를 useState로 관리 (템플릿 개수에 따라, 초기값은 9)
+    const [notes, setNotes] = useState<NoteData[]>(() => {
+        // 초기 렌더링 시에는 기본값 9 사용 (나중에 useEffect에서 업데이트됨)
+        return createInitialNotes(centerX, centerY, 9);
+    });
     const [selectedNoteId, setSelectedNoteId] = useState<number | null>(null);
     const [selectedLabelId, setSelectedLabelId] = useState<number | null>(null);
     const [selectedSymbolId, setSelectedSymbolId] = useState<number | null>(null); // RS 기호 선택 (딩만)
@@ -569,7 +726,6 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
     const [isToneFieldPanelExpanded, setIsToneFieldPanelExpanded] = useState<boolean>(false);
     const [isLabelPanelExpanded, setIsLabelPanelExpanded] = useState<boolean>(false);
     const [isPitchPanelExpanded, setIsPitchPanelExpanded] = useState<boolean>(false);
-    const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
 
     // 선택된 노트를 useMemo로 메모이제이션하여 notes 변경 시 자동 업데이트
     const selectedNote = useMemo(() => {
@@ -643,12 +799,30 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
         }
     }, [selectedPitchId]);
 
-    // 노트 업데이트 함수 (자동으로 localStorage에 저장)
+    // 템플릿이 변경될 때마다 해당 템플릿의 캘리브레이션을 로드하여 notes 업데이트
+    useEffect(() => {
+        const templateCount = activeTemplateCount;
+        const loadedNotes = createInitialNotes(centerX, centerY, templateCount);
+        setNotes(loadedNotes);
+        // 선택 상태 초기화
+        setSelectedNoteId(null);
+        setSelectedLabelId(null);
+        setSelectedSymbolId(null);
+        setSelectedLeftSymbolId(null);
+        setSelectedBottomSymbolId(null);
+        setSelectedPitchId(null);
+    }, [activeTemplateCount, centerX, centerY]);
+
+    // 노트 업데이트 함수 (자동으로 localStorage에 저장, 템플릿별로 독립 저장)
     const updateNote = (id: number, updates: Partial<NoteData>) => {
         setNotes(prevNotes => {
             const updatedNotes = prevNotes.map(note =>
                 note.id === id ? { ...note, ...updates } : note
             );
+            
+            // 템플릿별로 독립적인 localStorage 키 사용
+            const toneFieldKey = `minidigipan_tonefield_calibration_${activeTemplateCount}`;
+            const labelKey = `minidigipan_label_calibration_${activeTemplateCount}`;
             
             // 톤필드 캘리브레이션 자동 저장
             const toneFieldData = updatedNotes.map(({ id, label, cx, cy, scale, rotate }) => ({
@@ -660,9 +834,9 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                 rotate: rotate || 0,
             }));
             try {
-                localStorage.setItem('minidigipan_tonefield_calibration', JSON.stringify(toneFieldData));
+                localStorage.setItem(toneFieldKey, JSON.stringify(toneFieldData));
             } catch (error) {
-                console.error('Failed to save tonefield calibration to localStorage:', error);
+                console.error(`Failed to save tonefield calibration to localStorage (${toneFieldKey}):`, error);
             }
             
             // 라벨 캘리브레이션 자동 저장 (null 값도 명시적으로 저장)
@@ -683,16 +857,16 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                 symbolBottomOffset: note.symbolBottomOffset !== undefined ? note.symbolBottomOffset : null,
             }));
             try {
-                localStorage.setItem('minidigipan_label_calibration', JSON.stringify(labelData));
+                localStorage.setItem(labelKey, JSON.stringify(labelData));
             } catch (error) {
-                console.error('Failed to save label calibration to localStorage:', error);
+                console.error(`Failed to save label calibration to localStorage (${labelKey}):`, error);
             }
             
             return updatedNotes;
         });
     };
 
-    // 톤필드 JSON 내보내기 및 localStorage 저장
+    // 톤필드 JSON 내보내기 및 localStorage 저장 (템플릿별로 독립 저장)
     const exportJson = () => {
         const exportData = notes.map(({ id, label, cx, cy, scale, rotate }) => ({
             id,
@@ -705,11 +879,12 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
 
         const jsonString = JSON.stringify(exportData, null, 2);
 
-        // localStorage에 저장 (다음 로드 시 자동으로 초기값으로 사용)
+        // 템플릿별로 독립적인 localStorage 키 사용
+        const toneFieldKey = `minidigipan_tonefield_calibration_${activeTemplateCount}`;
         try {
-            localStorage.setItem('minidigipan_tonefield_calibration', JSON.stringify(exportData));
+            localStorage.setItem(toneFieldKey, JSON.stringify(exportData));
         } catch (error) {
-            console.error('Failed to save tonefield calibration to localStorage:', error);
+            console.error(`Failed to save tonefield calibration to localStorage (${toneFieldKey}):`, error);
         }
 
         // 클립보드에 복사
@@ -783,11 +958,12 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
 
         const jsonString = JSON.stringify(exportData, null, 2);
 
-        // localStorage에 저장 (다음 로드 시 자동으로 초기값으로 사용)
+        // 템플릿별로 독립적인 localStorage 키 사용
+        const labelKey = `minidigipan_label_calibration_${activeTemplateCount}`;
         try {
-            localStorage.setItem('minidigipan_label_calibration', JSON.stringify(exportData));
+            localStorage.setItem(labelKey, JSON.stringify(exportData));
         } catch (error) {
-            console.error('Failed to save label calibration to localStorage:', error);
+            console.error(`Failed to save label calibration to localStorage (${labelKey}):`, error);
         }
 
         // 클립보드에 복사
@@ -1186,8 +1362,8 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                 if (note.id === 0) {
                                     // 딩은 notes.ding에서 가져오기
                                     pitchLabel = scale.notes.ding;
-                                } else if (note.id >= 1 && note.id <= 8) {
-                                    // Top 노트를 낮은 피치부터 정렬하여 1-8에 배치
+                                } else if (note.id >= 1) {
+                                    // Top 노트를 낮은 피치부터 정렬하여 1부터 순서대로 배치 (템플릿 개수에 맞게)
                                     const sortedTopNotes = [...scale.notes.top].sort(comparePitch);
                                     pitchLabel = sortedTopNotes[note.id - 1] || null;
                                 }
