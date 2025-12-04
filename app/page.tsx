@@ -486,39 +486,37 @@ export default function Home() {
                         <ThemeToggle />
                     </div>
 
-                    <header className="text-center space-y-1 pt-2">
+                    <header className="text-center space-y-2 pt-2">
+                        <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-slate-400 drop-shadow-sm">
+                            {language === 'ko' ? '나에게 맞는 핸드팬 스케일 찾기' : "Discover your Handpan scale"}
+                        </h1>
                         <div className="flex items-center justify-center gap-2">
-                            <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-slate-400 drop-shadow-sm">
-                                {language === 'ko' ? '나에게 맞는 핸드팬 스케일 찾기' : "Discover your Handpan scale"}
-                            </h1>
-                            <div className="flex items-center gap-2 ml-2">
-                                {/* 한국 국기 아이콘 */}
-                                <button
-                                    onClick={() => handleLanguageChange('ko')}
-                                    className="transition-all duration-200 hover:scale-110 focus:outline-none"
-                                    aria-label="한국어"
-                                >
-                                    <div className={`w-6 h-6 md:w-7 md:h-7 rounded-full transition-all duration-200 ${language === 'ko'
-                                        ? 'ring-2 ring-indigo-600 dark:ring-cosmic shadow-lg dark:shadow-[0_0_10px_rgba(72,255,0,0.3)] scale-105'
-                                        : 'opacity-50 hover:opacity-70 ring-1 ring-gray-300 dark:ring-gray-600'
-                                        }`}>
-                                        <CircleFlag countryCode="kr" height="24" />
-                                    </div>
-                                </button>
-                                {/* 미국 국기 아이콘 */}
-                                <button
-                                    onClick={() => handleLanguageChange('en')}
-                                    className="transition-all duration-200 hover:scale-110 focus:outline-none"
-                                    aria-label="English"
-                                >
-                                    <div className={`w-6 h-6 md:w-7 md:h-7 rounded-full transition-all duration-200 ${language === 'en'
-                                        ? 'ring-2 ring-indigo-600 dark:ring-cosmic shadow-lg dark:shadow-[0_0_10px_rgba(72,255,0,0.3)] scale-105'
-                                        : 'opacity-50 hover:opacity-70 ring-1 ring-gray-300 dark:ring-gray-600'
-                                        }`}>
-                                        <CircleFlag countryCode="us" height="24" />
-                                    </div>
-                                </button>
-                            </div>
+                            {/* 한국 국기 아이콘 */}
+                            <button
+                                onClick={() => handleLanguageChange('ko')}
+                                className="transition-all duration-200 hover:scale-110 focus:outline-none"
+                                aria-label="한국어"
+                            >
+                                <div className={`w-6 h-6 md:w-7 md:h-7 rounded-full transition-all duration-200 ${language === 'ko'
+                                    ? 'ring-2 ring-indigo-600 dark:ring-cosmic shadow-lg dark:shadow-[0_0_10px_rgba(72,255,0,0.3)] scale-105'
+                                    : 'opacity-50 hover:opacity-70 ring-1 ring-gray-300 dark:ring-gray-600'
+                                    }`}>
+                                    <CircleFlag countryCode="kr" height="24" />
+                                </div>
+                            </button>
+                            {/* 미국 국기 아이콘 */}
+                            <button
+                                onClick={() => handleLanguageChange('en')}
+                                className="transition-all duration-200 hover:scale-110 focus:outline-none"
+                                aria-label="English"
+                            >
+                                <div className={`w-6 h-6 md:w-7 md:h-7 rounded-full transition-all duration-200 ${language === 'en'
+                                    ? 'ring-2 ring-indigo-600 dark:ring-cosmic shadow-lg dark:shadow-[0_0_10px_rgba(72,255,0,0.3)] scale-105'
+                                    : 'opacity-50 hover:opacity-70 ring-1 ring-gray-300 dark:ring-gray-600'
+                                    }`}>
+                                    <CircleFlag countryCode="us" height="24" />
+                                </div>
+                            </button>
                         </div>
                     </header>
 

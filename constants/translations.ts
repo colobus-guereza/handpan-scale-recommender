@@ -11,7 +11,7 @@ export const TRANSLATIONS = {
         },
         scaleList: {
             back: '다시 선택',
-            scaleClassification: '스케일 분류기준',
+            scaleClassification: '분류기준',
             allScales: '전체 스케일',
             purchase: '구매',
             preparing: '준비중',
@@ -80,9 +80,9 @@ export const TRANSLATIONS = {
         },
         scaleList: {
             back: 'Select Again',
-            scaleClassification: 'Scale Classification',
+            scaleClassification: 'Classification',
             allScales: 'All Scales',
-            purchase: 'Buy Now',
+            purchase: 'Buy',
             preparing: 'Coming Soon',
             share: 'Share',
             copied: 'Copied',
