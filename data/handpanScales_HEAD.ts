@@ -77,9 +77,9 @@ export const SCALES: Scale[] = [
         productUrl: "https://smartstore.naver.com/sndhandpan/products/7514024868"
     },
 
-    // 5. E Equinox 14 (Mutant/Extended)
+    // 5. E Equinox 14 (Normal)
     {
-        id: "e_equinox_14_mutant",
+        id: "e_equinox_14",
         name: "E Equinox 14",
         notes: {
             ding: "E3",
@@ -308,7 +308,7 @@ export const SCALES: Scale[] = [
         notes: {
             ding: "D3",
             top: ["A3", "Bb3", "C4", "D4", "E4", "F4", "G4", "A4", "C5"],
-            bottom: ["E3", "F3"]
+            bottom: ["F3", "G3"]
         },
         vector: { minorMajor: -0.8, pureSpicy: 0.1, rarePopular: 0.95 },
         tags: ["마이너", "저음보강", "표준확장", "딩베이스", "화성연주"],

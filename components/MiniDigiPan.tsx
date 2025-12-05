@@ -930,9 +930,10 @@ interface LabelProps {
     isCalibrationEnabled?: boolean;
     activeTemplateCount?: number;
     selectedTemplate?: number | string | null;
+    scale?: Scale | null;
 }
 
-const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected, onSelect, isCalibrationEnabled = true, activeTemplateCount = 9, selectedTemplate = null }) => {
+const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected, onSelect, isCalibrationEnabled = true, activeTemplateCount = 9, selectedTemplate = null, scale = null }) => {
     const cx = note.cx || 500;
     const cy = note.cy || 500;
 
@@ -963,13 +964,36 @@ const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected
             }
         }
         // 12N 템플릿일 때 label 매핑
-        if (selectedTemplate === '12N') {
-            // 12N 템플릿 매핑: 하판 좌측 베이스(10) → "1", 하판 우측 베이스(11) → "2", 딩(0) → "3", Top 노트(1-9) → "4"-"12"
-            if (note.id === 10) return '1';
-            if (note.id === 11) return '2';
-            if (note.id === 0) return '3';
-            if (note.id >= 1 && note.id <= 9) {
-                return String(note.id + 3); // 1→4, 2→5, ..., 9→12
+        if (selectedTemplate === '12N' || (activeTemplateCount === 12 && scale && scale.notes.top.length === 9 && scale.notes.bottom.length === 2)) {
+            // D Kurd 12 특별 매핑: 딩(0) → "1", 하판 좌측 F3(10) → "2", 하판 우측 G3(11) → "3", Top 노트 → "4"-"12"
+            if (scale?.id === 'd_kurd_12') {
+                if (note.id === 0) return '1';
+                if (note.id === 10) return '2'; // 하판 좌측 F3
+                if (note.id === 11) return '3'; // 하판 우측 G3
+                // Top 노트 매핑: A3→4, Bb3→5, C4→6, D4→7, E4→8, F4→9, G4→10, A4→11, C5→12
+                const dKurd12TopMapping: { [key: number]: string } = {
+                    1: '4',  // A3
+                    2: '5',  // Bb3
+                    3: '6',  // C4
+                    4: '7',  // D4
+                    5: '8',  // E4
+                    6: '9',  // F4
+                    7: '10', // G4
+                    8: '11', // A4
+                    9: '12'  // C5
+                };
+                if (note.id >= 1 && note.id <= 9) {
+                    return dKurd12TopMapping[note.id] || String(note.id + 3);
+                }
+            }
+            // 일반 12N 템플릿 매핑: 하판 좌측 베이스(10) → "1", 하판 우측 베이스(11) → "2", 딩(0) → "3", Top 노트(1-9) → "4"-"12"
+            else {
+                if (note.id === 10) return '1';
+                if (note.id === 11) return '2';
+                if (note.id === 0) return '3';
+                if (note.id >= 1 && note.id <= 9) {
+                    return String(note.id + 3); // 1→4, 2→5, ..., 9→12
+                }
             }
         }
         // 그 외의 경우 기본 label 사용
@@ -1023,6 +1047,11 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
             return scale.notes.top.length === 8 && scale.notes.bottom.length === 2;
         }
         
+        // 12 notes 템플릿 (12N): 딩 1개 + Top 9개 + Bottom 2개
+        if (totalNotes === 12) {
+            return scale.notes.top.length === 9 && scale.notes.bottom.length === 2;
+        }
+        
         // 그 외 템플릿: bottom이 0이어야 함
         return scale.notes.bottom.length === 0;
     }, [scale]);
@@ -1046,6 +1075,10 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
             // 11개 음 스케일의 경우 11 템플릿으로 설정
             if (totalNotes === 11) {
                 return 11;
+            }
+            // 12개 음 스케일(상판 9개 + 하판 2개)의 경우 12N 템플릿으로 설정
+            if (totalNotes === 12 && scale.notes.top.length === 9 && scale.notes.bottom.length === 2) {
+                return 12; // 12N 템플릿 사용
             }
             // 그 외의 경우 딩 + Top 노트 개수
             return scale.notes.top.length + 1;
@@ -1145,9 +1178,56 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
 
     // 템플릿이 변경될 때마다 해당 템플릿의 캘리브레이션을 로드하여 notes 업데이트
     useEffect(() => {
-        // selectedTemplate이 있으면 그것을 사용, 없으면 activeTemplateCount 사용
-        const templateKey = selectedTemplate !== null ? selectedTemplate : activeTemplateCount;
-        const loadedNotes = createInitialNotes(centerX, centerY, templateKey);
+        // selectedTemplate이 있으면 그것을 사용
+        // 없으면 activeTemplateCount 사용하되, 12개 음 스케일(상판 9개 + 하판 2개)인 경우 '12N' 사용
+        let templateKey: number | string;
+        if (selectedTemplate !== null) {
+            templateKey = selectedTemplate;
+        } else if (scale && isCompatibleScale) {
+            const totalNotes = scale.notes.top.length + scale.notes.bottom.length + 1;
+            // 12개 음 스케일이고 상판 9개 + 하판 2개인 경우 '12N' 템플릿 사용
+            if (totalNotes === 12 && scale.notes.top.length === 9 && scale.notes.bottom.length === 2) {
+                templateKey = '12N';
+            } else {
+                templateKey = activeTemplateCount;
+            }
+        } else {
+            templateKey = activeTemplateCount;
+        }
+        let loadedNotes = createInitialNotes(centerX, centerY, templateKey);
+        
+        // D Kurd 12의 경우 하판 F3와 G3 톤필드 위치 교체
+        if (scale?.id === 'd_kurd_12') {
+            const note10Original = loadedNotes.find(n => n.id === 10);
+            const note11Original = loadedNotes.find(n => n.id === 11);
+            if (note10Original && note11Original) {
+                loadedNotes = loadedNotes.map(note => {
+                    if (note.id === 10) {
+                        // id 10 (하판 좌측)을 id 11의 위치로 이동
+                        return {
+                            ...note,
+                            cx: note11Original.cx,
+                            cy: note11Original.cy,
+                            rotate: note11Original.rotate,
+                            labelX: note11Original.labelX,
+                            labelY: note11Original.labelY,
+                        };
+                    } else if (note.id === 11) {
+                        // id 11 (하판 우측)을 id 10의 위치로 이동
+                        return {
+                            ...note,
+                            cx: note10Original.cx,
+                            cy: note10Original.cy,
+                            rotate: note10Original.rotate,
+                            labelX: note10Original.labelX,
+                            labelY: note10Original.labelY,
+                        };
+                    }
+                    return note;
+                });
+            }
+        }
+        
         setNotes(loadedNotes);
         // 선택 상태 초기화
         setSelectedNoteId(null);
@@ -1156,7 +1236,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
         setSelectedLeftSymbolId(null);
         setSelectedBottomSymbolId(null);
         setSelectedPitchId(null);
-    }, [selectedTemplate, activeTemplateCount, centerX, centerY]);
+    }, [selectedTemplate, activeTemplateCount, scale, isCompatibleScale, centerX, centerY]);
 
     // 노트 업데이트 함수 (자동으로 localStorage에 저장, 템플릿별로 독립 저장)
     const updateNote = (id: number, updates: Partial<NoteData>) => {
@@ -1545,6 +1625,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                         isCalibrationEnabled={isCalibrationEnabled}
                                         activeTemplateCount={activeTemplateCount}
                                         selectedTemplate={selectedTemplate}
+                                        scale={scale}
                                     />
                                 </g>
                             );
@@ -1732,17 +1813,44 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                     // 중앙 딩은 notes.ding에서 가져오기
                                     pitchLabel = scale.notes.ding;
                                 } else if (note.id === 10 || note.id === 11) {
-                                    // 림 바깥 좌우 딩 (11 템플릿): bottom 노트 사용
+                                    // 림 바깥 좌우 딩 (11 템플릿 또는 12N 템플릿): bottom 노트 사용
                                     const bottomNotes = [...scale.notes.bottom].sort(comparePitch);
-                                    if (note.id === 10) {
-                                        pitchLabel = bottomNotes[0] || null; // 좌측 딩
-                                    } else if (note.id === 11) {
-                                        pitchLabel = bottomNotes[1] || null; // 우측 딩
+                                    // D Kurd 12의 경우 하판 F3와 G3 위치: 좌측에 F3, 우측에 G3
+                                    if (scale.id === 'd_kurd_12') {
+                                        if (note.id === 10) {
+                                            pitchLabel = bottomNotes[0] || null; // 좌측 딩에 F3
+                                        } else if (note.id === 11) {
+                                            pitchLabel = bottomNotes[1] || null; // 우측 딩에 G3
+                                        }
+                                    } else {
+                                        // 일반적인 경우
+                                        if (note.id === 10) {
+                                            pitchLabel = bottomNotes[0] || null; // 좌측 딩
+                                        } else if (note.id === 11) {
+                                            pitchLabel = bottomNotes[1] || null; // 우측 딩
+                                        }
                                     }
                                 } else if (note.id >= 1) {
-                                    // Top 노트를 낮은 피치부터 정렬하여 1부터 순서대로 배치 (템플릿 개수에 맞게)
-                                    const sortedTopNotes = [...scale.notes.top].sort(comparePitch);
-                                    pitchLabel = sortedTopNotes[note.id - 1] || null;
+                                    // D Kurd 12의 경우 특별한 Top 노트 매핑
+                                    if (scale.id === 'd_kurd_12') {
+                                        // D Kurd 12 Top 노트 순서: A3→4, Bb3→5, C4→6, D4→7, E4→8, F4→9, G4→10, A4→11, C5→12
+                                        const topNoteMapping: { [key: number]: string } = {
+                                            1: 'A3',  // 4번
+                                            2: 'Bb3', // 5번
+                                            3: 'C4',  // 6번
+                                            4: 'D4',  // 7번
+                                            5: 'E4',  // 8번
+                                            6: 'F4',  // 9번
+                                            7: 'G4',  // 10번
+                                            8: 'A4',  // 11번
+                                            9: 'C5'   // 12번
+                                        };
+                                        pitchLabel = topNoteMapping[note.id] || null;
+                                    } else {
+                                        // 일반적인 경우: Top 노트를 낮은 피치부터 정렬하여 1부터 순서대로 배치
+                                        const sortedTopNotes = [...scale.notes.top].sort(comparePitch);
+                                        pitchLabel = sortedTopNotes[note.id - 1] || null;
+                                    }
                                 }
                             } else {
                                 // 스케일이 없거나 호환되지 않으면 기본값 사용
