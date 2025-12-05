@@ -134,7 +134,7 @@ const loadCalibrationFromStorage = (key: string): any[] | null => {
 };
 
 // 초기 노트 데이터 생성 함수 (템플릿 개수에 따라 생성)
-const createInitialNotes = (centerX: number, centerY: number, templateCount: number = 9): NoteData[] => {
+const createInitialNotes = (centerX: number, centerY: number, templateCount: number | string = 9): NoteData[] => {
     // 템플릿별로 독립적인 localStorage 키 사용
     const toneFieldKey = `minidigipan_tonefield_calibration_${templateCount}`;
     const labelKey = `minidigipan_label_calibration_${templateCount}`;
@@ -144,7 +144,7 @@ const createInitialNotes = (centerX: number, centerY: number, templateCount: num
     const storedLabelCalibration = loadCalibrationFromStorage(labelKey);
 
     // 템플릿별 기본 캘리브레이션 데이터
-    const getDefaultCalibrationData = (count: number): any[] => {
+    const getDefaultCalibrationData = (count: number | string): any[] => {
         // 9 Notes 템플릿 기본값
         const default9Notes = [
             {
@@ -522,6 +522,157 @@ const createInitialNotes = (centerX: number, centerY: number, templateCount: num
             ];
         }
 
+        // 12N 템플릿 기본값 (상판 10개: 중앙 딩 + Top 9개 + 하판 2개: 좌우 딩)
+        if (count === '12N') {
+            return [
+                // 중앙 딩 (3번)
+                {
+                    id: 0,
+                    label: '3',
+                    cx: 500,
+                    cy: 500,
+                    scale: 389.7,
+                    rotate: 90,
+                    labelX: null,
+                    labelY: 514,
+                    labelOffset: 25,
+                    symbolX: 945,
+                    symbolY: null,
+                    symbolOffset: 15,
+                    symbolLeftX: 59,
+                    symbolLeftY: null,
+                    symbolLeftOffset: 15,
+                    symbolBottomX: null,
+                    symbolBottomY: 665,
+                    symbolBottomOffset: 15,
+                },
+                // Top 노트 1-9 (10 템플릿의 상판)
+                {
+                    id: 1,
+                    label: '1',
+                    cx: 661,
+                    cy: 779,
+                    scale: 286,
+                    rotate: 121,
+                    labelX: null,
+                    labelY: 886,
+                    labelOffset: 25,
+                },
+                {
+                    id: 2,
+                    label: '2',
+                    cx: 335,
+                    cy: 776,
+                    scale: 285,
+                    rotate: 61,
+                    labelX: null,
+                    labelY: 884,
+                    labelOffset: 25,
+                },
+                {
+                    id: 3,
+                    label: '3',
+                    cx: 813,
+                    cy: 595,
+                    scale: 253,
+                    rotate: 128,
+                    labelX: null,
+                    labelY: 697,
+                    labelOffset: 25,
+                },
+                {
+                    id: 4,
+                    label: '4',
+                    cx: 195,
+                    cy: 594,
+                    scale: 249,
+                    rotate: 47,
+                    labelX: null,
+                    labelY: 699,
+                    labelOffset: 25,
+                },
+                {
+                    id: 5,
+                    label: '5',
+                    cx: 808,
+                    cy: 358,
+                    scale: 237,
+                    rotate: 55,
+                    labelX: null,
+                    labelY: 453,
+                    labelOffset: 25,
+                },
+                {
+                    id: 6,
+                    label: '6',
+                    cx: 204,
+                    cy: 366,
+                    scale: 238,
+                    rotate: 125,
+                    labelX: null,
+                    labelY: 458,
+                    labelOffset: 25,
+                },
+                {
+                    id: 7,
+                    label: '7',
+                    cx: 688,
+                    cy: 201,
+                    scale: 226,
+                    rotate: 48,
+                    labelX: null,
+                    labelY: 295,
+                    labelOffset: 25,
+                },
+                {
+                    id: 8,
+                    label: '8',
+                    cx: 321,
+                    cy: 203,
+                    scale: 232,
+                    rotate: 133,
+                    labelX: null,
+                    labelY: 295,
+                    labelOffset: 25,
+                },
+                {
+                    id: 9,
+                    label: '9',
+                    cx: 501,
+                    cy: 143,
+                    scale: 200,
+                    rotate: 0,
+                    labelX: null,
+                    labelY: null,
+                    labelOffset: 25,
+                },
+                // 하판 좌측 딩 (베이스 1)
+                {
+                    id: 10,
+                    label: '1',
+                    cx: -118,
+                    cy: 608,
+                    scale: 300,
+                    rotate: 164,
+                    labelX: -98,
+                    labelY: 750,
+                    labelOffset: 25,
+                },
+                // 하판 우측 딩 (베이스 2)
+                {
+                    id: 11,
+                    label: '2',
+                    cx: 1118,
+                    cy: 608,
+                    scale: 300,
+                    rotate: 19,
+                    labelX: 1084,
+                    labelY: 750,
+                    labelOffset: 25,
+                },
+            ];
+        }
+
         // 기본값은 9 Notes
         return default9Notes;
     };
@@ -778,9 +929,10 @@ interface LabelProps {
     onSelect: () => void;
     isCalibrationEnabled?: boolean;
     activeTemplateCount?: number;
+    selectedTemplate?: number | string | null;
 }
 
-const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected, onSelect, isCalibrationEnabled = true, activeTemplateCount = 9 }) => {
+const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected, onSelect, isCalibrationEnabled = true, activeTemplateCount = 9, selectedTemplate = null }) => {
     const cx = note.cx || 500;
     const cy = note.cy || 500;
 
@@ -808,6 +960,16 @@ const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected
             if (note.id === 0) return '3';
             if (note.id >= 1 && note.id <= 8) {
                 return String(note.id + 3); // 1→4, 2→5, ..., 8→11
+            }
+        }
+        // 12N 템플릿일 때 label 매핑
+        if (selectedTemplate === '12N') {
+            // 12N 템플릿 매핑: 하판 좌측 베이스(10) → "1", 하판 우측 베이스(11) → "2", 딩(0) → "3", Top 노트(1-9) → "4"-"12"
+            if (note.id === 10) return '1';
+            if (note.id === 11) return '2';
+            if (note.id === 0) return '3';
+            if (note.id >= 1 && note.id <= 9) {
+                return String(note.id + 3); // 1→4, 2→5, ..., 9→12
             }
         }
         // 그 외의 경우 기본 label 사용
@@ -866,12 +1028,16 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
     }, [scale]);
 
     // 템플릿 선택 상태 (다른 상태보다 먼저 선언되어야 함)
-    const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
+    const [selectedTemplate, setSelectedTemplate] = useState<number | string | null>(null);
 
     // 현재 활성화된 템플릿 개수 결정 (템플릿 선택 시 템플릿 개수, 아니면 스케일 기반 또는 9)
     const activeTemplateCount = useMemo(() => {
         if (selectedTemplate !== null) {
-            return selectedTemplate;
+            // 12N과 12M은 모두 12로 처리
+            if (selectedTemplate === '12N' || selectedTemplate === '12M') {
+                return 12;
+            }
+            return typeof selectedTemplate === 'number' ? selectedTemplate : 12;
         }
         // 템플릿이 선택되지 않았을 때는 스케일 호환성에 따라 결정
         if (scale && isCompatibleScale) {
@@ -979,8 +1145,9 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
 
     // 템플릿이 변경될 때마다 해당 템플릿의 캘리브레이션을 로드하여 notes 업데이트
     useEffect(() => {
-        const templateCount = activeTemplateCount;
-        const loadedNotes = createInitialNotes(centerX, centerY, templateCount);
+        // selectedTemplate이 있으면 그것을 사용, 없으면 activeTemplateCount 사용
+        const templateKey = selectedTemplate !== null ? selectedTemplate : activeTemplateCount;
+        const loadedNotes = createInitialNotes(centerX, centerY, templateKey);
         setNotes(loadedNotes);
         // 선택 상태 초기화
         setSelectedNoteId(null);
@@ -989,7 +1156,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
         setSelectedLeftSymbolId(null);
         setSelectedBottomSymbolId(null);
         setSelectedPitchId(null);
-    }, [activeTemplateCount, centerX, centerY]);
+    }, [selectedTemplate, activeTemplateCount, centerX, centerY]);
 
     // 노트 업데이트 함수 (자동으로 localStorage에 저장, 템플릿별로 독립 저장)
     const updateNote = (id: number, updates: Partial<NoteData>) => {
@@ -998,9 +1165,10 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                 note.id === id ? { ...note, ...updates } : note
             );
             
-            // 템플릿별로 독립적인 localStorage 키 사용
-            const toneFieldKey = `minidigipan_tonefield_calibration_${activeTemplateCount}`;
-            const labelKey = `minidigipan_label_calibration_${activeTemplateCount}`;
+            // 템플릿별로 독립적인 localStorage 키 사용 (selectedTemplate 우선)
+            const templateKey = selectedTemplate !== null ? selectedTemplate : activeTemplateCount;
+            const toneFieldKey = `minidigipan_tonefield_calibration_${templateKey}`;
+            const labelKey = `minidigipan_label_calibration_${templateKey}`;
             
             // 톤필드 캘리브레이션 자동 저장
             const toneFieldData = updatedNotes.map(({ id, label, cx, cy, scale, rotate }) => ({
@@ -1057,8 +1225,9 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
 
         const jsonString = JSON.stringify(exportData, null, 2);
 
-        // 템플릿별로 독립적인 localStorage 키 사용
-        const toneFieldKey = `minidigipan_tonefield_calibration_${activeTemplateCount}`;
+        // 템플릿별로 독립적인 localStorage 키 사용 (selectedTemplate 우선)
+        const templateKey = selectedTemplate !== null ? selectedTemplate : activeTemplateCount;
+        const toneFieldKey = `minidigipan_tonefield_calibration_${templateKey}`;
         try {
             localStorage.setItem(toneFieldKey, JSON.stringify(exportData));
         } catch (error) {
@@ -1136,8 +1305,9 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
 
         const jsonString = JSON.stringify(exportData, null, 2);
 
-        // 템플릿별로 독립적인 localStorage 키 사용
-        const labelKey = `minidigipan_label_calibration_${activeTemplateCount}`;
+        // 템플릿별로 독립적인 localStorage 키 사용 (selectedTemplate 우선)
+        const templateKey = selectedTemplate !== null ? selectedTemplate : activeTemplateCount;
+        const labelKey = `minidigipan_label_calibration_${templateKey}`;
         try {
             localStorage.setItem(labelKey, JSON.stringify(exportData));
         } catch (error) {
@@ -1374,6 +1544,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                         }}
                                         isCalibrationEnabled={isCalibrationEnabled}
                                         activeTemplateCount={activeTemplateCount}
+                                        selectedTemplate={selectedTemplate}
                                     />
                                 </g>
                             );
@@ -1694,7 +1865,49 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                 템플릿
                             </h3>
                             <div className="flex flex-wrap gap-1.5">
-                                {[9, 10, 11, 12, 14, 15, 18].map((count) => (
+                                {[9, 10, 11].map((count) => (
+                                    <button
+                                        key={count}
+                                        onClick={() => {
+                                            // 토글: 같은 버튼 클릭 시 비활성화, 다른 버튼 클릭 시 활성화
+                                            setSelectedTemplate(selectedTemplate === count ? null : count);
+                                        }}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                                            selectedTemplate === count
+                                                ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                                : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                        }`}
+                                    >
+                                        {count}
+                                    </button>
+                                ))}
+                                {/* 12N 버튼 */}
+                                <button
+                                    onClick={() => {
+                                        setSelectedTemplate(selectedTemplate === '12N' ? null : '12N');
+                                    }}
+                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                                        selectedTemplate === '12N'
+                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                    }`}
+                                >
+                                    12N
+                                </button>
+                                {/* 12M 버튼 */}
+                                <button
+                                    onClick={() => {
+                                        setSelectedTemplate(selectedTemplate === '12M' ? null : '12M');
+                                    }}
+                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                                        selectedTemplate === '12M'
+                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                    }`}
+                                >
+                                    12M
+                                </button>
+                                {[14, 15, 18].map((count) => (
                                     <button
                                         key={count}
                                         onClick={() => {
