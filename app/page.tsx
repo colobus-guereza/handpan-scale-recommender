@@ -486,6 +486,23 @@ export default function Home() {
                         <ThemeToggle />
                     </div>
 
+                    {/* Worldwide Shipping Badge - Top Right */}
+                    <div className="absolute top-4 right-4 z-40 flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full shadow-lg animate-pulse hover:animate-none transition-all duration-300 hover:scale-105">
+                        <svg 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            className="h-4 w-4 md:h-5 md:w-5" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                            strokeWidth={2}
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 002 2h2.945M3.055 11H1m2.055 0c-.01.33-.055.66-.055 1 0 5.523 4.477 10 10 10s10-4.477 10-10S17.523 2 12 2c-1.66 0-3.2.405-4.555 1.11M3.055 11l1.11-1.11M21 11h-2m-2 0h2m-2 0a2 2 0 00-2-2h-2m4 2v1a2 2 0 01-2 2h-2m4-3V9a2 2 0 00-2-2h-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v2M9 7h2m-2 0v2m2-2v2m0 0h2m-2 0H9m2 0v2m0-2V9" />
+                        </svg>
+                        <span className="text-xs md:text-sm font-bold whitespace-nowrap">
+                            {language === 'ko' ? t.shipping.worldwide : t.shipping.worldwideEn}
+                        </span>
+                    </div>
+
                     <header className="text-center space-y-2 pt-2">
                         <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-slate-400 drop-shadow-sm">
                             {language === 'ko' ? '나에게 맞는 핸드팬 스케일 찾기' : "Discover your Handpan scale"}

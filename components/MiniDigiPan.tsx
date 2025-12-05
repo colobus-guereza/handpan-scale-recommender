@@ -57,21 +57,21 @@ const comparePitch = (a: string, b: string): number => {
     // 숫자 추출 (옥타브)
     const aNum = parseInt(a.match(/\d+/)?.[0] || '0');
     const bNum = parseInt(b.match(/\d+/)?.[0] || '0');
-    
+
     // 옥타브가 다르면 옥타브로 비교
     if (aNum !== bNum) return aNum - bNum;
-    
+
     // 옥타브가 같으면 알파벳 부분 비교
     const aNote = a.replace(/\d+/g, '').trim();
     const bNote = b.replace(/\d+/g, '').trim();
-    
+
     // 음표 순서 정의 (C, C#, D, D#, E, F, F#, G, G#, A, A#, B)
     const noteOrder: { [key: string]: number } = {
         'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3,
         'E': 4, 'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8,
         'A': 9, 'A#': 10, 'Bb': 10, 'B': 11
     };
-    
+
     // 알파벳 부분에서 음표 추출 (예: "A3" -> "A", "Bb3" -> "Bb")
     const getNoteValue = (noteStr: string): number => {
         // # 또는 b이 포함된 경우
@@ -86,10 +86,10 @@ const comparePitch = (a: string, b: string): number => {
         const singleNote = noteStr.charAt(0);
         return noteOrder[singleNote] ?? 999;
     };
-    
+
     const aValue = getNoteValue(aNote);
     const bValue = getNoteValue(bNote);
-    
+
     return aValue - bValue;
 };
 
@@ -134,17 +134,51 @@ const loadCalibrationFromStorage = (key: string): any[] | null => {
 };
 
 // 초기 노트 데이터 생성 함수 (템플릿 개수에 따라 생성)
-const createInitialNotes = (centerX: number, centerY: number, templateCount: number | string = 9): NoteData[] => {
+const createInitialNotes = (centerX: number, centerY: number, templateCount: number | string = 9, scale?: Scale | null): NoteData[] => {
     // 템플릿별로 독립적인 localStorage 키 사용
-    const toneFieldKey = `minidigipan_tonefield_calibration_${templateCount}`;
-    const labelKey = `minidigipan_label_calibration_${templateCount}`;
-    
+    // 스케일이 있으면 스케일 ID를 우선 사용 (개별 저장)
+    const storageKeySuffix = scale ? `scale_${scale.id}` : templateCount;
+    const toneFieldKey = `minidigipan_tonefield_calibration_${storageKeySuffix}`;
+    const labelKey = `minidigipan_label_calibration_${storageKeySuffix}`;
+
     // localStorage에서 톤필드 캘리브레이션 불러오기
     const storedToneFieldCalibration = loadCalibrationFromStorage(toneFieldKey);
     const storedLabelCalibration = loadCalibrationFromStorage(labelKey);
 
     // 템플릿별 기본 캘리브레이션 데이터
     const getDefaultCalibrationData = (count: number | string): any[] => {
+        // E Equinox 14 전용 하드코딩 설정
+        if (scale?.id === 'e_equinox_14' && count === '14N') {
+            const base12N = getDefaultCalibrationData('12N');
+            return [
+                ...base12N,
+                // 추가 노트 1 (id 12, Label 13) - 상단 좌측
+                {
+                    id: 12,
+                    label: '13',
+                    cx: 420,
+                    cy: 120,
+                    scale: 180,
+                    rotate: 340,
+                    labelX: null,
+                    labelY: null,
+                    labelOffset: 25,
+                },
+                // 추가 노트 2 (id 13, Label 14) - 상단 우측
+                {
+                    id: 13,
+                    label: '14',
+                    cx: 580,
+                    cy: 120,
+                    scale: 180,
+                    rotate: 20,
+                    labelX: null,
+                    labelY: null,
+                    labelOffset: 25,
+                },
+            ];
+        }
+
         // 9 Notes 템플릿 기본값
         const default9Notes = [
             {
@@ -673,6 +707,213 @@ const createInitialNotes = (centerX: number, centerY: number, templateCount: num
             ];
         }
 
+        // 14N 템플릿 (E Equinox 14 캘리브레이션 데이터)
+        if (count === '14N') {
+            return [
+                // 중앙 딩 (3번)
+                {
+                    id: 0,
+                    label: '3',
+                    cx: 500,
+                    cy: 500,
+                    scale: 389.7,
+                    rotate: 90,
+                    labelX: null,
+                    labelY: 514,
+                    labelOffset: 25,
+                    symbolX: 945,
+                    symbolY: null,
+                    symbolOffset: 15,
+                    symbolLeftX: 59,
+                    symbolLeftY: null,
+                    symbolLeftOffset: 15,
+                    symbolBottomX: null,
+                    symbolBottomY: 665,
+                    symbolBottomOffset: 15,
+                },
+                // Top 노트 1-9
+                {
+                    id: 1,
+                    label: '1',
+                    cx: 661,
+                    cy: 779,
+                    scale: 286,
+                    rotate: 121,
+                    labelX: null,
+                    labelY: 886,
+                    labelOffset: 25,
+                },
+                {
+                    id: 2,
+                    label: '2',
+                    cx: 335,
+                    cy: 776,
+                    scale: 285,
+                    rotate: 61,
+                    labelX: null,
+                    labelY: 884,
+                    labelOffset: 25,
+                },
+                {
+                    id: 3,
+                    label: '3',
+                    cx: 813,
+                    cy: 595,
+                    scale: 253,
+                    rotate: 128,
+                    labelX: null,
+                    labelY: 697,
+                    labelOffset: 25,
+                },
+                {
+                    id: 4,
+                    label: '4',
+                    cx: 195,
+                    cy: 594,
+                    scale: 249,
+                    rotate: 47,
+                    labelX: null,
+                    labelY: 699,
+                    labelOffset: 25,
+                },
+                {
+                    id: 5,
+                    label: '5',
+                    cx: 808,
+                    cy: 358,
+                    scale: 237,
+                    rotate: 55,
+                    labelX: null,
+                    labelY: 453,
+                    labelOffset: 25,
+                },
+                {
+                    id: 6,
+                    label: '6',
+                    cx: 204,
+                    cy: 366,
+                    scale: 238,
+                    rotate: 125,
+                    labelX: null,
+                    labelY: 458,
+                    labelOffset: 25,
+                },
+                {
+                    id: 7,
+                    label: '7',
+                    cx: 688,
+                    cy: 201,
+                    scale: 226,
+                    rotate: 48,
+                    labelX: null,
+                    labelY: 295,
+                    labelOffset: 25,
+                },
+                {
+                    id: 8,
+                    label: '8',
+                    cx: 321,
+                    cy: 203,
+                    scale: 232,
+                    rotate: 133,
+                    labelX: null,
+                    labelY: 295,
+                    labelOffset: 25,
+                },
+                {
+                    id: 9,
+                    label: '9',
+                    cx: 501,
+                    cy: 143,
+                    scale: 200,
+                    rotate: 0,
+                    labelX: null,
+                    labelY: null,
+                    labelOffset: 25,
+                },
+                // 하판 좌측 딩 (베이스 1)
+                {
+                    id: 10,
+                    label: '1',
+                    cx: -118,
+                    cy: 608,
+                    scale: 300,
+                    rotate: 164,
+                    labelX: -98,
+                    labelY: 750,
+                    labelOffset: 25,
+                },
+                // 하판 우측 딩 (베이스 2)
+                {
+                    id: 11,
+                    label: '2',
+                    cx: 1118,
+                    cy: 608,
+                    scale: 300,
+                    rotate: 19,
+                    labelX: 1084,
+                    labelY: 750,
+                    labelOffset: 25,
+                },
+                // 하판 중앙 노트 1 (id 12, D5)
+                {
+                    id: 12,
+                    label: '13',
+                    cx: 420,
+                    cy: -96,
+                    scale: 180,
+                    rotate: 251,
+                    labelX: null,
+                    labelY: -29,
+                    labelOffset: 25,
+                },
+                // 하판 중앙 노트 2 (id 13, E5)
+                {
+                    id: 13,
+                    label: '14',
+                    cx: 609,
+                    cy: -90,
+                    scale: 146,
+                    rotate: 290,
+                    labelX: null,
+                    labelY: -20,
+                    labelOffset: 25,
+                },
+            ];
+        }
+
+        // 14M 템플릿 (12N 기반 + 2개 추가)
+        if (count === '14M') {
+            const base12N = getDefaultCalibrationData('12N');
+            return [
+                ...base12N,
+                // 추가 노트 1 (id 12)
+                {
+                    id: 12,
+                    label: '13',
+                    cx: 500,
+                    cy: 500,
+                    scale: 200,
+                    rotate: 0,
+                    labelX: null,
+                    labelY: null,
+                    labelOffset: 25,
+                },
+                // 추가 노트 2 (id 13)
+                {
+                    id: 13,
+                    label: '14',
+                    cx: 500,
+                    cy: 500,
+                    scale: 200,
+                    rotate: 0,
+                    labelX: null,
+                    labelY: null,
+                    labelOffset: 25,
+                },
+            ];
+        }
+
         // 기본값은 9 Notes
         return default9Notes;
     };
@@ -685,7 +926,7 @@ const createInitialNotes = (centerX: number, centerY: number, templateCount: num
     // 저장된 라벨 캘리브레이션이 있으면 사용, 없으면 defaultCalibrationData의 라벨 값 사용
     // 저장된 값과 기본값을 병합하여 저장된 값이 없는 속성은 기본값 사용
     const labelCalibrationMap = new Map();
-    
+
     // 먼저 기본값으로 맵 초기화 (toneFieldData를 사용하여 실제 사용되는 노트만 처리)
     toneFieldData.forEach((item: any) => {
         // 기본값에서 해당 id의 라벨 데이터 찾기
@@ -705,7 +946,7 @@ const createInitialNotes = (centerX: number, centerY: number, templateCount: num
             symbolBottomOffset: defaultItem?.symbolBottomOffset,
         });
     });
-    
+
     // 저장된 값이 있으면 병합 (저장된 값이 우선, 없는 속성은 기본값 유지)
     if (storedLabelCalibration) {
         storedLabelCalibration.forEach((item: any) => {
@@ -928,7 +1169,7 @@ interface LabelProps {
     isSelected: boolean;
     onSelect: () => void;
     isCalibrationEnabled?: boolean;
-    activeTemplateCount?: number;
+    activeTemplateCount?: number | string;
     selectedTemplate?: number | string | null;
     scale?: Scale | null;
 }
@@ -963,8 +1204,11 @@ const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected
                 return String(note.id + 3); // 1→4, 2→5, ..., 8→11
             }
         }
-        // 12N 템플릿일 때 label 매핑
-        if (selectedTemplate === '12N' || (activeTemplateCount === 12 && scale && scale.notes.top.length === 9 && scale.notes.bottom.length === 2)) {
+        // 12N, 14N, 14M 템플릿일 때 label 매핑
+        if (selectedTemplate === '12N' || activeTemplateCount === '12N' ||
+            selectedTemplate === '14N' || activeTemplateCount === '14N' ||
+            selectedTemplate === '14M' || activeTemplateCount === '14M' ||
+            (activeTemplateCount === 12 && scale && scale.notes.top.length === 9 && scale.notes.bottom.length === 2)) {
             // D Kurd 12 특별 매핑: 딩(0) → "1", 하판 좌측 F3(10) → "2", 하판 우측 G3(11) → "3", Top 노트 → "4"-"12"
             if (scale?.id === 'd_kurd_12') {
                 if (note.id === 0) return '1';
@@ -986,7 +1230,7 @@ const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected
                     return dKurd12TopMapping[note.id] || String(note.id + 3);
                 }
             }
-            // 일반 12N 템플릿 매핑: 하판 좌측 베이스(10) → "1", 하판 우측 베이스(11) → "2", 딩(0) → "3", Top 노트(1-9) → "4"-"12"
+            // 일반 12N/14N/14M 템플릿 매핑: 하판 좌측 베이스(10) → "1", 하판 우측 베이스(11) → "2", 딩(0) → "3", Top 노트(1-9) → "4"-"12"
             else {
                 if (note.id === 10) return '1';
                 if (note.id === 11) return '2';
@@ -994,6 +1238,9 @@ const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected
                 if (note.id >= 1 && note.id <= 9) {
                     return String(note.id + 3); // 1→4, 2→5, ..., 9→12
                 }
+                // 14N/14M 추가 노트
+                if (note.id === 12) return '13';
+                if (note.id === 13) return '14';
             }
         }
         // 그 외의 경우 기본 label 사용
@@ -1041,17 +1288,22 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
         const supportedCounts = [9, 10, 11, 12, 14, 15, 18];
         // 지원되는 노트 개수와 일치하는 경우
         if (!supportedCounts.includes(totalNotes)) return false;
-        
+
         // 11 notes 템플릿: 딩 1개 + Top 8개 + Bottom 2개
         if (totalNotes === 11) {
             return scale.notes.top.length === 8 && scale.notes.bottom.length === 2;
         }
-        
+
         // 12 notes 템플릿 (12N): 딩 1개 + Top 9개 + Bottom 2개
         if (totalNotes === 12) {
             return scale.notes.top.length === 9 && scale.notes.bottom.length === 2;
         }
-        
+
+        // 14 notes 템플릿 (14N/14M)
+        if (totalNotes === 14) {
+            return true;
+        }
+
         // 그 외 템플릿: bottom이 0이어야 함
         return scale.notes.bottom.length === 0;
     }, [scale]);
@@ -1062,9 +1314,9 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
     // 현재 활성화된 템플릿 개수 결정 (템플릿 선택 시 템플릿 개수, 아니면 스케일 기반 또는 9)
     const activeTemplateCount = useMemo(() => {
         if (selectedTemplate !== null) {
-            // 12N과 12M은 모두 12로 처리
-            if (selectedTemplate === '12N' || selectedTemplate === '12M') {
-                return 12;
+            // 12N과 12M은 모두 12로 처리하지 않고 문자열 그대로 반환하여 createInitialNotes에서 구분
+            if (selectedTemplate === '12N' || selectedTemplate === '12M' || selectedTemplate === '14N' || selectedTemplate === '14M') {
+                return selectedTemplate;
             }
             return typeof selectedTemplate === 'number' ? selectedTemplate : 12;
         }
@@ -1078,7 +1330,16 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
             }
             // 12개 음 스케일(상판 9개 + 하판 2개)의 경우 12N 템플릿으로 설정
             if (totalNotes === 12 && scale.notes.top.length === 9 && scale.notes.bottom.length === 2) {
-                return 12; // 12N 템플릿 사용
+                return '12N'; // 12N 템플릿 사용
+            }
+            // 14개 음 스케일
+            if (totalNotes === 14) {
+                // F# Low Pygmy 14 (Mutant) -> 14M
+                if (scale.id.includes('mutant')) {
+                    return '14M';
+                }
+                // C# Deepasia 14, E Equinox 14 (Normal) -> 14N
+                return '14N';
             }
             // 그 외의 경우 딩 + Top 노트 개수
             return scale.notes.top.length + 1;
@@ -1089,7 +1350,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
     // 초기 노트 데이터를 useState로 관리 (템플릿 개수에 따라, 초기값은 9)
     const [notes, setNotes] = useState<NoteData[]>(() => {
         // 초기 렌더링 시에는 기본값 9 사용 (나중에 useEffect에서 업데이트됨)
-        return createInitialNotes(centerX, centerY, 9);
+        return createInitialNotes(centerX, centerY, 9, scale);
     });
     const [selectedNoteId, setSelectedNoteId] = useState<number | null>(null);
     const [selectedLabelId, setSelectedLabelId] = useState<number | null>(null);
@@ -1115,30 +1376,30 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
         if (selectedLabelId === null) return null;
         return notes.find(note => note.id === selectedLabelId) || null;
     }, [notes, selectedLabelId]);
-    
+
     // 선택된 기호 노트를 useMemo로 메모이제이션 (RS 기호용)
     const selectedSymbolNote = useMemo(() => {
         if (selectedSymbolId === null) return null;
         return notes.find(note => note.id === selectedSymbolId) || null;
     }, [notes, selectedSymbolId]);
-    
+
     // 선택된 왼쪽 기호 노트를 useMemo로 메모이제이션 (LS 기호용)
     const selectedLeftSymbolNote = useMemo(() => {
         if (selectedLeftSymbolId === null) return null;
         return notes.find(note => note.id === selectedLeftSymbolId) || null;
     }, [notes, selectedLeftSymbolId]);
-    
+
     // 선택된 하단 기호 노트를 useMemo로 메모이제이션 (H 기호용)
     const selectedBottomSymbolNote = useMemo(() => {
         if (selectedBottomSymbolId === null) return null;
         return notes.find(note => note.id === selectedBottomSymbolId) || null;
     }, [notes, selectedBottomSymbolId]);
-    
+
     // 기호 텍스트 패널에서 사용할 선택된 노트 (라벨 또는 기호)
     const selectedSymbolTextNote = useMemo(() => {
         return selectedBottomSymbolNote || selectedLeftSymbolNote || selectedSymbolNote || selectedLabelNote;
     }, [selectedBottomSymbolNote, selectedLeftSymbolNote, selectedSymbolNote, selectedLabelNote]);
-    
+
     // 선택된 피치 노트를 useMemo로 메모이제이션하여 notes 변경 시 자동 업데이트
     const selectedPitchNote = useMemo(() => {
         if (selectedPitchId === null) return null;
@@ -1168,7 +1429,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
             setIsLabelPanelExpanded(true);
         }
     }, [selectedLabelId, selectedSymbolId, selectedLeftSymbolId, selectedBottomSymbolId]);
-    
+
     // 피치 선택 시 패널 자동 확장
     useEffect(() => {
         if (selectedPitchId !== null) {
@@ -1194,40 +1455,105 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
         } else {
             templateKey = activeTemplateCount;
         }
-        let loadedNotes = createInitialNotes(centerX, centerY, templateKey);
-        
-        // D Kurd 12의 경우 하판 F3와 G3 톤필드 위치 교체
+        let loadedNotes = createInitialNotes(centerX, centerY, templateKey, scale);
+
+        // localStorage에서 C# Pygmy 11의 설정값 불러오기 (11 템플릿)
+        const csPygmy11ToneFieldKey = `minidigipan_tonefield_calibration_11`;
+        const csPygmy11LabelKey = `minidigipan_label_calibration_11`;
+        const csPygmy11ToneFieldCalibration = loadCalibrationFromStorage(csPygmy11ToneFieldKey);
+        const csPygmy11LabelCalibration = loadCalibrationFromStorage(csPygmy11LabelKey);
+
+        // C# Pygmy 11의 하판 베이스 노트 설정값 추출
+        let csPygmy11BottomSettings = null;
+        if (csPygmy11ToneFieldCalibration) {
+            const note10 = csPygmy11ToneFieldCalibration.find((n: any) => n.id === 10);
+            const note11 = csPygmy11ToneFieldCalibration.find((n: any) => n.id === 11);
+            if (note10 && note11) {
+                const label10 = csPygmy11LabelCalibration?.find((n: any) => n.id === 10);
+                const label11 = csPygmy11LabelCalibration?.find((n: any) => n.id === 11);
+                csPygmy11BottomSettings = {
+                    note10: {
+                        cx: note10.cx,
+                        cy: note10.cy,
+                        scale: note10.scale,
+                        rotate: note10.rotate,
+                        labelX: label10?.labelX ?? note10.labelX,
+                        labelY: label10?.labelY ?? note10.labelY,
+                    },
+                    note11: {
+                        cx: note11.cx,
+                        cy: note11.cy,
+                        scale: note11.scale,
+                        rotate: note11.rotate,
+                        labelX: label11?.labelX ?? note11.labelX,
+                        labelY: label11?.labelY ?? note11.labelY,
+                    }
+                };
+            }
+        }
+
+        // F Low Pygmy 12, D Kurd 12, E Equinox 12에 C# Pygmy 11의 하판 베이스 노트 설정 적용
+        if (csPygmy11BottomSettings && (scale?.id === 'f_low_pygmy_12' || scale?.id === 'd_kurd_12' || scale?.id === 'e_equinox_12')) {
+            loadedNotes = loadedNotes.map(note => {
+                if (note.id === 10) {
+                    // C# Pygmy 11의 하판 좌측 베이스 노트 설정 적용
+                    return {
+                        ...note,
+                        cx: csPygmy11BottomSettings.note10.cx,
+                        cy: csPygmy11BottomSettings.note10.cy,
+                        scale: csPygmy11BottomSettings.note10.scale,
+                        rotate: csPygmy11BottomSettings.note10.rotate,
+                        labelX: csPygmy11BottomSettings.note10.labelX,
+                        labelY: csPygmy11BottomSettings.note10.labelY,
+                    };
+                } else if (note.id === 11) {
+                    // C# Pygmy 11의 하판 우측 베이스 노트 설정 적용
+                    return {
+                        ...note,
+                        cx: csPygmy11BottomSettings.note11.cx,
+                        cy: csPygmy11BottomSettings.note11.cy,
+                        scale: csPygmy11BottomSettings.note11.scale,
+                        rotate: csPygmy11BottomSettings.note11.rotate,
+                        labelX: csPygmy11BottomSettings.note11.labelX,
+                        labelY: csPygmy11BottomSettings.note11.labelY,
+                    };
+                }
+                return note;
+            });
+        }
+
+        // D Kurd 12의 경우 하판 F3와 G3 톤필드 위치 교체 (C# Pygmy 11 설정 적용 후)
         if (scale?.id === 'd_kurd_12') {
-            const note10Original = loadedNotes.find(n => n.id === 10);
-            const note11Original = loadedNotes.find(n => n.id === 11);
-            if (note10Original && note11Original) {
+            const note10Current = loadedNotes.find(n => n.id === 10);
+            const note11Current = loadedNotes.find(n => n.id === 11);
+            if (note10Current && note11Current) {
                 loadedNotes = loadedNotes.map(note => {
                     if (note.id === 10) {
                         // id 10 (하판 좌측)을 id 11의 위치로 이동
                         return {
                             ...note,
-                            cx: note11Original.cx,
-                            cy: note11Original.cy,
-                            rotate: note11Original.rotate,
-                            labelX: note11Original.labelX,
-                            labelY: note11Original.labelY,
+                            cx: note11Current.cx,
+                            cy: note11Current.cy,
+                            rotate: note11Current.rotate,
+                            labelX: note11Current.labelX,
+                            labelY: note11Current.labelY,
                         };
                     } else if (note.id === 11) {
                         // id 11 (하판 우측)을 id 10의 위치로 이동
                         return {
                             ...note,
-                            cx: note10Original.cx,
-                            cy: note10Original.cy,
-                            rotate: note10Original.rotate,
-                            labelX: note10Original.labelX,
-                            labelY: note10Original.labelY,
+                            cx: note10Current.cx,
+                            cy: note10Current.cy,
+                            rotate: note10Current.rotate,
+                            labelX: note10Current.labelX,
+                            labelY: note10Current.labelY,
                         };
                     }
                     return note;
                 });
             }
         }
-        
+
         setNotes(loadedNotes);
         // 선택 상태 초기화
         setSelectedNoteId(null);
@@ -1244,12 +1570,15 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
             const updatedNotes = prevNotes.map(note =>
                 note.id === id ? { ...note, ...updates } : note
             );
-            
+
             // 템플릿별로 독립적인 localStorage 키 사용 (selectedTemplate 우선)
+            // 스케일이 있으면 스케일 ID를 우선 사용 (개별 저장)
             const templateKey = selectedTemplate !== null ? selectedTemplate : activeTemplateCount;
-            const toneFieldKey = `minidigipan_tonefield_calibration_${templateKey}`;
-            const labelKey = `minidigipan_label_calibration_${templateKey}`;
-            
+            const storageKeySuffix = scale ? `scale_${scale.id}` : templateKey;
+
+            const toneFieldKey = `minidigipan_tonefield_calibration_${storageKeySuffix}`;
+            const labelKey = `minidigipan_label_calibration_${storageKeySuffix}`;
+
             // 톤필드 캘리브레이션 자동 저장
             const toneFieldData = updatedNotes.map(({ id, label, cx, cy, scale, rotate }) => ({
                 id,
@@ -1264,7 +1593,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
             } catch (error) {
                 console.error(`Failed to save tonefield calibration to localStorage (${toneFieldKey}):`, error);
             }
-            
+
             // 라벨 캘리브레이션 자동 저장 (null 값도 명시적으로 저장)
             const labelData = updatedNotes.map((note) => ({
                 id: note.id,
@@ -1287,7 +1616,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
             } catch (error) {
                 console.error(`Failed to save label calibration to localStorage (${labelKey}):`, error);
             }
-            
+
             return updatedNotes;
         });
     };
@@ -1306,8 +1635,10 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
         const jsonString = JSON.stringify(exportData, null, 2);
 
         // 템플릿별로 독립적인 localStorage 키 사용 (selectedTemplate 우선)
+        // 스케일이 있으면 스케일 ID를 우선 사용 (개별 저장)
         const templateKey = selectedTemplate !== null ? selectedTemplate : activeTemplateCount;
-        const toneFieldKey = `minidigipan_tonefield_calibration_${templateKey}`;
+        const storageKeySuffix = scale ? `scale_${scale.id}` : templateKey;
+        const toneFieldKey = `minidigipan_tonefield_calibration_${storageKeySuffix}`;
         try {
             localStorage.setItem(toneFieldKey, JSON.stringify(exportData));
         } catch (error) {
@@ -1386,8 +1717,10 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
         const jsonString = JSON.stringify(exportData, null, 2);
 
         // 템플릿별로 독립적인 localStorage 키 사용 (selectedTemplate 우선)
+        // 스케일이 있으면 스케일 ID를 우선 사용 (개별 저장)
         const templateKey = selectedTemplate !== null ? selectedTemplate : activeTemplateCount;
-        const labelKey = `minidigipan_label_calibration_${templateKey}`;
+        const storageKeySuffix = scale ? `scale_${scale.id}` : templateKey;
+        const labelKey = `minidigipan_label_calibration_${storageKeySuffix}`;
         try {
             localStorage.setItem(labelKey, JSON.stringify(exportData));
         } catch (error) {
@@ -1418,7 +1751,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
         if (!isToneFieldPanelExpanded && !isLabelPanelExpanded && !isPitchPanelExpanded) {
             return;
         }
-        
+
         // 패널 내부 클릭은 무시
         const target = e.target as HTMLElement;
         if (target.closest('.panel-container')) {
@@ -1428,7 +1761,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
         if (target.closest('svg')) {
             return;
         }
-        
+
         // 그 외 영역 클릭 시 패널 닫기 및 선택 해제
         setIsToneFieldPanelExpanded(false);
         setIsLabelPanelExpanded(false);
@@ -1450,21 +1783,21 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                 {/* 스케일 이름 또는 템플릿 제목 - 항상 표시 */}
                 <div className="w-full max-w-[600px] mx-auto text-center">
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                        {selectedTemplate !== null 
+                        {selectedTemplate !== null
                             ? `${selectedTemplate} Notes 템플릿`
-                            : scale 
-                                ? scale.name 
+                            : scale
+                                ? scale.name
                                 : '디지팬'}
                     </h2>
                 </div>
-                
+
                 {/* 핸드팬 SVG 영역 */}
                 <div
-                    className="w-full max-w-[600px] mx-auto aspect-square relative flex-shrink-0"
+                    className="w-full max-w-[600px] mx-auto aspect-[9/16] relative flex-shrink-0"
                     onClick={(e) => e.stopPropagation()}
                 >
                     <svg
-                        viewBox="-400 -400 1800 1800"
+                        viewBox="-400 -1100 1800 3200"
                         className="w-full h-full"
                         xmlns="http://www.w3.org/2000/svg"
                         onClick={(e) => e.stopPropagation()}
@@ -1532,12 +1865,12 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                             </filter>
                         </defs>
 
-                        {/* 캘리브레이션 영역 외곽선 표시 (캘리브레이션 On일 때만 표시) */}
+                        {/* 캘리브레이션 영역 외곽선 표시 (캘리브레이션 On일 때만 표시) - 9:16 비율 */}
                         <rect
                             x="-400"
-                            y="-400"
+                            y="-1100"
                             width="1800"
-                            height="1800"
+                            height="3200"
                             fill="none"
                             stroke="#1E40AF"
                             strokeWidth="3"
@@ -1630,29 +1963,29 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                 </g>
                             );
                         })}
-                        
+
                         {/* 기호 텍스트 'RS' (딩의 3시 방향 외곽선 안쪽) */}
                         {(() => {
                             const dingNote = notes.find(note => note.id === 0);
                             if (!dingNote) return null;
-                            
+
                             const baseScale = dingNote.scale || 100;
                             const baseRx = baseScale * TONEFIELD_RATIO_X;
                             const cx = dingNote.cx || 500;
                             const cy = dingNote.cy || 500;
-                            
+
                             // 3시 방향 외곽선 안쪽 위치 계산
                             const defaultOffset = dingNote.symbolOffset !== undefined ? dingNote.symbolOffset : 15; // 외곽선에서 안쪽으로의 오프셋
-                            const symbolX = dingNote.symbolX !== undefined && dingNote.symbolX !== null 
-                                ? dingNote.symbolX 
+                            const symbolX = dingNote.symbolX !== undefined && dingNote.symbolX !== null
+                                ? dingNote.symbolX
                                 : (cx + baseRx - defaultOffset);
                             const symbolY = dingNote.symbolY !== undefined && dingNote.symbolY !== null
                                 ? dingNote.symbolY
                                 : cy;
-                            
+
                             const fontSize = 28.8; // 라벨과 동일한 폰트 사이즈
                             const isSymbolSelected = selectedSymbolId === 0;
-                            
+
                             return (
                                 <text
                                     x={symbolX}
@@ -1677,34 +2010,34 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                         setSelectedLeftSymbolId(null); // LS 선택 해제
                                         setSelectedBottomSymbolId(null); // H 선택 해제
                                     }}
-                                    >
+                                >
                                     RS
                                 </text>
                             );
                         })()}
-                        
+
                         {/* 기호 텍스트 'LS' (딩의 9시 방향 외곽선 안쪽) */}
                         {(() => {
                             const dingNote = notes.find(note => note.id === 0);
                             if (!dingNote) return null;
-                            
+
                             const baseScale = dingNote.scale || 100;
                             const baseRx = baseScale * TONEFIELD_RATIO_X;
                             const cx = dingNote.cx || 500;
                             const cy = dingNote.cy || 500;
-                            
+
                             // 9시 방향 외곽선 안쪽 위치 계산
                             const defaultOffset = dingNote.symbolLeftOffset !== undefined ? dingNote.symbolLeftOffset : 15; // 외곽선에서 안쪽으로의 오프셋
-                            const symbolLeftX = dingNote.symbolLeftX !== undefined && dingNote.symbolLeftX !== null 
-                                ? dingNote.symbolLeftX 
+                            const symbolLeftX = dingNote.symbolLeftX !== undefined && dingNote.symbolLeftX !== null
+                                ? dingNote.symbolLeftX
                                 : (cx - baseRx + defaultOffset);
                             const symbolLeftY = dingNote.symbolLeftY !== undefined && dingNote.symbolLeftY !== null
                                 ? dingNote.symbolLeftY
                                 : cy;
-                            
+
                             const fontSize = 28.8; // 라벨과 동일한 폰트 사이즈
                             const isLeftSymbolSelected = selectedLeftSymbolId === 0;
-                            
+
                             return (
                                 <text
                                     x={symbolLeftX}
@@ -1729,34 +2062,34 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                         setSelectedSymbolId(null); // RS 선택 해제
                                         setSelectedBottomSymbolId(null); // H 선택 해제
                                     }}
-                                    >
+                                >
                                     LS
                                 </text>
                             );
                         })()}
-                        
+
                         {/* 기호 텍스트 'H' (딩의 하단 외곽선 안쪽) */}
                         {(() => {
                             const dingNote = notes.find(note => note.id === 0);
                             if (!dingNote) return null;
-                            
+
                             const baseScale = dingNote.scale || 100;
                             const baseRy = baseScale * TONEFIELD_RATIO_Y;
                             const cx = dingNote.cx || 500;
                             const cy = dingNote.cy || 500;
-                            
+
                             // 하단 외곽선 안쪽 위치 계산
                             const defaultOffset = dingNote.symbolBottomOffset !== undefined ? dingNote.symbolBottomOffset : 15; // 외곽선에서 안쪽으로의 오프셋
-                            const symbolBottomX = dingNote.symbolBottomX !== undefined && dingNote.symbolBottomX !== null 
-                                ? dingNote.symbolBottomX 
+                            const symbolBottomX = dingNote.symbolBottomX !== undefined && dingNote.symbolBottomX !== null
+                                ? dingNote.symbolBottomX
                                 : cx;
                             const symbolBottomY = dingNote.symbolBottomY !== undefined && dingNote.symbolBottomY !== null
                                 ? dingNote.symbolBottomY
                                 : (cy + baseRy - defaultOffset);
-                            
+
                             const fontSize = 28.8; // 라벨과 동일한 폰트 사이즈
                             const isBottomSymbolSelected = selectedBottomSymbolId === 0;
-                            
+
                             return (
                                 <text
                                     x={symbolBottomX}
@@ -1781,17 +2114,17 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                         setSelectedSymbolId(null); // RS 선택 해제
                                         setSelectedLeftSymbolId(null); // LS 선택 해제
                                     }}
-                                    >
+                                >
                                     H
                                 </text>
                             );
                         })()}
-                        
+
                         {/* 피치 텍스트 렌더링 (모든 노트, 톤필드 회전과 독립적) */}
                         {notes.map((note) => {
                             // 스케일 데이터에서 피치 가져오기
                             let pitchLabel: string | null = null;
-                            
+
                             // 템플릿이 선택된 경우 스케일 정보와 동기화하지 않음 (기본값 사용)
                             if (selectedTemplate !== null) {
                                 // 템플릿 모드: 기본값 사용
@@ -1828,6 +2161,25 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                             pitchLabel = bottomNotes[0] || null; // 좌측 딩
                                         } else if (note.id === 11) {
                                             pitchLabel = bottomNotes[1] || null; // 우측 딩
+                                        }
+                                    }
+                                } else if (note.id === 12 || note.id === 13) {
+                                    // 14N 템플릿의 하판 중앙 노트 (E Equinox 14 등)
+                                    const bottomNotes = [...scale.notes.bottom].sort(comparePitch);
+                                    if (scale.id === 'e_equinox_14') {
+                                        // E Equinox 14: bottom = [C3, D3, D5, E5]
+                                        // id 12 → D5 (3번째), id 13 → E5 (4번째)
+                                        if (note.id === 12) {
+                                            pitchLabel = bottomNotes[2] || null; // D5
+                                        } else if (note.id === 13) {
+                                            pitchLabel = bottomNotes[3] || null; // E5
+                                        }
+                                    } else {
+                                        // 다른 14N 스케일의 경우
+                                        if (note.id === 12) {
+                                            pitchLabel = bottomNotes[2] || null;
+                                        } else if (note.id === 13) {
+                                            pitchLabel = bottomNotes[3] || null;
                                         }
                                     }
                                 } else if (note.id >= 1) {
@@ -1867,12 +2219,12 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                 };
                                 pitchLabel = defaultPitchLabels[note.id] || null;
                             }
-                            
+
                             if (!pitchLabel) return null;
-                            
+
                             const cx = note.cx || 500;
                             const cy = note.cy || 500;
-                            
+
                             // 피치 텍스트 캘리브레이션 값
                             const pitchX = note.pitchTextX !== undefined ? note.pitchTextX : cx;
                             const pitchY = note.pitchTextY !== undefined ? note.pitchTextY : cy;
@@ -1881,7 +2233,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                             const pitchScale = note.pitchTextScale !== undefined ? note.pitchTextScale : defaultPitchScale;
                             const pitchRotate = note.pitchTextRotate !== undefined ? note.pitchTextRotate : 0;
                             const isPitchSelected = selectedPitchId === note.id;
-                            
+
                             return (
                                 <g
                                     key={`pitch-${note.id}`}
@@ -1912,7 +2264,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                 </g>
                             );
                         })}
-                        
+
                         {/* 호환되지 않는 스케일일 경우 중앙에 '구현 예정' 메시지 표시 (템플릿 모드가 아닐 때만) */}
                         {selectedTemplate === null && scale && !isCompatibleScale && (
                             <text
@@ -1951,11 +2303,10 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                 setSelectedPitchId(null);
                             }
                         }}
-                        className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
-                            isCalibrationEnabled
-                                ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                : 'bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-white/20'
-                        }`}
+                        className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${isCalibrationEnabled
+                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                            : 'bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-white/20'
+                            }`}
                     >
                         캘리브레이션 {isCalibrationEnabled ? 'On' : 'Off'}
                     </button>
@@ -1980,11 +2331,10 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                             // 토글: 같은 버튼 클릭 시 비활성화, 다른 버튼 클릭 시 활성화
                                             setSelectedTemplate(selectedTemplate === count ? null : count);
                                         }}
-                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                                            selectedTemplate === count
-                                                ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                                : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                                        }`}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === count
+                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                            }`}
                                     >
                                         {count}
                                     </button>
@@ -1994,11 +2344,10 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                     onClick={() => {
                                         setSelectedTemplate(selectedTemplate === '12N' ? null : '12N');
                                     }}
-                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                                        selectedTemplate === '12N'
-                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                                    }`}
+                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === '12N'
+                                        ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                        : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                        }`}
                                 >
                                     12N
                                 </button>
@@ -2007,26 +2356,48 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                     onClick={() => {
                                         setSelectedTemplate(selectedTemplate === '12M' ? null : '12M');
                                     }}
-                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                                        selectedTemplate === '12M'
-                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                                    }`}
+                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === '12M'
+                                        ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                        : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                        }`}
                                 >
                                     12M
                                 </button>
-                                {[14, 15, 18].map((count) => (
+                                {/* 14N 버튼 */}
+                                <button
+                                    onClick={() => {
+                                        setSelectedTemplate(selectedTemplate === '14N' ? null : '14N');
+                                    }}
+                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === '14N'
+                                        ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                        : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                        }`}
+                                >
+                                    14N
+                                </button>
+                                {/* 14M 버튼 */}
+                                <button
+                                    onClick={() => {
+                                        setSelectedTemplate(selectedTemplate === '14M' ? null : '14M');
+                                    }}
+                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === '14M'
+                                        ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                        : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                        }`}
+                                >
+                                    14M
+                                </button>
+                                {[15, 18].map((count) => (
                                     <button
                                         key={count}
                                         onClick={() => {
                                             // 토글: 같은 버튼 클릭 시 비활성화, 다른 버튼 클릭 시 활성화
                                             setSelectedTemplate(selectedTemplate === count ? null : count);
                                         }}
-                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                                            selectedTemplate === count
-                                                ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                                : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                                        }`}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === count
+                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                            }`}
                                     >
                                         {count}
                                     </button>
@@ -2037,644 +2408,644 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
 
                     {/* 톤필드 캘리브레이션 패널 */}
                     {isCalibrationEnabled && (
-                    <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
-                        <div
-                            className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setIsToneFieldPanelExpanded(!isToneFieldPanelExpanded);
-                            }}
-                        >
-                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
-                                <span>{isToneFieldPanelExpanded ? '톤필드 캘리브레이션' : '톤필드'}</span>
-                                <span className="text-sm font-normal">{isToneFieldPanelExpanded ? '▲' : '▼'}</span>
-                            </h3>
-                        </div>
-                        {isToneFieldPanelExpanded && (
-                            <div className="p-4 pt-0 max-h-[45vh] overflow-y-auto">
-
-                                {selectedNote ? (
-                                    <div className="space-y-4">
-                                        <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded text-sm font-medium text-indigo-900 dark:text-indigo-100">
-                                            선택된 노트: <strong>{selectedNote.label}</strong>
-                                        </div>
-
-                                        {/* Position X */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                                Position X (cx)
-                                            </label>
-                                            <div className="flex gap-2 items-center">
-                                                <input
-                                                    type="range"
-                                                    min="-400"
-                                                    max="1400"
-                                                    step="1"
-                                                    value={selectedNote.cx || 500}
-                                                    onChange={(e) => updateNote(selectedNote.id, { cx: parseFloat(e.target.value) })}
-                                                    className="flex-1"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    min="-400"
-                                                    max="1400"
-                                                    step="0.1"
-                                                    value={selectedNote.cx?.toFixed(1) || 500}
-                                                    onChange={(e) => {
-                                                        const value = parseFloat(e.target.value);
-                                                        if (!isNaN(value)) {
-                                                            updateNote(selectedNote.id, { cx: Math.max(-400, Math.min(1400, value)) });
-                                                        }
-                                                    }}
-                                                    className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Position Y */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                                Position Y (cy)
-                                            </label>
-                                            <div className="flex gap-2 items-center">
-                                                <input
-                                                    type="range"
-                                                    min="-400"
-                                                    max="1400"
-                                                    step="1"
-                                                    value={selectedNote.cy || 500}
-                                                    onChange={(e) => updateNote(selectedNote.id, { cy: parseFloat(e.target.value) })}
-                                                    className="flex-1"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    min="-400"
-                                                    max="1400"
-                                                    step="0.1"
-                                                    value={selectedNote.cy?.toFixed(1) || 500}
-                                                    onChange={(e) => {
-                                                        const value = parseFloat(e.target.value);
-                                                        if (!isNaN(value)) {
-                                                            updateNote(selectedNote.id, { cy: Math.max(-400, Math.min(1400, value)) });
-                                                        }
-                                                    }}
-                                                    className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Size (비율 유지) */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                                Size (scale)
-                                                <span className="text-xs text-slate-500 dark:text-slate-400 ml-2">
-                                                    (rx: {((selectedNote.scale || 100) * TONEFIELD_RATIO_X).toFixed(1)}, ry: {((selectedNote.scale || 100) * TONEFIELD_RATIO_Y).toFixed(1)})
-                                                </span>
-                                            </label>
-                                            <div className="flex gap-2 items-center">
-                                                <input
-                                                    type="range"
-                                                    min="10"
-                                                    max="500"
-                                                    step="1"
-                                                    value={selectedNote.scale || 100}
-                                                    onChange={(e) => updateNote(selectedNote.id, { scale: parseFloat(e.target.value) })}
-                                                    className="flex-1"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    min="10"
-                                                    max="500"
-                                                    step="0.1"
-                                                    value={selectedNote.scale?.toFixed(1) || 100}
-                                                    onChange={(e) => {
-                                                        const value = parseFloat(e.target.value);
-                                                        if (!isNaN(value)) {
-                                                            updateNote(selectedNote.id, { scale: Math.max(10, Math.min(500, value)) });
-                                                        }
-                                                    }}
-                                                    className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Rotation */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                                Rotation (°)
-                                            </label>
-                                            <div className="flex gap-2 items-center">
-                                                <input
-                                                    type="range"
-                                                    min="0"
-                                                    max="360"
-                                                    step="1"
-                                                    value={selectedNote.rotate || 0}
-                                                    onChange={(e) => updateNote(selectedNote.id, { rotate: parseFloat(e.target.value) })}
-                                                    className="flex-1"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    max="360"
-                                                    step="0.1"
-                                                    value={selectedNote.rotate?.toFixed(1) || 0}
-                                                    onChange={(e) => {
-                                                        const value = parseFloat(e.target.value);
-                                                        if (!isNaN(value)) {
-                                                            updateNote(selectedNote.id, { rotate: Math.max(0, Math.min(360, value)) });
-                                                        }
-                                                    }}
-                                                    className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="text-sm text-slate-500 dark:text-slate-400 text-center py-8">
-                                        톤필드를 클릭하여 선택하세요
-                                    </div>
-                                )}
-
-                                {/* JSON 내보내기 버튼 */}
-                                <div className="mt-6 pt-4 border-t border-slate-300 dark:border-slate-700">
-                                    <button
-                                        onClick={exportJson}
-                                        className="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors"
-                                    >
-                                        {copyButtonText}
-                                    </button>
-                                </div>
+                        <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
+                            <div
+                                className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsToneFieldPanelExpanded(!isToneFieldPanelExpanded);
+                                }}
+                            >
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
+                                    <span>{isToneFieldPanelExpanded ? '톤필드 캘리브레이션' : '톤필드'}</span>
+                                    <span className="text-sm font-normal">{isToneFieldPanelExpanded ? '▲' : '▼'}</span>
+                                </h3>
                             </div>
-                        )}
-                    </div>
+                            {isToneFieldPanelExpanded && (
+                                <div className="p-4 pt-0 max-h-[45vh] overflow-y-auto">
+
+                                    {selectedNote ? (
+                                        <div className="space-y-4">
+                                            <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded text-sm font-medium text-indigo-900 dark:text-indigo-100">
+                                                선택된 노트: <strong>{selectedNote.label}</strong>
+                                            </div>
+
+                                            {/* Position X */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                                    Position X (cx)
+                                                </label>
+                                                <div className="flex gap-2 items-center">
+                                                    <input
+                                                        type="range"
+                                                        min="-400"
+                                                        max="1400"
+                                                        step="1"
+                                                        value={selectedNote.cx || 500}
+                                                        onChange={(e) => updateNote(selectedNote.id, { cx: parseFloat(e.target.value) })}
+                                                        className="flex-1"
+                                                    />
+                                                    <input
+                                                        type="number"
+                                                        min="-400"
+                                                        max="1400"
+                                                        step="0.1"
+                                                        value={selectedNote.cx?.toFixed(1) || 500}
+                                                        onChange={(e) => {
+                                                            const value = parseFloat(e.target.value);
+                                                            if (!isNaN(value)) {
+                                                                updateNote(selectedNote.id, { cx: Math.max(-400, Math.min(1400, value)) });
+                                                            }
+                                                        }}
+                                                        className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Position Y */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                                    Position Y (cy)
+                                                </label>
+                                                <div className="flex gap-2 items-center">
+                                                    <input
+                                                        type="range"
+                                                        min="-400"
+                                                        max="1400"
+                                                        step="1"
+                                                        value={selectedNote.cy || 500}
+                                                        onChange={(e) => updateNote(selectedNote.id, { cy: parseFloat(e.target.value) })}
+                                                        className="flex-1"
+                                                    />
+                                                    <input
+                                                        type="number"
+                                                        min="-400"
+                                                        max="1400"
+                                                        step="0.1"
+                                                        value={selectedNote.cy?.toFixed(1) || 500}
+                                                        onChange={(e) => {
+                                                            const value = parseFloat(e.target.value);
+                                                            if (!isNaN(value)) {
+                                                                updateNote(selectedNote.id, { cy: Math.max(-400, Math.min(1400, value)) });
+                                                            }
+                                                        }}
+                                                        className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Size (비율 유지) */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                                    Size (scale)
+                                                    <span className="text-xs text-slate-500 dark:text-slate-400 ml-2">
+                                                        (rx: {((selectedNote.scale || 100) * TONEFIELD_RATIO_X).toFixed(1)}, ry: {((selectedNote.scale || 100) * TONEFIELD_RATIO_Y).toFixed(1)})
+                                                    </span>
+                                                </label>
+                                                <div className="flex gap-2 items-center">
+                                                    <input
+                                                        type="range"
+                                                        min="10"
+                                                        max="500"
+                                                        step="1"
+                                                        value={selectedNote.scale || 100}
+                                                        onChange={(e) => updateNote(selectedNote.id, { scale: parseFloat(e.target.value) })}
+                                                        className="flex-1"
+                                                    />
+                                                    <input
+                                                        type="number"
+                                                        min="10"
+                                                        max="500"
+                                                        step="0.1"
+                                                        value={selectedNote.scale?.toFixed(1) || 100}
+                                                        onChange={(e) => {
+                                                            const value = parseFloat(e.target.value);
+                                                            if (!isNaN(value)) {
+                                                                updateNote(selectedNote.id, { scale: Math.max(10, Math.min(500, value)) });
+                                                            }
+                                                        }}
+                                                        className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Rotation */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                                    Rotation (°)
+                                                </label>
+                                                <div className="flex gap-2 items-center">
+                                                    <input
+                                                        type="range"
+                                                        min="0"
+                                                        max="360"
+                                                        step="1"
+                                                        value={selectedNote.rotate || 0}
+                                                        onChange={(e) => updateNote(selectedNote.id, { rotate: parseFloat(e.target.value) })}
+                                                        className="flex-1"
+                                                    />
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        max="360"
+                                                        step="0.1"
+                                                        value={selectedNote.rotate?.toFixed(1) || 0}
+                                                        onChange={(e) => {
+                                                            const value = parseFloat(e.target.value);
+                                                            if (!isNaN(value)) {
+                                                                updateNote(selectedNote.id, { rotate: Math.max(0, Math.min(360, value)) });
+                                                            }
+                                                        }}
+                                                        className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-sm text-slate-500 dark:text-slate-400 text-center py-8">
+                                            톤필드를 클릭하여 선택하세요
+                                        </div>
+                                    )}
+
+                                    {/* JSON 내보내기 버튼 */}
+                                    <div className="mt-6 pt-4 border-t border-slate-300 dark:border-slate-700">
+                                        <button
+                                            onClick={exportJson}
+                                            className="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors"
+                                        >
+                                            {copyButtonText}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     )}
 
                     {/* 라벨 캘리브레이션 패널 */}
                     {isCalibrationEnabled && (
-                    <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
-                        <div
-                            className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setIsLabelPanelExpanded(!isLabelPanelExpanded);
-                            }}
-                        >
-                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
-                                <span>{isLabelPanelExpanded ? '기호 텍스트 캘리브레이션' : '기호 텍스트'}</span>
-                                <span className="text-sm font-normal">{isLabelPanelExpanded ? '▲' : '▼'}</span>
-                            </h3>
-                        </div>
-                        {isLabelPanelExpanded && (
-                            <div className="p-4 pt-0 max-h-[45vh] overflow-y-auto">
-
-                                {selectedSymbolTextNote ? (
-                                    <div className="space-y-4">
-                                        <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded text-sm font-medium text-purple-900 dark:text-purple-100">
-                                            선택된 기호: <strong>{selectedBottomSymbolId !== null ? 'H' : selectedLeftSymbolId !== null ? 'LS' : selectedSymbolId !== null ? 'RS' : selectedSymbolTextNote.label}</strong>
-                                        </div>
-
-                                        {/* Position X */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                                Position X ({selectedBottomSymbolId !== null ? 'symbolBottomX' : selectedLeftSymbolId !== null ? 'symbolLeftX' : selectedSymbolId !== null ? 'symbolX' : 'labelX'})
-                                                <span className="text-xs text-slate-500 dark:text-slate-400 ml-2">
-                                                    (null이면 자동 계산)
-                                                </span>
-                                            </label>
-                                            <div className="flex gap-2 items-center">
-                                                <input
-                                                    type="range"
-                                                    min="-400"
-                                                    max="1400"
-                                                    step="1"
-                                                    value={selectedBottomSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolBottomX !== undefined && selectedSymbolTextNote.symbolBottomX !== null 
-                                                            ? selectedSymbolTextNote.symbolBottomX 
-                                                            : (selectedSymbolTextNote.cx || 500))
-                                                        : selectedLeftSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolLeftX !== undefined && selectedSymbolTextNote.symbolLeftX !== null 
-                                                            ? selectedSymbolTextNote.symbolLeftX 
-                                                            : (() => {
-                                                                const cx = selectedSymbolTextNote.cx || 500;
-                                                                const scale = selectedSymbolTextNote.scale || 100;
-                                                                const rx = scale * TONEFIELD_RATIO_X;
-                                                                const offset = selectedSymbolTextNote.symbolLeftOffset !== undefined ? selectedSymbolTextNote.symbolLeftOffset : 15;
-                                                                return cx - rx + offset;
-                                                            })())
-                                                        : selectedSymbolId !== null 
-                                                        ? (selectedSymbolTextNote.symbolX !== undefined && selectedSymbolTextNote.symbolX !== null 
-                                                            ? selectedSymbolTextNote.symbolX 
-                                                            : (() => {
-                                                                const cx = selectedSymbolTextNote.cx || 500;
-                                                                const scale = selectedSymbolTextNote.scale || 100;
-                                                                const rx = scale * TONEFIELD_RATIO_X;
-                                                                const offset = selectedSymbolTextNote.symbolOffset !== undefined ? selectedSymbolTextNote.symbolOffset : 15;
-                                                                return cx + rx - offset;
-                                                            })())
-                                                        : (selectedSymbolTextNote.labelX !== undefined ? selectedSymbolTextNote.labelX : (selectedSymbolTextNote.cx || 500))}
-                                                    onChange={(e) => {
-                                                        if (selectedBottomSymbolId !== null) {
-                                                            updateNote(selectedSymbolTextNote.id, { symbolBottomX: parseFloat(e.target.value) });
-                                                        } else if (selectedLeftSymbolId !== null) {
-                                                            updateNote(selectedSymbolTextNote.id, { symbolLeftX: parseFloat(e.target.value) });
-                                                        } else if (selectedSymbolId !== null) {
-                                                            updateNote(selectedSymbolTextNote.id, { symbolX: parseFloat(e.target.value) });
-                                                        } else {
-                                                            updateNote(selectedSymbolTextNote.id, { labelX: parseFloat(e.target.value) });
-                                                        }
-                                                    }}
-                                                    className="flex-1"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    min="-400"
-                                                    max="1400"
-                                                    step="0.1"
-                                                    value={selectedBottomSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolBottomX !== undefined && selectedSymbolTextNote.symbolBottomX !== null ? selectedSymbolTextNote.symbolBottomX.toFixed(1) : '')
-                                                        : selectedLeftSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolLeftX !== undefined && selectedSymbolTextNote.symbolLeftX !== null ? selectedSymbolTextNote.symbolLeftX.toFixed(1) : '')
-                                                        : selectedSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolX !== undefined && selectedSymbolTextNote.symbolX !== null ? selectedSymbolTextNote.symbolX.toFixed(1) : '')
-                                                        : (selectedSymbolTextNote.labelX !== undefined && selectedSymbolTextNote.labelX !== null ? selectedSymbolTextNote.labelX.toFixed(1) : '')}
-                                                    placeholder="auto"
-                                                    onChange={(e) => {
-                                                        const value = e.target.value === '' ? undefined : parseFloat(e.target.value);
-                                                        if (value === undefined || !isNaN(value)) {
-                                                            if (selectedBottomSymbolId !== null) {
-                                                                updateNote(selectedSymbolTextNote.id, {
-                                                                    symbolBottomX: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
-                                                                });
-                                                            } else if (selectedLeftSymbolId !== null) {
-                                                                updateNote(selectedSymbolTextNote.id, {
-                                                                    symbolLeftX: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
-                                                                });
-                                                            } else if (selectedSymbolId !== null) {
-                                                                updateNote(selectedSymbolTextNote.id, {
-                                                                    symbolX: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
-                                                                });
-                                                            } else {
-                                                                updateNote(selectedSymbolTextNote.id, {
-                                                                    labelX: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
-                                                                });
-                                                            }
-                                                        }
-                                                    }}
-                                                    className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Position Y */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                                Position Y ({selectedBottomSymbolId !== null ? 'symbolBottomY' : selectedLeftSymbolId !== null ? 'symbolLeftY' : selectedSymbolId !== null ? 'symbolY' : 'labelY'})
-                                                <span className="text-xs text-slate-500 dark:text-slate-400 ml-2">
-                                                    (null이면 자동 계산)
-                                                </span>
-                                            </label>
-                                            <div className="flex gap-2 items-center">
-                                                <input
-                                                    type="range"
-                                                    min="-400"
-                                                    max="1400"
-                                                    step="1"
-                                                    value={selectedBottomSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolBottomY !== undefined && selectedSymbolTextNote.symbolBottomY !== null
-                                                            ? selectedSymbolTextNote.symbolBottomY
-                                                            : (() => {
-                                                                const cy = selectedSymbolTextNote.cy || 500;
-                                                                const scale = selectedSymbolTextNote.scale || 100;
-                                                                const ry = scale * TONEFIELD_RATIO_Y;
-                                                                const offset = selectedSymbolTextNote.symbolBottomOffset !== undefined ? selectedSymbolTextNote.symbolBottomOffset : 15;
-                                                                return cy + ry - offset;
-                                                            })())
-                                                        : selectedLeftSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolLeftY !== undefined && selectedSymbolTextNote.symbolLeftY !== null
-                                                            ? selectedSymbolTextNote.symbolLeftY
-                                                            : (selectedSymbolTextNote.cy || 500))
-                                                        : selectedSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolY !== undefined && selectedSymbolTextNote.symbolY !== null
-                                                            ? selectedSymbolTextNote.symbolY
-                                                            : (selectedSymbolTextNote.cy || 500))
-                                                        : (selectedSymbolTextNote.labelY !== undefined ? selectedSymbolTextNote.labelY : (() => {
-                                                            const cy = selectedSymbolTextNote.cy || 500;
-                                                            const scale = selectedSymbolTextNote.scale || 100;
-                                                            const ry = scale * TONEFIELD_RATIO_Y;
-                                                            const offset = selectedSymbolTextNote.labelOffset || 25;
-                                                            return cy + ry + offset;
-                                                        })())}
-                                                    onChange={(e) => {
-                                                        if (selectedBottomSymbolId !== null) {
-                                                            updateNote(selectedSymbolTextNote.id, { symbolBottomY: parseFloat(e.target.value) });
-                                                        } else if (selectedLeftSymbolId !== null) {
-                                                            updateNote(selectedSymbolTextNote.id, { symbolLeftY: parseFloat(e.target.value) });
-                                                        } else if (selectedSymbolId !== null) {
-                                                            updateNote(selectedSymbolTextNote.id, { symbolY: parseFloat(e.target.value) });
-                                                        } else {
-                                                            updateNote(selectedSymbolTextNote.id, { labelY: parseFloat(e.target.value) });
-                                                        }
-                                                    }}
-                                                    className="flex-1"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    min="-400"
-                                                    max="1400"
-                                                    step="0.1"
-                                                    value={selectedBottomSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolBottomY !== undefined && selectedSymbolTextNote.symbolBottomY !== null ? selectedSymbolTextNote.symbolBottomY.toFixed(1) : '')
-                                                        : selectedLeftSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolLeftY !== undefined && selectedSymbolTextNote.symbolLeftY !== null ? selectedSymbolTextNote.symbolLeftY.toFixed(1) : '')
-                                                        : selectedSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolY !== undefined && selectedSymbolTextNote.symbolY !== null ? selectedSymbolTextNote.symbolY.toFixed(1) : '')
-                                                        : (selectedSymbolTextNote.labelY !== undefined && selectedSymbolTextNote.labelY !== null ? selectedSymbolTextNote.labelY.toFixed(1) : '')}
-                                                    placeholder="auto"
-                                                    onChange={(e) => {
-                                                        const value = e.target.value === '' ? undefined : parseFloat(e.target.value);
-                                                        if (value === undefined || !isNaN(value)) {
-                                                            if (selectedBottomSymbolId !== null) {
-                                                                updateNote(selectedSymbolTextNote.id, {
-                                                                    symbolBottomY: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
-                                                                });
-                                                            } else if (selectedLeftSymbolId !== null) {
-                                                                updateNote(selectedSymbolTextNote.id, {
-                                                                    symbolLeftY: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
-                                                                });
-                                                            } else if (selectedSymbolId !== null) {
-                                                                updateNote(selectedSymbolTextNote.id, {
-                                                                    symbolY: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
-                                                                });
-                                                            } else {
-                                                                updateNote(selectedSymbolTextNote.id, {
-                                                                    labelY: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
-                                                                });
-                                                            }
-                                                        }
-                                                    }}
-                                                    className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Offset */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                                Offset ({selectedBottomSymbolId !== null ? 'symbolBottomOffset' : selectedLeftSymbolId !== null ? 'symbolLeftOffset' : selectedSymbolId !== null ? 'symbolOffset' : 'labelOffset'})
-                                                <span className="text-xs text-slate-500 dark:text-slate-400 ml-2">
-                                                    (자동 계산 시 사용)
-                                                </span>
-                                            </label>
-                                            <div className="flex gap-2 items-center">
-                                                <input
-                                                    type="range"
-                                                    min="0"
-                                                    max="100"
-                                                    step="1"
-                                                    value={selectedBottomSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolBottomOffset !== undefined ? selectedSymbolTextNote.symbolBottomOffset : 15)
-                                                        : selectedLeftSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolLeftOffset !== undefined ? selectedSymbolTextNote.symbolLeftOffset : 15)
-                                                        : selectedSymbolId !== null 
-                                                        ? (selectedSymbolTextNote.symbolOffset !== undefined ? selectedSymbolTextNote.symbolOffset : 15)
-                                                        : (selectedSymbolTextNote.labelOffset || 25)}
-                                                    onChange={(e) => {
-                                                        if (selectedBottomSymbolId !== null) {
-                                                            updateNote(selectedSymbolTextNote.id, { symbolBottomOffset: parseFloat(e.target.value) });
-                                                        } else if (selectedLeftSymbolId !== null) {
-                                                            updateNote(selectedSymbolTextNote.id, { symbolLeftOffset: parseFloat(e.target.value) });
-                                                        } else if (selectedSymbolId !== null) {
-                                                            updateNote(selectedSymbolTextNote.id, { symbolOffset: parseFloat(e.target.value) });
-                                                        } else {
-                                                            updateNote(selectedSymbolTextNote.id, { labelOffset: parseFloat(e.target.value) });
-                                                        }
-                                                    }}
-                                                    className="flex-1"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    max="100"
-                                                    step="0.1"
-                                                    value={selectedBottomSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolBottomOffset !== undefined ? selectedSymbolTextNote.symbolBottomOffset : 15).toFixed(1)
-                                                        : selectedLeftSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolLeftOffset !== undefined ? selectedSymbolTextNote.symbolLeftOffset : 15).toFixed(1)
-                                                        : selectedSymbolId !== null
-                                                        ? (selectedSymbolTextNote.symbolOffset !== undefined ? selectedSymbolTextNote.symbolOffset : 15).toFixed(1)
-                                                        : (selectedSymbolTextNote.labelOffset || 25).toFixed(1)}
-                                                    onChange={(e) => {
-                                                        const value = parseFloat(e.target.value);
-                                                        if (!isNaN(value)) {
-                                                            if (selectedBottomSymbolId !== null) {
-                                                                updateNote(selectedSymbolTextNote.id, { symbolBottomOffset: Math.max(0, Math.min(100, value)) });
-                                                            } else if (selectedLeftSymbolId !== null) {
-                                                                updateNote(selectedSymbolTextNote.id, { symbolLeftOffset: Math.max(0, Math.min(100, value)) });
-                                                            } else if (selectedSymbolId !== null) {
-                                                                updateNote(selectedSymbolTextNote.id, { symbolOffset: Math.max(0, Math.min(100, value)) });
-                                                            } else {
-                                                                updateNote(selectedSymbolTextNote.id, { labelOffset: Math.max(0, Math.min(100, value)) });
-                                                            }
-                                                        }
-                                                    }}
-                                                    className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="text-sm text-slate-500 dark:text-slate-400 text-center py-8">
-                                        라벨을 클릭하여 선택하세요
-                                    </div>
-                                )}
-
-                                {/* JSON 내보내기 버튼 */}
-                                <div className="pt-2 border-t border-slate-300 dark:border-slate-700">
-                                    <button
-                                        onClick={exportLabelJson}
-                                        className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
-                                    >
-                                        {copyLabelButtonText}
-                                    </button>
-                                </div>
+                        <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
+                            <div
+                                className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsLabelPanelExpanded(!isLabelPanelExpanded);
+                                }}
+                            >
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
+                                    <span>{isLabelPanelExpanded ? '기호 텍스트 캘리브레이션' : '기호 텍스트'}</span>
+                                    <span className="text-sm font-normal">{isLabelPanelExpanded ? '▲' : '▼'}</span>
+                                </h3>
                             </div>
-                        )}
-                    </div>
+                            {isLabelPanelExpanded && (
+                                <div className="p-4 pt-0 max-h-[45vh] overflow-y-auto">
+
+                                    {selectedSymbolTextNote ? (
+                                        <div className="space-y-4">
+                                            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded text-sm font-medium text-purple-900 dark:text-purple-100">
+                                                선택된 기호: <strong>{selectedBottomSymbolId !== null ? 'H' : selectedLeftSymbolId !== null ? 'LS' : selectedSymbolId !== null ? 'RS' : selectedSymbolTextNote.label}</strong>
+                                            </div>
+
+                                            {/* Position X */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                                    Position X ({selectedBottomSymbolId !== null ? 'symbolBottomX' : selectedLeftSymbolId !== null ? 'symbolLeftX' : selectedSymbolId !== null ? 'symbolX' : 'labelX'})
+                                                    <span className="text-xs text-slate-500 dark:text-slate-400 ml-2">
+                                                        (null이면 자동 계산)
+                                                    </span>
+                                                </label>
+                                                <div className="flex gap-2 items-center">
+                                                    <input
+                                                        type="range"
+                                                        min="-400"
+                                                        max="1400"
+                                                        step="1"
+                                                        value={selectedBottomSymbolId !== null
+                                                            ? (selectedSymbolTextNote.symbolBottomX !== undefined && selectedSymbolTextNote.symbolBottomX !== null
+                                                                ? selectedSymbolTextNote.symbolBottomX
+                                                                : (selectedSymbolTextNote.cx || 500))
+                                                            : selectedLeftSymbolId !== null
+                                                                ? (selectedSymbolTextNote.symbolLeftX !== undefined && selectedSymbolTextNote.symbolLeftX !== null
+                                                                    ? selectedSymbolTextNote.symbolLeftX
+                                                                    : (() => {
+                                                                        const cx = selectedSymbolTextNote.cx || 500;
+                                                                        const scale = selectedSymbolTextNote.scale || 100;
+                                                                        const rx = scale * TONEFIELD_RATIO_X;
+                                                                        const offset = selectedSymbolTextNote.symbolLeftOffset !== undefined ? selectedSymbolTextNote.symbolLeftOffset : 15;
+                                                                        return cx - rx + offset;
+                                                                    })())
+                                                                : selectedSymbolId !== null
+                                                                    ? (selectedSymbolTextNote.symbolX !== undefined && selectedSymbolTextNote.symbolX !== null
+                                                                        ? selectedSymbolTextNote.symbolX
+                                                                        : (() => {
+                                                                            const cx = selectedSymbolTextNote.cx || 500;
+                                                                            const scale = selectedSymbolTextNote.scale || 100;
+                                                                            const rx = scale * TONEFIELD_RATIO_X;
+                                                                            const offset = selectedSymbolTextNote.symbolOffset !== undefined ? selectedSymbolTextNote.symbolOffset : 15;
+                                                                            return cx + rx - offset;
+                                                                        })())
+                                                                    : (selectedSymbolTextNote.labelX !== undefined ? selectedSymbolTextNote.labelX : (selectedSymbolTextNote.cx || 500))}
+                                                        onChange={(e) => {
+                                                            if (selectedBottomSymbolId !== null) {
+                                                                updateNote(selectedSymbolTextNote.id, { symbolBottomX: parseFloat(e.target.value) });
+                                                            } else if (selectedLeftSymbolId !== null) {
+                                                                updateNote(selectedSymbolTextNote.id, { symbolLeftX: parseFloat(e.target.value) });
+                                                            } else if (selectedSymbolId !== null) {
+                                                                updateNote(selectedSymbolTextNote.id, { symbolX: parseFloat(e.target.value) });
+                                                            } else {
+                                                                updateNote(selectedSymbolTextNote.id, { labelX: parseFloat(e.target.value) });
+                                                            }
+                                                        }}
+                                                        className="flex-1"
+                                                    />
+                                                    <input
+                                                        type="number"
+                                                        min="-400"
+                                                        max="1400"
+                                                        step="0.1"
+                                                        value={selectedBottomSymbolId !== null
+                                                            ? (selectedSymbolTextNote.symbolBottomX !== undefined && selectedSymbolTextNote.symbolBottomX !== null ? selectedSymbolTextNote.symbolBottomX.toFixed(1) : '')
+                                                            : selectedLeftSymbolId !== null
+                                                                ? (selectedSymbolTextNote.symbolLeftX !== undefined && selectedSymbolTextNote.symbolLeftX !== null ? selectedSymbolTextNote.symbolLeftX.toFixed(1) : '')
+                                                                : selectedSymbolId !== null
+                                                                    ? (selectedSymbolTextNote.symbolX !== undefined && selectedSymbolTextNote.symbolX !== null ? selectedSymbolTextNote.symbolX.toFixed(1) : '')
+                                                                    : (selectedSymbolTextNote.labelX !== undefined && selectedSymbolTextNote.labelX !== null ? selectedSymbolTextNote.labelX.toFixed(1) : '')}
+                                                        placeholder="auto"
+                                                        onChange={(e) => {
+                                                            const value = e.target.value === '' ? undefined : parseFloat(e.target.value);
+                                                            if (value === undefined || !isNaN(value)) {
+                                                                if (selectedBottomSymbolId !== null) {
+                                                                    updateNote(selectedSymbolTextNote.id, {
+                                                                        symbolBottomX: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
+                                                                    });
+                                                                } else if (selectedLeftSymbolId !== null) {
+                                                                    updateNote(selectedSymbolTextNote.id, {
+                                                                        symbolLeftX: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
+                                                                    });
+                                                                } else if (selectedSymbolId !== null) {
+                                                                    updateNote(selectedSymbolTextNote.id, {
+                                                                        symbolX: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
+                                                                    });
+                                                                } else {
+                                                                    updateNote(selectedSymbolTextNote.id, {
+                                                                        labelX: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
+                                                                    });
+                                                                }
+                                                            }
+                                                        }}
+                                                        className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Position Y */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                                    Position Y ({selectedBottomSymbolId !== null ? 'symbolBottomY' : selectedLeftSymbolId !== null ? 'symbolLeftY' : selectedSymbolId !== null ? 'symbolY' : 'labelY'})
+                                                    <span className="text-xs text-slate-500 dark:text-slate-400 ml-2">
+                                                        (null이면 자동 계산)
+                                                    </span>
+                                                </label>
+                                                <div className="flex gap-2 items-center">
+                                                    <input
+                                                        type="range"
+                                                        min="-400"
+                                                        max="1400"
+                                                        step="1"
+                                                        value={selectedBottomSymbolId !== null
+                                                            ? (selectedSymbolTextNote.symbolBottomY !== undefined && selectedSymbolTextNote.symbolBottomY !== null
+                                                                ? selectedSymbolTextNote.symbolBottomY
+                                                                : (() => {
+                                                                    const cy = selectedSymbolTextNote.cy || 500;
+                                                                    const scale = selectedSymbolTextNote.scale || 100;
+                                                                    const ry = scale * TONEFIELD_RATIO_Y;
+                                                                    const offset = selectedSymbolTextNote.symbolBottomOffset !== undefined ? selectedSymbolTextNote.symbolBottomOffset : 15;
+                                                                    return cy + ry - offset;
+                                                                })())
+                                                            : selectedLeftSymbolId !== null
+                                                                ? (selectedSymbolTextNote.symbolLeftY !== undefined && selectedSymbolTextNote.symbolLeftY !== null
+                                                                    ? selectedSymbolTextNote.symbolLeftY
+                                                                    : (selectedSymbolTextNote.cy || 500))
+                                                                : selectedSymbolId !== null
+                                                                    ? (selectedSymbolTextNote.symbolY !== undefined && selectedSymbolTextNote.symbolY !== null
+                                                                        ? selectedSymbolTextNote.symbolY
+                                                                        : (selectedSymbolTextNote.cy || 500))
+                                                                    : (selectedSymbolTextNote.labelY !== undefined ? selectedSymbolTextNote.labelY : (() => {
+                                                                        const cy = selectedSymbolTextNote.cy || 500;
+                                                                        const scale = selectedSymbolTextNote.scale || 100;
+                                                                        const ry = scale * TONEFIELD_RATIO_Y;
+                                                                        const offset = selectedSymbolTextNote.labelOffset || 25;
+                                                                        return cy + ry + offset;
+                                                                    })())}
+                                                        onChange={(e) => {
+                                                            if (selectedBottomSymbolId !== null) {
+                                                                updateNote(selectedSymbolTextNote.id, { symbolBottomY: parseFloat(e.target.value) });
+                                                            } else if (selectedLeftSymbolId !== null) {
+                                                                updateNote(selectedSymbolTextNote.id, { symbolLeftY: parseFloat(e.target.value) });
+                                                            } else if (selectedSymbolId !== null) {
+                                                                updateNote(selectedSymbolTextNote.id, { symbolY: parseFloat(e.target.value) });
+                                                            } else {
+                                                                updateNote(selectedSymbolTextNote.id, { labelY: parseFloat(e.target.value) });
+                                                            }
+                                                        }}
+                                                        className="flex-1"
+                                                    />
+                                                    <input
+                                                        type="number"
+                                                        min="-400"
+                                                        max="1400"
+                                                        step="0.1"
+                                                        value={selectedBottomSymbolId !== null
+                                                            ? (selectedSymbolTextNote.symbolBottomY !== undefined && selectedSymbolTextNote.symbolBottomY !== null ? selectedSymbolTextNote.symbolBottomY.toFixed(1) : '')
+                                                            : selectedLeftSymbolId !== null
+                                                                ? (selectedSymbolTextNote.symbolLeftY !== undefined && selectedSymbolTextNote.symbolLeftY !== null ? selectedSymbolTextNote.symbolLeftY.toFixed(1) : '')
+                                                                : selectedSymbolId !== null
+                                                                    ? (selectedSymbolTextNote.symbolY !== undefined && selectedSymbolTextNote.symbolY !== null ? selectedSymbolTextNote.symbolY.toFixed(1) : '')
+                                                                    : (selectedSymbolTextNote.labelY !== undefined && selectedSymbolTextNote.labelY !== null ? selectedSymbolTextNote.labelY.toFixed(1) : '')}
+                                                        placeholder="auto"
+                                                        onChange={(e) => {
+                                                            const value = e.target.value === '' ? undefined : parseFloat(e.target.value);
+                                                            if (value === undefined || !isNaN(value)) {
+                                                                if (selectedBottomSymbolId !== null) {
+                                                                    updateNote(selectedSymbolTextNote.id, {
+                                                                        symbolBottomY: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
+                                                                    });
+                                                                } else if (selectedLeftSymbolId !== null) {
+                                                                    updateNote(selectedSymbolTextNote.id, {
+                                                                        symbolLeftY: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
+                                                                    });
+                                                                } else if (selectedSymbolId !== null) {
+                                                                    updateNote(selectedSymbolTextNote.id, {
+                                                                        symbolY: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
+                                                                    });
+                                                                } else {
+                                                                    updateNote(selectedSymbolTextNote.id, {
+                                                                        labelY: value === undefined ? undefined : Math.max(-400, Math.min(1400, value))
+                                                                    });
+                                                                }
+                                                            }
+                                                        }}
+                                                        className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Offset */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                                    Offset ({selectedBottomSymbolId !== null ? 'symbolBottomOffset' : selectedLeftSymbolId !== null ? 'symbolLeftOffset' : selectedSymbolId !== null ? 'symbolOffset' : 'labelOffset'})
+                                                    <span className="text-xs text-slate-500 dark:text-slate-400 ml-2">
+                                                        (자동 계산 시 사용)
+                                                    </span>
+                                                </label>
+                                                <div className="flex gap-2 items-center">
+                                                    <input
+                                                        type="range"
+                                                        min="0"
+                                                        max="100"
+                                                        step="1"
+                                                        value={selectedBottomSymbolId !== null
+                                                            ? (selectedSymbolTextNote.symbolBottomOffset !== undefined ? selectedSymbolTextNote.symbolBottomOffset : 15)
+                                                            : selectedLeftSymbolId !== null
+                                                                ? (selectedSymbolTextNote.symbolLeftOffset !== undefined ? selectedSymbolTextNote.symbolLeftOffset : 15)
+                                                                : selectedSymbolId !== null
+                                                                    ? (selectedSymbolTextNote.symbolOffset !== undefined ? selectedSymbolTextNote.symbolOffset : 15)
+                                                                    : (selectedSymbolTextNote.labelOffset || 25)}
+                                                        onChange={(e) => {
+                                                            if (selectedBottomSymbolId !== null) {
+                                                                updateNote(selectedSymbolTextNote.id, { symbolBottomOffset: parseFloat(e.target.value) });
+                                                            } else if (selectedLeftSymbolId !== null) {
+                                                                updateNote(selectedSymbolTextNote.id, { symbolLeftOffset: parseFloat(e.target.value) });
+                                                            } else if (selectedSymbolId !== null) {
+                                                                updateNote(selectedSymbolTextNote.id, { symbolOffset: parseFloat(e.target.value) });
+                                                            } else {
+                                                                updateNote(selectedSymbolTextNote.id, { labelOffset: parseFloat(e.target.value) });
+                                                            }
+                                                        }}
+                                                        className="flex-1"
+                                                    />
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        max="100"
+                                                        step="0.1"
+                                                        value={selectedBottomSymbolId !== null
+                                                            ? (selectedSymbolTextNote.symbolBottomOffset !== undefined ? selectedSymbolTextNote.symbolBottomOffset : 15).toFixed(1)
+                                                            : selectedLeftSymbolId !== null
+                                                                ? (selectedSymbolTextNote.symbolLeftOffset !== undefined ? selectedSymbolTextNote.symbolLeftOffset : 15).toFixed(1)
+                                                                : selectedSymbolId !== null
+                                                                    ? (selectedSymbolTextNote.symbolOffset !== undefined ? selectedSymbolTextNote.symbolOffset : 15).toFixed(1)
+                                                                    : (selectedSymbolTextNote.labelOffset || 25).toFixed(1)}
+                                                        onChange={(e) => {
+                                                            const value = parseFloat(e.target.value);
+                                                            if (!isNaN(value)) {
+                                                                if (selectedBottomSymbolId !== null) {
+                                                                    updateNote(selectedSymbolTextNote.id, { symbolBottomOffset: Math.max(0, Math.min(100, value)) });
+                                                                } else if (selectedLeftSymbolId !== null) {
+                                                                    updateNote(selectedSymbolTextNote.id, { symbolLeftOffset: Math.max(0, Math.min(100, value)) });
+                                                                } else if (selectedSymbolId !== null) {
+                                                                    updateNote(selectedSymbolTextNote.id, { symbolOffset: Math.max(0, Math.min(100, value)) });
+                                                                } else {
+                                                                    updateNote(selectedSymbolTextNote.id, { labelOffset: Math.max(0, Math.min(100, value)) });
+                                                                }
+                                                            }
+                                                        }}
+                                                        className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-sm text-slate-500 dark:text-slate-400 text-center py-8">
+                                            라벨을 클릭하여 선택하세요
+                                        </div>
+                                    )}
+
+                                    {/* JSON 내보내기 버튼 */}
+                                    <div className="pt-2 border-t border-slate-300 dark:border-slate-700">
+                                        <button
+                                            onClick={exportLabelJson}
+                                            className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
+                                        >
+                                            {copyLabelButtonText}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     )}
-                    
+
                     {/* 피치 캘리브레이션 패널 */}
                     {isCalibrationEnabled && (
-                    <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
-                        <div
-                            className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setIsPitchPanelExpanded(!isPitchPanelExpanded);
-                            }}
-                        >
-                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
-                                <span>{isPitchPanelExpanded ? '피치 캘리브레이션' : '피치'}</span>
-                                <span className="text-sm font-normal">{isPitchPanelExpanded ? '▲' : '▼'}</span>
-                            </h3>
-                        </div>
-                        {isPitchPanelExpanded && (
-                            <div className="p-4 pt-0 max-h-[45vh] overflow-y-auto">
-                                {selectedPitchNote ? (
-                                    <div className="space-y-4">
-                                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded text-sm font-medium text-blue-900 dark:text-blue-100">
-                                            선택된 피치: <strong>{(() => {
-                                                const pitchLabels: { [key: number]: string } = {
-                                                    0: 'D3',
-                                                    1: 'A',
-                                                    2: 'Bb',
-                                                    3: 'C4',
-                                                    4: 'D',
-                                                    5: 'E',
-                                                    6: 'F',
-                                                    7: 'G',
-                                                    8: 'A',
-                                                };
-                                                return pitchLabels[selectedPitchNote.id] || '';
-                                            })()}</strong>
-                                        </div>
-                                        
-                                        {/* Position X */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                                Position X (pitchTextX)
-                                            </label>
-                                            <div className="flex gap-2 items-center">
-                                                <input
-                                                    type="range"
-                                                    min="-400"
-                                                    max="1400"
-                                                    step="1"
-                                                    value={selectedPitchNote.pitchTextX !== undefined ? selectedPitchNote.pitchTextX : (selectedPitchNote.cx || 500)}
-                                                    onChange={(e) => updateNote(selectedPitchNote.id, { pitchTextX: parseFloat(e.target.value) })}
-                                                    className="flex-1"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    min="-400"
-                                                    max="1400"
-                                                    step="0.1"
-                                                    value={(selectedPitchNote.pitchTextX !== undefined ? selectedPitchNote.pitchTextX : (selectedPitchNote.cx || 500)).toFixed(1)}
-                                                    onChange={(e) => {
-                                                        const value = parseFloat(e.target.value);
-                                                        if (!isNaN(value)) {
-                                                            updateNote(selectedPitchNote.id, { pitchTextX: Math.max(-400, Math.min(1400, value)) });
-                                                        }
-                                                    }}
-                                                    className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                                                />
-                                            </div>
-                                        </div>
-                                        
-                                        {/* Position Y */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                                Position Y (pitchTextY)
-                                            </label>
-                                            <div className="flex gap-2 items-center">
-                                                <input
-                                                    type="range"
-                                                    min="-400"
-                                                    max="1400"
-                                                    step="1"
-                                                    value={selectedPitchNote.pitchTextY !== undefined ? selectedPitchNote.pitchTextY : (selectedPitchNote.cy || 500)}
-                                                    onChange={(e) => updateNote(selectedPitchNote.id, { pitchTextY: parseFloat(e.target.value) })}
-                                                    className="flex-1"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    min="-400"
-                                                    max="1400"
-                                                    step="0.1"
-                                                    value={(selectedPitchNote.pitchTextY !== undefined ? selectedPitchNote.pitchTextY : (selectedPitchNote.cy || 500)).toFixed(1)}
-                                                    onChange={(e) => {
-                                                        const value = parseFloat(e.target.value);
-                                                        if (!isNaN(value)) {
-                                                            updateNote(selectedPitchNote.id, { pitchTextY: Math.max(-400, Math.min(1400, value)) });
-                                                        }
-                                                    }}
-                                                    className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                                                />
-                                            </div>
-                                        </div>
-                                        
-                                        {/* Size (가로세로비율 유지) */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                                Size (pitchTextScale)
-                                            </label>
-                                            <div className="flex gap-2 items-center">
-                                                <input
-                                                    type="range"
-                                                    min="10"
-                                                    max="100"
-                                                    step="1"
-                                                    value={selectedPitchNote.pitchTextScale !== undefined ? selectedPitchNote.pitchTextScale : (selectedPitchNote.id === 0 ? 37 : 30)}
-                                                    onChange={(e) => updateNote(selectedPitchNote.id, { pitchTextScale: parseFloat(e.target.value) })}
-                                                    className="flex-1"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    min="10"
-                                                    max="100"
-                                                    step="0.1"
-                                                    value={(selectedPitchNote.pitchTextScale !== undefined ? selectedPitchNote.pitchTextScale : (selectedPitchNote.id === 0 ? 37 : 30)).toFixed(1)}
-                                                    onChange={(e) => {
-                                                        const value = parseFloat(e.target.value);
-                                                        if (!isNaN(value)) {
-                                                            updateNote(selectedPitchNote.id, { pitchTextScale: Math.max(10, Math.min(100, value)) });
-                                                        }
-                                                    }}
-                                                    className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                                                />
-                                            </div>
-                                        </div>
-                                        
-                                        {/* Rotation */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                                Rotation (°) (pitchTextRotate)
-                                            </label>
-                                            <div className="flex gap-2 items-center">
-                                                <input
-                                                    type="range"
-                                                    min="0"
-                                                    max="360"
-                                                    step="1"
-                                                    value={selectedPitchNote.pitchTextRotate !== undefined ? selectedPitchNote.pitchTextRotate : 0}
-                                                    onChange={(e) => updateNote(selectedPitchNote.id, { pitchTextRotate: parseFloat(e.target.value) })}
-                                                    className="flex-1"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    max="360"
-                                                    step="0.1"
-                                                    value={(selectedPitchNote.pitchTextRotate !== undefined ? selectedPitchNote.pitchTextRotate : 0).toFixed(1)}
-                                                    onChange={(e) => {
-                                                        const value = parseFloat(e.target.value);
-                                                        if (!isNaN(value)) {
-                                                            updateNote(selectedPitchNote.id, { pitchTextRotate: Math.max(0, Math.min(360, value)) });
-                                                        }
-                                                    }}
-                                                    className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="text-sm text-slate-500 dark:text-slate-400 text-center py-8">
-                                        피치 텍스트를 클릭하여 선택하세요
-                                    </div>
-                                )}
+                        <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden">
+                            <div
+                                className="p-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsPitchPanelExpanded(!isPitchPanelExpanded);
+                                }}
+                            >
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
+                                    <span>{isPitchPanelExpanded ? '피치 캘리브레이션' : '피치'}</span>
+                                    <span className="text-sm font-normal">{isPitchPanelExpanded ? '▲' : '▼'}</span>
+                                </h3>
                             </div>
-                        )}
-                    </div>
+                            {isPitchPanelExpanded && (
+                                <div className="p-4 pt-0 max-h-[45vh] overflow-y-auto">
+                                    {selectedPitchNote ? (
+                                        <div className="space-y-4">
+                                            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded text-sm font-medium text-blue-900 dark:text-blue-100">
+                                                선택된 피치: <strong>{(() => {
+                                                    const pitchLabels: { [key: number]: string } = {
+                                                        0: 'D3',
+                                                        1: 'A',
+                                                        2: 'Bb',
+                                                        3: 'C4',
+                                                        4: 'D',
+                                                        5: 'E',
+                                                        6: 'F',
+                                                        7: 'G',
+                                                        8: 'A',
+                                                    };
+                                                    return pitchLabels[selectedPitchNote.id] || '';
+                                                })()}</strong>
+                                            </div>
+
+                                            {/* Position X */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                                    Position X (pitchTextX)
+                                                </label>
+                                                <div className="flex gap-2 items-center">
+                                                    <input
+                                                        type="range"
+                                                        min="-400"
+                                                        max="1400"
+                                                        step="1"
+                                                        value={selectedPitchNote.pitchTextX !== undefined ? selectedPitchNote.pitchTextX : (selectedPitchNote.cx || 500)}
+                                                        onChange={(e) => updateNote(selectedPitchNote.id, { pitchTextX: parseFloat(e.target.value) })}
+                                                        className="flex-1"
+                                                    />
+                                                    <input
+                                                        type="number"
+                                                        min="-400"
+                                                        max="1400"
+                                                        step="0.1"
+                                                        value={(selectedPitchNote.pitchTextX !== undefined ? selectedPitchNote.pitchTextX : (selectedPitchNote.cx || 500)).toFixed(1)}
+                                                        onChange={(e) => {
+                                                            const value = parseFloat(e.target.value);
+                                                            if (!isNaN(value)) {
+                                                                updateNote(selectedPitchNote.id, { pitchTextX: Math.max(-400, Math.min(1400, value)) });
+                                                            }
+                                                        }}
+                                                        className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Position Y */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                                    Position Y (pitchTextY)
+                                                </label>
+                                                <div className="flex gap-2 items-center">
+                                                    <input
+                                                        type="range"
+                                                        min="-400"
+                                                        max="1400"
+                                                        step="1"
+                                                        value={selectedPitchNote.pitchTextY !== undefined ? selectedPitchNote.pitchTextY : (selectedPitchNote.cy || 500)}
+                                                        onChange={(e) => updateNote(selectedPitchNote.id, { pitchTextY: parseFloat(e.target.value) })}
+                                                        className="flex-1"
+                                                    />
+                                                    <input
+                                                        type="number"
+                                                        min="-400"
+                                                        max="1400"
+                                                        step="0.1"
+                                                        value={(selectedPitchNote.pitchTextY !== undefined ? selectedPitchNote.pitchTextY : (selectedPitchNote.cy || 500)).toFixed(1)}
+                                                        onChange={(e) => {
+                                                            const value = parseFloat(e.target.value);
+                                                            if (!isNaN(value)) {
+                                                                updateNote(selectedPitchNote.id, { pitchTextY: Math.max(-400, Math.min(1400, value)) });
+                                                            }
+                                                        }}
+                                                        className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Size (가로세로비율 유지) */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                                    Size (pitchTextScale)
+                                                </label>
+                                                <div className="flex gap-2 items-center">
+                                                    <input
+                                                        type="range"
+                                                        min="10"
+                                                        max="100"
+                                                        step="1"
+                                                        value={selectedPitchNote.pitchTextScale !== undefined ? selectedPitchNote.pitchTextScale : (selectedPitchNote.id === 0 ? 37 : 30)}
+                                                        onChange={(e) => updateNote(selectedPitchNote.id, { pitchTextScale: parseFloat(e.target.value) })}
+                                                        className="flex-1"
+                                                    />
+                                                    <input
+                                                        type="number"
+                                                        min="10"
+                                                        max="100"
+                                                        step="0.1"
+                                                        value={(selectedPitchNote.pitchTextScale !== undefined ? selectedPitchNote.pitchTextScale : (selectedPitchNote.id === 0 ? 37 : 30)).toFixed(1)}
+                                                        onChange={(e) => {
+                                                            const value = parseFloat(e.target.value);
+                                                            if (!isNaN(value)) {
+                                                                updateNote(selectedPitchNote.id, { pitchTextScale: Math.max(10, Math.min(100, value)) });
+                                                            }
+                                                        }}
+                                                        className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Rotation */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                                    Rotation (°) (pitchTextRotate)
+                                                </label>
+                                                <div className="flex gap-2 items-center">
+                                                    <input
+                                                        type="range"
+                                                        min="0"
+                                                        max="360"
+                                                        step="1"
+                                                        value={selectedPitchNote.pitchTextRotate !== undefined ? selectedPitchNote.pitchTextRotate : 0}
+                                                        onChange={(e) => updateNote(selectedPitchNote.id, { pitchTextRotate: parseFloat(e.target.value) })}
+                                                        className="flex-1"
+                                                    />
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        max="360"
+                                                        step="0.1"
+                                                        value={(selectedPitchNote.pitchTextRotate !== undefined ? selectedPitchNote.pitchTextRotate : 0).toFixed(1)}
+                                                        onChange={(e) => {
+                                                            const value = parseFloat(e.target.value);
+                                                            if (!isNaN(value)) {
+                                                                updateNote(selectedPitchNote.id, { pitchTextRotate: Math.max(0, Math.min(360, value)) });
+                                                            }
+                                                        }}
+                                                        className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-sm text-slate-500 dark:text-slate-400 text-center py-8">
+                                            피치 텍스트를 클릭하여 선택하세요
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     )}
                 </div>
             </div>

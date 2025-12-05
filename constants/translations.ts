@@ -53,6 +53,10 @@ export const TRANSLATIONS = {
             case: '하드케이스',
             stand: '스탠드'
         },
+        shipping: {
+            worldwide: '전세계 배송 가능',
+            worldwideEn: 'Worldwide Shipping'
+        },
         tags: {
             minor: '마이너',
             major: '메이저',
@@ -122,6 +126,10 @@ export const TRANSLATIONS = {
             ethnic: 'Deep Ethnic',
             case: 'Hard Case',
             stand: 'Stand'
+        },
+        shipping: {
+            worldwide: '전세계 배송 가능',
+            worldwideEn: 'Worldwide Shipping'
         },
         tags: {
             minor: 'Minor',

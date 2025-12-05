@@ -714,10 +714,17 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                     </div>
                                 </div>
 
-                                <div className="mb-8">
-                                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-base md:text-lg break-keep">
-                                        {language === 'en' ? (currentScale.descriptionEn || currentScale.description) : currentScale.description}
-                                    </p>
+                                <div className="mb-8 relative">
+                                    {/* 카카오톡 스타일 말풍선 - 파스텔 노란색 */}
+                                    <div className="relative bg-[#FFF9C4] dark:bg-[#FEF9E7] rounded-2xl rounded-tl-sm px-4 py-3 shadow-md max-w-full border border-yellow-200/30 dark:border-yellow-300/20">
+                                        {/* 말풍선 꼬리 */}
+                                        <div className="absolute -left-2 top-4 w-0 h-0 border-t-[8px] border-t-transparent border-r-[8px] border-r-[#FFF9C4] dark:border-r-[#FEF9E7] border-b-[8px] border-b-transparent"></div>
+                                        
+                                        {/* 설명 텍스트 (볼드 처리) */}
+                                        <p className="text-slate-900 dark:text-slate-800 leading-relaxed text-base md:text-lg break-keep font-bold">
+                                            {language === 'en' ? (currentScale.descriptionEn || currentScale.description) : currentScale.description}
+                                        </p>
+                                    </div>
                                 </div>
 
                                 <div className="flex gap-3">
