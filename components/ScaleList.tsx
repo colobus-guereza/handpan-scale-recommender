@@ -750,9 +750,9 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
             {showMiniDigiPan && <MiniDigiPan key={miniDigiPanKey} scale={currentScale} language={language} />}
 
             {/* 스케일 분류기준 및 전체 스케일 토글 버튼 */}
-            <div className="flex flex-wrap items-center justify-end gap-4 mb-4">
+            <div className="flex items-center justify-end gap-2 mb-4 overflow-x-auto">
                 {/* 우측: 기능 버튼 */}
-                <div className="flex gap-3">
+                <div className="flex gap-2 flex-shrink-0">
                     <button
                         onClick={() => {
                             if (!showMiniDigiPan) {
@@ -761,35 +761,35 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                             }
                             setShowMiniDigiPan(!showMiniDigiPan);
                         }}
-                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm whitespace-nowrap"
+                        className="flex items-center space-x-1 px-2 py-2 text-xs font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm whitespace-nowrap"
                     >
                         <span className="whitespace-nowrap">{t.scaleList.digiPan}</span>
                         {showMiniDigiPan ? (
-                            <ChevronDown className="w-4 h-4 transition-transform flex-shrink-0" />
+                            <ChevronDown className="w-3 h-3 transition-transform flex-shrink-0" />
                         ) : (
-                            <ChevronUp className="w-4 h-4 transition-transform flex-shrink-0" />
+                            <ChevronUp className="w-3 h-3 transition-transform flex-shrink-0" />
                         )}
                     </button>
                     <button
                         onClick={() => setShowClassificationCriteria(!showClassificationCriteria)}
-                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm whitespace-nowrap"
+                        className="flex items-center space-x-1 px-2 py-2 text-xs font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm whitespace-nowrap"
                     >
                         <span className="whitespace-nowrap">{t.scaleList.scaleClassification}</span>
                         {showClassificationCriteria ? (
-                            <ChevronUp className="w-4 h-4 transition-transform flex-shrink-0" />
+                            <ChevronUp className="w-3 h-3 transition-transform flex-shrink-0" />
                         ) : (
-                            <ChevronDown className="w-4 h-4 transition-transform flex-shrink-0" />
+                            <ChevronDown className="w-3 h-3 transition-transform flex-shrink-0" />
                         )}
                     </button>
                     <button
                         onClick={() => setShowAllScales(!showAllScales)}
-                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm whitespace-nowrap"
+                        className="flex items-center space-x-1 px-2 py-2 text-xs font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm whitespace-nowrap"
                     >
                         <span className="whitespace-nowrap">{t.scaleList.allScales}</span>
                         {showAllScales ? (
-                            <ChevronUp className="w-4 h-4 transition-transform flex-shrink-0" />
+                            <ChevronUp className="w-3 h-3 transition-transform flex-shrink-0" />
                         ) : (
-                            <ChevronDown className="w-4 h-4 transition-transform flex-shrink-0" />
+                            <ChevronDown className="w-3 h-3 transition-transform flex-shrink-0" />
                         )}
                     </button>
                 </div>

@@ -12,7 +12,7 @@ export const TRANSLATIONS = {
         scaleList: {
             back: '다시 선택',
             scaleClassification: '분류기준',
-            allScales: '전체 스케일',
+            allScales: '전체스케일',
             purchase: '구매',
             preparing: '준비중',
             share: '공유',
