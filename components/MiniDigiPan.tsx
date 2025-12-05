@@ -495,28 +495,28 @@ const createInitialNotes = (centerX: number, centerY: number, templateCount: num
                     labelY: 295,
                     labelOffset: 25,
                 },
-                // 림 바깥 좌측 딩
+                // 림 바깥 좌측 딩 (1번 D3)
                 {
                     id: 10,
                     label: '1',
-                    cx: 150,
-                    cy: 500,
+                    cx: -118,
+                    cy: 608,
                     scale: 300,
-                    rotate: 90,
-                    labelX: null,
-                    labelY: null,
+                    rotate: 164,
+                    labelX: -98,
+                    labelY: 750,
                     labelOffset: 25,
                 },
-                // 림 바깥 우측 딩
+                // 림 바깥 우측 딩 (2번)
                 {
                     id: 11,
                     label: '2',
-                    cx: 850,
-                    cy: 500,
+                    cx: 1118,
+                    cy: 608,
                     scale: 300,
-                    rotate: 90,
-                    labelX: null,
-                    labelY: null,
+                    rotate: 19,
+                    labelX: 1084,
+                    labelY: 750,
                     labelOffset: 25,
                 },
             ];

@@ -761,35 +761,35 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                             }
                             setShowMiniDigiPan(!showMiniDigiPan);
                         }}
-                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm whitespace-nowrap"
                     >
-                        <span>{t.scaleList.digiPan}</span>
+                        <span className="whitespace-nowrap">{t.scaleList.digiPan}</span>
                         {showMiniDigiPan ? (
-                            <ChevronDown className="w-4 h-4 transition-transform" />
+                            <ChevronDown className="w-4 h-4 transition-transform flex-shrink-0" />
                         ) : (
-                            <ChevronUp className="w-4 h-4 transition-transform" />
+                            <ChevronUp className="w-4 h-4 transition-transform flex-shrink-0" />
                         )}
                     </button>
                     <button
                         onClick={() => setShowClassificationCriteria(!showClassificationCriteria)}
-                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm whitespace-nowrap"
                     >
-                        <span>{t.scaleList.scaleClassification}</span>
+                        <span className="whitespace-nowrap">{t.scaleList.scaleClassification}</span>
                         {showClassificationCriteria ? (
-                            <ChevronUp className="w-4 h-4 transition-transform" />
+                            <ChevronUp className="w-4 h-4 transition-transform flex-shrink-0" />
                         ) : (
-                            <ChevronDown className="w-4 h-4 transition-transform" />
+                            <ChevronDown className="w-4 h-4 transition-transform flex-shrink-0" />
                         )}
                     </button>
                     <button
                         onClick={() => setShowAllScales(!showAllScales)}
-                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm whitespace-nowrap"
                     >
-                        <span>{t.scaleList.allScales}</span>
+                        <span className="whitespace-nowrap">{t.scaleList.allScales}</span>
                         {showAllScales ? (
-                            <ChevronUp className="w-4 h-4 transition-transform" />
+                            <ChevronUp className="w-4 h-4 transition-transform flex-shrink-0" />
                         ) : (
-                            <ChevronDown className="w-4 h-4 transition-transform" />
+                            <ChevronDown className="w-4 h-4 transition-transform flex-shrink-0" />
                         )}
                     </button>
                 </div>
