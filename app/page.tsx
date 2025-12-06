@@ -515,8 +515,8 @@ export default function Home() {
                         <ThemeToggle />
                     </div>
 
-                    {/* Worldwide Shipping Badge - Top Right */}
-                    <div className="absolute top-4 right-4 z-40 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-rose-600 text-white rounded-full shadow-lg animate-pulse hover:animate-none transition-all duration-300 hover:scale-105">
+                    {/* Worldwide Shipping Badge - Top Right (Mobile: Relative/Centered, Desktop: Absolute/Right) */}
+                    <div className="relative mb-6 lg:mb-0 lg:absolute lg:top-4 lg:right-4 z-40 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-rose-600 text-white rounded-full shadow-lg animate-pulse hover:animate-none transition-all duration-300 hover:scale-105">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="h-5 w-5 md:h-6 md:w-6"
@@ -534,10 +534,10 @@ export default function Home() {
 
                     <header className="text-center space-y-2 pt-2">
                         <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-slate-400 drop-shadow-sm">
-                            {language === 'ko' ? '나에게 맞는 핸드팬 스케일 찾기' : "Discover your Handpan scale"}
+                            {t.title}
                         </h1>
                         <div className="flex items-center justify-center gap-2 flex-wrap max-w-2xl mx-auto">
-                            {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'fr'].includes(lang.code)).map((lang) => (
+                            {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'fr', 'ja'].includes(lang.code)).map((lang) => (
                                 <button
                                     key={lang.code}
                                     onClick={() => handleLanguageChange(lang.code)}
@@ -961,7 +961,7 @@ export default function Home() {
                                             {isSoldOut && (
                                                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                                     <span className="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg">
-                                                        {language === 'ko' ? '품절' : language === 'fr' ? 'Épuisé' : 'Sold Out'}
+                                                        {t.soldOut}
                                                     </span>
                                                 </div>
                                             )}
@@ -1049,7 +1049,7 @@ export default function Home() {
                                             {isSoldOut && (
                                                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                                     <span className="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg">
-                                                        {language === 'ko' ? '품절' : language === 'fr' ? 'Épuisé' : 'Sold Out'}
+                                                        {t.soldOut}
                                                     </span>
                                                 </div>
                                             )}

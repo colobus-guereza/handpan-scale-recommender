@@ -89,7 +89,11 @@ export const SCALES: Scale[] = [
         i18n: {
             fr: {
                 name: "D Kurd 9",
-                description: "L’une des gammes mineures les plus populaires. Avec ses 9 notes, elle offre une profondeur émotionnelle et une ambiance intime, tout en gardant un excellent équilibre pour l’improvisation et la composition."
+                description: "L'une des gammes mineures les plus populaires. Avec ses 9 notes, elle offre une profondeur émotionnelle et une ambiance intime, tout en gardant un excellent équilibre pour l'improvisation et la composition."
+            },
+            ja: {
+                name: "D Kurd 9",
+                description: "最もポピュラーなマイナースケールです。深く感情的な響きが特徴で、バランスの取れたサウンドを生み出します。"
             }
         }
     },
@@ -116,6 +120,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "D Kurd 10",
                 description: "Gamme équivalente à un D mineur classique, idéale pour débuter. D'innombrables partitions et morceaux d'exercice sont disponibles sur YouTube, ce qui en fait un modèle parfait pour apprendre et progresser rapidement. En raison de sa popularité, cette gamme offre une très grande polyvalence dans divers genres musicaux."
+            },
+            ja: {
+                name: "D Kurd 10",
+                description: "一般的な D マイナーと同じ音構成を持つスケールで、YouTube 上に楽譜や練習曲が最も多く公開されている入門向けモデルです。初めてのハンドパンにも安心してお選びいただけます。"
             }
         }
     },
@@ -142,6 +150,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "E Equinox 14",
                 description: "Gamme hybride entre majeur et mineur, à la fois cinématique et doux-amer. Les 14 notes, incluant des basses puissantes, offrent une grande richesse harmonique, idéale pour des jeux complexes et très expressifs, plutôt destinés aux joueurs avancés."
+            },
+            ja: {
+                name: "E Equinox 14",
+                description: "メジャーとマイナーの境界に位置するハイブリッドスケールです。シネマティックな雰囲気とほろ苦い感性が魅力で、重厚な低音を含む 14 音により非常に豊かなサウンドを奏でます。複雑で感情豊かな演奏を楽しみたい上級者向けモデルです。"
             }
         }
     },
@@ -167,7 +179,11 @@ export const SCALES: Scale[] = [
         i18n: {
             fr: {
                 name: "F# Low Pygmy 14",
-                description: "L’un des Pygmy les plus appréciés au monde, véritable best-seller. Les notes graves tissent une véritable histoire sonore, profonde et envoûtante. Un choix parfait si vous aimez les ambiances racontées par des basses chaleureuses, dans l’esprit de joueurs comme Malte Marten."
+                description: "L'un des Pygmy les plus appréciés au monde, véritable best-seller. Les notes graves tissent une véritable histoire sonore, profonde et envoûtante. Un choix parfait si vous aimez les ambiances racontées par des basses chaleureuses, dans l'esprit de joueurs comme Malte Marten."
+            },
+            ja: {
+                name: "F# Low Pygmy 14",
+                description: "世界的に最も人気のあるベストセラースケールの一つです。低音ノートたちが物語を紡ぐように溶け合い、深い共鳴を生み出します。Malte Marten などの奏者によって広く知られるスタイルです。"
             }
         }
     },
@@ -193,7 +209,11 @@ export const SCALES: Scale[] = [
         i18n: {
             fr: {
                 name: "F Aeolian 10",
-                description: "Même contenu de notes qu’un F mineur, vu depuis le mode éolien (gamme mineure naturelle). Son caractère stable, légèrement mélancolique, en fait un instrument très musical. Peut être enrichi plus tard par des notes supplémentaires en bas, ce qui en fait un modèle au rapport qualité-prix exceptionnel."
+                description: "Même contenu de notes qu'un F mineur, vu depuis le mode éolien (gamme mineure naturelle). Son caractère stable, légèrement mélancolique, en fait un instrument très musical. Peut être enrichi plus tard par des notes supplémentaires en bas, ce qui en fait un modèle au rapport qualité-prix exceptionnel."
+            },
+            ja: {
+                name: "F Aeolian 10",
+                description: "F マイナーと同じ音構成を持ちながら、エオリアンモード（自然短音階）の視点でアプローチするスケールです。安定感のある少し憂いを帯びた雰囲気が特徴で、ボトム側のアップグレードによってさまざまなムードに発展させることができます。コストパフォーマンスに優れたおすすめモデルです。"
             }
         }
     },
@@ -220,6 +240,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "E Romanian Hijaz 10",
                 description: "Pour celles et ceux qui recherchent la différence. Cette gamme au parfum gitan et bohème dégage une énergie forte, mystérieuse et exotique, parfaite pour un jeu expressif et théâtral."
+            },
+            ja: {
+                name: "E Romanian Hijaz 10",
+                description: "人と違う個性を求める方のためのエキゾチックスケールです。ジプシー音楽やボヘミアンミュージックを思わせる、強くミステリアスな雰囲気を生み出します。"
             }
         }
     },
@@ -245,7 +269,11 @@ export const SCALES: Scale[] = [
         i18n: {
             fr: {
                 name: "D Saladin 9",
-                description: "Gamme très exotique de type phrygien, rappelant les nuits orientales et l’ambiance des contes arabes. Son caractère intense, « épicé » et rare en fait un choix idéal pour affirmer une personnalité sonore unique."
+                description: "Gamme très exotique de type phrygien, rappelant les nuits orientales et l'ambiance des contes arabes. Son caractère intense, « épicé » et rare en fait un choix idéal pour affirmer une personnalité sonore unique."
+            },
+            ja: {
+                name: "D Saladin 9",
+                description: "アラビアンナイトを連想させる、とてもエキゾチックでパワフルなフリジアンスケールです。希少性が高く、スパイシーなサウンドが特徴で、唯一無二の個性を表現したい方に最適です。"
             }
         }
     },
@@ -271,7 +299,11 @@ export const SCALES: Scale[] = [
         i18n: {
             fr: {
                 name: "D Asha 9",
-                description: "Aussi connue sous les noms Sabye ou Ashakiran, cette gamme de D majeur est douce et lumineuse. Son timbre gentil et apaisant évoque la pureté, la lumière et l’espoir. C’est un deuxième handpan parfait pour accompagner un modèle mineur."
+                description: "Aussi connue sous les noms Sabye ou Ashakiran, cette gamme de D majeur est douce et lumineuse. Son timbre gentil et apaisant évoque la pureté, la lumière et l'espoir. C'est un deuxième handpan parfait pour accompagner un modèle mineur."
+            },
+            ja: {
+                name: "D Asha 9",
+                description: "Sabye や Ashakiran とも呼ばれる、柔らかく穏やかな D メジャースケールです。ジェントルでソフトなトーンに、純粋な光と希望のイメージを込めました。マイナースケールのハンドパンと一緒に演奏するセカンド楽器として非常に人気があります。"
             }
         }
     },
@@ -297,7 +329,11 @@ export const SCALES: Scale[] = [
         i18n: {
             fr: {
                 name: "E La Sirena 10",
-                description: "Gamme en mode dorien, comme une sirène qui vous entraîne dans les profondeurs de l’eau. Elle oscille subtilement entre majeur et mineur, avec un charme mystérieux. La note C#4 y joue un rôle clé. Recommandée aux joueurs de niveau intermédiaire."
+                description: "Gamme en mode dorien, comme une sirène qui vous entraîne dans les profondeurs de l'eau. Elle oscille subtilement entre majeur et mineur, avec un charme mystérieux. La note C#4 y joue un rôle clé. Recommandée aux joueurs de niveau intermédiaire."
+            },
+            ja: {
+                name: "E La Sirena 10",
+                description: "名の通り「セイレーン」のように、深い水の中を遊泳している感覚を与えるドリアンスケールです。メジャーとマイナーの間を行き来する不思議な魅力があり、C#4 ノートの使い方がポイントになります。中級者の方におすすめです。"
             }
         }
     },
@@ -324,6 +360,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "C# Pygmy 9",
                 description: "La version « classique » de la gamme Pygmy, un grand standard du handpan. Son ambiance à la fois vide et onirique favorise les états de méditation profonde et de transe douce."
+            },
+            ja: {
+                name: "C# Pygmy 9",
+                description: "ハンドパンの古典にして名作といえるクラシック・ピグミースケールです。独特の空虚感と夢のように深い響きが、深い瞑想やトランス状態へと誘います。"
             }
         }
     },
@@ -349,7 +389,11 @@ export const SCALES: Scale[] = [
         i18n: {
             fr: {
                 name: "D Asha 15",
-                description: "Gamme de D majeur couvrant parfaitement deux octaves complètes. Sa polyvalence est remarquable, notamment pour la plupart des morceaux de musique populaire en mode majeur. Un modèle idéal pour jouer avec d’autres instruments et pour la scène."
+                description: "Gamme de D majeur couvrant parfaitement deux octaves complètes. Sa polyvalence est remarquable, notamment pour la plupart des morceaux de musique populaire en mode majeur. Un modèle idéal pour jouer avec d'autres instruments et pour la scène."
+            },
+            ja: {
+                name: "D Asha 15",
+                description: "2 オクターブの音域を完全にカバーする D メジャースケールです。汎用性が非常に高く、メジャーキーが多い一般的なポップスでの活用度も抜群です。他の楽器とのアンサンブルでも大きな強みを発揮する、共演に特におすすめのモデルです。"
             }
         }
     },
@@ -375,7 +419,11 @@ export const SCALES: Scale[] = [
         i18n: {
             fr: {
                 name: "E Equinox 12",
-                description: "Version enrichie de l’Equinox, avec des basses supplémentaires (C3, D3). Le résultat est un son plus ample et plus profond, tout en conservant le caractère émotionnel et équilibré typique de cette gamme hybride."
+                description: "Version enrichie de l'Equinox, avec des basses supplémentaires (C3, D3). Le résultat est un son plus ample et plus profond, tout en conservant le caractère émotionnel et équilibré typique de cette gamme hybride."
+            },
+            ja: {
+                name: "E Equinox 12",
+                description: "既存のハイブリッドスケール Equinox に低音（C3, D3）を追加し、さらに豊かな響きを実現したモデルです。感性的な演奏に最適化された、完璧なバランスが魅力です。"
             }
         }
     },
@@ -401,7 +449,11 @@ export const SCALES: Scale[] = [
         i18n: {
             fr: {
                 name: "E Equinox 10",
-                description: "Modèle standard de la gamme Equinox. Elle se situe exactement entre majeur et mineur, avec une couleur subtile et nuancée. Parfaite pour celles et ceux qui recherchent une émotion différente, accessible aussi bien aux débutants qu’aux joueurs confirmés."
+                description: "Modèle standard de la gamme Equinox. Elle se situe exactement entre majeur et mineur, avec une couleur subtile et nuancée. Parfaite pour celles et ceux qui recherchent une émotion différente, accessible aussi bien aux débutants qu'aux joueurs confirmés."
+            },
+            ja: {
+                name: "E Equinox 10",
+                description: "Equinox スケールの標準モデルです。メジャーとマイナーのちょうど中間に位置するような微妙なニュアンスが特徴で、新しい感性を求める方におすすめです。扱いやすい音域とエモーショナルなメロディラインにより、初心者から上級者まで幅広くお楽しみいただけます。"
             }
         }
     },
@@ -428,6 +480,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "F# Low Pygmy 18",
                 description: "Version « mutante » du Low Pygmy, inspirée du style de Malte Marten. Ses 18 notes ouvrent un registre extrêmement large, incluant un suraigu très expressif. Les nuances fines dans les aigus se combinent à des graves profonds, pour un instrument clairement orienté professionnel."
+            },
+            ja: {
+                name: "F# Low Pygmy 18",
+                description: "Malte Marten スタイルの「ミュータント・ピグミー」スケールであり、Low Pygmy の拡張版です。18 ノートがもたらす広大な音域と超高音域により、繊細な高音表現と深い低音が共存するプロフェッショナル向けモデルです。"
             }
         }
     },
@@ -454,6 +510,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "C# Pygmy 11",
                 description: "Extension du C# Pygmy classique avec des graves ajoutés (D3, E3). Cette configuration renforce la profondeur et la majesté du son, idéale pour la transe, la méditation, le soin sonore et les voyages intérieurs."
+            },
+            ja: {
+                name: "C# Pygmy 11",
+                description: "クラシックな C# Pygmy に低音（D3, E3）を追加し、より深く荘厳な響きを実現したモデルです。トランス、瞑想、ヒーリング演奏に非常に優れています。"
             }
         }
     },
@@ -480,6 +540,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "F Low Pygmy 12",
                 description: "Une version élargie du F Pygmy, qui conserve sa douceur tout en gagnant en profondeur grâce aux basses renforcées. Parfait pour créer des ambiances chaleureuses, flottantes et légèrement rêveuses."
+            },
+            ja: {
+                name: "F Low Pygmy 12",
+                description: "ピグミースケール F Pygmy の柔らかさに、低音を補強してさらに深みを加えたモデルです。あたたかく、どこか夢見心地な雰囲気を作り出すのに最適です。"
             }
         }
     },
@@ -506,6 +570,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "D Kurd 12",
                 description: "Extension du D Kurd 10 avec un « bottom upgrade » pour des graves supplémentaires. Les deux basses sur la coque inférieure permettent un jeu plus harmonique et plus complet, sans perdre le caractère mineur expressif du Kurd."
+            },
+            ja: {
+                name: "D Kurd 12",
+                description: "マイナースケール D Kurd 10 にボトム側のアップグレードを施した標準拡張版です。低音が強化され、ボトムの 2 つのディングベースによって和声的な演奏が可能になります。"
             }
         }
     },
@@ -532,6 +600,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "F Low Pygmy 9",
                 description: "Version de base du F Low Pygmy, au caractère posé et stable. Son timbre doux en fait un excellent choix pour la méditation, le yoga, la relaxation et toutes les pratiques de guérison sonore."
+            },
+            ja: {
+                name: "F Low Pygmy 9",
+                description: "落ち着きと安定感のある Pygmy スケールの基本モデルです。瞑想やヒーリング演奏に適した、柔らかくやさしい音色を持っています。"
             }
         }
     },
@@ -558,6 +630,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "C# Annapurna 9",
                 description: "Gamme identique à Yisha Savita, inspirée par la montagne Annapurna. Elle combine grandeur, fraîcheur et énergie dans un cadre majeur lumineux, idéale pour des mélodies puissantes et inspirantes."
+            },
+            ja: {
+                name: "C# Annapurna 9",
+                description: "Yisha Savita と同じ構成を持ち、アンナプルナの雄大さと爽快感、エネルギーを込めたメジャースケールです。力強くポジティブなメロディにぴったりです。"
             }
         }
     },
@@ -583,7 +659,11 @@ export const SCALES: Scale[] = [
         i18n: {
             fr: {
                 name: "C Major 10",
-                description: "La gamme majeure la plus simple et la plus pure : C majeur. Son caractère clair et joyeux convient très bien aux mélodies connues de tous, aux chansons enfantines et à l’initiation musicale."
+                description: "La gamme majeure la plus simple et la plus pure : C majeur. Son caractère clair et joyeux convient très bien aux mélodies connues de tous, aux chansons enfantines et à l'initiation musicale."
+            },
+            ja: {
+                name: "C Major 10",
+                description: "もっとも基本的で純粋なメジャースケールである C メジャーです。明るく朗らかなキャラクターで、童謡のような誰もが知っているメロディを弾くのに最適です。"
             }
         }
     },
@@ -610,6 +690,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "C Rasavali 10",
                 description: "Gamme Rasavali à la couleur résolument indienne. Elle dégage une aura mystérieuse et envoûtante, idéale pour les ambiances spirituelles, rituelles ou cinématiques."
+            },
+            ja: {
+                name: "C Rasavali 10",
+                description: "ラサヴァリ（Rasavali）スケールで、インド風の色彩を帯びたミステリアスなスケールです。独特な音階が生み出す、どこか妖しい雰囲気が魅力です。"
             }
         }
     },
@@ -636,6 +720,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "C# Deepasia 14",
                 description: "Gamme Deepasia, à la résonance profondément asiatique. Ses 14 notes créent un paysage sonore riche, idéal pour la méditation longue, les voyages sonores et les compositions contemplatives."
+            },
+            ja: {
+                name: "C# Deepasia 14",
+                description: "ディープアジア（Deepasia）スケールで、東洋的な深い響きを持つ拡張モデルです。14 ノートに拡張されたことで、より豊かで瞑想的な演奏が可能になりました。"
             }
         }
     },
@@ -661,7 +749,11 @@ export const SCALES: Scale[] = [
         i18n: {
             fr: {
                 name: "C# Blues 9",
-                description: "Gamme blues en C#, chargée d’une forte expressivité. Parfaite pour le jazz, le groove et les ambiances soul, elle met en avant le côté « blue notes » et les phrases pleines de feeling."
+                description: "Gamme blues en C#, chargée d'une forte expressivité. Parfaite pour le jazz, le groove et les ambiances soul, elle met en avant le côté « blue notes » et les phrases pleines de feeling."
+            },
+            ja: {
+                name: "C# Blues 9",
+                description: "ブルーススケールで、ブルージーな感性が詰まったモデルです。ジャズやソウルフルな演奏に適しており、独特のグルーヴ感が生きたエモーショナルなサウンドを奏でます。"
             }
         }
     },
@@ -687,7 +779,11 @@ export const SCALES: Scale[] = [
         i18n: {
             fr: {
                 name: "Eb MUJU 10",
-                description: "Gamme en Eb majeur intégrant les couleurs du pyeongjo et de l’air traditionnel « Arirang ». Elle s’inspire des paysages paisibles de Muju et propose un son doux, chaleureux, capable d’apaiser et de réconforter l’auditeur."
+                description: "Gamme en Eb majeur intégrant les couleurs du pyeongjo et de l'air traditionnel « Arirang ». Elle s'inspire des paysages paisibles de Muju et propose un son doux, chaleureux, capable d'apaiser et de réconforter l'auditeur."
+            },
+            ja: {
+                name: "Eb MUJU 10",
+                description: "Eb メジャースケールで、韓国伝統音楽の平調と「アリラン」の音階を取り入れています。ムジュ（茂朱）の自然を思わせる穏やかなスケールで、柔らかくあたたかな音色が心を癒してくれます。"
             }
         }
     },
@@ -714,6 +810,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "C Yunsl 9",
                 description: "Gamme Yunsl, dont le nom évoque les reflets de la lumière sur les vagues. Elle offre un son clair, scintillant et poétique, idéal pour des mélodies lyriques et émouvantes."
+            },
+            ja: {
+                name: "C Yunsl 9",
+                description: "ユンスル（Yunsl）スケールで、水面にきらめく陽光のように澄んで輝くサウンドが特徴です。抒情的で美しいメロディを奏でるのに最適です。"
             }
         }
     },
@@ -740,6 +840,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "C# Sapphire 9",
                 description: "Gamme Sapphire, aussi raffinée et brillante que la pierre précieuse du même nom. Elle se distingue par une résonance fraîche, propre et moderne, recommandée à ceux qui aiment les sonorités élégantes et épurées."
+            },
+            ja: {
+                name: "C# Sapphire 9",
+                description: "サファイアスケールで、その名の通りサファイアのように清涼感があり、洗練された響きを持ちます。すっきりとモダンなサウンドを好む方におすすめです。"
             }
         }
     },
@@ -766,6 +870,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "C# Annaziska 9",
                 description: "Gamme mystérieuse et légèrement tendue, avec une forte couleur exotique. Elle convient parfaitement aux joueurs en quête de sonorités rares et de climats dramatiques ou cinématiques."
+            },
+            ja: {
+                name: "C# Annaziska 9",
+                description: "ミステリアスで、わずかな緊張感を含んだエキゾチックスケールです。独特の雰囲気を演出したいマニアックなプレイヤーに適しています。"
             }
         }
     },
@@ -792,6 +900,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "E Hijaz 9",
                 description: "Gamme Hijaz en E, immédiatement reconnaissable par sa couleur orientale et enflammée. Sa dynamique intense, épicée et passionnée est idéale pour les improvisations expressives et les paysages sonores moyen-orientaux."
+            },
+            ja: {
+                name: "E Hijaz 9",
+                description: "E キーのヒジャーズスケールで、中東風のエキゾチックさと情熱的でスパイシーな雰囲気を強く伝えます。ドラマチックな即興演奏にぴったりです。"
             }
         }
     },
@@ -818,6 +930,10 @@ export const SCALES: Scale[] = [
             fr: {
                 name: "C# Amara 9",
                 description: "Le C# Amara 9, également connu sous le nom de « Celtic Minor » et membre du trio Wellness (Pygmy, Aegean, Amara), occupe une place unique dans les communautés mondiales de yoga, de méditation et de guérison, rendu célèbre par les performances renommées de Malte Marten. Également version d'introduction du bien-aimé E Amara 18, cette gamme est profondément appréciée par ceux qui recherchent la paix intérieure en Orient et en Occident, grâce à sa résonance mystérieuse et spirituelle unique."
+            },
+            ja: {
+                name: "C# Amara 9",
+                description: "ウェルネス三大スケール（Pygmy・Aegean・Amara）の一つで、「Celtic Minor」としても知られる C# Amara 9 は、Malte Marten の名演によって世界的に注目され、ヨガ・瞑想・ヒーリングコミュニティで独自の地位を確立しています。人気モデル E Amara 18 の入門版でもあり、特有の神秘的でスピリチュアルな響きによって、東西を問わず内なる平和を求める多くの人々に愛されています。"
             }
         }
     }

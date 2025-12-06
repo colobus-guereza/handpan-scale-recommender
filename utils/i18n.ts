@@ -36,13 +36,11 @@ export const getLocalizedScale = (scale: any, lang: Language): LocalizedContent 
         };
     }
 
-    // 3. For other languages (fr, de, ja, etc.), if i18n doesn't exist, fallback to English
-    if (lang !== 'ko') {
-        // Try English i18n first
-        if (scale.i18n && scale.i18n['en']) {
-            return scale.i18n['en'];
-        }
-        // Fallback to English fields
+    // 3. Fallback to English for French and Japanese if i18n not found
+    if ((lang === 'fr' || lang === 'ja') && scale.i18n && scale.i18n['en']) {
+        return scale.i18n['en'];
+    }
+    if ((lang === 'fr' || lang === 'ja') && (scale.nameEn || scale.descriptionEn)) {
         return {
             name: scale.nameEn || scale.name,
             description: scale.descriptionEn || scale.description,
@@ -69,6 +67,18 @@ export const getLocalizedProduct = (product: Product, lang: Language): Localized
         return {
             name: product.nameEn || product.name,
             description: product.description, // English description not separated yet in Product interface
+            options: product.options
+        };
+    }
+
+    // 3. Fallback to English for French and Japanese if i18n not found
+    if ((lang === 'fr' || lang === 'ja') && product.i18n && product.i18n['en']) {
+        return product.i18n['en'];
+    }
+    if ((lang === 'fr' || lang === 'ja') && product.nameEn) {
+        return {
+            name: product.nameEn || product.name,
+            description: product.description,
             options: product.options
         };
     }

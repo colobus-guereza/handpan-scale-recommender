@@ -136,8 +136,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
             // 현재 URL의 기본 경로 가져오기
             const baseUrl = window.location.origin + window.location.pathname;
-            // 스케일 ID를 쿼리 파라미터로 추가
-            const shareUrl = `${baseUrl}?scale=${currentScale.id}`;
+            // 스케일 ID와 언어를 쿼리 파라미터로 추가
+            const shareUrl = `${baseUrl}?scale=${currentScale.id}&lang=${language}`;
 
             await navigator.clipboard.writeText(shareUrl);
             setIsCopied(true);
@@ -151,7 +151,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
             if (!currentScale) return;
 
             const baseUrl = window.location.origin + window.location.pathname;
-            const shareUrl = `${baseUrl}?scale=${currentScale.id}`;
+            const shareUrl = `${baseUrl}?scale=${currentScale.id}&lang=${language}`;
 
             const textArea = document.createElement('textarea');
             textArea.value = shareUrl;
@@ -718,12 +718,12 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                 </div>
 
                                 <div className="mb-8">
-                                    <div className="relative bg-yellow-100 dark:bg-yellow-50/90 p-4 rounded-xl shadow-md border border-yellow-200/30 dark:border-yellow-100/20">
+                                    <div className="relative bg-yellow-100 dark:bg-yellow-50/90 p-4 rounded-xl shadow-md border border-yellow-200/30 dark:border-yellow-100/20 overflow-hidden">
                                         {/* Speech bubble tail - Integrated with border (Left side) */}
                                         <div className="absolute top-1/2 -translate-y-1/2 -left-[10px] w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[10px] border-r-yellow-200/30 dark:border-r-yellow-100/20"></div>
                                         <div className="absolute top-1/2 -translate-y-1/2 -left-[9px] w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[10px] border-r-yellow-100 dark:border-r-[#FDFDEA]"></div>
 
-                                        <p className="text-slate-900 dark:text-slate-800 font-bold leading-relaxed text-base md:text-lg break-keep">
+                                        <p className="text-slate-900 dark:text-slate-800 font-bold leading-relaxed text-base md:text-lg break-words" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
                                             {getLocalizedScale(currentScale, language).description}
                                         </p>
                                     </div>

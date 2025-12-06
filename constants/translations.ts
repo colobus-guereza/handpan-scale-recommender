@@ -107,7 +107,8 @@ const EN_TRANSLATIONS = {
         uplifting: 'Uplifting',
         calm: 'Calm',
         energetic: 'Energetic'
-    }
+    },
+    soldOut: 'Sold Out'
 };
 
 const FR_TRANSLATIONS = {
@@ -203,7 +204,105 @@ const FR_TRANSLATIONS = {
         uplifting: 'Édifiant',
         calm: 'Calme',
         energetic: 'Énergique'
-    }
+    },
+    soldOut: 'Épuisé'
+};
+
+const JA_TRANSLATIONS = {
+    title: 'あなたにぴったりのハンドパンスケールを見つける',
+    vibeSelector: {
+        jamming: '初心者',
+        meditation: 'ヨガ・瞑想・ヒーリング',
+        uplift: '明るい雰囲気',
+        exotic: 'ディープエスニック'
+    },
+    scaleList: {
+        back: '再選択',
+        scaleClassification: '分類基準',
+        allScales: '全スケール',
+        purchase: '購入',
+        preparing: '準備中',
+        share: '共有',
+        copied: 'コピーしました',
+        rankRecommendation: 'おすすめ',
+        popularScale: '人気スケール',
+        ding: 'Ding',
+        top: 'Top',
+        bottom: 'Bottom',
+        prev: '前へ',
+        next: '次へ',
+        mutant: 'ミュータント',
+        normal: '通常',
+        viewing: '閲覧中',
+        select: '選択',
+        filter: 'フィルター',
+        selectCategory: 'カテゴリー選択',
+        selectType: 'タイプ選択',
+        noteCount: 'ノート数',
+        selectDing: 'Ding選択',
+        mood: '調性',
+        tone: '音色',
+        popularity: '人気度',
+        minor: 'マイナー',
+        major: 'メジャー',
+        pure: 'シンプル',
+        spicy: '華やか',
+        rare: '希少',
+        popular: '人気',
+        digiPan: 'DigiPan',
+        implementationPending: '実装予定',
+        axes: {
+            minorMajor: {
+                label: '調性',
+                description: 'スケールが与える全体的な感情的な雰囲気を表します。',
+                minLabel: 'マイナー',
+                maxLabel: 'メジャー'
+            },
+            pureSpicy: {
+                label: '音色',
+                description: '音のシンプルさと華やかさの程度を表します。',
+                minLabel: 'シンプル',
+                maxLabel: '華やか'
+            },
+            rarePopular: {
+                label: '人気度',
+                description: '市場での希少性と人気を表します。',
+                minLabel: '希少',
+                maxLabel: '人気'
+            }
+        }
+    },
+    categories: {
+        beginner: '初心者',
+        healing: 'ヨガ・瞑想・ヒーリング',
+        bright: 'メジャースケール',
+        ethnic: 'ディープエスニック',
+        case: 'ハードケース',
+        softCase: 'ソフトケース',
+        stand: 'スタンド'
+    },
+    shipping: {
+        worldwide: '全世界配送可能',
+        worldwideEn: 'Worldwide Shipping'
+    },
+        tags: {
+            minor: 'マイナー',
+            major: 'メジャー',
+            harmonic: 'ハーモニック',
+            melodic: 'メロディック',
+            pentatonic: 'ペンタトニック',
+            exotic: 'エキゾチック',
+            meditative: '瞑想的',
+            bright: '明るい',
+            dark: '暗い',
+            mysterious: '神秘的',
+            happy: '幸せ',
+            sad: '悲しい',
+            uplifting: '高揚感',
+            calm: '穏やか',
+            energetic: 'エネルギッシュ'
+        },
+        soldOut: '売り切れ'
 };
 
 export type TranslationType = typeof EN_TRANSLATIONS;
@@ -302,12 +401,13 @@ export const TRANSLATIONS: Record<Language, TranslationType> = {
             uplifting: '고양되는',
             calm: '차분한',
             energetic: '에너지 넘치는'
-        }
+        },
+        soldOut: '품절'
     },
     en: EN_TRANSLATIONS,
     fr: FR_TRANSLATIONS,
     de: EN_TRANSLATIONS,
-    ja: EN_TRANSLATIONS,
+    ja: JA_TRANSLATIONS,
     zh: EN_TRANSLATIONS,
     tr: EN_TRANSLATIONS,
     ar: EN_TRANSLATIONS,
