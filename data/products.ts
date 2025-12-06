@@ -1,3 +1,9 @@
+export interface LocalizedProductContent {
+    name: string;
+    description?: string;
+    options?: string[];
+}
+
 export interface Product {
     id: string;
     name: string;
@@ -9,6 +15,7 @@ export interface Product {
     description?: string;
     naverUrl?: string;
     ownUrl?: string;
+    i18n?: Record<string, LocalizedProductContent>;
 }
 
 export const PRODUCTS: Product[] = [
@@ -22,7 +29,13 @@ export const PRODUCTS: Product[] = [
         manufacturer: "Hardcase Technologies",
         options: ["M", "Black"],
         naverUrl: "https://smartstore.naver.com/sndhandpan/products/9455037225",
-        ownUrl: "https://handpan.co.kr/shop_view/?idx=99"
+        ownUrl: "https://handpan.co.kr/shop_view/?idx=99",
+        i18n: {
+            fr: {
+                name: "Étui rigide HTC Evatek",
+                options: ["M", "Noir"]
+            }
+        }
     },
 
     // 2. Avaja Premium Softcase
@@ -36,7 +49,14 @@ export const PRODUCTS: Product[] = [
         options: ["Titan Mid", "Black & Light Grey"],
         description: "Made in Iran",
         naverUrl: "https://smartstore.naver.com/sndhandpan/products/12070010394",
-        ownUrl: "https://handpan.co.kr/shop_view/?idx=98"
+        ownUrl: "https://handpan.co.kr/shop_view/?idx=98",
+        i18n: {
+            fr: {
+                name: "Étui souple Premium Avaja",
+                description: "Fabriqué en Iran",
+                options: ["Titan Mid", "Noir & Gris clair"]
+            }
+        }
     },
 
     // 3. Wood Handpan Stand S
@@ -46,7 +66,12 @@ export const PRODUCTS: Product[] = [
         nameEn: "Wood Handpan Stand S",
         category: "Stand",
         naverUrl: "https://smartstore.naver.com/sndhandpan/products/7352234142",
-        ownUrl: "https://handpan.co.kr/shop_view/?idx=100"
+        ownUrl: "https://handpan.co.kr/shop_view/?idx=100",
+        i18n: {
+            fr: {
+                name: "Support de handpan en bois S"
+            }
+        }
     },
 
     // 4. Wood Handpan Stand M
@@ -56,6 +81,11 @@ export const PRODUCTS: Product[] = [
         nameEn: "Wood Handpan Stand M",
         category: "Stand",
         naverUrl: "https://smartstore.naver.com/sndhandpan/products/7371144021",
-        ownUrl: "https://handpan.co.kr/shop_view/?idx=101"
+        ownUrl: "https://handpan.co.kr/shop_view/?idx=101",
+        i18n: {
+            fr: {
+                name: "Support de handpan en bois M"
+            }
+        }
     }
 ];

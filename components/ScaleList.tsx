@@ -4,6 +4,7 @@ import { Vibe, VIBES } from './VibeSelector';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Sparkles, Moon, Sun, Flame, Share2, Check } from 'lucide-react';
 import { TRANSLATIONS, Language } from '@/constants/translations';
+import { getLocalizedScale } from '../utils/i18n';
 import MiniDigiPan from './MiniDigiPan';
 
 interface Props {
@@ -28,14 +29,14 @@ const getOrdinalSuffix = (rank: number): string => {
     return `${rank}th`;
 };
 
-const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
+const VideoPlayer = ({ url, title, language = 'ko' }: { url: string; title: string; language?: Language }) => {
+    const t = TRANSLATIONS[language];
     const videoId = getVideoId(url);
 
     if (!videoId) {
         return (
-            <div className="w-full h-full flex flex-col items-center justify-center text-slate-400">
-                <Play className="w-12 h-12 mb-2 opacity-50" />
-                <span className="text-sm">영상 준비중</span>
+            <div className="w-full h-full flex flex-col items-center justify-center bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                <span className="text-sm font-medium">{t.scaleList.preparing}</span>
             </div>
         );
     }
@@ -55,6 +56,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
     const t = TRANSLATIONS[language];
     const [displayScales, setDisplayScales] = useState<Scale[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+
+
 
     // 디버깅: initialScaleId 확인
     useEffect(() => {
@@ -574,7 +577,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center relative z-10">
                             {/* Video Section */}
                             <div className="w-full aspect-video bg-slate-100 dark:bg-slate-950 rounded-xl overflow-hidden shadow-inner relative group border border-slate-200 dark:border-slate-700">
-                                <VideoPlayer key={currentScale.id} url={currentScale.videoUrl || ""} title={currentScale.name} />
+                                <VideoPlayer key={currentScale.id} url={currentScale.videoUrl || ""} title={currentScale.name} language={language} />
                             </div>
 
                             {/* Info Section */}
@@ -721,7 +724,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                         <div className="absolute top-1/2 -translate-y-1/2 -left-[9px] w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[10px] border-r-yellow-100 dark:border-r-[#FDFDEA]"></div>
 
                                         <p className="text-slate-900 dark:text-slate-800 font-bold leading-relaxed text-base md:text-lg break-keep">
-                                            {language === 'en' ? (currentScale.descriptionEn || currentScale.description) : currentScale.description}
+                                            {getLocalizedScale(currentScale, language).description}
                                         </p>
                                     </div>
                                 </div>
@@ -752,11 +755,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                 </div>
             </div>
 
-            {/* MiniDigiPan 컴포넌트 */}
-            {showMiniDigiPan && <MiniDigiPan key={miniDigiPanKey} scale={currentScale} language={language} />}
-
             {/* 스케일 분류기준 및 전체 스케일 토글 버튼 */}
-            <div className="flex items-center justify-end gap-2 mb-4 overflow-x-auto">
+            <div className="flex items-center justify-end gap-2 mb-2 overflow-x-auto">
                 {/* 우측: 기능 버튼 */}
                 <div className="flex gap-2 flex-shrink-0">
                     <button
@@ -771,9 +771,9 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                     >
                         <span className="whitespace-nowrap">{t.scaleList.digiPan}</span>
                         {showMiniDigiPan ? (
-                            <ChevronDown className="w-3 h-3 transition-transform flex-shrink-0" />
-                        ) : (
                             <ChevronUp className="w-3 h-3 transition-transform flex-shrink-0" />
+                        ) : (
+                            <ChevronDown className="w-3 h-3 transition-transform flex-shrink-0" />
                         )}
                     </button>
                     <button
@@ -823,10 +823,12 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                 ? ((value + 1) / 2) * 100
                                 : value * 100;
 
-                            const label = language === 'en' ? axis.labelEn || axis.label : axis.label;
-                            const description = language === 'en' ? axis.descriptionEn || axis.description : axis.description;
-                            const minLabel = language === 'en' ? axis.minLabelEn || axis.minLabel : axis.minLabel;
-                            const maxLabel = language === 'en' ? axis.maxLabelEn || axis.maxLabel : axis.maxLabel;
+                            // Use translations for labels and descriptions
+                            const axisTranslation = t.scaleList.axes[key as keyof typeof t.scaleList.axes];
+                            const label = axisTranslation.label;
+                            const description = axisTranslation.description;
+                            const minLabel = axisTranslation.minLabel;
+                            const maxLabel = axisTranslation.maxLabel;
 
                             return (
                                 <div key={axis.id} className="flex flex-col space-y-2">
@@ -1088,6 +1090,9 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                     />
                 </div>
             )}
+
+            {/* MiniDigiPan 컴포넌트 - 전체 스케일 목록 아래 */}
+            {showMiniDigiPan && <MiniDigiPan key={miniDigiPanKey} scale={currentScale} language={language} />}
         </div>
     );
 }
@@ -1211,7 +1216,7 @@ const ScaleGrid = React.memo(({
                 >
                     <span className={`font-semibold transition-colors ${currentScaleName === scale.name ? 'text-indigo-700 dark:text-cosmic' : 'text-slate-700 dark:text-slate-300 group-hover:text-indigo-700 dark:group-hover:text-cosmic'
                         }`}>
-                        {language === 'en' ? (scale.nameEn || scale.name) : scale.name}
+                        {getLocalizedScale(scale, language).name}
                     </span>
                     <span className={`text-xs ${currentScaleName === scale.name ? 'text-indigo-600 dark:text-cosmic/70' : 'text-slate-500 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-cosmic/70'
                         }`}>

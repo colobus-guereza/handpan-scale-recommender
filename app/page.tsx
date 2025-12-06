@@ -9,7 +9,8 @@ import { Navigation, Pagination } from 'swiper/modules';
 import { SCALES } from '@/data/handpanScales';
 import { PRODUCTS as ACCESSORY_PRODUCTS } from '@/data/products';
 import { CircleFlag } from 'react-circle-flags';
-import { TRANSLATIONS } from '@/constants/translations';
+import { TRANSLATIONS, SUPPORTED_LANGUAGES, Language } from '@/constants/translations';
+import { getLocalizedProduct } from '../utils/i18n';
 import ThemeToggle from "@/components/ThemeToggle";
 
 import 'swiper/css';
@@ -312,6 +313,11 @@ const SOFT_CASE_PRODUCTS = [
         rating: 4.8,
         reviewCount: 120,
         image: '/images/products/avaja_titanmid_grey.png',
+        i18n: {
+            fr: {
+                name: 'Avaja Premium (M, Gris)'
+            }
+        }
     },
     {
         id: 3,
@@ -322,6 +328,11 @@ const SOFT_CASE_PRODUCTS = [
         reviewCount: 120,
         image: '/images/products/avaja_titanmid_green.png',
         soldOut: true,
+        i18n: {
+            fr: {
+                name: 'Avaja Premium (M, Vert)'
+            }
+        }
     },
     {
         id: 4,
@@ -332,6 +343,11 @@ const SOFT_CASE_PRODUCTS = [
         reviewCount: 120,
         image: '/images/products/avaja_titanmid_white.png',
         soldOut: true,
+        i18n: {
+            fr: {
+                name: 'Avaja Premium (M, Blanc)'
+            }
+        }
     },
 ];
 
@@ -345,6 +361,11 @@ const STAND_PRODUCTS = [
         rating: 4.8,
         reviewCount: 0,
         image: '/images/products/stand_s.png',
+        i18n: {
+            fr: {
+                name: 'Support de handpan en bois S'
+            }
+        }
     },
     {
         id: 2,
@@ -354,6 +375,11 @@ const STAND_PRODUCTS = [
         rating: 4.8,
         reviewCount: 0,
         image: '/images/products/stand_m.png',
+        i18n: {
+            fr: {
+                name: 'Support de handpan en bois M'
+            }
+        }
     },
 ];
 
@@ -393,7 +419,7 @@ const getProductUrl = (productName: string): string | null => {
 
 export default function Home() {
     const [scaleIdFromUrl, setScaleIdFromUrl] = useState<string | null>(null);
-    const [language, setLanguage] = useState<'ko' | 'en'>('ko');
+    const [language, setLanguage] = useState<Language>('ko');
     const t = TRANSLATIONS[language];
 
     // 클라이언트 측에서 URL 파라미터 읽기
@@ -405,8 +431,9 @@ export default function Home() {
 
             // URL에서 언어 파라미터 확인
             const lang = params.get('lang');
-            if (lang === 'en' || lang === 'ko') {
-                setLanguage(lang);
+            const isSupported = SUPPORTED_LANGUAGES.some(l => l.code === lang);
+            if (isSupported && lang) {
+                setLanguage(lang as Language);
             }
         }
     }, []);
@@ -418,7 +445,7 @@ export default function Home() {
     const [isLoading, setIsLoading] = useState(true);
 
     // 언어 전환 핸들러
-    const handleLanguageChange = (lang: 'ko' | 'en') => {
+    const handleLanguageChange = (lang: Language) => {
         setLanguage(lang);
         // URL에 언어 파라미터 추가 (현재 페이지 유지)
         if (typeof window !== 'undefined') {
@@ -430,13 +457,15 @@ export default function Home() {
 
     // 가격 포맷 변환 함수
     const formatPrice = (price: string): string => {
-        if (language === 'en') {
+        if (language !== 'ko') {
             // "2,860,000원" -> "KRW 2,860,000"
             return price.replace('원', '').trim() ? `KRW ${price.replace('원', '').trim()}` : price;
         }
         // 한글 모드: 그대로 반환
         return price;
     };
+
+
 
     useEffect(() => {
         // 페이지 로드 완료 후 로딩 상태 해제
@@ -487,19 +516,19 @@ export default function Home() {
                     </div>
 
                     {/* Worldwide Shipping Badge - Top Right */}
-                    <div className="absolute top-4 right-4 z-40 flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full shadow-lg animate-pulse hover:animate-none transition-all duration-300 hover:scale-105">
-                        <svg 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            className="h-4 w-4 md:h-5 md:w-5" 
-                            fill="none" 
-                            viewBox="0 0 24 24" 
+                    <div className="absolute top-4 right-4 z-40 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-rose-600 text-white rounded-full shadow-lg animate-pulse hover:animate-none transition-all duration-300 hover:scale-105">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 md:h-6 md:w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
                             stroke="currentColor"
                             strokeWidth={2}
                         >
                             <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 002 2h2.945M3.055 11H1m2.055 0c-.01.33-.055.66-.055 1 0 5.523 4.477 10 10 10s10-4.477 10-10S17.523 2 12 2c-1.66 0-3.2.405-4.555 1.11M3.055 11l1.11-1.11M21 11h-2m-2 0h2m-2 0a2 2 0 00-2-2h-2m4 2v1a2 2 0 01-2 2h-2m4-3V9a2 2 0 00-2-2h-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v2M9 7h2m-2 0v2m2-2v2m0 0h2m-2 0H9m2 0v2m0-2V9" />
                         </svg>
-                        <span className="text-xs md:text-sm font-bold whitespace-nowrap">
-                            {language === 'ko' ? t.shipping.worldwide : t.shipping.worldwideEn}
+                        <span className="text-sm md:text-base font-bold whitespace-nowrap">
+                            {t.shipping.worldwide}
                         </span>
                     </div>
 
@@ -507,33 +536,22 @@ export default function Home() {
                         <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-slate-400 drop-shadow-sm">
                             {language === 'ko' ? '나에게 맞는 핸드팬 스케일 찾기' : "Discover your Handpan scale"}
                         </h1>
-                        <div className="flex items-center justify-center gap-2">
-                            {/* 한국 국기 아이콘 */}
-                            <button
-                                onClick={() => handleLanguageChange('ko')}
-                                className="transition-all duration-200 hover:scale-110 focus:outline-none"
-                                aria-label="한국어"
-                            >
-                                <div className={`w-6 h-6 md:w-7 md:h-7 rounded-full transition-all duration-200 ${language === 'ko'
-                                    ? 'ring-2 ring-indigo-600 dark:ring-cosmic shadow-lg dark:shadow-[0_0_10px_rgba(72,255,0,0.3)] scale-105'
-                                    : 'opacity-50 hover:opacity-70 ring-1 ring-gray-300 dark:ring-gray-600'
-                                    }`}>
-                                    <CircleFlag countryCode="kr" height="24" />
-                                </div>
-                            </button>
-                            {/* 미국 국기 아이콘 */}
-                            <button
-                                onClick={() => handleLanguageChange('en')}
-                                className="transition-all duration-200 hover:scale-110 focus:outline-none"
-                                aria-label="English"
-                            >
-                                <div className={`w-6 h-6 md:w-7 md:h-7 rounded-full transition-all duration-200 ${language === 'en'
-                                    ? 'ring-2 ring-indigo-600 dark:ring-cosmic shadow-lg dark:shadow-[0_0_10px_rgba(72,255,0,0.3)] scale-105'
-                                    : 'opacity-50 hover:opacity-70 ring-1 ring-gray-300 dark:ring-gray-600'
-                                    }`}>
-                                    <CircleFlag countryCode="us" height="24" />
-                                </div>
-                            </button>
+                        <div className="flex items-center justify-center gap-2 flex-wrap max-w-2xl mx-auto">
+                            {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'fr'].includes(lang.code)).map((lang) => (
+                                <button
+                                    key={lang.code}
+                                    onClick={() => handleLanguageChange(lang.code)}
+                                    className="transition-all duration-200 hover:scale-110 focus:outline-none"
+                                    aria-label={lang.name}
+                                >
+                                    <div className={`w-6 h-6 md:w-7 md:h-7 rounded-full transition-all duration-200 ${language === lang.code
+                                        ? 'ring-2 ring-indigo-600 dark:ring-cosmic shadow-lg dark:shadow-[0_0_10px_rgba(72,255,0,0.3)] scale-105'
+                                        : 'opacity-50 hover:opacity-70 ring-1 ring-gray-300 dark:ring-gray-600'
+                                        }`}>
+                                        <CircleFlag countryCode={lang.flag} height="24" />
+                                    </div>
+                                </button>
+                            ))}
                         </div>
                     </header>
 
@@ -625,7 +643,7 @@ export default function Home() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
+                                                {getLocalizedProduct(product as any, language).name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
@@ -704,7 +722,7 @@ export default function Home() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
+                                                {getLocalizedProduct(product as any, language).name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
@@ -783,7 +801,7 @@ export default function Home() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
+                                                {getLocalizedProduct(product as any, language).name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
@@ -862,7 +880,7 @@ export default function Home() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
+                                                {getLocalizedProduct(product as any, language).name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
@@ -943,7 +961,7 @@ export default function Home() {
                                             {isSoldOut && (
                                                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                                     <span className="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg">
-                                                        {language === 'ko' ? '품절' : 'Sold Out'}
+                                                        {language === 'ko' ? '품절' : language === 'fr' ? 'Épuisé' : 'Sold Out'}
                                                     </span>
                                                 </div>
                                             )}
@@ -966,7 +984,7 @@ export default function Home() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{language === 'ko' ? '소프트케이스' : 'Soft Case'}</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{t.categories.softCase}</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -1031,14 +1049,14 @@ export default function Home() {
                                             {isSoldOut && (
                                                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                                     <span className="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg">
-                                                        {language === 'ko' ? '품절' : 'Sold Out'}
+                                                        {language === 'ko' ? '품절' : language === 'fr' ? 'Épuisé' : 'Sold Out'}
                                                     </span>
                                                 </div>
                                             )}
                                         </div>
                                         <div>
                                             <h3 className={`text-sm font-medium line-clamp-1 mb-0 ${isSoldOut ? 'text-gray-400' : 'text-gray-900'}`}>
-                                                {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
+                                                {getLocalizedProduct(product as any, language).name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className={`text-lg font-bold ${isSoldOut ? 'text-gray-400' : 'text-gray-900'}`}>
@@ -1117,7 +1135,7 @@ export default function Home() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
+                                                {getLocalizedProduct(product as any, language).name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">

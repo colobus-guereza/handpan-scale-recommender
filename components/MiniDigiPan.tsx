@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useTheme } from './ThemeProvider';
 import { Scale } from '../data/handpanScales';
 import { TRANSLATIONS, Language } from '../constants/translations';
+import { Settings } from 'lucide-react';
 
 // 톤필드 가로세로 비율 상수
 const TONEFIELD_RATIO_X = 0.3;  // 가로 반지름 비율
@@ -1433,8 +1434,6 @@ const ToneField: React.FC<ToneFieldProps> = ({ note, isSelected, onSelect, isCal
     const [isHovered, setIsHovered] = useState(false);
     const [isActive, setIsActive] = useState(false);
     const [triggerRipple, setTriggerRipple] = useState(false);
-    const [isDragging, setIsDragging] = useState(false);
-    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
     const cx = note.cx || 500;
     const cy = note.cy || 500;
@@ -1455,83 +1454,24 @@ const ToneField: React.FC<ToneFieldProps> = ({ note, isSelected, onSelect, isCal
     const currentFill = 'url(#toneFieldMetalGradient)';
     const currentDimpleFill = 'url(#dimpleGradient)';
 
-    // SVG 좌표를 화면 좌표로 변환
-    const getSVGPoint = (clientX: number, clientY: number): { x: number; y: number } | null => {
-        if (!svgRef?.current) return null;
-        const svg = svgRef.current;
-        const pt = svg.createSVGPoint();
-        pt.x = clientX;
-        pt.y = clientY;
-        const svgPoint = pt.matrixTransform(svg.getScreenCTM()?.inverse());
-        return { x: svgPoint.x, y: svgPoint.y };
-    };
-
     const handleMouseDown = (e: React.MouseEvent) => {
         e.stopPropagation();
         setIsActive(true);
-
-        // 캘리브레이션 모드일 때만 드래그 시작
-        if (isCalibrationEnabled && onUpdateNote) {
-            const svgPoint = getSVGPoint(e.clientX, e.clientY);
-            if (svgPoint) {
-                setIsDragging(true);
-                setDragOffset({
-                    x: svgPoint.x - cx,
-                    y: svgPoint.y - cy
-                });
-            }
-        }
     };
 
     const handleMouseUp = (e: React.MouseEvent) => {
         e.stopPropagation();
-
-        // 드래그가 아닌 일반 클릭인 경우에만 처리
-        if (!isDragging) {
-            setIsActive(false);
-            // 일반 클릭 시 리플 효과 트리거 (캘리브레이션 Off일 때도 유지)
-            setTriggerRipple(true);
-            setTimeout(() => {
-                setTriggerRipple(false);
-            }, 800); // 애니메이션 시간(0.8s) 후 리플 제거
-            // 캘리브레이션 On일 때만 선택
-            if (isCalibrationEnabled) {
-                onSelect();
-            }
+        setIsActive(false);
+        // 일반 클릭 시 리플 효과 트리거 (캘리브레이션 Off일 때도 유지)
+        setTriggerRipple(true);
+        setTimeout(() => {
+            setTriggerRipple(false);
+        }, 800); // 애니메이션 시간(0.8s) 후 리플 제거
+        // 캘리브레이션 On일 때만 선택
+        if (isCalibrationEnabled) {
+            onSelect();
         }
     };
-
-    // window 레벨 마우스 이벤트 처리 (드래그 중일 때)
-    useEffect(() => {
-        if (!isDragging || !isCalibrationEnabled || !onUpdateNote) return;
-
-        const handleGlobalMouseMove = (e: MouseEvent) => {
-            const svgPoint = getSVGPoint(e.clientX, e.clientY);
-            if (svgPoint) {
-                const newCx = svgPoint.x - dragOffset.x;
-                const newCy = svgPoint.y - dragOffset.y;
-                onUpdateNote(note.id, { cx: newCx, cy: newCy });
-            }
-        };
-
-        const handleGlobalMouseUp = () => {
-            setIsDragging(false);
-            setIsActive(false);
-            // 드래그 종료 시 리플 효과 트리거
-            setTriggerRipple(true);
-            setTimeout(() => {
-                setTriggerRipple(false);
-            }, 800);
-        };
-
-        window.addEventListener('mousemove', handleGlobalMouseMove);
-        window.addEventListener('mouseup', handleGlobalMouseUp);
-
-        return () => {
-            window.removeEventListener('mousemove', handleGlobalMouseMove);
-            window.removeEventListener('mouseup', handleGlobalMouseUp);
-        };
-    }, [isDragging, isCalibrationEnabled, onUpdateNote, note.id, dragOffset]);
 
     const handleMouseEnter = () => {
         setIsHovered(true);
@@ -1540,9 +1480,6 @@ const ToneField: React.FC<ToneFieldProps> = ({ note, isSelected, onSelect, isCal
     const handleMouseLeave = () => {
         setIsHovered(false);
         setIsActive(false);
-        if (isDragging) {
-            setIsDragging(false);
-        }
     };
 
     const handleTouchStart = (e: React.TouchEvent) => {
@@ -1583,55 +1520,20 @@ const ToneField: React.FC<ToneFieldProps> = ({ note, isSelected, onSelect, isCal
 
     const activeTransition = isActive ? 'none' : 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
 
-    // window 레벨 마우스 이벤트 처리 (드래그 중일 때)
-    useEffect(() => {
-        if (!isDragging || !isCalibrationEnabled || !onUpdateNote) return;
 
-        const handleGlobalMouseMove = (e: MouseEvent) => {
-            if (!svgRef?.current) return;
-            const svg = svgRef.current;
-            const pt = svg.createSVGPoint();
-            pt.x = e.clientX;
-            pt.y = e.clientY;
-            const svgPoint = pt.matrixTransform(svg.getScreenCTM()?.inverse());
-
-            if (svgPoint) {
-                const newCx = svgPoint.x - dragOffset.x;
-                const newCy = svgPoint.y - dragOffset.y;
-                onUpdateNote(note.id, { cx: newCx, cy: newCy });
-            }
-        };
-
-        const handleGlobalMouseUp = () => {
-            setIsDragging(false);
-            setIsActive(false);
-            // 드래그 종료 시 리플 효과 트리거
-            setTriggerRipple(true);
-            setTimeout(() => {
-                setTriggerRipple(false);
-            }, 800);
-        };
-
-        window.addEventListener('mousemove', handleGlobalMouseMove);
-        window.addEventListener('mouseup', handleGlobalMouseUp);
-
-        return () => {
-            window.removeEventListener('mousemove', handleGlobalMouseMove);
-            window.removeEventListener('mouseup', handleGlobalMouseUp);
-        };
-    }, [isDragging, isCalibrationEnabled, onUpdateNote, note.id, dragOffset.x, dragOffset.y, svgRef]);
 
     return (
         <g
             className="tone-field-group"
             transform={svgTransform}
             style={{
-                cursor: isCalibrationEnabled && isDragging ? 'grabbing' : (isCalibrationEnabled ? 'grab' : 'pointer'),
-                transition: isDragging ? 'none' : activeTransition,
+                cursor: isCalibrationEnabled ? 'pointer' : 'pointer',
+                transition: activeTransition,
             }}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
         >
@@ -1708,11 +1610,40 @@ const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected
     const cx = note.cx || 500;
     const cy = note.cy || 500;
 
-    // 라벨 위치 계산: 직접 지정된 좌표가 있으면 사용, 없으면 기본 계산
-    // null 또는 undefined일 때 기본값 사용
+    // 타원의 가장 아래쪽(World Y기준) 좌표를 계산하는 함수
+    const calculateEllipseBottom = (cx: number, cy: number, rx: number, ry: number, rotateDeg: number) => {
+        const phi = (rotateDeg * Math.PI) / 180;
+        // tan(theta) = (Ry/Rx) * cot(phi)
+        // phi가 0 또는 180도 근처일 때(cot가 무한대) 처리
+        if (Math.abs(Math.sin(phi)) < 1e-6) {
+            return { x: cx, y: cy + ry };
+        }
+
+        const tanTheta = (ry / rx) / Math.tan(phi);
+        const theta1 = Math.atan(tanTheta);
+        const theta2 = theta1 + Math.PI;
+
+        // 두 후보 지점 중 Y가 더 큰(화면 아래쪽) 점 선택
+        const getPoint = (theta: number) => ({
+            x: cx + rx * Math.cos(theta) * Math.cos(phi) - ry * Math.sin(theta) * Math.sin(phi),
+            y: cy + rx * Math.cos(theta) * Math.sin(phi) + ry * Math.sin(theta) * Math.cos(phi)
+        });
+
+        const p1 = getPoint(theta1);
+        const p2 = getPoint(theta2);
+
+        return p1.y > p2.y ? p1 : p2;
+    };
+
+    // 라벨 위치 계산: 직접 지정된 좌표가 있으면 사용, 없으면 기본 계산 (타원 최하단)
     const defaultOffset = note.labelOffset || 25;
-    const labelX = (note.labelX !== null && note.labelX !== undefined) ? note.labelX : cx;
-    const labelY = (note.labelY !== null && note.labelY !== undefined) ? note.labelY : (cy + ry + defaultOffset);
+
+    // 계산된 최하단 좌표
+    const bottomPoint = calculateEllipseBottom(cx, cy, rx, ry, rotate);
+
+    // labelX/labelY가 명시적으로 있으면 사용, 없으면 계산된 최하단 좌표 사용
+    const labelX = (note.labelX !== null && note.labelX !== undefined) ? note.labelX : bottomPoint.x;
+    const labelY = (note.labelY !== null && note.labelY !== undefined) ? note.labelY : (bottomPoint.y + defaultOffset);
 
     // 폰트 사이즈 (60% 상향: 18 * 1.6 = 28.8)
     const fontSize = 28.8;
@@ -1820,6 +1751,30 @@ const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected
                     return dKurd12TopMapping[note.id] || String(note.id + 3);
                 }
             }
+            // C# Deepasia 14 특별 매핑
+            else if (scale?.id === 'cs_deepasia_14') {
+                // 딩(0) → "1", 하판 좌측(10) → "2", 하판 우측(11) → "3", 상판 노트 → "4"-"12", 하판 추가(12) → "7", 하판 추가(13) → 표시 안 함
+                if (note.id === 0) return '1'; // 딩
+                if (note.id === 10) return '2'; // 하판 좌측 D#3
+                if (note.id === 11) return '3'; // 하판 우측 F3
+                if (note.id === 12) return '7'; // 하판 추가 D#4
+                if (note.id === 13) return ''; // 하판 추가 F4 - 라벨 표시 안 함
+                // 상판 노트 매핑: G#3→4, A#3→5, C#4→6, F4→7(이미 12가 7), F#4→8, G#4→9, C#5→9, D#5→10, F5→11, (추가)→12
+                const csDeepasia14TopMapping: { [key: number]: string } = {
+                    1: '4',  // G#3
+                    2: '5',  // A#3
+                    3: '6',  // C#4
+                    4: '9',  // G#4 (요청: x="187" y="461" → "9")
+                    5: '8',  // F#4
+                    6: '9',  // C#5 (요청: x="202" y="458" → "9", "10"에서 "9"로 변경)
+                    7: '10', // D#5 (요청: x="659.8155838963952" y="295" → "10", "11"에서 "10"으로 변경)
+                    8: '11', // F5 (요청: x="349.8476531460914" y="295" → "11", "12"에서 "11"로 변경)
+                    9: '12'  // (요청: x="501" y="253" → "12", "13"에서 "12"로 변경)
+                };
+                if (note.id >= 1 && note.id <= 9) {
+                    return csDeepasia14TopMapping[note.id] || String(note.id + 3);
+                }
+            }
             // 일반 12N/14N/14M 템플릿 매핑: 하판 좌측 베이스(10) → "1", 하판 우측 베이스(11) → "2", 딩(0) → "3", Top 노트(1-9) → "4"-"12"
             else {
                 // F# Low Pygmy 18의 경우 ID 13은 '7'로 표시 (이미 위에서 처리됨)
@@ -1841,6 +1796,13 @@ const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected
         return note.label;
     };
 
+    const displayLabel = getDisplayLabel();
+    
+    // 빈 문자열이면 렌더링하지 않음
+    if (!displayLabel) {
+        return null;
+    }
+    
     return (
         <text
             x={labelX}
@@ -1859,7 +1821,7 @@ const ToneFieldLabel: React.FC<LabelProps> = ({ note, rx, ry, rotate, isSelected
             }}
             onClick={handleClick}
         >
-            {getDisplayLabel()}
+            {displayLabel}
         </text>
     );
 };
@@ -1986,6 +1948,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
     const [isLabelPanelExpanded, setIsLabelPanelExpanded] = useState<boolean>(false);
     const [isPitchPanelExpanded, setIsPitchPanelExpanded] = useState<boolean>(false);
     const [isCalibrationEnabled, setIsCalibrationEnabled] = useState<boolean>(true);
+    const [showDeveloperTools, setShowDeveloperTools] = useState<boolean>(false);
 
     // 선택된 노트를 useMemo로 메모이제이션하여 notes 변경 시 자동 업데이트
     const selectedNote = useMemo(() => {
@@ -2518,7 +2481,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
             className="glass-card rounded-2xl p-4 mb-4 relative overflow-hidden transition-opacity duration-150"
             onClick={handleOutsideClick}
         >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
                 {/* 스케일 이름 또는 템플릿 제목 - 항상 표시 */}
                 <div className="w-full max-w-[600px] mx-auto text-center">
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
@@ -2531,14 +2494,14 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                 </div>
 
                 {/* 디지팬과 캘리브레이션 패널을 나란히 배치 */}
-                <div className="flex flex-col lg:flex-row gap-4 items-start">
+                <div className="flex flex-col gap-2 items-start">
                     {/* 핸드팬 SVG 영역 */}
                     <div
-                        className="w-full max-w-[600px] lg:flex-shrink-0 aspect-square relative border border-dashed border-slate-300 dark:border-slate-700 rounded-lg"
+                        className="w-full max-w-[600px] mx-auto aspect-square relative border border-dashed border-slate-300 dark:border-slate-700 rounded-lg"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <svg
-                            viewBox="-400 -400 1800 1800"
+                            viewBox="-400 50 1800 900"
                             className="w-full h-full"
                             xmlns="http://www.w3.org/2000/svg"
                             onClick={(e) => e.stopPropagation()}
@@ -2605,20 +2568,6 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                     </feMerge>
                                 </filter>
                             </defs>
-
-                            {/* 캘리브레이션 영역 외곽선 표시 (캘리브레이션 On일 때만 표시) - 9:16 비율 */}
-                            <rect
-                                x="-400"
-                                y="-1100"
-                                width="1800"
-                                height="3200"
-                                fill="none"
-                                stroke="#1E40AF"
-                                strokeWidth="3"
-                                strokeDasharray="10,5"
-                                opacity={isCalibrationEnabled ? "0.9" : "0"}
-                                className="dark:stroke-blue-300"
-                            />
 
                             {/* 핸드팬 림(Rim) - 가장 아래 레이어 */}
                             <circle
@@ -2953,9 +2902,14 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                                 pitchLabel = labelToPitch[note.label] || null;
                                             }
                                         } else {
-                                            // 일반적인 경우: Top 노트를 낮은 피치부터 정렬하여 1부터 순서대로 배치
-                                            const sortedTopNotes = [...scale.notes.top].sort(comparePitch);
-                                            pitchLabel = sortedTopNotes[note.id - 1] || null;
+                                            // C# Deepasia 14 특별 처리: note.id 6에 G#4 강제 설정
+                                            if (scale.id === 'cs_deepasia_14' && note.id === 6) {
+                                                pitchLabel = 'G#4';
+                                            } else {
+                                                // 일반적인 경우: Top 노트를 낮은 피치부터 정렬하여 1부터 순서대로 배치
+                                                const sortedTopNotes = [...scale.notes.top].sort(comparePitch);
+                                                pitchLabel = sortedTopNotes[note.id - 1] || null;
+                                            }
                                         }
                                     } else if (note.id === 10 || note.id === 11) {
                                         // 림 바깥 좌우 딩 (11 템플릿 또는 12N 템플릿): bottom 노트 사용
@@ -3040,6 +2994,16 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                                     '18': 'G#5'
                                                 };
                                                 pitchLabel = labelToPitch[note.label] || null;
+                                            }
+                                        } else if (scale.id === 'cs_deepasia_14') {
+                                            // C# Deepasia 14 (14N 템플릿): bottom에 D#3, F3, D#4, F4가 있음
+                                            // note.id 13에 F4 강제 설정
+                                            if (note.id === 13) {
+                                                pitchLabel = 'F4';
+                                            } else if (note.id === 12) {
+                                                // note.id 12는 D#4
+                                                const bottomNotes = [...scale.notes.bottom].sort(comparePitch);
+                                                pitchLabel = bottomNotes[2] || null; // D#4
                                             }
                                         } else if (scale.id === 'd_asha_15_mutant') {
                                             // D Asha 15 (15 템플릿): top에 C#5, D5가 있음
@@ -3155,7 +3119,8 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                 // D3는 기본값 37, 나머지는 30
                                 const defaultPitchScale = note.id === 0 ? 37 : 30;
                                 const pitchScale = (note.pitchTextScale !== undefined && note.pitchTextScale !== null) ? note.pitchTextScale : defaultPitchScale;
-                                const pitchRotate = note.pitchTextRotate !== undefined ? note.pitchTextRotate : 0;
+                                // 피치 텍스트 회전: 항상 0도로 고정 (사용자 요청)
+                                const pitchRotate = 0;
                                 const isPitchSelected = selectedPitchId === note.id;
 
                                 return (
@@ -3211,8 +3176,20 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                         </svg>
                     </div>
 
-                    {/* 우측 캘리브레이션 패널 영역 */}
-                    <div className="flex-1 lg:min-w-[400px] flex flex-col gap-4">
+                    {/* 개발자 도구 토글 버튼 */}
+                    <div className="w-full flex justify-center">
+                        <button
+                            onClick={() => setShowDeveloperTools(!showDeveloperTools)}
+                            className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm"
+                            title={showDeveloperTools ? '개발자 도구 숨기기' : '개발자 도구 보이기'}
+                        >
+                            <Settings className={`w-5 h-5 transition-transform duration-300 ${showDeveloperTools ? 'rotate-90' : ''}`} />
+                        </button>
+                    </div>
+
+                    {/* 디지팬 아래 캘리브레이션 버튼 및 패널 영역 */}
+                    {showDeveloperTools && (
+                        <div className="w-full flex flex-col gap-4">
                         {/* 캘리브레이션 On/Off 버튼 */}
                         <div className="flex justify-center gap-2">
                             <button
@@ -3724,97 +3701,6 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                             </div>
                         )}
 
-                        {/* 템플릿 선택 패널 */}
-                        <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden panel-container"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <div className="p-4">
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-3">
-                                    템플릿
-                                </h3>
-                                <div className="flex flex-wrap gap-1.5">
-                                    {[9, 10, 11].map((count) => (
-                                        <button
-                                            key={count}
-                                            onClick={() => {
-                                                // 토글: 같은 버튼 클릭 시 비활성화, 다른 버튼 클릭 시 활성화
-                                                setSelectedTemplate(selectedTemplate === count ? null : count);
-                                            }}
-                                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === count
-                                                ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                                : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                                                }`}
-                                        >
-                                            {count}
-                                        </button>
-                                    ))}
-                                    {/* 12N 버튼 */}
-                                    <button
-                                        onClick={() => {
-                                            setSelectedTemplate(selectedTemplate === '12N' ? null : '12N');
-                                        }}
-                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === '12N'
-                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                                            }`}
-                                    >
-                                        12N
-                                    </button>
-                                    {/* 12M 버튼 */}
-                                    <button
-                                        onClick={() => {
-                                            setSelectedTemplate(selectedTemplate === '12M' ? null : '12M');
-                                        }}
-                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === '12M'
-                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                                            }`}
-                                    >
-                                        12M
-                                    </button>
-                                    {/* 14N 버튼 */}
-                                    <button
-                                        onClick={() => {
-                                            setSelectedTemplate(selectedTemplate === '14N' ? null : '14N');
-                                        }}
-                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === '14N'
-                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                                            }`}
-                                    >
-                                        14N
-                                    </button>
-                                    {/* 14M 버튼 */}
-                                    <button
-                                        onClick={() => {
-                                            setSelectedTemplate(selectedTemplate === '14M' ? null : '14M');
-                                        }}
-                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === '14M'
-                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                                            }`}
-                                    >
-                                        14M
-                                    </button>
-                                    {[15, 18].map((count) => (
-                                        <button
-                                            key={count}
-                                            onClick={() => {
-                                                // 토글: 같은 버튼 클릭 시 비활성화, 다른 버튼 클릭 시 활성화
-                                                setSelectedTemplate(selectedTemplate === count ? null : count);
-                                            }}
-                                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === count
-                                                ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
-                                                : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
-                                                }`}
-                                        >
-                                            {count}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
                         {/* 피치 캘리브레이션 패널 */}
                         {isCalibrationEnabled && (
                             <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden panel-container"
@@ -3990,7 +3876,99 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                                 )}
                             </div>
                         )}
-                    </div>
+
+                        {/* 템플릿 선택 패널 */}
+                        <div className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden panel-container"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="p-4">
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-3">
+                                    템플릿
+                                </h3>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {[9, 10, 11].map((count) => (
+                                        <button
+                                            key={count}
+                                            onClick={() => {
+                                                // 토글: 같은 버튼 클릭 시 비활성화, 다른 버튼 클릭 시 활성화
+                                                setSelectedTemplate(selectedTemplate === count ? null : count);
+                                            }}
+                                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === count
+                                                ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                                : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                                }`}
+                                        >
+                                            {count}
+                                        </button>
+                                    ))}
+                                    {/* 12N 버튼 */}
+                                    <button
+                                        onClick={() => {
+                                            setSelectedTemplate(selectedTemplate === '12N' ? null : '12N');
+                                        }}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === '12N'
+                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                            }`}
+                                    >
+                                        12N
+                                    </button>
+                                    {/* 12M 버튼 */}
+                                    <button
+                                        onClick={() => {
+                                            setSelectedTemplate(selectedTemplate === '12M' ? null : '12M');
+                                        }}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === '12M'
+                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                            }`}
+                                    >
+                                        12M
+                                    </button>
+                                    {/* 14N 버튼 */}
+                                    <button
+                                        onClick={() => {
+                                            setSelectedTemplate(selectedTemplate === '14N' ? null : '14N');
+                                        }}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === '14N'
+                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                            }`}
+                                    >
+                                        14N
+                                    </button>
+                                    {/* 14M 버튼 */}
+                                    <button
+                                        onClick={() => {
+                                            setSelectedTemplate(selectedTemplate === '14M' ? null : '14M');
+                                        }}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === '14M'
+                                            ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                            : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                            }`}
+                                    >
+                                        14M
+                                    </button>
+                                    {[15, 18].map((count) => (
+                                        <button
+                                            key={count}
+                                            onClick={() => {
+                                                // 토글: 같은 버튼 클릭 시 비활성화, 다른 버튼 클릭 시 활성화
+                                                setSelectedTemplate(selectedTemplate === count ? null : count);
+                                            }}
+                                            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedTemplate === count
+                                                ? 'bg-indigo-600 dark:bg-cosmic/20 text-white dark:text-cosmic border border-transparent dark:border-cosmic/30 shadow-sm dark:shadow-[0_0_10px_rgba(72,255,0,0.2)]'
+                                                : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10'
+                                                }`}
+                                        >
+                                            {count}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

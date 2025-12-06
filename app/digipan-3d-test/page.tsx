@@ -1,143 +1,68 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Digipan3D from '../../components/Digipan3D';
+import { SCALES } from '@/data/handpanScales';
 
-const sampleNotes = [
-    {
-        id: 0,
-        label: 'D',
-        cx: 500,
-        cy: 500,
-        scale: 389.7,
-        rotate: 90,
-        labelX: undefined,
-        labelY: 514,
-        labelOffset: 25,
-        symbolX: 945,
-        symbolY: undefined,
-        symbolOffset: 15,
-        symbolLeftX: 59,
-        symbolLeftY: undefined,
-        symbolLeftOffset: 15,
-        symbolBottomX: undefined,
-        symbolBottomY: 665,
-        symbolBottomOffset: 15,
-        position: 'center' as const,
-        angle: 0
-    },
-    {
-        id: 1,
-        label: 'A3',
-        cx: 661,
-        cy: 779,
-        scale: 286,
-        rotate: 121,
-        labelX: undefined,
-        labelY: 886,
-        labelOffset: 25,
-        position: 'top' as const,
-        angle: 0
-    },
-    {
-        id: 2,
-        label: 'Bb3',
-        cx: 335,
-        cy: 776,
-        scale: 285,
-        rotate: 61,
-        labelX: undefined,
-        labelY: 884,
-        labelOffset: 25,
-        position: 'top' as const,
-        angle: 0
-    },
-    {
-        id: 3,
-        label: 'C4',
-        cx: 813,
-        cy: 595,
-        scale: 253,
-        rotate: 128,
-        labelX: undefined,
-        labelY: 697,
-        labelOffset: 25,
-        position: 'top' as const,
-        angle: 0
-    },
-    {
-        id: 4,
-        label: 'D4',
-        cx: 195,
-        cy: 594,
-        scale: 249,
-        rotate: 47,
-        labelX: undefined,
-        labelY: 699,
-        labelOffset: 25,
-        position: 'top' as const,
-        angle: 0
-    },
-    {
-        id: 5,
-        label: 'E4',
-        cx: 808,
-        cy: 358,
-        scale: 237,
-        rotate: 55,
-        labelX: undefined,
-        labelY: 453,
-        labelOffset: 25,
-        position: 'top' as const,
-        angle: 0
-    },
-    {
-        id: 6,
-        label: 'F4',
-        cx: 204,
-        cy: 366,
-        scale: 238,
-        rotate: 125,
-        labelX: undefined,
-        labelY: 458,
-        labelOffset: 25,
-        position: 'top' as const,
-        angle: 0
-    },
-    {
-        id: 7,
-        label: 'G4',
-        cx: 630,
-        cy: 201,
-        scale: 226,
-        rotate: 48,
-        labelX: undefined,
-        labelY: 295,
-        labelOffset: 25,
-        position: 'top' as const,
-        angle: 0
-    },
-    {
-        id: 8,
-        label: 'A4',
-        cx: 363,
-        cy: 200,
-        scale: 232,
-        rotate: 133,
-        labelX: undefined,
-        labelY: 295,
-        labelOffset: 25,
-        position: 'top' as const,
-        angle: 0
-    },
-];
+import { HANDPAN_TEMPLATES } from '@/data/handpanTemplates';
+
+// Note Frequencies
+const NOTE_FREQUENCIES: Record<string, number> = {
+    'C#3': 138.59,
+    'G#3': 207.65,
+    'B3': 246.94,
+    'C#4': 277.18,
+    'D#4': 311.13,
+    'E4': 329.63,
+    'F#4': 369.99,
+    'G#4': 415.30,
+    'B4': 493.88
+};
 
 export default function Digipan3DTestPage() {
+    // Select C# Amara 9 Scale
+    const targetScaleId = 'cs_amara_9';
+    const scale = SCALES.find(s => s.id === targetScaleId);
+
+    const notes = useMemo(() => {
+        if (!scale) return [];
+
+        // Select Template based on note count (or explicit logic)
+        // For now, defaulting to NOTES_9
+        const templateData = HANDPAN_TEMPLATES.NOTES_9;
+
+        // Ding
+        const dingTemplate = templateData[0];
+        const dingNote = {
+            ...dingTemplate,
+            label: scale.notes.ding,
+            frequency: NOTE_FREQUENCIES[scale.notes.ding] || 440,
+            labelOffset: 25
+        };
+
+        // Top Notes
+        const topNotes = scale.notes.top.map((pitch, index) => {
+            // Note indices start from 1 (0 is ding)
+            const template = templateData[index + 1];
+            if (!template) return null; // Should not happen if count matches
+
+            return {
+                ...template,
+                label: pitch,
+                frequency: NOTE_FREQUENCIES[pitch] || 440,
+                labelOffset: 25
+            };
+        }).filter(n => n !== null);
+
+        return [dingNote, ...topNotes];
+    }, [scale]);
+
     return (
         <div className="w-full h-screen bg-white">
             <Digipan3D
-                notes={sampleNotes}
+                notes={notes as any[]} // Type casting to match strict props if needed, though structure aligns
                 onNoteClick={(id) => console.log(`Clicked note ${id}`)}
+                scale={scale} // Pass scale object if component uses it
             />
         </div>
     );

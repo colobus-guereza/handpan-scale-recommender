@@ -1,12 +1,17 @@
 import { Scale } from '../data/handpanScales';
 import { Product } from '../data/products';
-
-export type Language = 'ko' | 'en';
+import { Language } from '../constants/translations';
 
 export interface LocalizedContent {
     name: string;
     description?: string;
     tags?: string[];
+}
+
+export interface LocalizedProductContent {
+    name: string;
+    description?: string;
+    options?: string[];
 }
 
 // Using 'any' temporarily for scale/product to allow for the transition period 
@@ -31,6 +36,20 @@ export const getLocalizedScale = (scale: any, lang: Language): LocalizedContent 
         };
     }
 
+    // 3. For other languages (fr, de, ja, etc.), if i18n doesn't exist, fallback to English
+    if (lang !== 'ko') {
+        // Try English i18n first
+        if (scale.i18n && scale.i18n['en']) {
+            return scale.i18n['en'];
+        }
+        // Fallback to English fields
+        return {
+            name: scale.nameEn || scale.name,
+            description: scale.descriptionEn || scale.description,
+            tags: scale.tagsEn || scale.tags || []
+        };
+    }
+
     // Default to Korean (base fields)
     return {
         name: scale.name,
@@ -39,25 +58,25 @@ export const getLocalizedScale = (scale: any, lang: Language): LocalizedContent 
     };
 };
 
-export const getLocalizedProduct = (product: any, lang: Language): LocalizedContent => {
+export const getLocalizedProduct = (product: Product, lang: Language): LocalizedProductContent => {
     // 1. Try to use the new i18n structure if it exists
     if (product.i18n && product.i18n[lang]) {
         return product.i18n[lang];
     }
 
-    // 2. Fallback to existing fields
+    // 2. Fallback to existing fields (Parallel Change Strategy)
     if (lang === 'en') {
         return {
             name: product.nameEn || product.name,
-            description: product.description, // Products currently don't have descriptionEn in old structure
-            tags: []
+            description: product.description, // English description not separated yet in Product interface
+            options: product.options
         };
     }
 
-    // Default to Korean
+    // Default to Korean (base fields)
     return {
         name: product.name,
         description: product.description,
-        tags: []
+        options: product.options
     };
 };
