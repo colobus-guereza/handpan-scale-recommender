@@ -208,6 +208,103 @@ const FR_TRANSLATIONS = {
     soldOut: 'Épuisé'
 };
 
+const DE_TRANSLATIONS = {
+    title: 'Finden Sie Ihre perfekte Handpan-Skala',
+    vibeSelector: {
+        jamming: 'Anfänger',
+        meditation: 'Yoga·Meditation·Heilung',
+        uplift: 'Helle Atmosphäre',
+        exotic: 'Tiefe Ethnische'
+    },
+    scaleList: {
+        back: 'Erneut auswählen',
+        scaleClassification: 'Klassifizierung',
+        allScales: 'Alle Skalen',
+        purchase: 'Kaufen',
+        preparing: 'Demnächst verfügbar',
+        share: 'Teilen',
+        copied: 'Kopiert',
+        rankRecommendation: 'Empfehlung',
+        popularScale: 'Beliebt',
+        ding: 'Ding',
+        top: 'Top',
+        bottom: 'Unten',
+        prev: 'Zurück',
+        next: 'Weiter',
+        mutant: 'Mutant',
+        normal: 'Normal',
+        viewing: 'Anzeigen',
+        select: 'Auswählen',
+        filter: 'Filter',
+        selectCategory: 'Kategorie auswählen',
+        selectType: 'Typ auswählen',
+        noteCount: 'Anzahl der Noten',
+        selectDing: 'Ding auswählen',
+        mood: 'Stimmung',
+        tone: 'Klangfarbe',
+        popularity: 'Beliebtheit',
+        minor: 'Moll',
+        major: 'Dur',
+        pure: 'Rein',
+        spicy: 'Würzig',
+        rare: 'Selten',
+        popular: 'Beliebt',
+        digiPan: 'DigiPan',
+        implementationPending: 'Implementierung ausstehend',
+        axes: {
+            minorMajor: {
+                label: 'Stimmung',
+                description: 'Repräsentiert die gesamte emotionale Atmosphäre der Skala.',
+                minLabel: 'Moll',
+                maxLabel: 'Dur'
+            },
+            pureSpicy: {
+                label: 'Klangfarbe',
+                description: 'Repräsentiert den Grad der Einfachheit oder Komplexität des Klangs.',
+                minLabel: 'Rein',
+                maxLabel: 'Würzig'
+            },
+            rarePopular: {
+                label: 'Beliebtheit',
+                description: 'Repräsentiert die Seltenheit und Beliebtheit auf dem Markt.',
+                minLabel: 'Selten',
+                maxLabel: 'Beliebt'
+            }
+        }
+    },
+    categories: {
+        beginner: 'Anfänger',
+        healing: 'Yoga & Meditation',
+        bright: 'Dur-Skala',
+        ethnic: 'Tiefe Ethnische',
+        case: 'Hartschalenkoffer',
+        softCase: 'Weichschalenkoffer',
+        stand: 'Ständer'
+    },
+    shipping: {
+        worldwide: 'Weltweiter Versand',
+        worldwideEn: 'Worldwide Shipping'
+    },
+    tags: {
+        minor: 'Moll',
+        major: 'Dur',
+        harmonic: 'Harmonisch',
+        melodic: 'Melodisch',
+        pentatonic: 'Pentatonisch',
+        exotic: 'Exotisch',
+        meditative: 'Meditativ',
+        bright: 'Hell',
+        dark: 'Dunkel',
+        mysterious: 'Mysteriös',
+        happy: 'Glücklich',
+        sad: 'Traurig',
+        uplifting: 'Erhebend',
+        calm: 'Ruhig',
+        energetic: 'Energisch'
+    },
+    soldOut: 'Ausverkauft'
+};
+
 const JA_TRANSLATIONS = {
     title: 'あなたにぴったりのハンドパンスケールを見つける',
     vibeSelector: {
@@ -303,6 +400,103 @@ const JA_TRANSLATIONS = {
             energetic: 'エネルギッシュ'
         },
         soldOut: '売り切れ'
+};
+
+const ZH_TRANSLATIONS = {
+    title: '找到适合您的手碟音阶',
+    vibeSelector: {
+        jamming: '初学者',
+        meditation: '瑜伽·冥想·疗愈',
+        uplift: '明亮氛围',
+        exotic: '深度民族风'
+    },
+    scaleList: {
+        back: '重新选择',
+        scaleClassification: '分类标准',
+        allScales: '所有音阶',
+        purchase: '购买',
+        preparing: '准备中',
+        share: '分享',
+        copied: '已复制',
+        rankRecommendation: '推荐',
+        popularScale: '热门音阶',
+        ding: 'Ding',
+        top: 'Top',
+        bottom: 'Bottom',
+        prev: '上一个',
+        next: '下一个',
+        mutant: '变异型',
+        normal: '标准型',
+        viewing: '查看中',
+        select: '选择',
+        filter: '筛选',
+        selectCategory: '选择类别',
+        selectType: '选择类型',
+        noteCount: '音符数量',
+        selectDing: '选择Ding',
+        mood: '调性',
+        tone: '音色',
+        popularity: '受欢迎度',
+        minor: '小调',
+        major: '大调',
+        pure: '纯净',
+        spicy: '丰富',
+        rare: '稀有',
+        popular: '流行',
+        digiPan: 'DigiPan',
+        implementationPending: '待实现',
+        axes: {
+            minorMajor: {
+                label: '调性',
+                description: '代表音阶的整体情感氛围。',
+                minLabel: '小调',
+                maxLabel: '大调'
+            },
+            pureSpicy: {
+                label: '音色',
+                description: '代表声音的简洁与丰富程度。',
+                minLabel: '纯净',
+                maxLabel: '丰富'
+            },
+            rarePopular: {
+                label: '受欢迎度',
+                description: '代表市场上的稀有性和受欢迎程度。',
+                minLabel: '稀有',
+                maxLabel: '流行'
+            }
+        }
+    },
+    categories: {
+        beginner: '初学者',
+        healing: '瑜伽·冥想·疗愈',
+        bright: '大调音阶',
+        ethnic: '深度民族风',
+        case: '硬壳',
+        softCase: '软壳',
+        stand: '支架'
+    },
+    shipping: {
+        worldwide: '全球配送',
+        worldwideEn: 'Worldwide Shipping'
+    },
+    tags: {
+        minor: '小调',
+        major: '大调',
+        harmonic: '和声',
+        melodic: '旋律',
+        pentatonic: '五声音阶',
+        exotic: '异域风情',
+        meditative: '冥想',
+        bright: '明亮',
+        dark: '深沉',
+        mysterious: '神秘',
+        happy: '快乐',
+        sad: '悲伤',
+        uplifting: '振奋',
+        calm: '平静',
+        energetic: '充满活力'
+    },
+    soldOut: '已售罄'
 };
 
 export type TranslationType = typeof EN_TRANSLATIONS;
@@ -406,9 +600,9 @@ export const TRANSLATIONS: Record<Language, TranslationType> = {
     },
     en: EN_TRANSLATIONS,
     fr: FR_TRANSLATIONS,
-    de: EN_TRANSLATIONS,
+    de: DE_TRANSLATIONS,
     ja: JA_TRANSLATIONS,
-    zh: EN_TRANSLATIONS,
+    zh: ZH_TRANSLATIONS,
     tr: EN_TRANSLATIONS,
     ar: EN_TRANSLATIONS,
     hi: EN_TRANSLATIONS,

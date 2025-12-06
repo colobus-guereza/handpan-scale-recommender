@@ -537,7 +537,12 @@ export default function Home() {
                             {t.title}
                         </h1>
                         <div className="flex items-center justify-center gap-2 flex-wrap max-w-2xl mx-auto">
-                            {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'fr', 'ja'].includes(lang.code)).map((lang) => (
+                            {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de'].includes(lang.code))
+                                .sort((a, b) => {
+                                    const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de'];
+                                    return order.indexOf(a.code) - order.indexOf(b.code);
+                                })
+                                .map((lang) => (
                                 <button
                                     key={lang.code}
                                     onClick={() => handleLanguageChange(lang.code)}
