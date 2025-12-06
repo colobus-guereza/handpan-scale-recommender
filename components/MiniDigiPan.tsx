@@ -2534,11 +2534,11 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                 <div className="flex flex-col lg:flex-row gap-4 items-start">
                     {/* 핸드팬 SVG 영역 */}
                     <div
-                        className="w-full max-w-[600px] lg:flex-shrink-0 aspect-[9/16] relative"
+                        className="w-full max-w-[600px] lg:flex-shrink-0 aspect-square relative border border-dashed border-slate-300 dark:border-slate-700 rounded-lg"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <svg
-                            viewBox="-400 -1100 1800 3200"
+                            viewBox="-400 -400 1800 1800"
                             className="w-full h-full"
                             xmlns="http://www.w3.org/2000/svg"
                             onClick={(e) => e.stopPropagation()}
