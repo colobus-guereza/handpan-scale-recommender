@@ -328,8 +328,8 @@ export const SCALES: Scale[] = [
         nameEn: "F# Low Pygmy 18",
         notes: {
             ding: "F#3",
-            top: ["G#3", "A3", "C#4", "E4", "F#4", "G#4", "A4", "B4", "C#5", "E5", "F#5", "G#5"],
-            bottom: ["D3", "E3", "B3", "D5"]
+            top: ["G#3", "A3", "D4", "E4", "F#4", "G#4", "A4", "D5", "E5", "F#5", "G#5"],
+            bottom: ["D3", "E3", "B3", "C#4", "B4", "C#5"]
         },
         vector: { minorMajor: -0.6, pureSpicy: 0.25, rarePopular: 0.9 },
         tags: ["Malte Marten Style", "뮤턴트", "초고음역", "피그미", "전문가용"],
