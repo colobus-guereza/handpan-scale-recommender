@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { Text, OrbitControls, Center, Line } from '@react-three/drei';
 import * as THREE from 'three';
@@ -42,191 +42,257 @@ const CameraHandler = ({ isLocked }: { isLocked: boolean }) => {
 
 // ... (HandpanBody, ToneFieldMesh components remain the same)
 
+import { SCALES } from '@/data/handpanScales';
+
 export default function Digipan3D({
     notes,
+    onNoteClick,
+    isCameraLocked = false,
     scale,
     centerX = 500,
-    centerY = 500,
-    onNoteClick
+    centerY = 500
 }: Digipan3DProps) {
-    const [isCameraLocked, setIsCameraLocked] = useState(true);
-    const [copySuccess, setCopySuccess] = useState(false);
-    const containerRef = useRef<HTMLDivElement>(null);
+        const [isCameraLockedState, setIsCameraLocked] = useState(isCameraLocked); // Local state if needed or props
+        const [copySuccess, setCopySuccess] = useState(false);
+        const [isInfoExpanded, setIsInfoExpanded] = useState(true);
+        const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+        const containerRef = useRef<HTMLDivElement>(null);
 
-    const handleCapture = async () => {
-        if (!containerRef.current) return;
+        // Filter for 9-note scales (Ding + 8 Top/Bottom matching template)
+        // Assuming 9 total notes for now based on template NOTES_9 (0-8)
+        const nineNoteScales = useMemo(() => {
+            return SCALES.filter(s => {
+                const totalNotes = 1 + s.notes.top.length + s.notes.bottom.length;
+                return totalNotes === 9;
+            }).sort((a, b) => a.name.localeCompare(b.name));
+        }, []);
 
-        try {
-            // Temporarily hide the controls for the screenshot if desired, 
-            // but user said "visible space", so we keep them or hide them?
-            // Usually "screenshot" implies capturing the content, not the tools.
-            // Let's hide the buttons during capture for a cleaner look.
-            const controls = containerRef.current.querySelector('.controls-container') as HTMLElement;
-            if (controls) controls.style.display = 'none';
+        const handleCapture = async () => {
+            if (!containerRef.current) return;
 
-            const canvas = await html2canvas(containerRef.current, {
-                backgroundColor: '#1E50A0', // Ensure background color is captured
-                logging: false,
-                useCORS: true // Important for external images/fonts if any
-            });
+            try {
+                // Temporarily hide the controls for the screenshot if desired, 
+                // but user said "visible space", so we keep them or hide them?
+                // Usually "screenshot" implies capturing the content, not the tools.
+                // Let's hide the buttons during capture for a cleaner look.
+                const controls = containerRef.current.querySelector('.controls-container') as HTMLElement;
+                if (controls) controls.style.display = 'none';
 
-            // Restore controls
-            if (controls) controls.style.display = 'flex';
+                const canvas = await html2canvas(containerRef.current, {
+                    backgroundColor: '#1E50A0', // Ensure background color is captured
+                    logging: false,
+                    useCORS: true // Important for external images/fonts if any
+                });
 
-            canvas.toBlob(async (blob) => {
-                if (!blob) return;
-                try {
-                    await navigator.clipboard.write([
-                        new ClipboardItem({
-                            'image/png': blob
-                        })
-                    ]);
-                    setCopySuccess(true);
-                    setTimeout(() => setCopySuccess(false), 2000);
-                } catch (err) {
-                    console.error('Failed to copy to clipboard:', err);
-                }
-            });
-        } catch (err) {
-            console.error('Failed to capture canvas:', err);
-        }
-    };
+                // Restore controls
+                if (controls) controls.style.display = 'flex';
 
-    return (
-        <div ref={containerRef} className="w-full h-full relative" style={{ minHeight: '600px', background: '#1E50A0' }}> {/* Blueprint Blue */}
-            {/* Controls Container */}
-            <div className="controls-container absolute top-4 right-4 z-10 flex flex-col gap-2">
-                {/* Camera Toggle Button */}
-                <button
-                    onClick={() => setIsCameraLocked(!isCameraLocked)}
-                    className="p-3 bg-white/20 backdrop-blur-sm rounded-full shadow-lg hover:bg-white/30 transition-all duration-200 border border-white/30 text-white"
-                    title={isCameraLocked ? "Unlock View (Free Rotation)" : "Lock View (Top Down)"}
+                canvas.toBlob(async (blob) => {
+                    if (!blob) return;
+                    try {
+                        await navigator.clipboard.write([
+                            new ClipboardItem({
+                                'image/png': blob
+                            })
+                        ]);
+                        setCopySuccess(true);
+                        setTimeout(() => setCopySuccess(false), 2000);
+                    } catch (err) {
+                        console.error('Failed to copy to clipboard:', err);
+                    }
+                });
+            } catch (err) {
+                console.error('Failed to capture canvas:', err);
+            }
+        };
+
+        return (
+            <div ref={containerRef} className="w-full h-full relative" style={{ minHeight: '600px', background: '#1E50A0' }}> {/* Blueprint Blue */}
+                {/* Controls Container */}
+                <div className="controls-container absolute top-4 right-4 z-10 flex flex-col gap-2">
+                    {/* Camera Toggle Button */}
+                    <button
+                        onClick={() => setIsCameraLocked(!isCameraLocked)}
+                        className="p-3 bg-white/20 backdrop-blur-sm rounded-full shadow-lg hover:bg-white/30 transition-all duration-200 border border-white/30 text-white"
+                        title={isCameraLocked ? "Unlock View (Free Rotation)" : "Lock View (Top Down)"}
+                    >
+                        {isCameraLocked ? <Lock size={24} /> : <Unlock size={24} />}
+                    </button>
+
+                    {/* Screen Capture Button */}
+                    <button
+                        onClick={handleCapture}
+                        className="p-3 bg-white/20 backdrop-blur-sm rounded-full shadow-lg hover:bg-white/30 transition-all duration-200 border border-white/30 text-white"
+                        title="Copy Screenshot to Clipboard"
+                    >
+                        {copySuccess ? <Check size={24} className="text-green-400" /> : <Camera size={24} />}
+                    </button>
+                </div>
+
+                <Canvas
+                    orthographic
+                    gl={{ preserveDrawingBuffer: true }}
+                    camera={{
+                        zoom: 12, // Adjusted for 57cm object
+                        position: [0, 0, 100],
+                        near: 0.1,
+                        far: 2000
+                    }}
                 >
-                    {isCameraLocked ? <Lock size={24} /> : <Unlock size={24} />}
-                </button>
+                    {/* Lighting - Adjusted for Blueprint look */}
+                    <ambientLight intensity={1.0} /> {/* Bright ambient for flat look */}
+                    <pointLight position={[0, 0, 100]} intensity={0.2} color="#ffffff" />
+                    <directionalLight position={[-50, 100, 100]} intensity={0.5} />
 
-                {/* Screen Capture Button */}
-                <button
-                    onClick={handleCapture}
-                    className="p-3 bg-white/20 backdrop-blur-sm rounded-full shadow-lg hover:bg-white/30 transition-all duration-200 border border-white/30 text-white"
-                    title="Copy Screenshot to Clipboard"
-                >
-                    {copySuccess ? <Check size={24} className="text-green-400" /> : <Camera size={24} />}
-                </button>
-            </div>
+                    <CameraHandler isLocked={isCameraLockedState} />
 
-            <Canvas
-                orthographic
-                gl={{ preserveDrawingBuffer: true }}
-                camera={{
-                    zoom: 12, // Adjusted for 57cm object
-                    position: [0, 0, 100],
-                    near: 0.1,
-                    far: 2000
-                }}
-            >
-                {/* Lighting - Adjusted for Blueprint look */}
-                <ambientLight intensity={1.0} /> {/* Bright ambient for flat look */}
-                <pointLight position={[0, 0, 100]} intensity={0.2} color="#ffffff" />
-                <directionalLight position={[-50, 100, 100]} intensity={0.5} />
+                    <Center>
+                        <group>
+                            {/* Body */}
+                            <HandpanBody />
 
-                <CameraHandler isLocked={isCameraLocked} />
+                            {/* Tone Fields */}
+                            {notes.map((note) => (
+                                <ToneFieldMesh
+                                    key={note.id}
+                                    note={note}
+                                    centerX={centerX}
+                                    centerY={centerY}
+                                    onClick={onNoteClick}
+                                />
+                            ))}
+                        </group>
+                    </Center>
+                </Canvas>
 
-                <Center>
-                    <group>
-                        {/* Body */}
-                        <HandpanBody />
-
-                        {/* Tone Fields */}
-                        {notes.map((note) => (
-                            <ToneFieldMesh
-                                key={note.id}
-                                note={note}
-                                centerX={centerX}
-                                centerY={centerY}
-                                onClick={onNoteClick}
-                            />
-                        ))}
-                    </group>
-                </Center>
-            </Canvas>
-
-            {/* Scale Info Panel - Bottom Right Overlay */}
-            {scale && (
-                <div className="absolute bottom-4 right-4 bg-slate-900/80 backdrop-blur-sm border border-slate-700 p-4 rounded-xl text-white shadow-xl max-w-sm z-10 pointer-events-none select-none">
-                    <h3 className="text-sm uppercase tracking-wider text-slate-400 mb-1">Current Scale</h3>
-                    <div className="text-xl font-bold mb-3 text-blue-100 border-b border-slate-700 pb-2">{scale.name}</div>
-
-                    <div className="space-y-3">
-                        {/* 1. Classification Vectors */}
-                        <div className="space-y-1">
-                            <span className="text-xs text-slate-400 font-bold uppercase block mb-1">Sound Profile</span>
-                            <div className="grid grid-cols-3 gap-2 text-xs">
-                                <div className="bg-slate-800/50 p-2 rounded text-center flex flex-col items-center justify-center">
-                                    <span className="text-slate-400 text-[10px] uppercase mb-0.5">Mood</span>
-                                    <span className="font-medium text-blue-200 leading-tight">
-                                        {(scale.vector?.minorMajor ?? 0) < 0 ? 'Minor' : 'Major'}
-                                        <div className="opacity-75 text-[10px]">({scale.vector?.minorMajor ?? 0})</div>
-                                    </span>
-                                </div>
-                                <div className="bg-slate-800/50 p-2 rounded text-center flex flex-col items-center justify-center">
-                                    <span className="text-slate-400 text-[10px] uppercase mb-0.5">Tone</span>
-                                    <span className="font-medium text-blue-200 leading-tight">
-                                        {(scale.vector?.pureSpicy ?? 0) <= 0.5 ? 'Pure' : 'Spicy'}
-                                        <div className="opacity-75 text-[10px]">({scale.vector?.pureSpicy ?? 0})</div>
-                                    </span>
-                                </div>
-                                <div className="bg-slate-800/50 p-2 rounded text-center flex flex-col items-center justify-center">
-                                    <span className="text-slate-400 text-[10px] uppercase mb-0.5">Popularity</span>
-                                    <span className="font-medium text-blue-200 leading-tight">
-                                        {(scale.vector?.rarePopular ?? 0) <= 0.5 ? 'Rare' : 'Popular'}
-                                        <div className="opacity-75 text-[10px]">({scale.vector?.rarePopular ?? 0})</div>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* 2. Notes Info */}
-                        <div className="text-sm space-y-1">
-                            <div className="flex items-start gap-2">
-                                <span className="text-yellow-500 font-bold w-10 shrink-0">Ding:</span>
-                                <span className="font-medium">{scale.notes.ding}</span>
-                            </div>
-                            <div className="flex items-start gap-2">
-                                <span className="text-slate-400 font-bold w-10 shrink-0">Notes:</span>
-                                <div className="font-medium text-slate-200 leading-snug">
-                                    {scale.notes.top.join(', ')}
-                                    {scale.notes.bottom.length > 0 && (
-                                        <>
-                                            <br />
-                                            <span className="text-xs text-slate-400 block mt-1">
-                                                +{scale.notes.bottom.length} Bottom: {scale.notes.bottom.join(', ')}
-                                            </span>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* 3. Tags */}
-                        {scale.tags && scale.tags.length > 0 && (
+                {/* Scale Info Panel - Bottom Right Overlay */}
+                {scale && (
+                    <div className={`absolute bottom-4 right-4 bg-slate-900/90 backdrop-blur-md border border-slate-700 rounded-xl text-white shadow-xl z-20 transition-all duration-300 ease-in-out pointer-events-auto ${isInfoExpanded ? 'p-5 max-w-sm' : 'p-3 max-w-[200px]'}`}>
+                        <div className="flex justify-between items-start mb-1">
                             <div>
-                                <span className="text-xs text-slate-400 font-bold uppercase block mb-1">Tags</span>
-                                <div className="flex flex-wrap gap-1.5">
-                                    {scale.tags.map(tag => (
-                                        <span key={tag} className="text-xs bg-slate-700/50 px-2 py-0.5 rounded-full text-slate-300">
-                                            #{tag}
-                                        </span>
-                                    ))}
+                                <h3 className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Current Scale</h3>
+                                {!isInfoExpanded && (
+                                    <div className="text-sm font-bold text-blue-100 truncate mt-0.5">{scale.name}</div>
+                                )}
+                            </div>
+                            <button
+                                onClick={() => setIsInfoExpanded(!isInfoExpanded)}
+                                className="text-slate-400 hover:text-white transition-colors p-1 -mt-1 -mr-1 rounded-full hover:bg-slate-700"
+                            >
+                                {isInfoExpanded ? (
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                    </svg>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                                    </svg>
+                                )}
+                            </button>
+                        </div>
+
+                        {isInfoExpanded && (
+                            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                <div className="flex items-center justify-between mb-4 border-b border-slate-700 pb-3">
+                                    <div className="text-xl font-bold text-blue-100">{scale.name}</div>
+                                    <button
+                                        onClick={() => setIsSelectorOpen(!isSelectorOpen)}
+                                        className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded border border-slate-600 transition-colors"
+                                    >
+                                        Change
+                                    </button>
+                                </div>
+
+                                {/* Scale Selector Dropdown */}
+                                {isSelectorOpen && (
+                                    <div className="mb-4 max-h-40 overflow-y-auto custom-scrollbar bg-slate-800/50 rounded border border-slate-700/50">
+                                        {nineNoteScales.length === 0 ? (
+                                            <div className="p-2 text-xs text-slate-500 text-center">No 9-note scales found</div>
+                                        ) : (
+                                            nineNoteScales.map(s => (
+                                                <div
+                                                    key={s.id}
+                                                    className={`px-3 py-2 text-sm cursor-pointer hover:bg-slate-700/50 flex justify-between items-center ${s.id === scale.id ? 'bg-blue-900/30 text-blue-200' : 'text-slate-300'}`}
+                                                // onClick={() => {}} // Deferred implementation
+                                                >
+                                                    <span>{s.name}</span>
+                                                    {s.id === scale.id && <span className="text-xs text-blue-400">Current</span>}
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                )}
+
+                                <div className="space-y-4">
+                                    {/* 1. Classification Vectors */}
+                                    <div className="space-y-1.5">
+                                        <div className="grid grid-cols-3 gap-2 text-xs">
+                                            <div className="bg-slate-800/50 p-2 rounded text-center flex flex-col items-center justify-center">
+                                                <span className="text-slate-400 text-[10px] uppercase mb-0.5">Mood</span>
+                                                <span className="font-medium text-blue-200 leading-tight">
+                                                    {(scale.vector?.minorMajor ?? 0) < 0 ? 'Minor' : 'Major'}
+                                                    <div className="opacity-75 text-[10px]">({scale.vector?.minorMajor ?? 0})</div>
+                                                </span>
+                                            </div>
+                                            <div className="bg-slate-800/50 p-2 rounded text-center flex flex-col items-center justify-center">
+                                                <span className="text-slate-400 text-[10px] uppercase mb-0.5">Tone</span>
+                                                <span className="font-medium text-blue-200 leading-tight">
+                                                    {(scale.vector?.pureSpicy ?? 0) <= 0.5 ? 'Pure' : 'Spicy'}
+                                                    <div className="opacity-75 text-[10px]">({scale.vector?.pureSpicy ?? 0})</div>
+                                                </span>
+                                            </div>
+                                            <div className="bg-slate-800/50 p-2 rounded text-center flex flex-col items-center justify-center">
+                                                <span className="text-slate-400 text-[10px] uppercase mb-0.5">Popularity</span>
+                                                <span className="font-medium text-blue-200 leading-tight">
+                                                    {(scale.vector?.rarePopular ?? 0) <= 0.5 ? 'Rare' : 'Popular'}
+                                                    <div className="opacity-75 text-[10px]">({scale.vector?.rarePopular ?? 0})</div>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* 2. Notes Info */}
+                                    <div className="text-sm space-y-1.5 bg-slate-800/30 p-2.5 rounded-lg border border-slate-700/50">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-yellow-500 font-bold text-xs uppercase tracking-wide w-12 shrink-0">Ding</span>
+                                            <span className="font-bold text-lg text-white">{scale.notes.ding}</span>
+                                        </div>
+                                        <div className="flex items-start gap-2 pt-1 border-t border-slate-700/50">
+                                            <span className="text-slate-400 font-bold text-xs uppercase tracking-wide w-12 shrink-0 mt-0.5">Scale</span>
+                                            <div className="font-medium text-slate-200 text-sm leading-relaxed">
+                                                {scale.notes.top.join(', ')}
+                                                {scale.notes.bottom.length > 0 && (
+                                                    <>
+                                                        <span className="text-xs text-slate-500 mx-1">•</span>
+                                                        <span className="text-slate-400">
+                                                            {scale.notes.bottom.join(', ')}
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* 3. Tags */}
+                                    {scale.tags && scale.tags.length > 0 && (
+                                        <div className="pt-1">
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {scale.tags.map(tag => (
+                                                    <span key={tag} className="text-[10px] bg-blue-900/40 border border-blue-800/50 px-2 py-0.5 rounded-full text-blue-200">
+                                                        #{tag}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
                     </div>
-                </div>
-            )}
-        </div>
-    );
-}
+                )}
+            </div>
+        );
+    }
 
 // -----------------------------------------------------------------------------
 // Constants & Types
@@ -256,6 +322,7 @@ interface Digipan3DProps {
     centerX?: number;
     centerY?: number;
     onNoteClick?: (noteId: number) => void;
+    isCameraLocked?: boolean;
 }
 
 // -----------------------------------------------------------------------------

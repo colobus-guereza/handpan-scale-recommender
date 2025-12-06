@@ -2501,7 +2501,7 @@ export default function MiniDigiPan({ scale = null, language = 'ko' }: MiniDigiP
                         onClick={(e) => e.stopPropagation()}
                     >
                         <svg
-                            viewBox="-400 50 1800 900"
+                            viewBox="-400 -400 1800 1800"
                             className="w-full h-full"
                             xmlns="http://www.w3.org/2000/svg"
                             onClick={(e) => e.stopPropagation()}
