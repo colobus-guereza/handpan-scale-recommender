@@ -110,5 +110,20 @@ export const HANDPAN_TEMPLATES: Record<string, NoteTemplate[]> = {
             position: 'top',
             angle: 0
         }
+    ],
+    // Standard 10-Note Layout (1 Ding + 9 Tonefields)
+    // Extrapolated from NOTES_9 with an added Top Center note
+    NOTES_10: [
+        { id: 0, cx: 500, cy: 500, scale: 389.7, rotate: 90, labelY: 514, position: 'center', angle: 0 },
+        { id: 1, cx: 661, cy: 779, scale: 286, rotate: 121, labelY: 886, position: 'top', angle: 0 },
+        { id: 2, cx: 335, cy: 776, scale: 285, rotate: 61, labelY: 884, position: 'top', angle: 0 },
+        { id: 3, cx: 813, cy: 595, scale: 253, rotate: 128, labelY: 697, position: 'top', angle: 0 },
+        { id: 4, cx: 195, cy: 594, scale: 249, rotate: 47, labelY: 699, position: 'top', angle: 0 },
+        { id: 5, cx: 808, cy: 358, scale: 237, rotate: 55, labelY: 453, position: 'top', angle: 0 },
+        { id: 6, cx: 204, cy: 366, scale: 238, rotate: 125, labelY: 458, position: 'top', angle: 0 },
+        { id: 7, cx: 630, cy: 201, scale: 226, rotate: 48, labelY: 295, position: 'top', angle: 0 },
+        { id: 8, cx: 363, cy: 200, scale: 232, rotate: 133, labelY: 295, position: 'top', angle: 0 },
+        // New Top Center Note
+        { id: 9, cx: 500, cy: 140, scale: 220, rotate: 90, labelY: 230, position: 'top', angle: 0 }
     ]
 };

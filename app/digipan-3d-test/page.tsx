@@ -1,69 +1,194 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import Digipan3D from '../../components/Digipan3D';
 import { SCALES } from '@/data/handpanScales';
-
 import { HANDPAN_TEMPLATES } from '@/data/handpanTemplates';
-
-// Note Frequencies
-const NOTE_FREQUENCIES: Record<string, number> = {
-    'C#3': 138.59,
-    'G#3': 207.65,
-    'B3': 246.94,
-    'C#4': 277.18,
-    'D#4': 311.13,
-    'E4': 329.63,
-    'F#4': 369.99,
-    'G#4': 415.30,
-    'B4': 493.88
-};
+import { getNoteFrequency } from '@/constants/noteFrequencies';
+import { useControls, button, folder } from 'leva';
 
 export default function Digipan3DTestPage() {
-    // Select C# Amara 9 Scale
-    const targetScaleId = 'cs_amara_9';
-    const scale = SCALES.find(s => s.id === targetScaleId);
+    // Dynamic Scale Selection State
+    const [selectedScaleId, setSelectedScaleId] = useState<string>('d_kurd_10');
 
-    const notes = useMemo(() => {
+    // Derived Scale Object
+    const scale = SCALES.find(s => s.id === selectedScaleId) || SCALES[0];
+
+    // Handle Scale Change from Digipan3D UI
+    const handleScaleSelect = (newScale: any) => {
+        setSelectedScaleId(newScale.id);
+    };
+
+    // Initial notes calculation (Static Base from User JSON)
+    const initialNotes = useMemo(() => {
         if (!scale) return [];
 
-        // Select Template based on note count (or explicit logic)
-        // For now, defaulting to NOTES_9
-        const templateData = HANDPAN_TEMPLATES.NOTES_9;
+        // User Provided JSON Configuration (Layout Template for 10 Notes)
+        // Ideally this should also be dynamic based on note count, but for now we stick to 10-note template
+        const userProvidedData = [
+            { id: 0, cx: 499, cy: 490, scale: 202, rotate: 89, position: "center", angle: 0, scaleX: 1.42, scaleY: 1.21 },
+            { id: 1, cx: 663, cy: 792, scale: 129, rotate: 66, position: "top", angle: 0, scaleX: 1, scaleY: 0.9199999999999999 },
+            { id: 2, cx: 367, cy: 807, scale: 285, rotate: 103, position: "top", angle: 0, scaleX: 1, scaleY: 0.87 },
+            { id: 3, cx: 828, cy: 595, scale: 253, rotate: 194, position: "top", angle: 0, scaleX: 1, scaleY: 0.93 },
+            { id: 4, cx: 185, cy: 640, scale: 249, rotate: 167, position: "top", angle: 0, scaleX: 0.99, scaleY: 0.91 },
+            { id: 5, cx: 808, cy: 347, scale: 237, rotate: 157, position: "top", angle: 0, scaleX: 1.06, scaleY: 0.86 },
+            { id: 6, cx: 160, cy: 403, scale: 238, rotate: 18, position: "top", angle: 0, scaleX: 0.97, scaleY: 0.85 },
+            { id: 7, cx: 659, cy: 190, scale: 201, rotate: 111, position: "top", angle: 0, scaleX: 1.01, scaleY: 0.82 },
+            { id: 8, cx: 282, cy: 224, scale: 265, rotate: 54, position: "top", angle: 0, scaleX: 1.05, scaleY: 0.83 },
+            { id: 9, cx: 464, cy: 143, scale: 220, rotate: 81, position: "top", angle: 0, scaleX: 0.91, scaleY: 0.78 }
+        ];
 
+        // Template Frequencies (D Kurd 10) - Fixed for Visual Layout
+        // The user's JSON was tuned for these specific frequencies. 
+        // We must use these to calculate dimensions to match the "Golden Standard" layout.
+        const TEMPLATE_FREQUENCIES = [
+            getNoteFrequency('D3'),  // Ding (0)
+            getNoteFrequency('A3'),  // 1
+            getNoteFrequency('Bb3'), // 2
+            getNoteFrequency('C4'),  // 3
+            getNoteFrequency('D4'),  // 4
+            getNoteFrequency('E4'),  // 5
+            getNoteFrequency('F4'),  // 6
+            getNoteFrequency('G4'),  // 7
+            getNoteFrequency('A4'),  // 8
+            getNoteFrequency('C5')   // 9
+        ];
+
+        // Map Scale Frequencies to this layout
         // Ding
-        const dingTemplate = templateData[0];
         const dingNote = {
-            ...dingTemplate,
+            ...userProvidedData[0],
             label: scale.notes.ding,
-            frequency: NOTE_FREQUENCIES[scale.notes.ding] || 440,
+            // Visual Frequency: Fixed to Template (D3)
+            frequency: TEMPLATE_FREQUENCIES[0],
             labelOffset: 25
         };
 
         // Top Notes
+        // Ensure we only map up to available template slots
         const topNotes = scale.notes.top.map((pitch, index) => {
-            // Note indices start from 1 (0 is ding)
-            const template = templateData[index + 1];
-            if (!template) return null; // Should not happen if count matches
+            const template = userProvidedData[index + 1];
+            if (!template) return null;
 
             return {
                 ...template,
                 label: pitch,
-                frequency: NOTE_FREQUENCIES[pitch] || 440,
+                // Visual Frequency: Fixed to Template (Slot Index + 1)
+                frequency: TEMPLATE_FREQUENCIES[index + 1] || 440,
                 labelOffset: 25
             };
         }).filter(n => n !== null);
 
-        return [dingNote, ...topNotes];
+        return [dingNote, ...topNotes] as any[];
     }, [scale]);
 
+    // -------------------------------------------------------------------------
+    // Leva Logic
+    // -------------------------------------------------------------------------
+
+    // CORRECT STRATEGY FOR LEVA KEYS:
+    // We will generate a schema with explicit keys like `0_cx`, `0_cy`.
+    const dynamicSchema = useMemo(() => {
+        const s: any = {};
+        initialNotes.forEach((note) => {
+            s[`N${note.id}_cx`] = { value: note.cx, min: 0, max: 1000, step: 1, label: `N${note.id} X` };
+            s[`N${note.id}_cy`] = { value: note.cy, min: 0, max: 1000, step: 1, label: `N${note.id} Y` };
+            s[`N${note.id}_rotate`] = { value: note.rotate, min: 0, max: 360, step: 1, label: `N${note.id} Rot` };
+            s[`N${note.id}_scale`] = { value: note.scale, min: 50, max: 500, step: 1, label: `N${note.id} Size` };
+            s[`N${note.id}_scaleX`] = { value: note.scaleX || 1, min: 0.1, max: 3, step: 0.01, label: `N${note.id} SX` };
+            s[`N${note.id}_scaleY`] = { value: note.scaleY || 1, min: 0.1, max: 3, step: 0.01, label: `N${note.id} SY` };
+        });
+
+        // Add Export Button
+        s['Export JSON'] = button(() => {
+            // Logic handled by separate button below
+            handleCopy();
+        });
+
+        return s;
+    }, [initialNotes]);
+
+    const controls = useControls('Tuning', dynamicSchema, [initialNotes]);
+
+    // Map controls back to notes
+    const activeNotes = useMemo(() => {
+        const c = controls as any;
+        return initialNotes.map(n => ({
+            ...n,
+            cx: c[`N${n.id}_cx`],
+            cy: c[`N${n.id}_cy`],
+            rotate: c[`N${n.id}_rotate`],
+            scale: c[`N${n.id}_scale`],
+            scaleX: c[`N${n.id}_scaleX`],
+            scaleY: c[`N${n.id}_scaleY`],
+        }));
+    }, [initialNotes, controls]);
+
+    // Filter notes for export (keep only template relevant data)
+    const exportData = useMemo(() => {
+        return activeNotes.map((n: any) => ({
+            id: n.id,
+            cx: Math.round(n.cx),
+            cy: Math.round(n.cy),
+            scale: Math.round(n.scale),
+            rotate: Math.round(n.rotate),
+            // labelY: Math.round(n.cy + (n.scale * 0.4)), // Can be recalculated or kept
+            labelY: undefined, // Let the app calculate defaults if preferred, or save specific
+            position: n.position || 'top',
+            angle: n.angle || 0,
+            scaleX: n.scaleX,
+            scaleY: n.scaleY
+        }));
+    }, [activeNotes]);
+
+    const handleCopy = () => {
+        const jsonString = JSON.stringify(exportData, null, 4);
+        navigator.clipboard.writeText(jsonString).then(() => {
+            alert("✅ JSON Copied to Clipboard!");
+        });
+    };
+
     return (
-        <div className="w-full h-screen bg-white">
-            <Digipan3D
-                notes={notes as any[]} // Type casting to match strict props if needed, though structure aligns
-                onNoteClick={(id) => console.log(`Clicked note ${id}`)}
-                scale={scale} // Pass scale object if component uses it
-            />
+        <div className="w-full h-screen flex bg-white">
+            {/* Left: 3D Workspace */}
+            <div className="flex-1 relative">
+                <Digipan3D
+                    notes={activeNotes}
+                    onNoteClick={(id) => console.log(`Clicked note ${id}`)}
+                    scale={scale}
+                    // Pass the handler to Digipan3D
+                    onScaleSelect={handleScaleSelect}
+                />
+            </div>
+
+            {/* Right: Data Panel */}
+            <div className="w-[400px] bg-slate-800 border-l border-slate-700 p-6 flex flex-col shadow-2xl z-10">
+                <h2 className="text-xl font-bold text-white mb-2">🛠️ Tuning Maker</h2>
+                <div className="mb-4">
+                    <span className="text-xs text-blue-400 font-bold uppercase tracking-wider">Current Scale</span>
+                    <div className="text-white font-bold text-lg">{scale.name}</div>
+                </div>
+                <p className="text-slate-400 text-sm mb-4">
+                    Adjust Leva controls to align notes. Copy the JSON below to update templates.
+                </p>
+
+                {/* JSON Display */}
+                <div className="flex-1 relative mb-4">
+                    <textarea
+                        readOnly
+                        value={JSON.stringify(exportData, null, 4)}
+                        className="w-full h-full bg-slate-950 text-emerald-400 font-mono text-xs p-4 rounded-lg border border-slate-700 focus:outline-none resize-none"
+                    />
+                </div>
+
+                {/* Actions */}
+                <button
+                    onClick={handleCopy}
+                    className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg shadow-lg transition-all flex items-center justify-center gap-2"
+                >
+                    <span>📋 Copy JSON Data</span>
+                </button>
+            </div>
         </div>
     );
 }

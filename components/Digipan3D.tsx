@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, Suspense } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
-import { Text, OrbitControls, Center, Line } from '@react-three/drei';
+import { Text, OrbitControls, Center, Line, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { Scale } from '../data/handpanScales';
-import { Lock, Unlock, Camera, Check } from 'lucide-react';
+import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle } from 'lucide-react';
 import { HANDPAN_CONFIG, getDomeHeight, TONEFIELD_CONFIG } from '../constants/handpanConfig';
 import html2canvas from 'html2canvas';
 
@@ -50,20 +50,26 @@ export default function Digipan3D({
     isCameraLocked = false,
     scale,
     centerX = 500,
-    centerY = 500
+    centerY = 500,
+    onScaleSelect
 }: Digipan3DProps) {
-    const [isCameraLockedState, setIsCameraLocked] = useState(isCameraLocked); // Local state if needed or props
+    const [isCameraLockedState, setIsCameraLocked] = useState(isCameraLocked);
     const [copySuccess, setCopySuccess] = useState(false);
     const [isInfoExpanded, setIsInfoExpanded] = useState(true);
     const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+    const [demoNoteId, setDemoNoteId] = useState<number | null>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+
+    // View Mode: 0 = Default (All), 1 = No Labels, 2 = No Mesh (Hidden)
+    const [viewMode, setViewMode] = useState<0 | 1 | 2>(0);
+
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Filter for 9-note scales (Ding + 8 Top/Bottom matching template)
-    // Assuming 9 total notes for now based on template NOTES_9 (0-8)
-    const nineNoteScales = useMemo(() => {
+    // Filter for 10-note scales
+    const tenNoteScales = useMemo(() => {
         return SCALES.filter(s => {
             const totalNotes = 1 + s.notes.top.length + s.notes.bottom.length;
-            return totalNotes === 9;
+            return totalNotes === 10;
         }).sort((a, b) => a.name.localeCompare(b.name));
     }, []);
 
@@ -71,20 +77,15 @@ export default function Digipan3D({
         if (!containerRef.current) return;
 
         try {
-            // Temporarily hide the controls for the screenshot if desired, 
-            // but user said "visible space", so we keep them or hide them?
-            // Usually "screenshot" implies capturing the content, not the tools.
-            // Let's hide the buttons during capture for a cleaner look.
             const controls = containerRef.current.querySelector('.controls-container') as HTMLElement;
             if (controls) controls.style.display = 'none';
 
             const canvas = await html2canvas(containerRef.current, {
-                background: '#1E50A0', // Ensure background color is captured
+                background: '#FFFFFF',
                 logging: false,
-                useCORS: true // Important for external images/fonts if any
+                useCORS: true
             });
 
-            // Restore controls
             if (controls) controls.style.display = 'flex';
 
             canvas.toBlob(async (blob) => {
@@ -106,26 +107,109 @@ export default function Digipan3D({
         }
     };
 
+    const handleDemoPlay = async () => {
+        if (isPlaying) return;
+        setIsPlaying(true);
+
+        const sortedNotes = [...notes].sort((a, b) => a.id - b.id);
+
+        // Helper to trigger a single note
+        const playNote = async (id: number, duration: number) => {
+            setDemoNoteId(id);
+            // Add slight random variation (Rubato)
+            const rubato = Math.random() * 30;
+            await new Promise(resolve => setTimeout(resolve, duration + rubato));
+
+            setDemoNoteId(null);
+            // Minimal gap for clean pulse
+            await new Promise(resolve => setTimeout(resolve, 30));
+        };
+
+        // 1. Ascending (0 -> Max)
+        for (let i = 0; i < sortedNotes.length; i++) {
+            const id = sortedNotes[i].id;
+            const isDing = id === 0;
+            const isTop = i === sortedNotes.length - 1;
+
+            // Timing Logic:
+            // - Ding (Root): 500ms (Heavy start)
+            // - Top Note: 800ms (Fermata/Peak linger)
+            // - Others: 180ms (Fluid flow)
+            let baseTime = isDing ? 500 : 180;
+            if (isTop) baseTime = 800; // Linger at the peak
+
+            await playNote(id, baseTime);
+
+            // [Modified] 1. Initial Ding Emphasis: Add breath after the first Ding
+            if (isDing) {
+                await new Promise(resolve => setTimeout(resolve, 600));
+            }
+        }
+
+        // Explicit Pause/Breath at the Top before descending
+        await new Promise(resolve => setTimeout(resolve, 400));
+
+        // 2. Descending (Max -> 0)
+        // Repeats the top note to start the descent, as per "D...9 9...D" structure
+        for (let i = sortedNotes.length - 1; i >= 0; i--) {
+            const id = sortedNotes[i].id;
+            const isDing = id === 0;
+
+            // [Modified] 2. Ending Emphasis: Add breath before the final Ding
+            if (isDing) {
+                await new Promise(resolve => setTimeout(resolve, 600));
+            }
+
+            // Standard flow for descent, Ding lasts longer at the end
+            const baseTime = isDing ? 800 : 180;
+
+            await playNote(id, baseTime);
+        }
+
+        setIsPlaying(false);
+    };
+
     return (
-        <div ref={containerRef} className="w-full h-full relative" style={{ minHeight: '600px', background: '#1E50A0' }}> {/* Blueprint Blue */}
+        <div ref={containerRef} className="w-full h-full relative" style={{ minHeight: '600px', background: '#FFFFFF' }}> {/* White Background */}
             {/* Controls Container */}
             <div className="controls-container absolute top-4 right-4 z-10 flex flex-col gap-2">
-                {/* Camera Toggle Button */}
+                {/* 1. Camera Toggle */}
                 <button
-                    onClick={() => setIsCameraLocked(!isCameraLocked)}
-                    className="p-3 bg-white/20 backdrop-blur-sm rounded-full shadow-lg hover:bg-white/30 transition-all duration-200 border border-white/30 text-white"
-                    title={isCameraLocked ? "Unlock View (Free Rotation)" : "Lock View (Top Down)"}
+                    onClick={() => setIsCameraLocked(prev => !prev)}
+                    className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                    title={isCameraLockedState ? "Unlock View (Free Rotation)" : "Lock View (Top Down)"}
                 >
-                    {isCameraLocked ? <Lock size={24} /> : <Unlock size={24} />}
+                    {isCameraLockedState ? <Lock size={24} /> : <Unlock size={24} />}
                 </button>
 
-                {/* Screen Capture Button */}
+                {/* 2. Screen Capture */}
                 <button
                     onClick={handleCapture}
-                    className="p-3 bg-white/20 backdrop-blur-sm rounded-full shadow-lg hover:bg-white/30 transition-all duration-200 border border-white/30 text-white"
+                    className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
                     title="Copy Screenshot to Clipboard"
                 >
-                    {copySuccess ? <Check size={24} className="text-green-400" /> : <Camera size={24} />}
+                    {copySuccess ? <Check size={24} className="text-green-600" /> : <Camera size={24} />}
+                </button>
+
+                {/* 3. View Mode Toggle */}
+                <button
+                    onClick={() => setViewMode(prev => (prev + 1) % 3 as 0 | 1 | 2)}
+                    className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                    title="Toggle Visibility: All -> No Labels -> Hidden"
+                >
+                    {viewMode === 0 && <Eye size={24} />}
+                    {viewMode === 1 && <MinusCircle size={24} />}
+                    {viewMode === 2 && <EyeOff size={24} />}
+                </button>
+
+                {/* 4. Demo Play */}
+                <button
+                    onClick={handleDemoPlay}
+                    disabled={isPlaying}
+                    className={`p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 ${isPlaying ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    title="Play Scale Demo"
+                >
+                    <PlayCircle size={24} className={isPlaying ? "animate-pulse text-green-600" : ""} />
                 </button>
             </div>
 
@@ -149,7 +233,9 @@ export default function Digipan3D({
                 <Center>
                     <group>
                         {/* Body */}
-                        <HandpanBody />
+                        <Suspense fallback={null}>
+                            <HandpanImage />
+                        </Suspense>
 
                         {/* Tone Fields */}
                         {notes.map((note) => (
@@ -159,11 +245,14 @@ export default function Digipan3D({
                                 centerX={centerX}
                                 centerY={centerY}
                                 onClick={onNoteClick}
+                                viewMode={viewMode}
+                                demoActive={demoNoteId === note.id}
                             />
                         ))}
                     </group>
                 </Center>
             </Canvas>
+
 
             {/* Scale Info Panel - Bottom Right Overlay */}
             {scale && (
@@ -206,14 +295,19 @@ export default function Digipan3D({
                             {/* Scale Selector Dropdown */}
                             {isSelectorOpen && (
                                 <div className="mb-4 max-h-40 overflow-y-auto custom-scrollbar bg-slate-800/50 rounded border border-slate-700/50">
-                                    {nineNoteScales.length === 0 ? (
-                                        <div className="p-2 text-xs text-slate-500 text-center">No 9-note scales found</div>
+                                    {tenNoteScales.length === 0 ? (
+                                        <div className="p-2 text-xs text-slate-500 text-center">No 10-note scales found</div>
                                     ) : (
-                                        nineNoteScales.map(s => (
+                                        tenNoteScales.map(s => (
                                             <div
                                                 key={s.id}
                                                 className={`px-3 py-2 text-sm cursor-pointer hover:bg-slate-700/50 flex justify-between items-center ${s.id === scale.id ? 'bg-blue-900/30 text-blue-200' : 'text-slate-300'}`}
-                                            // onClick={() => {}} // Deferred implementation
+                                                onClick={() => {
+                                                    if (onScaleSelect) {
+                                                        onScaleSelect(s);
+                                                        setIsSelectorOpen(false);
+                                                    }
+                                                }}
                                             >
                                                 <span>{s.name}</span>
                                                 {s.id === scale.id && <span className="text-xs text-blue-400">Current</span>}
@@ -310,6 +404,8 @@ interface NoteData {
     cy?: number;
     scale?: number;
     rotate?: number;
+    scaleX?: number; // Independent X Scale multiplier
+    scaleY?: number; // Independent Y Scale multiplier
     labelX?: number;
     labelY?: number;
     labelOffset?: number;
@@ -323,6 +419,7 @@ interface Digipan3DProps {
     centerY?: number;
     onNoteClick?: (noteId: number) => void;
     isCameraLocked?: boolean;
+    onScaleSelect?: (scale: Scale) => void;
 }
 
 // -----------------------------------------------------------------------------
@@ -373,74 +470,40 @@ const getTonefieldDimensions = (hz: number, isDing: boolean) => {
 // Sub-Components
 // -----------------------------------------------------------------------------
 
-const HandpanBody = () => {
-    const shellRadius = HANDPAN_CONFIG.PAN_RADIUS; // 27.5 cm
-    const outerRadius = HANDPAN_CONFIG.OUTER_RADIUS; // 28.5 cm
+// Image Component
+const HandpanImage = () => {
+    // Load the texture
+    const texture = useTexture('/images/10notes.png');
+
+    // Size: Based on Outer Radius (57cm diameter)
+    // The image is a square top view, so we map it to a plane.
+    const size = HANDPAN_CONFIG.OUTER_RADIUS * 2;
 
     return (
-        <group position={[0, 0, 0]}> {/* Centered at 0,0,0 for 2D plane */}
-            {/* 1. Main Shell Body - Diameter 55cm */}
-            <mesh receiveShadow castShadow rotation={[0, 0, 0]} position={[0, 0, 0]}>
-                <group rotation={[Math.PI / 2, 0, 0]}>
-                    <mesh scale={[1, 0.01, 1]}>
-                        <sphereGeometry args={[shellRadius, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
-                        <meshStandardMaterial
-                            color="#FFFFFF"
-                            roughness={0.9}
-                            metalness={0.0}
-                            wireframe={true}
-                        />
-                    </mesh>
-                </group>
-            </mesh>
-
-            {/* 2. Rim - Outer Edge (55cm -> 57cm) */}
-            {/* Visualized as a ring or outer wireframe from 55cm to 57cm */}
-            {/* RingGeometry is in XY plane by default, matching the flattened Shell in XY */}
-            <mesh position={[0, 0, -0.01]}> {/* Slightly behind */}
-                {/* RingGeometry: innerRadius, outerRadius, thetaSegments */}
-                <ringGeometry args={[shellRadius, outerRadius, 64]} />
-                <meshBasicMaterial
-                    color="#A0C0FF"
-                    wireframe={true}
-                    transparent
-                    opacity={0.5}
-                />
-            </mesh>
-
-            {/* Outer Boundary Line for Rim (57cm) */}
-            <mesh position={[0, 0, 0]}>
-                <ringGeometry args={[outerRadius - 0.05, outerRadius, 64]} />
-                <meshBasicMaterial color="#FFFFFF" />
-            </mesh>
-
-            {/* Horizontal Axis */}
-            <mesh position={[0, 0, 0]} rotation={[0, 0, Math.PI / 2]}> {/* Z=0 */}
-                <cylinderGeometry args={[0.02, 0.02, 60, 8]} />
-                <meshBasicMaterial color="#FFFFFF" opacity={0.5} transparent />
-            </mesh>
-
-            {/* Vertical Axis */}
-            <mesh position={[0, 0, 0]} rotation={[0, 0, 0]}> {/* Z=0 */}
-                <cylinderGeometry args={[0.02, 0.02, 60, 8]} />
-                <meshBasicMaterial color="#FFFFFF" opacity={0.5} transparent />
-            </mesh>
-        </group>
+        <mesh position={[0, 0, -0.5]} rotation={[0, 0, 0]}>
+            <planeGeometry args={[size, size]} />
+            <meshBasicMaterial map={texture} transparent opacity={1} />
+        </mesh>
     );
 };
 
 const ToneFieldMesh = ({
     note,
-    centerX,
-    centerY,
-    onClick
+    centerX = 500,
+    centerY = 500,
+    onClick,
+    viewMode = 0, // 0: All, 1: No Labels, 2: No Mesh
+    demoActive = false
 }: {
     note: NoteData;
-    centerX: number;
-    centerY: number;
+    centerX?: number;
+    centerY?: number;
     onClick?: (id: number) => void;
+    viewMode?: 0 | 1 | 2;
+    demoActive?: boolean;
 }) => {
     const [hovered, setHovered] = useState(false);
+    const [clicked, setClicked] = useState(false);
 
     // Calculate position
     const cx = note.cx ?? 500;
@@ -455,47 +518,94 @@ const ToneFieldMesh = ({
     // Ding logic
     const isDing = note.id === 0;
 
-    // Parametric Size Calculation
-    // Default to 440Hz if frequency is missing (safety fallback)
+    // Dimensions Calculation
+    // We use Frequency-based calculation to maintain consistency with the original tuning logic.
+    // D Kurd 10 template relies on these specific frequency responses + scaleX/Y modifiers.
     const hz = note.frequency || 440;
     const dimensions = getTonefieldDimensions(hz, isDing);
 
     const rx = dimensions.width;
     const ry = dimensions.height;
 
-    // Dimple size is now calculated in dimensions
-    // But existing code uses scale prop for dimple? 
-    // No, existing code used rx * dimpleRatio.
-    // We can use dimensions.dimpleWidth / 2 (since scale is diameter-ish? No, scale is radius-ish in geometry args?)
-    // SphereGeometry args: [1, ...] -> Radius 1.
-    // Scale [rx, ry] -> Radius becomes rx, ry.
-    // So rx is the radius in X, ry is radius in Y.
-    // Our dimensions.width is likely the Diameter (based on "Size" description usually implying diameter or length).
-    // User said "Base Size (Vertical Length) ... Height = Size".
-    // If Height is 145mm (14.5cm), that's likely the major axis diameter.
-    // So radius should be Height / 2.
+    const radiusX = rx / 2;
+    const radiusY = ry / 2;
 
-    const radiusX = dimensions.width / 2;
-    const radiusY = dimensions.height / 2;
-    const dimpleRadiusX = dimensions.dimpleWidth / 2;
-    const dimpleRadiusY = dimensions.dimpleHeight / 2;
+    // Calculate Dimple Radius
+    // Condition: Ding OR Frequency <= F#3 (185Hz) -> Large Dimple (0.45)
+    // Else -> Small Dimple (0.40)
+    // Note: When using fixed layout (note.scale), we don't strictly have frequency driving the size, 
+    // but we can still use the note's frequency property to determine dimple ratio.
+    const dimpleRatio = (isDing || (note.frequency || 0) <= TONEFIELD_CONFIG.RATIOS.F_SHARP_3_HZ)
+        ? TONEFIELD_CONFIG.RATIOS.DIMPLE_LARGE
+        : TONEFIELD_CONFIG.RATIOS.DIMPLE_SMALL;
+
+    const dimpleRadiusX = radiusX * dimpleRatio;
+    const dimpleRadiusY = radiusY * dimpleRatio;
+
+    // Apply Overrides (Multipliers)
+    // If scaleX/Y are provided, they multiply the calculated radius (or base unit).
+    const scaleXMult = note.scaleX ?? 1;
+    const scaleYMult = note.scaleY ?? 1;
+
+    const finalRadiusX = radiusX * scaleXMult;
+    const finalRadiusY = radiusY * scaleYMult;
 
     // Z-position: Place on the 0,0 coordinate plane (Top of dome)
-
-    // User requested "0,0 coordinate plane based 2D style"
     const zPos = 0;
+
+    // Trigger Demo Effect
+    React.useEffect(() => {
+        if (demoActive) {
+            // Play Sound
+            const filename = note.label.replace('#', 's');
+            const audio = new Audio(`/sounds/${filename}.mp3`);
+            audio.volume = 0.6;
+            audio.play().catch(() => { /* Ignore */ });
+
+            // Trigger Visual Blink
+            setClicked(true);
+
+            // Auto turn off after duration
+            // Important: Use a shorter duration than the interval in parent component (300ms + 100ms gap)
+            const timer = setTimeout(() => {
+                setClicked(false);
+            }, 300);
+
+            return () => {
+                clearTimeout(timer);
+                setClicked(false); // Force cleanup if unmounting or re-triggering quickly
+            };
+        } else {
+            // Ensure it's off if demoActive becomes false externally
+            setClicked(false);
+        }
+    }, [demoActive, note.label]);
+
+    const handlePointerDown = (e: any) => {
+        e.stopPropagation();
+        onClick?.(note.id);
+
+        // Play Sound
+        // Replace '#' with 's' for filename safety (e.g., C#3 -> Cs3.mp3)
+        const filename = note.label.replace('#', 's');
+        const audio = new Audio(`/sounds/${filename}.mp3`);
+        audio.volume = 0.6;
+        audio.play().catch(() => {
+            // Ignore if file not found
+        });
+
+        // Trigger Blink
+        setClicked(true);
+        setTimeout(() => setClicked(false), 150); // 150ms green flash
+    };
 
     return (
         <group position={[pos.x, pos.y, zPos]}>
             <group rotation={[0, 0, rotationZ]}>
-                {/* Tone Field Group: Body, Dimple, Labels */}
-
-                {/* 1. Tone Field Body - Wireframe */}
+                {/* 1. Tone Field Body */}
+                {/* 1-a. Interaction Mesh (Invisible Hit Box) - Always handles events */}
                 <mesh
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onClick?.(note.id);
-                    }}
+                    onPointerDown={handlePointerDown}
                     onPointerOver={() => {
                         document.body.style.cursor = 'pointer';
                         setHovered(true);
@@ -505,16 +615,50 @@ const ToneFieldMesh = ({
                         setHovered(false);
                     }}
                     rotation={[Math.PI / 2, 0, 0]}
-                    scale={[radiusX, 0.05, radiusY]} // Flattened
+                    scale={[finalRadiusX, 0.05, finalRadiusY]} // Flattened
+                    visible={true} // Must be visible to receive raycast events
+                >
+                    <sphereGeometry args={[1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
+                    <meshBasicMaterial
+                        transparent={true}
+                        opacity={0} // Invisible
+                        depthWrite={false} // Prevent depth issues
+                        side={THREE.DoubleSide}
+                    />
+                </mesh>
+
+                {/* 1-b. Visual Mesh (Wireframe) - No events, controlled by ViewMode */}
+                <mesh
+                    rotation={[Math.PI / 2, 0, 0]}
+                    scale={[finalRadiusX, 0.05, finalRadiusY]}
+                    visible={viewMode !== 2} // Completely hide from renderer in hidden mode
                 >
                     <sphereGeometry args={[1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
                     <meshStandardMaterial
-                        color={hovered ? "#A0C0FF" : "#FFFFFF"}
-                        emissive={hovered ? "#1E50A0" : "#000000"}
+                        color={hovered ? "#60A5FA" : "#FFFFFF"} // Blue Hover, White Idle
+                        emissive={hovered ? "#1E40AF" : "#000000"}
                         emissiveIntensity={hovered ? 0.5 : 0}
                         roughness={0.9}
                         metalness={0.0}
                         wireframe={true}
+                        toneMapped={false}
+                        transparent={true}
+                        opacity={1}
+                    />
+                </mesh>
+
+                {/* 2. Click Feedback Ring (Outer Outline Flash) */}
+                <mesh
+                    position={[0, 0, 0.02]} // Slightly above
+                    scale={[finalRadiusX, finalRadiusY, 1]} // Scale in X-Y plane
+                    visible={clicked} // Only visible on click
+                >
+                    <ringGeometry args={[0.92, 1.0, 64]} /> {/* Thin Ring */}
+                    <meshBasicMaterial
+                        color="#00FF00"
+                        transparent={true}
+                        opacity={1}
+                        toneMapped={false}
                     />
                 </mesh>
 
@@ -523,6 +667,7 @@ const ToneFieldMesh = ({
                     position={[0, 0, 0.01]}
                     rotation={[isDing ? Math.PI / 2 : -Math.PI / 2, 0, 0]}
                     scale={[dimpleRadiusX, 0.05, dimpleRadiusY]}
+                    visible={viewMode !== 2} // Explicitly hide mesh in mode 2
                 >
                     <sphereGeometry args={[1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
                     <meshStandardMaterial
@@ -530,6 +675,8 @@ const ToneFieldMesh = ({
                         roughness={0.9}
                         metalness={0.0}
                         wireframe={true}
+                        transparent={true}
+                        opacity={viewMode === 2 ? 0 : 1} // Hide visual in mode 2
                     />
                 </mesh>
 
@@ -576,7 +723,10 @@ const ToneFieldMesh = ({
                         return p1.y < p2.y ? p1 : p2;
                     };
 
-                    const bottomPos = calculateBottomOffset(radiusX, radiusY, rotationZ);
+                    const bottomPos = calculateBottomOffset(finalRadiusX, finalRadiusY, rotationZ);
+
+                    // Show labels only if viewMode is 0 (All Visible)
+                    if (viewMode !== 0) return null;
 
                     return (
                         <>
@@ -627,7 +777,7 @@ const ToneFieldMesh = ({
 
             {/* Markers - White */}
             {
-                note.id === 0 && (
+                note.id === 0 && viewMode === 0 && (
                     <>
                         <Text
                             position={[25, 0, 0.5]} // 25cm right
