@@ -452,6 +452,8 @@ export default function Home() {
             const url = new URL(window.location.href);
             url.searchParams.set('lang', lang);
             window.history.pushState({}, '', url.toString());
+            // TopBanner에 언어 변경 알림
+            window.dispatchEvent(new CustomEvent('languagechange'));
         }
     };
 
@@ -515,31 +517,14 @@ export default function Home() {
                         <ThemeToggle />
                     </div>
 
-                    {/* Worldwide Shipping Badge - Top Right (Mobile: Relative/Centered, Desktop: Absolute/Right) */}
-                    <div className="relative mb-6 lg:mb-0 lg:absolute lg:top-4 lg:right-4 z-40 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600 to-rose-600 text-white rounded-full shadow-lg animate-pulse hover:animate-none transition-all duration-300 hover:scale-105">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 md:h-6 md:w-6"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                        >
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 002 2h2.945M3.055 11H1m2.055 0c-.01.33-.055.66-.055 1 0 5.523 4.477 10 10 10s10-4.477 10-10S17.523 2 12 2c-1.66 0-3.2.405-4.555 1.11M3.055 11l1.11-1.11M21 11h-2m-2 0h2m-2 0a2 2 0 00-2-2h-2m4 2v1a2 2 0 01-2 2h-2m4-3V9a2 2 0 00-2-2h-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v2M9 7h2m-2 0v2m2-2v2m0 0h2m-2 0H9m2 0v2m0-2V9" />
-                        </svg>
-                        <span className="text-sm md:text-base font-bold whitespace-nowrap">
-                            {t.shipping.worldwide}
-                        </span>
-                    </div>
-
                     <header className="text-center space-y-2 pt-2">
                         <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-slate-400 drop-shadow-sm">
                             {t.title}
                         </h1>
                         <div className="flex items-center justify-center gap-2 flex-wrap max-w-2xl mx-auto">
-                            {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de'].includes(lang.code))
+                            {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae'].includes(lang.code))
                                 .sort((a, b) => {
-                                    const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de'];
+                                    const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae'];
                                     return order.indexOf(a.code) - order.indexOf(b.code);
                                 })
                                 .map((lang) => (

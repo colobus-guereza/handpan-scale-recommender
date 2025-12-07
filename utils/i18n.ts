@@ -36,11 +36,11 @@ export const getLocalizedScale = (scale: any, lang: Language): LocalizedContent 
         };
     }
 
-    // 3. Fallback to English for French, German, Japanese, and Chinese if i18n not found
-    if ((lang === 'fr' || lang === 'de' || lang === 'ja' || lang === 'zh') && scale.i18n && scale.i18n['en']) {
+    // 3. Fallback to English for French, German, Spanish, Russian, Japanese, Chinese, Persian, Portuguese, and UAE Arabic if i18n not found
+    if ((lang === 'fr' || lang === 'de' || lang === 'es' || lang === 'ru' || lang === 'ja' || lang === 'zh' || lang === 'fa' || lang === 'pt' || lang === 'ae') && scale.i18n && scale.i18n['en']) {
         return scale.i18n['en'];
     }
-    if ((lang === 'fr' || lang === 'de' || lang === 'ja' || lang === 'zh') && (scale.nameEn || scale.descriptionEn)) {
+    if ((lang === 'fr' || lang === 'de' || lang === 'es' || lang === 'ru' || lang === 'ja' || lang === 'zh' || lang === 'fa' || lang === 'pt' || lang === 'ae') && (scale.nameEn || scale.descriptionEn)) {
         return {
             name: scale.nameEn || scale.name,
             description: scale.descriptionEn || scale.description,
@@ -71,11 +71,11 @@ export const getLocalizedProduct = (product: Product, lang: Language): Localized
         };
     }
 
-    // 3. Fallback to English for French, German, Japanese, and Chinese if i18n not found
-    if ((lang === 'fr' || lang === 'de' || lang === 'ja' || lang === 'zh') && product.i18n && product.i18n['en']) {
+    // 3. Fallback to English for French, German, Spanish, Russian, Japanese, Chinese, Persian, Portuguese, and UAE Arabic if i18n not found
+    if ((lang === 'fr' || lang === 'de' || lang === 'es' || lang === 'ru' || lang === 'ja' || lang === 'zh' || lang === 'fa' || lang === 'pt' || lang === 'ae') && product.i18n && product.i18n['en']) {
         return product.i18n['en'];
     }
-    if ((lang === 'fr' || lang === 'de' || lang === 'ja' || lang === 'zh') && product.nameEn) {
+    if ((lang === 'fr' || lang === 'de' || lang === 'es' || lang === 'ru' || lang === 'ja' || lang === 'zh' || lang === 'fa' || lang === 'pt' || lang === 'ae') && product.nameEn) {
         return {
             name: product.nameEn || product.name,
             description: product.description,

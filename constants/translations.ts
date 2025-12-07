@@ -1,4 +1,4 @@
-export type Language = 'ko' | 'en' | 'fr' | 'de' | 'ja' | 'zh' | 'tr' | 'ar' | 'hi' | 'pt' | 'es';
+export type Language = 'ko' | 'en' | 'fr' | 'de' | 'ja' | 'zh' | 'tr' | 'ar' | 'hi' | 'pt' | 'es' | 'ru' | 'fa' | 'ae';
 
 export const SUPPORTED_LANGUAGES = [
     { code: 'ko', name: '한국어', flag: 'kr' },
@@ -11,11 +11,14 @@ export const SUPPORTED_LANGUAGES = [
     { code: 'ar', name: 'العربية', flag: 'sa' },
     { code: 'hi', name: 'हिन्दी', flag: 'in' },
     { code: 'pt', name: 'Português', flag: 'pt' },
-    { code: 'es', name: 'Español', flag: 'es' }
+    { code: 'es', name: 'Español', flag: 'es' },
+    { code: 'ru', name: 'Русский', flag: 'ru' },
+    { code: 'fa', name: 'فارسی', flag: 'ir' },
+    { code: 'ae', name: 'العربية (UAE)', flag: 'ae' }
 ] as const;
 
 const EN_TRANSLATIONS = {
-    title: 'Find Your Perfect Handpan',
+    title: 'Find My Perfect Handpan Scale',
     vibeSelector: {
         jamming: 'Beginner',
         meditation: 'Yoga·Meditation·Healing',
@@ -112,7 +115,7 @@ const EN_TRANSLATIONS = {
 };
 
 const FR_TRANSLATIONS = {
-    title: 'Trouvez votre Handpan idéal',
+    title: 'Trouver ma gamme de handpan idéale',
     vibeSelector: {
         jamming: 'Débutant',
         meditation: 'Yoga·Méditation·Guérison',
@@ -209,7 +212,7 @@ const FR_TRANSLATIONS = {
 };
 
 const DE_TRANSLATIONS = {
-    title: 'Finden Sie Ihre perfekte Handpan-Skala',
+    title: 'Meine passende Handpan-Tonleiter finden',
     vibeSelector: {
         jamming: 'Anfänger',
         meditation: 'Yoga·Meditation·Heilung',
@@ -305,8 +308,493 @@ const DE_TRANSLATIONS = {
     soldOut: 'Ausverkauft'
 };
 
+const RU_TRANSLATIONS = {
+    title: 'Найти мою идеальную гамму хэндпана',
+    vibeSelector: {
+        jamming: 'Новичок',
+        meditation: 'Йога·Медитация·Исцеление',
+        uplift: 'Яркая атмосфера',
+        exotic: 'Глубокий этнический'
+    },
+    scaleList: {
+        back: 'Выбрать снова',
+        scaleClassification: 'Классификация',
+        allScales: 'Все гаммы',
+        purchase: 'Купить',
+        preparing: 'Скоро в продаже',
+        share: 'Поделиться',
+        copied: 'Скопировано',
+        rankRecommendation: 'Рекомендация',
+        popularScale: 'Популярная',
+        ding: 'Ding',
+        top: 'Верх',
+        bottom: 'Низ',
+        prev: 'Назад',
+        next: 'Вперёд',
+        mutant: 'Мутант',
+        normal: 'Обычная',
+        viewing: 'Просмотр',
+        select: 'Выбрать',
+        filter: 'Фильтр',
+        selectCategory: 'Выбрать категорию',
+        selectType: 'Выбрать тип',
+        noteCount: 'Количество нот',
+        selectDing: 'Выбрать Ding',
+        mood: 'Настроение',
+        tone: 'Тон',
+        popularity: 'Популярность',
+        minor: 'Минор',
+        major: 'Мажор',
+        pure: 'Чистый',
+        spicy: 'Острый',
+        rare: 'Редкая',
+        popular: 'Популярная',
+        digiPan: 'DigiPan',
+        implementationPending: 'Реализация ожидается',
+        axes: {
+            minorMajor: {
+                label: 'Настроение',
+                description: 'Представляет общую эмоциональную атмосферу гаммы.',
+                minLabel: 'Минор',
+                maxLabel: 'Мажор'
+            },
+            pureSpicy: {
+                label: 'Тон',
+                description: 'Представляет степень простоты или сложности звука.',
+                minLabel: 'Чистый',
+                maxLabel: 'Острый'
+            },
+            rarePopular: {
+                label: 'Популярность',
+                description: 'Представляет редкость и популярность на рынке.',
+                minLabel: 'Редкая',
+                maxLabel: 'Популярная'
+            }
+        }
+    },
+    categories: {
+        beginner: 'Новичок',
+        healing: 'Йога & Медитация',
+        bright: 'Мажорная гамма',
+        ethnic: 'Глубокий этнический',
+        case: 'Жёсткий чехол',
+        softCase: 'Мягкий чехол',
+        stand: 'Подставка'
+    },
+    shipping: {
+        worldwide: 'Доставка по всему миру',
+        worldwideEn: 'Worldwide Shipping'
+    },
+    tags: {
+        minor: 'Минор',
+        major: 'Мажор',
+        harmonic: 'Гармонический',
+        melodic: 'Мелодический',
+        pentatonic: 'Пентатонический',
+        exotic: 'Экзотический',
+        meditative: 'Медитативный',
+        bright: 'Яркий',
+        dark: 'Тёмный',
+        mysterious: 'Таинственный',
+        happy: 'Радостный',
+        sad: 'Грустный',
+        uplifting: 'Воодушевляющий',
+        calm: 'Спокойный',
+        energetic: 'Энергичный'
+    },
+    soldOut: 'Распродано'
+};
+
+const FA_TRANSLATIONS = {
+    title: 'یافتن گام هنگ‌درام مناسب من',
+    vibeSelector: {
+        jamming: 'مبتدی',
+        meditation: 'یوگا·مدیتیشن·درمان',
+        uplift: 'فضای روشن',
+        exotic: 'قومی عمیق'
+    },
+    scaleList: {
+        back: 'انتخاب مجدد',
+        scaleClassification: 'طبقه‌بندی',
+        allScales: 'همهٔ گام‌ها',
+        purchase: 'خرید',
+        preparing: 'به‌زودی',
+        share: 'اشتراک‌گذاری',
+        copied: 'کپی شد',
+        rankRecommendation: 'توصیه',
+        popularScale: 'محبوب',
+        ding: 'Ding',
+        top: 'بالا',
+        bottom: 'پایین',
+        prev: 'قبلی',
+        next: 'بعدی',
+        mutant: 'جهش‌یافته',
+        normal: 'عادی',
+        viewing: 'در حال مشاهده',
+        select: 'انتخاب',
+        filter: 'فیلتر',
+        selectCategory: 'انتخاب دسته',
+        selectType: 'انتخاب نوع',
+        noteCount: 'تعداد نت',
+        selectDing: 'انتخاب Ding',
+        mood: 'حال‌وهوا',
+        tone: 'تن',
+        popularity: 'محبوبیت',
+        minor: 'مینور',
+        major: 'ماژور',
+        pure: 'خالص',
+        spicy: 'تیز',
+        rare: 'کمیاب',
+        popular: 'محبوب',
+        digiPan: 'DigiPan',
+        implementationPending: 'پیاده‌سازی در انتظار',
+        axes: {
+            minorMajor: {
+                label: 'حال‌وهوا',
+                description: 'نمایان‌گر فضای احساسی کلی گام است.',
+                minLabel: 'مینور',
+                maxLabel: 'ماژور'
+            },
+            pureSpicy: {
+                label: 'تن',
+                description: 'نمایان‌گر درجهٔ سادگی در مقابل پیچیدگی صدا است.',
+                minLabel: 'خالص',
+                maxLabel: 'تیز'
+            },
+            rarePopular: {
+                label: 'محبوبیت',
+                description: 'نمایان‌گر کمیابی و محبوبیت در بازار است.',
+                minLabel: 'کمیاب',
+                maxLabel: 'محبوب'
+            }
+        }
+    },
+    categories: {
+        beginner: 'مبتدی',
+        healing: 'یوگا & مدیتیشن',
+        bright: 'گام ماژور',
+        ethnic: 'قومی عمیق',
+        case: 'کیف سخت',
+        softCase: 'کیف نرم',
+        stand: 'پایه'
+    },
+    shipping: {
+        worldwide: 'ارسال به سراسر جهان',
+        worldwideEn: 'Worldwide Shipping'
+    },
+    tags: {
+        minor: 'مینور',
+        major: 'ماژور',
+        harmonic: 'هارمونیک',
+        melodic: 'ملودیک',
+        pentatonic: 'پنتاتونیک',
+        exotic: 'اگزوتیک',
+        meditative: 'مدیتیشنی',
+        bright: 'روشن',
+        dark: 'تاریک',
+        mysterious: 'رازآلود',
+        happy: 'شاد',
+        sad: 'غمگین',
+        uplifting: 'الهام‌بخش',
+        calm: 'آرام',
+        energetic: 'پرانرژی'
+    },
+    soldOut: 'تمام شده'
+};
+
+const AE_TRANSLATIONS = {
+    title: 'اكتشاف سُلَّم الهاندبان المناسب لي',
+    vibeSelector: {
+        jamming: 'مبتدئ',
+        meditation: 'يوغا·تأمل·شفاء',
+        uplift: 'جو مشرق',
+        exotic: 'إثني عميق'
+    },
+    scaleList: {
+        back: 'اختيار مرة أخرى',
+        scaleClassification: 'التصنيف',
+        allScales: 'جميع السلالم',
+        purchase: 'شراء',
+        preparing: 'قريبًا',
+        share: 'مشاركة',
+        copied: 'تم النسخ',
+        rankRecommendation: 'توصية',
+        popularScale: 'شائع',
+        ding: 'Ding',
+        top: 'أعلى',
+        bottom: 'أسفل',
+        prev: 'السابق',
+        next: 'التالي',
+        mutant: 'متطوّر',
+        normal: 'عادي',
+        viewing: 'عرض',
+        select: 'اختيار',
+        filter: 'تصفية',
+        selectCategory: 'اختيار الفئة',
+        selectType: 'اختيار النوع',
+        noteCount: 'عدد النغمات',
+        selectDing: 'اختيار Ding',
+        mood: 'المزاج',
+        tone: 'النغمة',
+        popularity: 'الشعبية',
+        minor: 'مينور',
+        major: 'ماجور',
+        pure: 'نقي',
+        spicy: 'حار',
+        rare: 'نادر',
+        popular: 'شائع',
+        digiPan: 'DigiPan',
+        implementationPending: 'قيد التنفيذ',
+        axes: {
+            minorMajor: {
+                label: 'المزاج',
+                description: 'يمثّل الجو العاطفي العام للسُلَّم.',
+                minLabel: 'مينور',
+                maxLabel: 'ماجور'
+            },
+            pureSpicy: {
+                label: 'النغمة',
+                description: 'يمثّل درجة البساطة مقابل التعقيد في الصوت.',
+                minLabel: 'نقي',
+                maxLabel: 'حار'
+            },
+            rarePopular: {
+                label: 'الشعبية',
+                description: 'يمثّل الندرة والشعبية في السوق.',
+                minLabel: 'نادر',
+                maxLabel: 'شائع'
+            }
+        }
+    },
+    categories: {
+        beginner: 'مبتدئ',
+        healing: 'يوغا & تأمل',
+        bright: 'سُلَّم ماجور',
+        ethnic: 'إثني عميق',
+        case: 'حقيبة صلبة',
+        softCase: 'حقيبة ناعمة',
+        stand: 'حامل'
+    },
+    shipping: {
+        worldwide: 'شحن عالمي',
+        worldwideEn: 'Worldwide Shipping'
+    },
+    tags: {
+        minor: 'مينور',
+        major: 'ماجور',
+        harmonic: 'هارموني',
+        melodic: 'لحني',
+        pentatonic: 'بنتاتوني',
+        exotic: 'أجنبي',
+        meditative: 'تأملي',
+        bright: 'مشرق',
+        dark: 'داكن',
+        mysterious: 'غامض',
+        happy: 'سعيد',
+        sad: 'حزين',
+        uplifting: 'ملهِم',
+        calm: 'هادئ',
+        energetic: 'نشط'
+    },
+    soldOut: 'نفدت الكمية'
+};
+
+const ES_TRANSLATIONS = {
+    title: 'Encontrar mi escala de handpan perfecta',
+    vibeSelector: {
+        jamming: 'Principiante',
+        meditation: 'Yoga·Meditación·Sanación',
+        uplift: 'Atmósfera brillante',
+        exotic: 'Étnico profundo'
+    },
+    scaleList: {
+        back: 'Seleccionar de nuevo',
+        scaleClassification: 'Clasificación',
+        allScales: 'Todas las escalas',
+        purchase: 'Comprar',
+        preparing: 'Próximamente',
+        share: 'Compartir',
+        copied: 'Copiado',
+        rankRecommendation: 'Recomendación',
+        popularScale: 'Popular',
+        ding: 'Ding',
+        top: 'Arriba',
+        bottom: 'Abajo',
+        prev: 'Anterior',
+        next: 'Siguiente',
+        mutant: 'Mutante',
+        normal: 'Normal',
+        viewing: 'Viendo',
+        select: 'Seleccionar',
+        filter: 'Filtrar',
+        selectCategory: 'Seleccionar categoría',
+        selectType: 'Seleccionar tipo',
+        noteCount: 'Número de notas',
+        selectDing: 'Seleccionar Ding',
+        mood: 'Estado de ánimo',
+        tone: 'Tono',
+        popularity: 'Popularidad',
+        minor: 'Menor',
+        major: 'Mayor',
+        pure: 'Puro',
+        spicy: 'Picante',
+        rare: 'Raro',
+        popular: 'Popular',
+        digiPan: 'DigiPan',
+        implementationPending: 'Implementación pendiente',
+        axes: {
+            minorMajor: {
+                label: 'Estado de ánimo',
+                description: 'Representa la atmósfera emocional general de la escala.',
+                minLabel: 'Menor',
+                maxLabel: 'Mayor'
+            },
+            pureSpicy: {
+                label: 'Tono',
+                description: 'Representa el grado de simplicidad o complejidad del sonido.',
+                minLabel: 'Puro',
+                maxLabel: 'Picante'
+            },
+            rarePopular: {
+                label: 'Popularidad',
+                description: 'Representa la rareza y popularidad en el mercado.',
+                minLabel: 'Raro',
+                maxLabel: 'Popular'
+            }
+        }
+    },
+    categories: {
+        beginner: 'Principiante',
+        healing: 'Yoga & Meditación',
+        bright: 'Escala Mayor',
+        ethnic: 'Étnico profundo',
+        case: 'Estuche rígido',
+        softCase: 'Estuche blando',
+        stand: 'Soporte'
+    },
+    shipping: {
+        worldwide: 'Envío mundial',
+        worldwideEn: 'Worldwide Shipping'
+    },
+    tags: {
+        minor: 'Menor',
+        major: 'Mayor',
+        harmonic: 'Harmónico',
+        melodic: 'Melódico',
+        pentatonic: 'Pentatónico',
+        exotic: 'Exótico',
+        meditative: 'Meditativo',
+        bright: 'Brillante',
+        dark: 'Oscuro',
+        mysterious: 'Misterioso',
+        happy: 'Feliz',
+        sad: 'Triste',
+        uplifting: 'Elevador',
+        calm: 'Tranquilo',
+        energetic: 'Energético'
+    },
+    soldOut: 'Agotado'
+};
+
+const PT_TRANSLATIONS = {
+    title: 'Encontrar minha escala de handpan ideal',
+    vibeSelector: {
+        jamming: 'Iniciante',
+        meditation: 'Yoga·Meditação·Cura',
+        uplift: 'Atmosfera brilhante',
+        exotic: 'Étnico profundo'
+    },
+    scaleList: {
+        back: 'Selecionar novamente',
+        scaleClassification: 'Classificação',
+        allScales: 'Todas as escalas',
+        purchase: 'Comprar',
+        preparing: 'Em breve',
+        share: 'Compartilhar',
+        copied: 'Copiado',
+        rankRecommendation: 'Recomendação',
+        popularScale: 'Popular',
+        ding: 'Ding',
+        top: 'Superior',
+        bottom: 'Inferior',
+        prev: 'Anterior',
+        next: 'Próximo',
+        mutant: 'Mutante',
+        normal: 'Normal',
+        viewing: 'Visualizando',
+        select: 'Selecionar',
+        filter: 'Filtro',
+        selectCategory: 'Selecionar categoria',
+        selectType: 'Selecionar tipo',
+        noteCount: 'Número de notas',
+        selectDing: 'Selecionar Ding',
+        mood: 'Humor',
+        tone: 'Tom',
+        popularity: 'Popularidade',
+        minor: 'Menor',
+        major: 'Maior',
+        pure: 'Puro',
+        spicy: 'Picante',
+        rare: 'Raro',
+        popular: 'Popular',
+        digiPan: 'DigiPan',
+        implementationPending: 'Implementação pendente',
+        axes: {
+            minorMajor: {
+                label: 'Humor',
+                description: 'Representa a atmosfera emocional geral da escala.',
+                minLabel: 'Menor',
+                maxLabel: 'Maior'
+            },
+            pureSpicy: {
+                label: 'Tom',
+                description: 'Representa o grau de simplicidade versus complexidade do som.',
+                minLabel: 'Puro',
+                maxLabel: 'Picante'
+            },
+            rarePopular: {
+                label: 'Popularidade',
+                description: 'Representa a raridade e popularidade no mercado.',
+                minLabel: 'Raro',
+                maxLabel: 'Popular'
+            }
+        }
+    },
+    categories: {
+        beginner: 'Iniciante',
+        healing: 'Yoga & Meditação',
+        bright: 'Escala Maior',
+        ethnic: 'Étnico profundo',
+        case: 'Estojo rígido',
+        softCase: 'Estojo macio',
+        stand: 'Suporte'
+    },
+    shipping: {
+        worldwide: 'Envio mundial',
+        worldwideEn: 'Worldwide Shipping'
+    },
+    tags: {
+        minor: 'Menor',
+        major: 'Maior',
+        harmonic: 'Harmônico',
+        melodic: 'Melódico',
+        pentatonic: 'Pentatônico',
+        exotic: 'Exótico',
+        meditative: 'Meditativo',
+        bright: 'Brilhante',
+        dark: 'Escuro',
+        mysterious: 'Misterioso',
+        happy: 'Feliz',
+        sad: 'Triste',
+        uplifting: 'Inspirador',
+        calm: 'Calmo',
+        energetic: 'Energético'
+    },
+    soldOut: 'Esgotado'
+};
+
 const JA_TRANSLATIONS = {
-    title: 'あなたにぴったりのハンドパンスケールを見つける',
+    title: '自分に合ったハンドパン・スケールを見つける',
     vibeSelector: {
         jamming: '初心者',
         meditation: 'ヨガ・瞑想・ヒーリング',
@@ -403,7 +891,7 @@ const JA_TRANSLATIONS = {
 };
 
 const ZH_TRANSLATIONS = {
-    title: '找到适合您的手碟音阶',
+    title: '找到适合我的手碟音阶',
     vibeSelector: {
         jamming: '初学者',
         meditation: '瑜伽·冥想·疗愈',
@@ -606,7 +1094,10 @@ export const TRANSLATIONS: Record<Language, TranslationType> = {
     tr: EN_TRANSLATIONS,
     ar: EN_TRANSLATIONS,
     hi: EN_TRANSLATIONS,
-    pt: EN_TRANSLATIONS,
-    es: EN_TRANSLATIONS
+    pt: PT_TRANSLATIONS,
+    es: ES_TRANSLATIONS,
+    ru: RU_TRANSLATIONS,
+    fa: FA_TRANSLATIONS,
+    ae: AE_TRANSLATIONS
 } as const;
 

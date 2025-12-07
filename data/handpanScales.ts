@@ -102,6 +102,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "D Kurd 9",
                 description: "Eine der beliebtesten Moll-Skalen überhaupt. Sie bietet einen tiefen, emotionalen Klang und erreicht eine sehr ausgewogene Balance zwischen Wärme und Ausdruck."
+            },
+            es: {
+                name: "D Kurd 9",
+                description: "Una de las escalas menores más populares. Ofrece una resonancia profunda y emocional, con un equilibrio perfecto entre claridad y calidez."
+            },
+            ru: {
+                name: "D Kurd 9",
+                description: "Одна из самых популярных минорных гамм. Обладает глубоким, эмоциональным звучанием и создаёт по-настоящему сбалансированное настроение."
+            },
+            fa: {
+                name: "D Kurd 9",
+                description: "یکی از محبوب‌ترین گام‌های مینور است. صدایی عمیق و احساسی دارد و تعادلی بسیار خوب بین گرما و شفافیت ایجاد می‌کند."
+            },
+            pt: {
+                name: "D Kurd 9",
+                description: "Uma das escalas menores mais populares. Oferece uma ressonância profunda e emocional, com um equilíbrio perfeito entre clareza e calor."
+            },
+            ae: {
+                name: "D Kurd 9",
+                description: "من أكثر السلالم المينور انتشارًا. يتميّز برنين عميق وعاطفي ويقدّم توازنًا جميلًا بين الوضوح والدفء."
             }
         }
     },
@@ -140,6 +160,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "D Kurd 10",
                 description: "Diese Skala entspricht der bekannten D-Moll-Tonleiter und ist eines der beliebtesten Einsteigermodelle. Auf YouTube gibt es besonders viele Noten und Übungsstücke – ideal als erstes Handpan."
+            },
+            es: {
+                name: "D Kurd 10",
+                description: "Tiene la misma estructura que la escala de Re menor tradicional, por lo que resulta muy familiar al oído. Es un modelo ideal para principiantes, ya que en YouTube se pueden encontrar muchísimas partituras y ejercicios para esta escala."
+            },
+            ru: {
+                name: "D Kurd 10",
+                description: "Имеет ту же структуру, что и привычная гамма D minor, поэтому очень естественно воспринимается на слух. Для этой гаммы на YouTube больше всего нот и учебных материалов, поэтому это один из лучших вариантов для начинающих."
+            },
+            fa: {
+                name: "D Kurd 10",
+                description: "این گام از نظر ساختار با گامِ شناخته‌شدهٔ ر مینور (D minor) یکسان است و برای گوش بسیار آشناست. به خاطر تعداد زیاد نت‌ها و تمرین‌ها در یوتیوب، برای هنرجویان مبتدی انتخابی عالی است."
+            },
+            pt: {
+                name: "D Kurd 10",
+                description: "Possui a mesma estrutura da escala tradicional de D minor (Ré menor), por isso soa muito familiar ao ouvido. É um modelo ideal para iniciantes, pois há muitas partituras e estudos disponíveis no YouTube para essa escala."
+            },
+            ae: {
+                name: "D Kurd 10",
+                description: "له البنية نفسها لسلم ري مينور (D minor) التقليدي، لذلك يبدو مألوفًا جدًّا للأذن. بفضل كثرة النوتات والدروس المتاحة له على يوتيوب فهو خيار ممتاز للمبتدئين."
             }
         }
     },
@@ -178,6 +218,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "E Equinox 14",
                 description: "Eine hybride Skala an der Grenze zwischen Dur und Moll. Sie vereint einen cineastischen Charakter mit bittersüßer Stimmung und bietet dank 14 Tönen inklusive kräftiger Bässe einen sehr vollen Klang. Perfekt für komplexe, emotional gefärbte Spielweisen fortgeschrittener Spieler."
+            },
+            es: {
+                name: "E Equinox 14",
+                description: "Escala híbrida situada entre el modo mayor y menor. Destaca por su carácter cinematográfico y su encanto agridulce. Sus 14 notas, incluyendo graves potentes, crean un sonido rico y lleno de matices, perfecto para intérpretes avanzados que buscan composiciones complejas y cargadas de emoción."
+            },
+            ru: {
+                name: "E Equinox 14",
+                description: "Гибридная гамма на границе между мажором и минором. Отличается кинематографичной атмосферой и приятной «горько-сладкой» окраской. 14 нот с мощными низами создают насыщенное звучание, идеально подходящее для сложной и очень эмоциональной игры продвинутых исполнителей."
+            },
+            fa: {
+                name: "E Equinox 14",
+                description: "یک گام هیبریدی در مرز بین ماژور و مینور است. حال‌وهوایی سینمایی و طعم تلخ‌وشیرینِ خاصی دارد و با ۱۴ نت، از جمله بیس‌های پرقدرت، صدایی بسیار پُر و غنی ایجاد می‌کند که برای نوازندگی احساسی و پیچیدهٔ هنرمندان پیشرفته بسیار مناسب است."
+            },
+            pt: {
+                name: "E Equinox 14",
+                description: "Escala híbrida situada na fronteira entre maior e menor. Destaca-se pelo caráter cinematográfico e pelo charme agridoce. As 14 notas, incluindo graves encorpados, criam um som rico e cheio de nuances, perfeito para músicos avançados que buscam interpretações complexas e emocionais."
+            },
+            ae: {
+                name: "E Equinox 14",
+                description: "سُلَّم هجين يقع على الحدود بين الماجور والمينور. يقدّم إحساسًا سينمائيًا مع نكهة حلوة مرّة، ومع 14 نغمة تشمل بيسات قوية يخلق صوتًا غنيًا ومليئًا بالتفاصيل، مناسبًا لعزف معقد وعاطفي لعازفين متقدّمين."
             }
         }
     },
@@ -216,6 +276,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "F# Low Pygmy 14",
                 description: "Eine der weltweit beliebtesten und meistverkauften Pygmy-Skalen. Die tiefen Töne erzählen eine zusammenhängende \"Klanggeschichte\" und sorgen für eine beeindruckend tiefe Resonanz. Dieser Stil ist durch Spieler wie Malte Marten weithin bekannt geworden."
+            },
+            es: {
+                name: "F# Low Pygmy 14",
+                description: "Una de las escalas más populares y superventas del mundo. Los graves cuentan una historia sonora coherente y envolvente, con una profundidad de resonancia muy característica. Es un estilo ampliamente conocido gracias a intérpretes como Malte Marten."
+            },
+            ru: {
+                name: "F# Low Pygmy 14",
+                description: "Одна из самых популярных и востребованных гамм Pygmy в мире. Глубокие низкие ноты выстраивают цельный музыкальный рассказ и дают очень плотную, объёмную резонансу. Стиль широко известен благодаря таким исполнителям, как Мальте Мартен."
+            },
+            fa: {
+                name: "F# Low Pygmy 14",
+                description: "یکی از پرفروش‌ترین و محبوب‌ترین گام‌های Pygmy در جهان است. نت‌های بمِ پایین، داستانی موسیقایی و پیوسته می‌سازند و رزونانسی عمیق و فراگیر ایجاد می‌کنند. این استایل به‌واسطهٔ نوازندگانی مانند Malte Marten به‌خوبی شناخته شده است."
+            },
+            pt: {
+                name: "F# Low Pygmy 14",
+                description: "Uma das escalas Pygmy mais populares e best-sellers do mundo. Os graves constroem uma narrativa sonora coerente e envolvente, com uma ressonância profunda muito característica. Estilo amplamente conhecido graças a intérpretes como Malte Marten."
+            },
+            ae: {
+                name: "F# Low Pygmy 14",
+                description: "واحد من أكثر سلالم Pygmy مبيعًا وشعبية في العالم. النغمات المنخفضة تحكي قصة موسيقية متماسكة وتمنح رنينًا عميقًا ومحيطًا. هذا الأسلوب معروف على نطاق واسع بفضل عازفين مثل Malte Marten."
             }
         }
     },
@@ -254,6 +334,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "F Aeolian 10",
                 description: "Hat die gleiche Tonstruktur wie F-Moll, wird aber aus der Perspektive der äolischen Tonleiter (natürliche Mollskala) betrachtet. Sie klingt stabil und leicht melancholisch; durch ein späteres Bottom-Upgrade lässt sich die Klangpalette flexibel erweitern. Ein Modell mit ausgezeichnetem Preis-Leistungs-Verhältnis."
+            },
+            es: {
+                name: "F Aeolian 10",
+                description: "Comparte la misma estructura que Fa menor, pero enfocada desde el modo eólico (escala menor natural). Se caracteriza por una sensación estable y ligeramente melancólica. Con una futura ampliación de notas graves (bottom upgrade) puede transformarse en una escala muy versátil. Es uno de los modelos con mejor relación calidad-precio."
+            },
+            ru: {
+                name: "F Aeolian 10",
+                description: "По звуковому составу совпадает с гаммой F minor, но рассматривается с позиции эолийского лада (натуральный минор). Отличается стабильным, немного меланхоличным характером. При дальнейшей доработке нижних нот (bottom-upgrade) легко раскрывается в разные настроения. Один из лучших вариантов по соотношению цены и возможностей."
+            },
+            fa: {
+                name: "F Aeolian 10",
+                description: "از نظر فواصل با فا مینور (F minor) یکسان است، اما از دیدگاه مُدِ Aeolian (مینور طبیعی) به آن نگاه می‌شود. شخصیتی پایدار و کمی غمگین دارد و با ارتقای بخش پایین (bottom upgrade) می‌تواند طیف‌های متنوع‌تری از فضا و حس را ارائه دهد. از نظر ارزش خرید، یکی از بهترین مدل‌ها برای پیشنهاد است."
+            },
+            pt: {
+                name: "F Aeolian 10",
+                description: "Tem o mesmo desenho de F minor (Fá menor), mas é abordada a partir do modo eólio (menor natural). Apresenta um caráter estável e levemente melancólico. Com um futuro upgrade de notas graves (bottom upgrade) pode se transformar numa escala muito versátil. É um dos modelos com melhor custo-benefício."
+            },
+            ae: {
+                name: "F Aeolian 10",
+                description: "يطابق في تركيبه سلم فا مينور (F minor) لكنه يُقدَّم من منظور طور Aeolian (المينور الطبيعي). يتميّز بطابع ثابت يميل قليلًا إلى الحزن. ومع ترقية النغمات المنخفضة لاحقًا يمكن أن يتحوّل إلى سُلَّم شديد التنوع. من أفضل النماذج من حيث القيمة مقابل السعر."
             }
         }
     },
@@ -292,6 +392,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "E Romanian Hijaz 10",
                 description: "Eine exotische Skala für alle, die nach einem besonders individuellen Klang suchen. Sie erinnert an Zigeuner- und Bohemian-Musik und erzeugt eine intensive, mystische Atmosphäre."
+            },
+            es: {
+                name: "E Romanian Hijaz 10",
+                description: "Escala exótica pensada para quienes buscan algo diferente. Evoca la energía de la música gitana y bohemia, generando una atmósfera intensa y misteriosa."
+            },
+            ru: {
+                name: "E Romanian Hijaz 10",
+                description: "Экзотическая гамма для тех, кто ищет что-то по-настоящему особенное. Напоминает цыганскую и богемную музыку, создавая яркую и таинственную атмосферу."
+            },
+            fa: {
+                name: "E Romanian Hijaz 10",
+                description: "یک گام کاملاً اگزوتیک برای کسانی که به‌دنبال تمایز و صدایی متفاوت هستند. یادآور موسیقی کولی و بوهِمی است و فضایی پرانرژی، قوی و رمزآلود ایجاد می‌کند."
+            },
+            pt: {
+                name: "E Romanian Hijaz 10",
+                description: "Escala exótica pensada para quem procura algo realmente diferente. Evoca a energia da música cigana e boêmia, criando uma atmosfera intensa e misteriosa."
+            },
+            ae: {
+                name: "E Romanian Hijaz 10",
+                description: "سُلَّم أجنبي مخصّص لمن يبحثون عن شيء مختلف حقًا. يذكّر بالموسيقى الغجرية والبوهيمية ويخلق جوًا قويًا وغامضًا."
             }
         }
     },
@@ -330,6 +450,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "D Saladin 9",
                 description: "Eine sehr exotische und kraftvolle phrygische Skala, die an \"Arabian Nights\" und orientalische Märchen erinnert. Ihre Seltenheit und \"scharfe Würze\" machen sie ideal, um eine unverwechselbare, charakterstarke Klangsignatur zu schaffen."
+            },
+            es: {
+                name: "D Saladin 9",
+                description: "Escala de tipo frigio, muy exótica y poderosa, que recuerda a los cuentos de \"Las mil y una noches\". Su rareza y su carácter \"picante\" la convierten en una opción excelente para expresar una personalidad única y muy marcada."
+            },
+            ru: {
+                name: "D Saladin 9",
+                description: "Очень экзотическая и насыщенная фригийская гамма, пробуждающая ассоциации с «арабскими ночами» и восточными сказками. Её редкость и «острый» характер помогут подчеркнуть яркую индивидуальность исполнителя."
+            },
+            fa: {
+                name: "D Saladin 9",
+                description: "یک گام فریجیَن بسیار اگزوتیک و قدرتمند است که فضا و حس «شب‌های عربی» را تداعی می‌کند. کمیاب بودن و «تیزی» این گام، آن را برای بیان فردیت قوی و منحصربه‌فرد بسیار مناسب می‌سازد."
+            },
+            pt: {
+                name: "D Saladin 9",
+                description: "Escala de caráter frígio, muito exótica e poderosa, que lembra as histórias de \"Noites Árabes\". Sua raridade e o tempero \"picante\" tornam essa escala ideal para expressar uma personalidade forte e única."
+            },
+            ae: {
+                name: "D Saladin 9",
+                description: "سُلَّم فريجي قوي وأجنبي جدًّا يثير أجواء «ليالي ألف ليلة وليلة». ندرته وحدّته تجعله مثاليًا للتعبير عن شخصية موسيقية فريدة وواضحة."
             }
         }
     },
@@ -368,6 +508,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "D Asha 9",
                 description: "Eine sanfte, warme D-Dur-Skala, auch bekannt als Sabye oder Ashakiran. Der weiche, \"gentle\" Klang trägt Licht und Hoffnung in sich. Besonders beliebt als zweites Handpan, das sich hervorragend mit einer Moll-Skala kombinieren lässt."
+            },
+            es: {
+                name: "D Asha 9",
+                description: "Escala de Re mayor suave y cálida, también conocida como Sabye o Ashakiran. Su timbre gentil y blando contiene una sensación de luz y esperanza. Es un segundo handpan muy popular para combinar con escalas menores."
+            },
+            ru: {
+                name: "D Asha 9",
+                description: "Мягкая и тёплая гамма D major, также известная как Sabye или Ashakiran. Её нежное звучание несёт в себе чистый свет и надежду. Один из самых популярных вариантов второй Handpan-гаммы для сочетания с минорными инструментами."
+            },
+            fa: {
+                name: "D Asha 9",
+                description: "گامِ رِ ماژورِ نرم و ملایمی است که با نام‌های Sabye و Ashakiran نیز شناخته می‌شود. رنگ صدایی لطیف و جنتل دارد و نوری از پاکی و امید را در خود حمل می‌کند. به‌عنوان دومین هنگ‌درام در کنار یک گام مینور، بسیار محبوب و پرطرفدار است."
+            },
+            pt: {
+                name: "D Asha 9",
+                description: "Escala suave e acolhedora de Ré maior, também conhecida como Sabye ou Ashakiran. O timbre gentil carrega uma sensação de luz e esperança. É um segundo handpan muito popular para combinar com escalas menores."
+            },
+            ae: {
+                name: "D Asha 9",
+                description: "سُلَّم ري ماجور ناعم ودافئ، يُعرَف أيضًا باسم Sabye أو Ashakiran. يحمل طابعًا لطيفًا وصوتًا رقيقًا يعبّر عن النور والأمل، وهو خيار شائع جدًّا كثاني هاندبان إلى جانب سلالم المينور."
             }
         }
     },
@@ -406,6 +566,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "E La Sirena 10",
                 description: "Eine dorische Skala, die – wie der Name \"Sirena\" (Meerjungfrau) andeutet – das Gefühl vermittelt, in geheimnisvollen Tiefen unter Wasser zu schweben. Sie bewegt sich zwischen Dur und Moll hin und her; die kreative Nutzung des Tons C#4 ist dabei ein wichtiger Punkt. Empfohlen für Spieler auf mittlerem Niveau."
+            },
+            es: {
+                name: "E La Sirena 10",
+                description: "Escala en modo dórico que, como su nombre sugiere, produce la sensación de estar nadando en aguas profundas y misteriosas. Tiene un encanto especial que oscila entre mayor y menor, y el uso creativo de la nota C#4 es la clave. Recomendado para intérpretes de nivel intermedio."
+            },
+            ru: {
+                name: "E La Sirena 10",
+                description: "Дорийская гамма, которая, как и имя «Сирена», создаёт ощущение плавания в глубоких таинственных водах. В ней по-особому переплетаются мажорные и минорные оттенки, а ключевую роль играет нота C#4. Рекомендуется исполнителям среднего уровня."
+            },
+            fa: {
+                name: "E La Sirena 10",
+                description: "گامی در مُد دوریَن است که همان‌طور که از نام «سیرنا» برمی‌آید، حسی شبیه شناور بودن در آب‌های عمیق و مرموز دریا می‌دهد. جذابیت خاصی میان ماژور و مینور در آن در جریان است و استفادهٔ خلاقانه از نت C#4 نقطهٔ کلیدی این گام است. برای نوازندگان در سطح متوسط توصیه می‌شود."
+            },
+            pt: {
+                name: "E La Sirena 10",
+                description: "Escala em modo dórico que, como o nome \"La Sirena\" sugere, transmite a sensação de nadar em águas profundas e misteriosas. Traz um charme especial que oscila entre maior e menor, e o uso criativo da nota C#4 é o ponto-chave. Recomendada para músicos de nível intermediário."
+            },
+            ae: {
+                name: "E La Sirena 10",
+                description: "سُلَّم في طور Dorian يعطي، كما يوحي الاسم «La Sirena»، إحساس السباحة في مياه عميقة وغامضة. يجمع بطريقة جذابة بين ألوان الماجور والمينور، والاستخدام الإبداعي للنغمة دو دييز 4 (C#4) هو نقطة الارتكاز في هذا السُلَّم. يُنصَح به للعازفين في المستوى المتوسط."
             }
         }
     },
@@ -444,6 +624,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "C# Pygmy 9",
                 description: "Eine klassische Pygmy-Skala und echter Handpan-Klassiker. Ihr charakteristisch leerer, zugleich traumhaft tiefer Klang führt den Hörer leicht in Zustände von tiefer Meditation und Trance."
+            },
+            es: {
+                name: "C# Pygmy 9",
+                description: "Clásico absoluto del mundo del handpan: la escala Pygmy tradicional. Su resonancia profunda, vacía y onírica conduce fácilmente a estados de meditación y trance."
+            },
+            ru: {
+                name: "C# Pygmy 9",
+                description: "Классика и настоящая «визитная карточка» Handpan-мира — традиционная гамма Pygmy. Её характерное пустое и одновременно глубоко мечтательное звучание легко вводит в состояние глубокой медитации и транса."
+            },
+            fa: {
+                name: "C# Pygmy 9",
+                description: "یک کلاسیک حقیقی در دنیای هنگ‌درام؛ گام Pygmy سنتی. رزونانس عمیق، خالی و رؤیاییِ آن به‌راحتی شنونده را به حالت‌های مدیتیشن عمیق و ترنس هدایت می‌کند."
+            },
+            pt: {
+                name: "C# Pygmy 9",
+                description: "Clássico absoluto no universo do handpan: a escala Pygmy tradicional. A ressonância profunda, vazia e onírica conduz facilmente a estados de meditação e transe."
+            },
+            ae: {
+                name: "C# Pygmy 9",
+                description: "كلاسيك حقيقي في عالم الهاندبان: سُلَّم Pygmy التقليدي. رنينه العميق والفارغ والحالم يقود بسهولة إلى حالات تأمل عميقة وترانس."
             }
         }
     },
@@ -482,6 +682,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "D Asha 15",
                 description: "Eine D-Dur-Skala, die einen vollständigen Umfang von zwei Oktaven abdeckt. Ihre Vielseitigkeit macht sie besonders geeignet für populäre Musik, die überwiegend in Dur steht. Durch die große Bandbreite eignet sie sich hervorragend für Ensemble- und Bühnenauftritte mit anderen Instrumenten."
+            },
+            es: {
+                name: "D Asha 15",
+                description: "Escala de Re mayor que cubre de forma completa dos octavas. Su gran polivalencia la hace muy útil para la mayoría de estilos de música popular en tonalidad mayor. Destaca especialmente en conjuntos y colaboraciones con otros instrumentos, por lo que es un modelo muy recomendado para actuaciones y acompañamientos."
+            },
+            ru: {
+                name: "D Asha 15",
+                description: "Гамма D major, полностью покрывающая диапазон двух октав. Обладает выдающейся универсальностью, особенно в популярной музыке, где преобладают мажорные тональности. Благодаря широкому диапазону отлично подходит для ансамблей и сотрудничества с другими инструментами — один из лучших вариантов для совместных выступлений."
+            },
+            fa: {
+                name: "D Asha 15",
+                description: "گام رِ ماژور که به‌طور کامل دو اکتاو را پوشش می‌دهد. به‌شدت چندکاره است و برای بیشتر موسیقی‌های پاپ که در فضای ماژور نوشته می‌شوند، کاربرد بسیار بالایی دارد. در آنسامبل و همکاری با سایر سازها نیز قدرت و برتری چشمگیری نشان می‌دهد و برای اجرای گروهی به‌شدت توصیه می‌شود."
+            },
+            pt: {
+                name: "D Asha 15",
+                description: "Escala de Ré maior que cobre completamente duas oitavas. Extremamente versátil, é muito útil para grande parte da música popular em tonalidade maior. Funciona de forma excelente em conjuntos e colaborações com outros instrumentos, sendo altamente recomendada para performances em grupo."
+            },
+            ae: {
+                name: "D Asha 15",
+                description: "سُلَّم ري ماجور يغطي نطاقًا كاملًا من درجتين صوتيتين (أوكتافَين). يتميّز بمرونة عالية جدًّا، خاصة في موسيقى البوب ذات الطباع الماجور. يبرز بشكل قوي في العزف الجماعي والتعاون مع آلات أخرى، لذلك هو نموذج موصى به جدًّا للعروض المشتركة."
             }
         }
     },
@@ -520,6 +740,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "E Equinox 12",
                 description: "Eine erweiterte Version der hybriden Equinox-Skala, bei der zusätzliche tiefe Töne (C3, D3) für noch mehr Klangfülle sorgen. Sie bietet eine perfekt ausbalancierte Basis für emotionales, ausdrucksstarkes Spiel."
+            },
+            es: {
+                name: "E Equinox 12",
+                description: "Versión ampliada de la escala híbrida Equinox, reforzada con graves adicionales (Do3, Re3) para ofrecer una resonancia aún más rica. Presume de un equilibrio perfecto, optimizado para interpretaciones muy emotivas."
+            },
+            ru: {
+                name: "E Equinox 12",
+                description: "Расширенная версия гибридной гаммы Equinox с усиленными низами (добавлены C3 и D3), что делает звук ещё более насыщенным. Отличается идеально выверенным балансом и особенно хорошо раскрывается в эмоциональной, выразительной игре."
+            },
+            fa: {
+                name: "E Equinox 12",
+                description: "نسخهٔ گسترش‌یافتهٔ گام هیبریدی Equinox که با افزودن نت‌های بم (C3 و D3) رزونانس آن غنی‌تر شده است. تعادل صوتی بسیار دقیقی دارد و برای اجراهای عمیقاً احساسی به‌خوبی بهینه شده است."
+            },
+            pt: {
+                name: "E Equinox 12",
+                description: "Versão expandida da escala híbrida Equinox, reforçada com graves adicionais (Dó3, Ré3), o que torna a ressonância ainda mais rica. Apresenta um equilíbrio sonoro impecável, otimizado para interpretações muito emotivas."
+            },
+            ae: {
+                name: "E Equinox 12",
+                description: "نسخة موسَّعة من سُلَّم Equinox الهجين مع تعزيز النغمات المنخفضة (C3 و D3)، ما يمنح رنينًا أكثر غنى. يتميّز بتوازن صوتي مثالي ومناسب جدًّا للعزف العاطفي المعبّر."
             }
         }
     },
@@ -558,6 +798,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "E Equinox 10",
                 description: "Das Standardmodell der Equinox-Skala. Es bewegt sich gefühlvoll \"irgendwo zwischen Dur und Moll\" und eignet sich für Spieler, die eine besondere, fein nuancierte Stimmung suchen. Der passende Tonumfang und melodische Ausdruck machen sie sowohl für Einsteiger als auch für Fortgeschrittene attraktiv."
+            },
+            es: {
+                name: "E Equinox 10",
+                description: "Modelo estándar de la escala Equinox. Su carácter se sitúa \"en algún lugar\" entre mayor y menor, con una sonoridad sutil y matizada. Recomendado para quienes buscan una sensibilidad diferente. Su registro cómodo y sus líneas melódicas expresivas la hacen adecuada tanto para principiantes como para músicos experimentados."
+            },
+            ru: {
+                name: "E Equinox 10",
+                description: "Стандартная модель гаммы Equinox. Её характер лежит «где-то между мажором и минором», с тонкой и утончённой окраской. Рекомендуется тем, кто ищет необычную эмоциональность. Удобный диапазон и выразительные мелодические линии делают её подходящей как для начинающих, так и для опытных музыкантов."
+            },
+            fa: {
+                name: "E Equinox 10",
+                description: "مدل استاندارد گام Equinox است. شخصیت آن «جایی بین ماژور و مینور» قرار می‌گیرد و رنگ صوتی ظریف و چندلایه‌ای دارد. برای کسانی که به‌دنبال احساسی متفاوت و خاص هستند مناسب است، و به‌واسطهٔ محدودهٔ راحت و ملودی‌های احساسی، از مبتدی تا نوازندهٔ حرفه‌ای همگی می‌توانند از آن لذت ببرند."
+            },
+            pt: {
+                name: "E Equinox 10",
+                description: "Modelo padrão da escala Equinox. Seu caráter se situa \"em algum lugar\" entre maior e menor, com uma sonoridade sutil e cheia de nuances. Indicada para quem busca uma sensibilidade diferente; o registro confortável e as linhas melódicas expressivas a tornam adequada tanto para iniciantes quanto para músicos experientes."
+            },
+            ae: {
+                name: "E Equinox 10",
+                description: "النموذج القياسي لسُلَّم Equinox. شخصيته تقع «بين الماجور والمينور» مع لون صوتي دقيق ومتعدّد الطبقات. مناسب لمن يبحثون عن إحساس مختلف؛ وبفضل مجاله المريح وخطوطه اللحنية العاطفية، يلائم المبتدئين والمحترفين على حد سواء."
             }
         }
     },
@@ -596,6 +856,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "F# Low Pygmy 18",
                 description: "Eine \"mutierte\" Pygmy-Skala im Stil von Malte Marten – die erweiterte Version der Low Pygmy. Mit 18 Tönen bietet sie einen enorm weiten Tonumfang bis in höchste Lagen. Feine Höhen und tiefe Bässe verbinden sich zu einem professionellen Spitzeninstrument."
+            },
+            es: {
+                name: "F# Low Pygmy 18",
+                description: "Escala \"mutante\" de estilo Malte Marten, versión extendida de la Low Pygmy. Sus 18 notas ofrecen un rango enorme, desde graves muy profundos hasta agudos extremos. Combina una gran delicadeza en el registro alto con un grave poderoso, convirtiéndola en un modelo claramente orientado a profesionales."
+            },
+            ru: {
+                name: "F# Low Pygmy 18",
+                description: "«Мутировавшая» Pygmy-гамма в стиле Мальте Мартена — расширенная версия Low Pygmy. 18 нот дают по-настоящему огромный диапазон: от очень глубоких басов до экстремально высоких нот. Тонкая работа в верхнем регистре сочетается с мощным низом, что делает этот инструмент профессиональной флагманской моделью."
+            },
+            fa: {
+                name: "F# Low Pygmy 18",
+                description: "گام Pygmy «جهش‌یافته» در سبک Malte Marten و نسخهٔ گسترش‌یافتهٔ Low Pygmy است. با ۱۸ نت، گسترهٔ صوتی بسیار وسیعی از بیس‌های بسیار عمیق تا نت‌های فوق‌العاده زیر را در اختیار می‌گذارد. ظرافت در رجیستر بالا با عمق در رجیستر پایین ترکیب شده و این مدل را به گزینه‌ای حرفه‌ای و پرچم‌دار تبدیل می‌کند."
+            },
+            pt: {
+                name: "F# Low Pygmy 18",
+                description: "Escala Pygmy \"mutante\" no estilo Malte Marten, versão estendida da Low Pygmy. As 18 notas oferecem um alcance enorme, de graves muito profundos a agudos extremos. Combina delicadeza no registro alto com graves poderosos, sendo um modelo claramente voltado para profissionais."
+            },
+            ae: {
+                name: "F# Low Pygmy 18",
+                description: "سُلَّم Pygmy «متطوّر» على طريقة Malte Marten، وهو نسخة موسَّعة من Low Pygmy. بـ 18 نغمة يوفّر مدى واسعًا جدًّا من البيسات العميقة إلى النغمات العالية جدًّا. يجمع بين دقة العُليا وقوّة المنخفضة، ما يجعله نموذجًا احترافيًا رائدًا."
             }
         }
     },
@@ -634,6 +914,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "C# Pygmy 11",
                 description: "Eine erweiterte Version der klassischen C# Pygmy-Skala mit zusätzlichen tiefen Tönen (D3, E3). Dadurch entsteht ein noch tieferer, majestätischer Klang, der sich hervorragend für Trance, Meditation und Healing-Sessions eignet."
+            },
+            es: {
+                name: "C# Pygmy 11",
+                description: "Versión extendida de la clásica C# Pygmy, con graves añadidos (Re3, Mi3) que aportan aún más profundidad y majestuosidad. Es una escala excelente para trance, meditación y sesiones de sanación sonora."
+            },
+            ru: {
+                name: "C# Pygmy 11",
+                description: "Расширенная версия классической C# Pygmy с добавлением низких нот (D3, E3), что придаёт звучанию ещё более глубокую и величественную резонансу. Прекрасный выбор для трансовых, медитативных и целительных (healing) сессий."
+            },
+            fa: {
+                name: "C# Pygmy 11",
+                description: "نسخهٔ توسعه‌یافتهٔ گام کلاسیک C# Pygmy با نت‌های بمِ افزوده‌شده (D3 و E3)، که رزونانس را عمیق‌تر و باشکوه‌تر می‌کند. گزینه‌ای عالی برای اجراهای ترنس، مدیتیشن و هیلینگ (درمان صوتی) است."
+            },
+            pt: {
+                name: "C# Pygmy 11",
+                description: "Versão estendida da clássica C# Pygmy, com graves adicionais (Ré3, Mi3) que trazem ainda mais profundidade e majestade à ressonância. Excelente escolha para sessões de transe, meditação e healing (cura sonora)."
+            },
+            ae: {
+                name: "C# Pygmy 11",
+                description: "نسخة مطوَّرة من C# Pygmy الكلاسيكي مع إضافة النغمات المنخفضة (D3 و E3)، ما يمنح رنينًا أكثر عمقًا وفخامة. خيار ممتاز لعروض الترانس، والتأمل، والعلاج بالصوت."
             }
         }
     },
@@ -672,6 +972,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "F Low Pygmy 12",
                 description: "Bewahrt die weiche Klangfarbe der F Pygmy-Skala und ergänzt sie um verstärkte Bässe für mehr Tiefe. Ideal, um eine warme, leicht traumartige Atmosphäre zu erschaffen."
+            },
+            es: {
+                name: "F Low Pygmy 12",
+                description: "Mantiene la suavidad característica de la F Pygmy, pero con graves reforzados que añaden más profundidad al conjunto. Ideal para crear atmósferas cálidas, envolventes y ligeramente oníricas."
+            },
+            ru: {
+                name: "F Low Pygmy 12",
+                description: "Сохраняет мягкость и нежность гаммы F Pygmy, но усиленные басы добавляют звучанию глубину и объём. Отлично подходит для создания тёплой, окутывающей и чуть мечтательной атмосферы."
+            },
+            fa: {
+                name: "F Low Pygmy 12",
+                description: "نرمی و لطافت گام F Pygmy را حفظ می‌کند، اما با تقویت بخش بم، عمق بیشتری به صدا می‌دهد. برای خلق فضاهای گرم، شناور و کمی رؤیایی بسیار مناسب است."
+            },
+            pt: {
+                name: "F Low Pygmy 12",
+                description: "Mantém a suavidade típica da F Pygmy, mas com graves reforçados que adicionam mais profundidade ao conjunto. Ideal para criar atmosferas quentes, envolventes e ligeiramente oníricas."
+            },
+            ae: {
+                name: "F Low Pygmy 12",
+                description: "يحافظ على نعومة ودفء سُلَّم F Pygmy، لكن مع تعزيز البيسات ليضيف عمقًا أكبر للصوت. مثالي لخلق أجواء دافئة، محيطة وقليلة الحلمية."
             }
         }
     },
@@ -710,6 +1030,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "D Kurd 12",
                 description: "Die Standard-Erweiterung der D Kurd 10 Moll-Skala mit Bottom-Upgrade. Durch die verstärkten Bässe und zwei Ding-Bässe auf der Unterseite wird harmonisches und akkordisches Spiel deutlich vielfältiger."
+            },
+            es: {
+                name: "D Kurd 12",
+                description: "Versión estándar ampliada de la escala menor D Kurd 10, con un \"bottom upgrade\". Los graves reforzados y los dos bajos tipo ding en la parte inferior permiten un acompañamiento armónico mucho más rico."
+            },
+            ru: {
+                name: "D Kurd 12",
+                description: "Стандартная расширенная версия минорной гаммы D Kurd 10 с bottom-upgrade. Усиленные низы и два баса-ding на нижней части корпуса дают возможность исполнять более богатые гармонии и аккорды."
+            },
+            fa: {
+                name: "D Kurd 12",
+                description: "نسخهٔ استانداردِ گسترش‌یافتهٔ گام مینور D Kurd 10 با bottom upgrade. بیس‌های تقویت‌شده و دو نت Ding باس در قسمت زیرین، امکان اجرای هارمونی‌ها و آکوردهای غنی‌تر را فراهم می‌کند."
+            },
+            pt: {
+                name: "D Kurd 12",
+                description: "Versão padrão estendida da escala menor D Kurd 10 com bottom upgrade. Os graves reforçados e os dois baixos tipo ding na parte inferior permitem um acompanhamento harmônico muito mais rico."
+            },
+            ae: {
+                name: "D Kurd 12",
+                description: "النسخة القياسية الموسَّعة من سلم D Kurd 10 المينور مع ترقية في الجزء السفلي. البيسات الأقوى ووجود اثنين من نغمات ding في الأسفل يسمحان بعزف هارمونيات وأوتار أكثر غنى."
             }
         }
     },
@@ -748,6 +1088,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "F Low Pygmy 9",
                 description: "Das Grundmodell der F Low Pygmy mit ruhigem, stabilem Charakter. Der sanfte, milde Klang eignet sich hervorragend für Meditation, Entspannung und Healing-Musik."
+            },
+            es: {
+                name: "F Low Pygmy 9",
+                description: "Modelo básico de la escala F Low Pygmy, con un carácter sereno y estable. Su timbre suave y delicado es perfecto para meditación, relajación y música de sanación."
+            },
+            ru: {
+                name: "F Low Pygmy 9",
+                description: "Базовая версия гаммы F Low Pygmy с спокойным и устойчивым характером. Мягкий, нежный тембр делает её отличным выбором для медитации, расслабления и лечебной (healing) музыки."
+            },
+            fa: {
+                name: "F Low Pygmy 9",
+                description: "مدل پایهٔ گام F Low Pygmy با شخصیتی آرام و پایدار. رنگ صوتی نرم و ملایم آن برای مدیتیشن، ریلکسیشن و موسیقی هیلینگ بسیار مناسب است."
+            },
+            pt: {
+                name: "F Low Pygmy 9",
+                description: "Modelo básico da escala F Low Pygmy, com caráter calmo e estável. O timbre suave e delicado é perfeito para meditação, relaxamento e música de cura."
+            },
+            ae: {
+                name: "F Low Pygmy 9",
+                description: "النموذج الأساسي لسُلَّم F Low Pygmy بطابع هادئ ومستقر. صوته الناعم واللطيف مثالي للتأمل، والاسترخاء، وموسيقى الشفاء."
             }
         }
     },
@@ -786,6 +1146,22 @@ export const SCALES: Scale[] = [
             de: {
                 name: "C# Annapurna 9",
                 description: "Gleiche Struktur wie Yisha Savita; eine C#-Dur-Skala, die die Majestät, Frische und Energie des Annapurna-Gebirges in sich trägt. Hervorragend für kraftvolle, inspirierende Melodien geeignet."
+            },
+            es: {
+                name: "C# Annapurna 9",
+                description: "Comparte la misma estructura que Yisha Savita. Es una escala mayor que encarna la grandeza, frescura y energía de Annapurna, perfecta para melodías potentes e inspiradoras."
+            },
+            ru: {
+                name: "C# Annapurna 9",
+                description: "Имеет ту же структуру, что и Yisha Savita. Мажорная гамма, вобравшая в себя величие, свежесть и энергию Аннапурны. Подходит для мощных, вдохновляющих мелодий."
+            },
+            pt: {
+                name: "C# Annapurna 9",
+                description: "Possui a mesma estrutura da escala Yisha Savita. É uma escala maior que incorpora a grandeza, o frescor e a energia de Annapurna, ideal para melodias poderosas e inspiradoras."
+            },
+            ae: {
+                name: "C# Annapurna 9",
+                description: "له التركيب نفسه لسُلَّم Yisha Savita. سُلَّم ماجور يجسّد عظمة وانتعاش وطاقة جبال أنابورنا، مناسب للألحان القوية والملهمة."
             }
         }
     },
@@ -824,6 +1200,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "C Major 10",
                 description: "Die grundlegendste und reinste Dur-Skala: C-Dur. Sie klingt hell und fröhlich und ist ideal, um bekannte Kinderlieder und einfache Melodien zu spielen – eine klassische Wahl für Einsteiger."
+            },
+            es: {
+                name: "C Major 10",
+                description: "La escala mayor más básica y pura: Do mayor. Su carácter brillante y alegre es ideal para tocar canciones infantiles y melodías sencillas que todo el mundo conoce. Excelente elección como primer instrumento."
+            },
+            ru: {
+                name: "C Major 10",
+                description: "Самая базовая и чистая мажорная гамма — C major. Звучит ярко и жизнерадостно, идеально подходит для исполнения детских песен и простых, знакомых всем мелодий. Классический выбор для первого инструмента."
+            },
+            fa: {
+                name: "C Major 10",
+                description: "پایه‌ای‌ترین و خالص‌ترین گام ماژور: دو ماژور (C major). صدایی روشن و شاد دارد و برای نواختن ترانه‌های کودکانه و ملودی‌های ساده و آشنا بسیار ایده‌آل است. یک انتخاب کلاسیک برای اولین ساز و اولین گام است."
+            },
+            pt: {
+                name: "C Major 10",
+                description: "A escala maior mais simples e pura: Dó maior (C major). De caráter brilhante e alegre, é perfeita para tocar canções infantis e melodias fáceis que todos conhecem. Uma escolha clássica como primeiro instrumento/primeira escala."
+            },
+            ae: {
+                name: "C Major 10",
+                description: "أبسط وأصفى سُلَّم ماجور: دو ماجور (C major). يتميّز بصوت مشرق ومبهج، مثالي لعزف أغاني الأطفال والأنغام السهلة المعروفة للجميع. خيار كلاسيكي كأول سُلَّم وأول هاندبان."
             }
         }
     },
@@ -862,6 +1258,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "C Rasavali 10",
                 description: "Die Rasavali-Skala mit deutlich indisch gefärbter Klangwelt. Die besondere Tonleiter erzeugt eine geheimnisvolle, leicht rätselhafte Atmosphäre und verleiht dem Spiel eine starke eigene Note."
+            },
+            es: {
+                name: "C Rasavali 10",
+                description: "Escala Rasavali, con una fuerte coloración de música india. Sus intervalos crean una atmósfera misteriosa y sugerente, muy atractiva para quienes buscan un sonido distintivo."
+            },
+            ru: {
+                name: "C Rasavali 10",
+                description: "Гамма Rasavali с ярко выраженной индийской окраской. Необычные интервалы создают загадочную и притягательную атмосферу, идеально подходящую тем, кто ищет по-настоящему уникальное звучание."
+            },
+            fa: {
+                name: "C Rasavali 10",
+                description: "گام Rasavali با رنگ‌وبوی قوی موسیقی هندوستان. فواصل خاص آن فضایی رازآلود و جذاب می‌آفریند و برای نوازندگانی که به‌دنبال صدایی متمایز هستند بسیار دل‌انگیز است."
+            },
+            pt: {
+                name: "C Rasavali 10",
+                description: "Escala Rasavali com forte coloração de música indiana. Seus intervalos criam uma atmosfera misteriosa e envolvente, muito atraente para quem busca um som verdadeiramente distinto."
+            },
+            ae: {
+                name: "C Rasavali 10",
+                description: "سُلَّم Rasavali ذو لون قوي من الموسيقى الهندية. فواصله غير المألوفة تخلق جوًا غامضًا وجذابًا، مناسبًا جدًّا لمن يبحث عن صوت مميّز حقًا."
             }
         }
     },
@@ -900,6 +1316,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "C# Deepasia 14",
                 description: "Die Deepasia-Skala – ein erweitertes Modell mit tief asiatisch anmutender Resonanz. Dank 14 Tönen bietet sie einen großen, dichten Klangraum und eignet sich hervorragend für lange, meditative Klangreisen."
+            },
+            es: {
+                name: "C# Deepasia 14",
+                description: "Escala Deepasia, un modelo extendido con una profunda resonancia de sabor oriental. Sus 14 notas permiten un paisaje sonoro amplio y denso, ideal para largas sesiones meditativas y viajes sonoros introspectivos."
+            },
+            ru: {
+                name: "C# Deepasia 14",
+                description: "Гамма Deepasia — расширенная модель с глубокой восточной резонансой. 14 нот открывают широкий и плотный звуковой ландшафт, особенно подходящий для длительных медитативных и созерцательных звуковых путешествий."
+            },
+            fa: {
+                name: "C# Deepasia 14",
+                description: "گام Deepasia یک مدل گسترش‌یافته با رزونانس عمیق و حال‌وهوای شرقی است. ۱۴ نت آن چشم‌اندازی صوتی گسترده و متراکم ایجاد می‌کند و برای سفرهای صوتی طولانی و مدیتیشن‌های درون‌نگر بسیار مناسب است."
+            },
+            pt: {
+                name: "C# Deepasia 14",
+                description: "Escala Deepasia, modelo expandido com ressonância profunda e sabor oriental. As 14 notas proporcionam uma paisagem sonora ampla e densa, ideal para longas sessões meditativas e viagens sonoras introspectivas."
+            },
+            ae: {
+                name: "C# Deepasia 14",
+                description: "سُلَّم Deepasia الموسَّع برنين عميق ونكهة شرقية واضحة. تمنح 14 نغمة منه مشهدًا صوتيًا واسعًا وكثيفًا، مثاليًا للرحلات الصوتية الطويلة والتأمل الداخلي."
             }
         }
     },
@@ -938,6 +1374,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "C# Blues 9",
                 description: "Eine Blues-Skala in C#, die voller \"bluesiger\" Emotion steckt. Ideal für Jazz, Soul und groovige Improvisationen; der charakteristische Groove dieser Skala lässt emotionale Phrasen besonders lebendig wirken."
+            },
+            es: {
+                name: "C# Blues 9",
+                description: "Escala blues en Do#, cargada de emoción \"bluesy\". Muy adecuada para jazz, soul y estilos con mucho groove; sus notas características dan vida a frases melódicas intensas y expresivas."
+            },
+            ru: {
+                name: "C# Blues 9",
+                description: "Блюзовая гамма в тональности C#, наполненная ярко выраженной «blues-эмоцией». Отлично подходит для джаза, соула и стилей с выраженным грувом; характерные ноты придают фразам особую выразительность и драйв."
+            },
+            fa: {
+                name: "C# Blues 9",
+                description: "گام بلوز در دو دیِز (C#) که سرشار از احساسات بلوزی است. برای جَز، سول و سبک‌های مبتنی بر گروو بسیار مناسب است و فواصل شاخص آن، جمله‌های ملودیک را به‌شدت احساسی و زنده می‌کند."
+            },
+            pt: {
+                name: "C# Blues 9",
+                description: "Escala blues em Dó#, carregada de emoção \"bluesy\". Muito adequada para jazz, soul e estilos com bastante groove; as notas características dão vida a frases melódicas intensas e expressivas."
+            },
+            ae: {
+                name: "C# Blues 9",
+                description: "سُلَّم بلوز في دو دييز (C#) مليء بالروح البلوزية. مناسب جدًّا للجَاز، والسول، والأنماط القائمة على الـ groove؛ ففواصله المميّزة تعطي الجُمل اللحنية تعبيرًا قويًا وحركة حية."
             }
         }
     },
@@ -976,6 +1432,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "Eb MUJU 10",
                 description: "Eine Eb-Dur-Skala, die Elemente der koreanischen Pyeongjo-Tonleiter und der \"Arirang\"-Melodie aufgreift. Sie erinnert an die friedliche Natur von Muju und entfaltet mit ihrem weichen, warmen Klang eine starke, heilsame Wirkung."
+            },
+            es: {
+                name: "Eb MUJU 10",
+                description: "Escala de Mi♭ mayor que incorpora elementos del modo coreano Pyeongjo y de la melodía de \"Arirang\". Evoca la naturaleza pacífica de Muju, con un sonido suave y cálido que tiene un fuerte efecto sanador sobre el oyente."
+            },
+            ru: {
+                name: "Eb MUJU 10",
+                description: "Мажорная гамма в тональности E♭, сочетающая элементы корейского традиционного лада пхёнโจ и мелодии «Ариран». Напоминает мирную природу Муджу: мягкий, тёплый звук обладает сильным успокаивающим и целительным эффектом."
+            },
+            fa: {
+                name: "Eb MUJU 10",
+                description: "گام می بمل ماژور (Eb major) که عناصری از مُد سنتی کره‌ای «پینگجو» و ملودی «آریرانگ» را در خود دارد. طبیعت آرام منطقهٔ Muju را به خاطر می‌آورد؛ با صدایی نرم و گرم که تأثیر آرام‌بخش و شفابخش قدرتمندی بر شنونده دارد."
+            },
+            pt: {
+                name: "Eb MUJU 10",
+                description: "Escala de Mi♭ maior que incorpora elementos do modo tradicional coreano Pyeongjo e da melodia \"Arirang\". Evoca a natureza pacífica de Muju, com som suave e quente que exerce forte efeito relaxante e restaurador sobre o ouvinte."
+            },
+            ae: {
+                name: "Eb MUJU 10",
+                description: "سُلَّم مي بيمول ماجور (Eb major) يدمج عناصر من الطور الكوري التقليدي Pyeongjo ولحن «آريرانغ». يستحضر طبيعة منطقة Muju الهادئة؛ صوته الناعم والدافئ له تأثير مهدّئ وشفائي قوي على المستمع."
             }
         }
     },
@@ -1014,6 +1490,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "C Yunsl 9",
                 description: "Die Yunsl-Skala, deren Klang wie Sonnenlicht wirkt, das auf den Wellen glitzert: klar, hell und funkelnd. Besonders geeignet für lyrische, poetische Melodien."
+            },
+            es: {
+                name: "C Yunsl 9",
+                description: "Escala Yunsl, cuyo sonido recuerda al reflejo del sol sobre las olas: claro, brillante y chispeante. Ideal para melodías líricas y hermosas, llenas de sensibilidad."
+            },
+            ru: {
+                name: "C Yunsl 9",
+                description: "Гамма Yunsl, чей звук напоминает солнечные блики на водной глади: чистый, яркий и мерцающий. Отлично подходит для лиричных, красивых мелодий, наполненных чувствами."
+            },
+            fa: {
+                name: "C Yunsl 9",
+                description: "گام Yunsl که صدای آن مانند بازتاب نور خورشید بر سطح موج‌های آب، شفاف، درخشان و چشمک‌زن است. برای ملودی‌های شاعرانه و زیبا که سرشار از احساس هستند، بسیار مناسب است."
+            },
+            pt: {
+                name: "C Yunsl 9",
+                description: "Escala Yunsl, cujo som lembra o brilho do sol refletido nas ondas do mar: claro, cintilante e reluzente. Excelente para melodias líricas e belas, cheias de sensibilidade."
+            },
+            ae: {
+                name: "C Yunsl 9",
+                description: "سُلَّم Yunsl الذي يشبه صوته انعكاس ضوء الشمس على سطح الماء: صافٍ، لامع ومتألّق. مناسب جدًّا للألحان الشاعرية والجميلة المليئة بالإحساس."
             }
         }
     },
@@ -1052,6 +1548,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "C# Sapphire 9",
                 description: "Die Sapphire-Skala mit einem kühlen, eleganten Klang – wie ein Saphir in Klangform. Sie eignet sich ideal für Spieler, die einen klaren, modernen und aufgeräumten Sound bevorzugen."
+            },
+            es: {
+                name: "C# Sapphire 9",
+                description: "Escala Sapphire, con una resonancia fresca y refinada, como un zafiro sonoro. Recomendable para quienes prefieren un sonido limpio, moderno y elegante."
+            },
+            ru: {
+                name: "C# Sapphire 9",
+                description: "Гамма Sapphire с чистой и изысканной резонансой, подобной звучанию сапфира. Рекомендуется тем, кто предпочитает современное, аккуратное и «минималистичное» звучание."
+            },
+            fa: {
+                name: "C# Sapphire 9",
+                description: "گام Sapphire با رزونانسی خنک و شیک، همچون صدای یک یاقوت کبود. برای نوازندگانی که صدایی تمیز، مدرن و مینیمال را ترجیح می‌دهند انتخابی عالی است."
+            },
+            pt: {
+                name: "C# Sapphire 9",
+                description: "Escala Sapphire, com ressonância fresca e sofisticada, como um \"safira sonora\". Recomendada para quem prefere um som limpo, moderno e elegante."
+            },
+            ae: {
+                name: "C# Sapphire 9",
+                description: "سُلَّم Sapphire برنين بارد وأنيق، مثل «ياقوتة زرقاء صوتية». يُوصى به لمن يفضّلون صوتًا نظيفًا، حديثًا وبسيطًا في الوقت نفسه."
             }
         }
     },
@@ -1090,6 +1606,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "C# Annaziska 9",
                 description: "Eine exotische Skala mit geheimnisvollem Charakter und leichter Spannung. Perfekt für Spieler, die eine besondere, dramatische Atmosphäre und einen individuellen Klang suchen."
+            },
+            es: {
+                name: "C# Annaziska 9",
+                description: "Escala exótica, misteriosa y con un ligero toque de tensión. Es perfecta para intérpretes que desean crear atmósferas únicas y dramáticas, con un carácter muy especial."
+            },
+            ru: {
+                name: "C# Annaziska 9",
+                description: "Экзотическая гамма с таинственным характером и лёгким напряжением. Подходит для музыкантов, которые хотят создавать необычные, драматичные и атмосферные звуковые миры."
+            },
+            fa: {
+                name: "C# Annaziska 9",
+                description: "گامی اگزوتیک با شخصیتی رازآلود و کمی پُرتنش. برای نوازندگانی که می‌خواهند فضاهایی خاص، دراماتیک و متمایز خلق کنند، گزینه‌ای بسیار جذاب است."
+            },
+            pt: {
+                name: "C# Annaziska 9",
+                description: "Escala exótica, misteriosa e com um leve toque de tensão. Perfeita para músicos que desejam criar atmosferas únicas e dramáticas, com um caráter muito especial."
+            },
+            ae: {
+                name: "C# Annaziska 9",
+                description: "سُلَّم أجنبي ذو شخصية غامضة ولمسة خفيفة من التوتر. مثالي للعازفين الذين يريدون خلق أجواء خاصة ودرامية بصوت مختلف وواضح."
             }
         }
     },
@@ -1128,6 +1664,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "E Hijaz 9",
                 description: "Eine Hijaz-Skala in E mit stark orientalischem, nahöstlichem Flair. Sie vermittelt eine leidenschaftliche, \"würzige\" Stimmung und eignet sich hervorragend für dramatische, ausdrucksstarke Improvisationen."
+            },
+            es: {
+                name: "E Hijaz 9",
+                description: "Escala Hijaz en Mi, de fuerte carácter exótico y sabor mediooriental. Transmite una sensación intensa, apasionada y \"picante\", ideal para improvisaciones dramáticas y muy expresivas."
+            },
+            ru: {
+                name: "E Hijaz 9",
+                description: "Гамма Hijaz в тональности E с ярко выраженным восточным и ближневосточным оттенком. Передаёт страстное, «пряное» настроение и идеально подходит для драматичных и очень выразительных импровизаций."
+            },
+            fa: {
+                name: "E Hijaz 9",
+                description: "گام Hijaz در تونالیتهٔ می (E) با رنگ‌وبوی قوی خاورمیانه‌ای و شرقی. حسی پرشور و «تند و ادویه‌دار» منتقل می‌کند و برای بداهه‌نوازی‌های دراماتیک و بسیار احساسی فوق‌العاده است."
+            },
+            pt: {
+                name: "E Hijaz 9",
+                description: "Escala Hijaz em Mi, de forte caráter exótico e sabor médio-oriental. Transmite uma sensação intensa, apaixonada e \"picante\", ideal para improvisações dramáticas e altamente expressivas."
+            },
+            ae: {
+                name: "E Hijaz 9",
+                description: "سُلَّم Hijaz في مي (E) بطابع شرقي وشرق أوسطي قوي. ينقل إحساسًا حادًا، عاطفيًا و«متبَّلًا»، وهو رائع للارتجالات الدرامية شديدة التعبير."
             }
         }
     },
@@ -1166,6 +1722,26 @@ export const SCALES: Scale[] = [
             de: {
                 name: "C# Amara 9",
                 description: "Mitglied der \"Wellness-Top-3\" (Pygmy, Aegean, Amara) und auch als \"Celtic Minor\" bekannt. Die C# Amara 9 wurde durch die virtuosen Interpretationen von Malte Marten berühmt und nimmt weltweit in Yoga-, Meditations- und Healing-Communities eine herausragende Stellung ein. Als Einsteigerversion der beliebten E Amara 18 ist sie dank ihres mystischen, spirituellen Klanges bei Menschen in Ost und West gleichermaßen geschätzt, die auf der Suche nach innerem Frieden sind."
+            },
+            es: {
+                name: "C# Amara 9",
+                description: "Miembro del \"trío del bienestar\" (Pygmy, Aegean, Amara) y también conocida como \"Celtic Minor\". La C# Amara 9 se hizo famosa gracias a las interpretaciones de Malte Marten y hoy ocupa una posición destacada en comunidades de yoga, meditación y sanación en todo el mundo. Es la versión de iniciación de la muy apreciada E Amara 18 y, gracias a su resonancia misteriosa y espiritual, es muy querida por quienes buscan la paz interior, tanto en Oriente como en Occidente."
+            },
+            ru: {
+                name: "C# Amara 9",
+                description: "Представитель «великий троицы wellness-гамм» (Pygmy, Aegean, Amara), также известна как Celtic Minor. C# Amara 9 стала популярной благодаря выдающимся выступлениям Мальте Мартена и сегодня занимает особое место в сообществах йоги, медитации и звукового исцеления по всему миру. Это также «входная» версия любимой многими гаммы E Amara 18. За счёт своего мистического и духовного звучания она особенно любима теми, кто ищет внутренний покой — как на Востоке, так и на Западе."
+            },
+            fa: {
+                name: "C# Amara 9",
+                description: "عضوی از «سه‌گانهٔ بزرگ Wellness» (Pygmy, Aegean, Amara) و همچنین با نام Celtic Minor شناخته می‌شود. C# Amara 9 با اجراهای درخشان Malte Marten به شهرت جهانی رسیده و در جوامع یوگا، مدیتیشن و هیلینگ جایگاهی ویژه دارد. این گام، نسخهٔ ورودی محبوبِ E Amara 18 نیز به‌شمار می‌آید و به لطف رزونانس اسرارآمیز و معنوی خود، در شرق و غرب جهان نزد همهٔ کسانی که در جستجوی صلح درونی هستند، بسیار محبوب است."
+            },
+            pt: {
+                name: "C# Amara 9",
+                description: "Membro da \"trindade do bem-estar\" (Pygmy, Aegean, Amara) e também conhecida como Celtic Minor. A C# Amara 9 tornou-se famosa graças às performances de Malte Marten e hoje ocupa uma posição de destaque em comunidades de yoga, meditação e healing em todo o mundo. É também a versão de entrada da muito apreciada E Amara 18 e, graças à sua ressonância misteriosa e espiritual, é extremamente querida por todos que buscam paz interior, tanto no Oriente quanto no Ocidente."
+            },
+            ae: {
+                name: "C# Amara 9",
+                description: "عضو في «ثالوث العافية» (Pygmy, Aegean, Amara) ويُعرَف أيضًا باسم Celtic Minor. أصبحت C# Amara 9 مشهورة بفضل عروض Malte Marten، وتشغل اليوم مكانة خاصة في مجتمعات اليوغا، والتأمل، والعلاج بالصوت حول العالم. كما تُعتبَر النسخة المدخلية المحبوبة لسُلَّم E Amara 18، وبفضل رنينها الروحاني والغامض تحظى بمحبة كبيرة لدى كل من يبحث عن السلام الداخلي في الشرق والغرب على حد سواء."
             }
         }
     }
