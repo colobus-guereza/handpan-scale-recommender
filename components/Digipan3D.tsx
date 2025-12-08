@@ -11,46 +11,52 @@ import html2canvas from 'html2canvas';
 
 // Inner component to handle camera reset
 const CameraHandler = ({ isLocked, enableZoom = true, enablePan = true }: { isLocked: boolean; enableZoom?: boolean; enablePan?: boolean }) => {
-    const { camera, gl } = useThree();
+    const { camera, gl, size } = useThree();
     const controlsRef = useRef<any>(null);
+
+    // Check if we are in a constrained container (Mobile-ish)
+    // We use 768px as the breakpoint for "Mobile View" logic
+    const isMobileView = size.width < 768;
 
     React.useEffect(() => {
         const updateZoom = () => {
             if (isLocked) {
-                // Responsive Zoom Logic
-                // Mobile (< 768px): Zoom 6.5 (Fits width)
-                // Desktop: Zoom 12 (Original)
-                const isMobile = window.innerWidth < 768;
-                const targetZoom = isMobile ? 6.5 : 12;
+                // Responsive Zoom Logic based on Canvas Size
+                const objectSize = 57;
+                // Use a smaller dimension to ensure fit (Landscape vs Portrait)
+                const minDimension = Math.min(size.width, size.height);
+
+                // Target 85% filling to ensure safety margin (avoid cropping)
+                const fitZoom = (minDimension * 0.85) / objectSize;
+
+                // Use the calculated fit zoom for mobile, or cap at 12 for desktop
+                const targetZoom = isMobileView ? fitZoom : 12;
 
                 // Reset to Top View
                 camera.position.set(0, 0, 100); // 1m away
                 camera.lookAt(0, 0, 0);
                 camera.zoom = targetZoom;
                 camera.updateProjectionMatrix();
+
                 if (controlsRef.current) {
-                    controlsRef.current.reset();
+                    // Manually sync controls instead of reset() to preserve our new zoom
+                    controlsRef.current.target.set(0, 0, 0);
+                    controlsRef.current.update();
                 }
             }
         };
 
-        // Initial update
+        // Update on mount, lock change, or resize
         updateZoom();
-
-        // Add Resize Listener
-        window.addEventListener('resize', updateZoom);
-
-        return () => {
-            window.removeEventListener('resize', updateZoom);
-        };
-    }, [isLocked, camera]);
+    }, [isLocked, camera, size.width, size.height, isMobileView]);
 
     return (
         <OrbitControls
             ref={controlsRef}
             args={[camera, gl.domElement]}
-            enableRotate={!isLocked} // Disable rotation
-            enableZoom={enableZoom}
+            enableRotate={!isLocked} // Disable rotation when locked
+            // Force disable zoom on mobile view to mimic production behavior
+            enableZoom={isMobileView ? false : enableZoom}
             enablePan={enablePan}
             minZoom={5}
             maxZoom={50}
@@ -94,11 +100,13 @@ export default function Digipan3D({
     initialViewMode = 0,
     enableZoom = true,
     enablePan = true,
-    showLabelToggle = false
+    showLabelToggle = false,
+    forceCompactView = false
 }: Digipan3DProps) {
     const [isCameraLockedState, setIsCameraLocked] = useState(isCameraLocked);
     const [copySuccess, setCopySuccess] = useState(false);
-    const [isInfoExpanded, setIsInfoExpanded] = useState(true);
+    // Default expanded unless forced compact
+    const [isInfoExpanded, setIsInfoExpanded] = useState(!forceCompactView);
     const [isSelectorOpen, setIsSelectorOpen] = useState(false);
     const [demoNoteId, setDemoNoteId] = useState<number | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -108,6 +116,13 @@ export default function Digipan3D({
     const [viewMode, setViewMode] = useState<0 | 1 | 2 | 3>(initialViewMode);
 
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // Auto-collapse panel when switching to compact view (Mobile Preview)
+    useEffect(() => {
+        if (forceCompactView) {
+            setIsInfoExpanded(false);
+        }
+    }, [forceCompactView]);
 
     // Dynamic Scale Filter based on noteCountFilter and Search Query
     const filteredScales = useMemo(() => {
@@ -218,35 +233,35 @@ export default function Digipan3D({
     return (
         <div ref={containerRef} className="w-full h-full relative" style={{ background: '#FFFFFF' }}> {/* White Background */}
             {/* Controls Container */}
-            <div className="controls-container absolute top-4 right-4 z-10 flex flex-col gap-2">
+            <div className="controls-container absolute top-4 right-4 z-50 flex flex-col gap-2 items-center">
                 {/* 1-3. Admin Controls (Camera, Capture, ViewMode) - Toggle via showControls */}
                 {showControls && (
                     <>
                         <button
                             onClick={() => setIsCameraLocked(prev => !prev)}
-                            className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
                             title={isCameraLockedState ? "Unlock View (Free Rotation)" : "Lock View (Top Down)"}
                         >
-                            {isCameraLockedState ? <Lock size={24} /> : <Unlock size={24} />}
+                            {isCameraLockedState ? <Lock size={20} /> : <Unlock size={20} />}
                         </button>
 
                         <button
                             onClick={handleCapture}
-                            className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
                             title="Copy Screenshot to Clipboard"
                         >
-                            {copySuccess ? <Check size={24} className="text-green-600" /> : <Camera size={24} />}
+                            {copySuccess ? <Check size={20} className="text-green-600" /> : <Camera size={20} />}
                         </button>
 
                         <button
                             onClick={() => setViewMode(prev => (prev + 1) % 4 as 0 | 1 | 2 | 3)}
-                            className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
                             title="Toggle Visibility: All -> No Labels -> Labels Only -> Hidden"
                         >
-                            {viewMode === 0 && <Eye size={24} />}
-                            {viewMode === 1 && <MinusCircle size={24} />}
-                            {viewMode === 2 && <EyeOff size={24} />}
-                            {viewMode === 3 && <EyeOff size={24} className="opacity-50" />}
+                            {viewMode === 0 && <Eye size={20} />}
+                            {viewMode === 1 && <MinusCircle size={20} />}
+                            {viewMode === 2 && <EyeOff size={20} />}
+                            {viewMode === 3 && <EyeOff size={20} className="opacity-50" />}
                         </button>
                     </>
                 )}
@@ -255,10 +270,10 @@ export default function Digipan3D({
                 {showLabelToggle && (
                     <button
                         onClick={() => setViewMode(prev => prev === 3 ? 2 : 3)}
-                        className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                        className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
                         title={viewMode === 3 ? "Show Labels" : "Hide Labels"}
                     >
-                        {viewMode === 3 ? <EyeOff size={24} className="opacity-50" /> : <Eye size={24} />}
+                        {viewMode === 3 ? <EyeOff size={20} className="opacity-50" /> : <Eye size={20} />}
                     </button>
                 )}
 
@@ -266,7 +281,7 @@ export default function Digipan3D({
                 <button
                     onClick={handleDemoPlay}
                     disabled={isPlaying}
-                    className={`p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 ${isPlaying ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 ${isPlaying ? 'opacity-50 cursor-not-allowed' : ''}`}
                     title="Play Scale Demo"
                 >
                     <PlayCircle size={24} className={isPlaying ? "animate-pulse text-green-600" : ""} />
@@ -553,6 +568,7 @@ interface Digipan3DProps {
     enableZoom?: boolean;
     enablePan?: boolean;
     showLabelToggle?: boolean;
+    forceCompactView?: boolean;
 }
 
 // -----------------------------------------------------------------------------
@@ -719,85 +735,69 @@ const ToneFieldMesh = ({
 
     // Animation State logic
     const effectMeshRef = useRef<THREE.Mesh>(null);
-    const effectMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
+    const effectMaterialRef = useRef<THREE.MeshStandardMaterial>(null);
     const animState = useRef({ active: false, time: 0 });
 
-    // Pulse Configuration
-    const PULSE_DURATION = 1.0; // Slightly faster but smoother fade
-    const MAX_SCALE_MULT = 1.25; // Expand to 125%
+    // Sound Breathing Configuration
+    const SUSTAIN_DURATION = 2.5; // Longer duration to match handpan sustain (2.5 seconds)
+    const MAX_EMISSIVE_INTENSITY = 1.2; // Peak glow intensity
 
-    // Frame Loop for Animation
+    // Frame Loop for Sound Breathing Animation
     useFrame((_state: any, delta: number) => {
-        // Only run if active (pulsing state handles visibility, but this handles animation values)
-        if (!animState.current.active || !effectMeshRef.current || !effectMaterialRef.current) return;
+        if (!animState.current.active || !effectMaterialRef.current) {
+            return;
+        }
 
         animState.current.time += delta;
-        const progress = Math.min(animState.current.time / PULSE_DURATION, 1);
-        const easeOut = 1 - Math.pow(1 - progress, 2); // Quadratic ease out (softer)
+        const progress = Math.min(animState.current.time / SUSTAIN_DURATION, 1);
 
-        // Animate Opacity (Fade out)
-        // Start at 0.8 (Stronger) -> 0
-        effectMaterialRef.current.opacity = 0.8 * (1 - easeOut);
+        // Ease-in-out curve for natural breathing effect
+        // Fast rise (like a breath in), slow decay (like exhaling)
+        const easeInOut = progress < 0.3
+            ? Math.pow(progress / 0.3, 2) * 0.3 // Fast rise in first 30%
+            : 0.3 + (1 - 0.3) * (1 - Math.pow((progress - 0.3) / 0.7, 1.5)); // Slow decay in remaining 70%
 
-        // Animate Scale (Expand)
-        // Start at 1.0, end at MAX_SCALE_MULT
-        const currentScale = 1 + (MAX_SCALE_MULT - 1) * easeOut;
-
-        // Applying scale to the Group/Mesh. 
-        // Note: resizing ring geometry via scale works.
-        effectMeshRef.current.scale.set(
-            finalRadiusX * currentScale,
-            finalRadiusY * currentScale,
-            1
-        );
-        // Wait! The previous Sphere was scaled [finalRadiusX, 0.05, finalRadiusY].
-        // The container is rotated [-Math.PI/2, 0, 0] (or similar).
-        // Let's check rotation below. 
-        // ToneFieldMesh Group > Group rotationZ > Mesh rotationX=90
-        // If mesh is RingGeometry (XY plane), and we rotate X 90, it lays flat on XZ.
-        // So Scale X acts on X (Width). Scale Y acts on Y (Height -> Depth in 3D).
-        // So scale should be [finalRadiusX * s, finalRadiusY * s, 1].
+        // Animate emissive intensity (glow effect)
+        // Start at 0 → peak at MAX_EMISSIVE_INTENSITY → back to 0
+        const currentIntensity = MAX_EMISSIVE_INTENSITY * Math.sin(easeInOut * Math.PI);
+        effectMaterialRef.current.emissiveIntensity = currentIntensity;
 
         if (progress >= 1) {
             animState.current.active = false;
-            // End of animation
+            effectMaterialRef.current.emissiveIntensity = 0; // Ensure it's off
             setPulsing(false);
         }
     });
 
-    // Initialize opacity
-    useEffect(() => {
-        if (effectMaterialRef.current) {
-            effectMaterialRef.current.opacity = 0;
-        }
-    }, []);
+    // Initialize opacity - DISABLED for testing (JSX now sets opacity={1.0})
+    // useEffect(() => {
+    //     if (effectMaterialRef.current) {
+    //         effectMaterialRef.current.opacity = 0;
+    //     }
+    // }, []);
 
     const triggerPulse = () => {
-        console.log("Trigger Pulse!", note.id);
-        // Start animation
+        // Start Sound Breathing animation
         animState.current = { active: true, time: 0 };
         setPulsing(true);
 
-        // Immediate reset
-        if (effectMeshRef.current && effectMaterialRef.current) {
-            effectMaterialRef.current.opacity = 0.8;
-            effectMeshRef.current.scale.set(finalRadiusX, finalRadiusY, 1);
-            effectMeshRef.current.visible = true;
+        // Initialize emissive intensity
+        if (effectMaterialRef.current) {
+            effectMaterialRef.current.emissiveIntensity = 0;
         }
     };
 
     const handlePointerDown = (e: any) => {
         e.stopPropagation();
-        console.log("Tonefield Clicked:", note.id);
         onClick?.(note.id);
 
         // Play Sound
         const filename = note.label.replace('#', '%23');
         const audio = new Audio(`/sounds/${filename}.mp3`);
         audio.volume = 0.6;
-        audio.play().catch((err) => { console.log("Audio Play Error:", err); });
+        audio.play().catch(() => { /* Ignore audio errors */ });
 
-        // Trigger Pulse
+        // Trigger Sound Breathing effect
         triggerPulse();
     };
 
@@ -829,8 +829,9 @@ const ToneFieldMesh = ({
                     />
                 </mesh>
 
-                {/* 1-b. Visual Mesh (Wireframe) - No events, controlled by ViewMode */}
+                {/* 1-b. Visual Mesh (Wireframe) - Now with Sound Breathing Effect */}
                 <mesh
+                    ref={effectMeshRef}
                     rotation={[Math.PI / 2, 0, 0]}
                     scale={[finalRadiusX, 0.05, finalRadiusY]}
                     // Visible in 0 (All) and 1 (No Labels). Hidden in 2 (Labels Only) and 3 (Interaction Only)
@@ -838,37 +839,16 @@ const ToneFieldMesh = ({
                 >
                     <sphereGeometry args={[1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
                     <meshStandardMaterial
+                        ref={effectMaterialRef}
                         color={hovered ? "#60A5FA" : "#FFFFFF"} // Blue Hover, White Idle
-                        emissive={hovered ? "#1E40AF" : "#000000"}
-                        emissiveIntensity={hovered ? 0.5 : 0}
+                        emissive="#D4A574" // Warm copper/gold color for breathing effect
+                        emissiveIntensity={0} // Will be animated by useFrame (0 → 0.8 → 0)
                         roughness={0.9}
                         metalness={0.0}
                         wireframe={true}
                         toneMapped={false}
                         transparent={true}
                         opacity={1}
-                    />
-                </mesh>
-
-                {/* 2. Sustain Effect Mesh (Lavender Ring) */}
-                <mesh
-                    ref={effectMeshRef}
-                    position={[0, 0, 0.1]} // Lift higher to 0.1 ensure it's above everything
-                    rotation={[Math.PI / 2, 0, 0]}
-                    scale={[finalRadiusX, finalRadiusY, 1]}
-                    visible={pulsing}
-                >
-                    {/* Thicker Ring for better visibility */}
-                    <ringGeometry args={[0.8, 1.05, 64]} />
-                    <meshBasicMaterial
-                        ref={effectMaterialRef}
-                        color="#C8A2C8" // Lilac
-                        transparent={true}
-                        // opacity={0}  <-- REMOVED to prevent R3F overwrite
-                        toneMapped={false}
-                        depthWrite={false}
-                        depthTest={false} // FORCE DRAW ON TOP
-                        side={THREE.DoubleSide}
                     />
                 </mesh>
 

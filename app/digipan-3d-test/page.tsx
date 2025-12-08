@@ -4,13 +4,15 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Digipan10 from '../../components/Digipan10';
 import Digipan9 from '../../components/Digipan9';
 import { SCALES } from '@/data/handpanScales';
-import { Grid, Monitor } from 'lucide-react';
+import { Grid, Monitor, Smartphone } from 'lucide-react';
 import { useControls, button } from 'leva';
 import { getNoteFrequency } from '@/constants/noteFrequencies';
 
 export default function Digipan3DTestPage() {
     // Mode State: '9' (Image Only) or '10' (Full Implementation)
     const [mode, setMode] = useState<'9' | '10'>('9');
+    // Mobile Preview State
+    const [isMobilePreview, setIsMobilePreview] = useState(false);
 
     // Dynamic Scale Selection State
     const [selectedScaleId, setSelectedScaleId] = useState<string>('d_kurd_9');
@@ -97,22 +99,13 @@ export default function Digipan3DTestPage() {
     // Construct Active Notes for Mode 9
     const activeNotes9 = useMemo(() => {
         if (mode !== '9' || !scale) return [];
-
         const c = controls9 as any;
-
-        // Combine Ding and Top notes for the 9-note array
-        // D Kurd 9 has 1 Ding + 8 Top notes = 9 notes
         const currentScaleNotes = [scale.notes.ding, ...scale.notes.top];
-
-        // Template Notes for "D Kurd 9" (Fixed Visual Layout)
-        // These frequencies match the original geometry of the 9notes.png
         const TEMPLATE_NOTES = ["D3", "A3", "Bb3", "C4", "D4", "E4", "F4", "G4", "A4"];
 
         const notes = initialNotes9.map((n, i) => {
             const noteName = currentScaleNotes[i] || ''; // e.g., "D3", "A3"
             const frequency = getNoteFrequency(noteName);
-
-            // Visual Frequency: Always use the Template's frequency for this index
             const visualNoteName = TEMPLATE_NOTES[i] || "A4";
             const visualFrequency = getNoteFrequency(visualNoteName);
 
@@ -123,13 +116,12 @@ export default function Digipan3DTestPage() {
                 rotate: c[`N${n.id}_rotate`],
                 scaleX: c[`N${n.id}_scaleX`],
                 scaleY: c[`N${n.id}_scaleY`],
-                label: noteName, // Use the actual note name (e.g. "D3") as label
+                label: noteName,
                 frequency: frequency || 440,
-                visualFrequency: visualFrequency || 440, // Lock geometry to template
+                visualFrequency: visualFrequency || 440,
                 labelOffset: 25
             };
         });
-
         return notes;
     }, [initialNotes9, controls9, mode, scale]);
 
@@ -143,54 +135,81 @@ export default function Digipan3DTestPage() {
 
     // Toggle Button Control
     const toggleControl = (
-        <button
-            onClick={() => {
-                const newMode = mode === '9' ? '10' : '9';
-                setMode(newMode);
-                // Switch default scale based on mode
-                if (newMode === '9') {
-                    setSelectedScaleId('d_kurd_9');
-                } else {
-                    setSelectedScaleId('d_kurd_10');
-                }
-            }}
-            className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 font-bold text-xs flex flex-col items-center justify-center gap-1 w-14 h-14"
-            title="Toggle Digipan 9 / 10"
-        >
-            {mode === '9' ? (
-                <>
-                    <span className="text-[10px] leading-none">9</span>
-                    <Grid size={16} />
-                </>
-            ) : (
-                <>
-                    <span className="text-[10px] leading-none">10</span>
-                    <Monitor size={16} />
-                </>
-            )}
-        </button>
+        <div className="flex flex-col gap-2">
+            {/* Mode Switcher */}
+            <button
+                onClick={() => {
+                    const newMode = mode === '9' ? '10' : '9';
+                    setMode(newMode);
+                    if (newMode === '9') {
+                        setSelectedScaleId('d_kurd_9');
+                    } else {
+                        setSelectedScaleId('d_kurd_10');
+                    }
+                }}
+                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 font-bold text-xs"
+                title="Toggle Digipan 9 / 10"
+            >
+                {mode === '9' ? (
+                    <span className="text-[10px] leading-none font-bold">9</span>
+                ) : (
+                    <span className="text-[10px] leading-none font-bold">10</span>
+                )}
+            </button>
+
+            {/* Mobile Preview Toggle */}
+            <button
+                onClick={() => setIsMobilePreview(!isMobilePreview)}
+                className={`w-12 h-12 flex items-center justify-center backdrop-blur-sm rounded-full shadow-lg transition-all duration-200 border text-slate-700 font-bold text-xs ${isMobilePreview
+                    ? 'bg-blue-100 border-blue-400 text-blue-700'
+                    : 'bg-white/80 border-slate-200 hover:bg-white'
+                    }`}
+                title="Toggle Mobile View"
+            >
+                <Smartphone size={20} />
+            </button>
+        </div>
     );
 
     return (
-        <div className="w-full h-screen flex bg-white">
+        <div className="w-full h-screen flex bg-gray-100">
             {/* Left: 3D Workspace */}
-            <div className="flex-1 relative">
-                {mode === '9' ? (
-                    <Digipan9
-                        notes={activeNotes9} // Pass interactive notes
-                        scale={scale} // Pass scale for reference if needed
-                        isCameraLocked={true} // Auto-lock as per previous logic, or user preference
-                        onScaleSelect={handleScaleSelect}
-                        extraControls={toggleControl}
-                    />
-                ) : (
-                    <Digipan10
-                        scale={scale}
-                        onScaleSelect={handleScaleSelect}
-                        onNoteClick={(id) => console.log(`Clicked note ${id}`)}
-                        extraControls={toggleControl}
-                    />
-                )}
+            <div className={`flex-1 relative flex items-center justify-center overflow-hidden transition-all duration-500 ${isMobilePreview ? 'bg-gray-200' : 'bg-white'}`}>
+
+                {/* 3D Container Wrapper - Changes size based on mode */}
+                <div
+                    className={`relative transition-all duration-500 ease-in-out shadow-2xl overflow-hidden bg-white ${isMobilePreview
+                        ? 'w-[375px] h-[700px] rounded-[40px] border-[12px] border-slate-800 ring-2 ring-slate-300/50'
+                        : 'w-full h-full'
+                        }`}
+                >
+                    {/* Status Bar for Mobile Look */}
+                    {isMobilePreview && (
+                        <div className="absolute top-0 left-0 w-full h-7 bg-slate-800 z-50 flex items-center justify-center">
+                            <div className="w-20 h-4 bg-black rounded-b-xl"></div>
+                        </div>
+                    )}
+
+                    {mode === '9' ? (
+                        <Digipan9
+                            notes={activeNotes9}
+                            scale={scale}
+                            isCameraLocked={true}
+                            onScaleSelect={handleScaleSelect}
+                            extraControls={toggleControl} // Controls are passed here but rendered via portal/absolute in Digipan3D
+                            forceCompactView={isMobilePreview}
+                        />
+                    ) : (
+                        <Digipan10
+                            scale={scale}
+                            isCameraLocked={true} // Fixed: Enable Camera Handler specific logic (Responsive Zoom)
+                            onScaleSelect={handleScaleSelect}
+                            onNoteClick={(id) => console.log(`Clicked note ${id}`)}
+                            extraControls={toggleControl}
+                            forceCompactView={isMobilePreview}
+                        />
+                    )}
+                </div>
             </div>
 
             {/* Right: Data Panel */}
@@ -198,6 +217,11 @@ export default function Digipan3DTestPage() {
                 <h2 className="text-xl font-bold text-white mb-2">
                     {mode === '9' ? '📷 Digipan 9 Preview' : '🎵 Digipan 10 Demo'}
                 </h2>
+                <div className="mb-6 flex items-center gap-2">
+                    <span className={`px-2 py-1 rounded text-xs font-bold ${isMobilePreview ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400'}`}>
+                        {isMobilePreview ? 'Mobile View' : 'Desktop View'}
+                    </span>
+                </div>
 
                 {/* Always show scale info if a scale is selected */}
                 {scale && (
@@ -213,6 +237,11 @@ export default function Digipan3DTestPage() {
                         : "Fully interactive 10-note implementation with tonefields and sound."
                     }
                 </p>
+                {isMobilePreview && (
+                    <div className="p-3 bg-blue-900/30 border border-blue-700/50 rounded-lg text-xs text-blue-200">
+                        ℹ️ Mobile Zoom (6.5) is active because the canvas width is &lt; 768px.
+                    </div>
+                )}
             </div>
         </div>
     );

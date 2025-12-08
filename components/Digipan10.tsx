@@ -17,6 +17,7 @@ interface Digipan10Props {
     enableZoom?: boolean;
     enablePan?: boolean;
     showLabelToggle?: boolean;
+    forceCompactView?: boolean;
 }
 
 export default function Digipan10({
@@ -30,7 +31,8 @@ export default function Digipan10({
     initialViewMode = 3,
     enableZoom = true,
     enablePan = true,
-    showLabelToggle = false
+    showLabelToggle = false,
+    forceCompactView = false
 }: Digipan10Props) {
 
     // 10-Note Specific Layout (Coordinates for 10notes.png)
@@ -204,6 +206,7 @@ export default function Digipan10({
             enableZoom={enableZoom}
             enablePan={enablePan}
             showLabelToggle={showLabelToggle}
+            forceCompactView={forceCompactView}
         />
     );
 }

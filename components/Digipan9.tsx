@@ -17,6 +17,7 @@ interface Digipan9Props {
     enableZoom?: boolean;
     enablePan?: boolean;
     showLabelToggle?: boolean;
+    forceCompactView?: boolean;
 }
 
 export default function Digipan9({
@@ -31,7 +32,8 @@ export default function Digipan9({
     initialViewMode = 3,
     enableZoom = true,
     enablePan = true,
-    showLabelToggle = false
+    showLabelToggle = false,
+    forceCompactView = false
 }: Digipan9Props) {
 
     // Internal Note Generation (Standard 9-Note D Kurd Layout)
@@ -104,6 +106,7 @@ export default function Digipan9({
             enableZoom={enableZoom}
             enablePan={enablePan}
             showLabelToggle={showLabelToggle}
+            forceCompactView={forceCompactView}
         />
     );
 }
