@@ -26,16 +26,116 @@ export default function Digipan3DTestPage() {
         // User Provided JSON Configuration (Layout Template for 10 Notes)
         // Ideally this should also be dynamic based on note count, but for now we stick to 10-note template
         const userProvidedData = [
-            { id: 0, cx: 499, cy: 490, scale: 202, rotate: 89, position: "center", angle: 0, scaleX: 1.42, scaleY: 1.21 },
-            { id: 1, cx: 663, cy: 792, scale: 129, rotate: 66, position: "top", angle: 0, scaleX: 1, scaleY: 0.9199999999999999 },
-            { id: 2, cx: 367, cy: 807, scale: 285, rotate: 103, position: "top", angle: 0, scaleX: 1, scaleY: 0.87 },
-            { id: 3, cx: 828, cy: 595, scale: 253, rotate: 194, position: "top", angle: 0, scaleX: 1, scaleY: 0.93 },
-            { id: 4, cx: 185, cy: 640, scale: 249, rotate: 167, position: "top", angle: 0, scaleX: 0.99, scaleY: 0.91 },
-            { id: 5, cx: 808, cy: 347, scale: 237, rotate: 157, position: "top", angle: 0, scaleX: 1.06, scaleY: 0.86 },
-            { id: 6, cx: 160, cy: 403, scale: 238, rotate: 18, position: "top", angle: 0, scaleX: 0.97, scaleY: 0.85 },
-            { id: 7, cx: 659, cy: 190, scale: 201, rotate: 111, position: "top", angle: 0, scaleX: 1.01, scaleY: 0.82 },
-            { id: 8, cx: 282, cy: 224, scale: 265, rotate: 54, position: "top", angle: 0, scaleX: 1.05, scaleY: 0.83 },
-            { id: 9, cx: 464, cy: 143, scale: 220, rotate: 81, position: "top", angle: 0, scaleX: 0.91, scaleY: 0.78 }
+            {
+                "id": 0,
+                "cx": 505,
+                "cy": 515,
+                "scale": 202,
+                "rotate": 89,
+                "position": "center",
+                "angle": 0,
+                "scaleX": 1.3599999999999999,
+                "scaleY": 1.16
+            },
+            {
+                "id": 1,
+                "cx": 643,
+                "cy": 808,
+                "scale": 129,
+                "rotate": 66,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1,
+                "scaleY": 0.8899999999999999
+            },
+            {
+                "id": 2,
+                "cx": 361,
+                "cy": 812,
+                "scale": 285,
+                "rotate": 103,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.98,
+                "scaleY": 0.9
+            },
+            {
+                "id": 3,
+                "cx": 825,
+                "cy": 620,
+                "scale": 253,
+                "rotate": 194,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1,
+                "scaleY": 0.93
+            },
+            {
+                "id": 4,
+                "cx": 179,
+                "cy": 620,
+                "scale": 249,
+                "rotate": 163,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.99,
+                "scaleY": 0.91
+            },
+            {
+                "id": 5,
+                "cx": 820,
+                "cy": 377,
+                "scale": 237,
+                "rotate": 158,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.9400000000000001,
+                "scaleY": 0.82
+            },
+            {
+                "id": 6,
+                "cx": 178,
+                "cy": 379,
+                "scale": 238,
+                "rotate": 28,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.97,
+                "scaleY": 0.85
+            },
+            {
+                "id": 7,
+                "cx": 684,
+                "cy": 210,
+                "scale": 201,
+                "rotate": 142,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.02,
+                "scaleY": 0.7999999999999999
+            },
+            {
+                "id": 8,
+                "cx": 301,
+                "cy": 210,
+                "scale": 265,
+                "rotate": 57,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.98,
+                "scaleY": 0.83
+            },
+            {
+                "id": 9,
+                "cx": 492,
+                "cy": 149,
+                "scale": 220,
+                "rotate": 182,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.23,
+                "scaleY": 0.67
+            }
         ];
 
         // Template Frequencies (D Kurd 10) - Fixed for Visual Layout
