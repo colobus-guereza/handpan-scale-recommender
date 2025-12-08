@@ -32,6 +32,7 @@ type HowlInstance = {
     play: () => void;
     volume: (vol: number) => void;
     unload: () => void;
+    state: () => string;
 };
 
 /**
@@ -42,16 +43,22 @@ type HowlInstance = {
  * - Uses Web Audio API (html5: false) for zero-latency playback
  * - Supports polyphony (overlapping sounds for natural reverb)
  * - Dynamic import to avoid SSR issues with Next.js
+ * - Fallback to HTML5 Audio if Howler fails
  */
 export const useHandpanAudio = (): UseHandpanAudioReturn => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [loadingProgress, setLoadingProgress] = useState(0);
     const soundsRef = useRef<Record<string, HowlInstance>>({});
     const loadedCountRef = useRef(0);
+    const howlerLoadedRef = useRef(false);
 
     useEffect(() => {
+        // Skip if running on server
+        if (typeof window === 'undefined') return;
+
         // Dynamic import to avoid SSR issues
         import('howler').then(({ Howl }) => {
+            howlerLoadedRef.current = true;
             const totalSounds = ALL_NOTES.length;
             loadedCountRef.current = 0;
 
@@ -78,29 +85,51 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
                     },
                     onloaderror: (_id: number, error: unknown) => {
                         console.error(`[useHandpanAudio] Failed to load ${note}:`, error);
+                        // Still count as loaded to prevent blocking
+                        loadedCountRef.current++;
+                        if (loadedCountRef.current === totalSounds) {
+                            setIsLoaded(true);
+                        }
                     }
                 });
             });
         }).catch(err => {
             console.error('[useHandpanAudio] Failed to load Howler:', err);
+            // Mark as loaded anyway so UI is not blocked
+            setIsLoaded(true);
         });
 
         // Cleanup: Unload all sounds on unmount
         return () => {
-            Object.values(soundsRef.current).forEach(sound => sound.unload());
+            Object.values(soundsRef.current).forEach(sound => {
+                try { sound.unload(); } catch (e) { /* ignore */ }
+            });
             soundsRef.current = {};
         };
     }, []);
 
     const playNote = useCallback((noteName: string, volume: number = 0.6) => {
         const sound = soundsRef.current[noteName];
+
+        // Try Howler first if available and loaded
         if (sound) {
-            // Play directly - no stop() to allow polyphony (overlapping sounds for natural decay)
-            sound.volume(volume);
-            sound.play();
-        } else {
-            console.warn(`[useHandpanAudio] Note "${noteName}" not found in sound library`);
+            try {
+                sound.volume(volume);
+                sound.play();
+                return;
+            } catch (e) {
+                console.warn(`[useHandpanAudio] Howler play failed for ${noteName}, using fallback:`, e);
+            }
         }
+
+        // Fallback: Use HTML5 Audio API (works but has latency)
+        console.log(`[useHandpanAudio] Using fallback Audio for ${noteName}`);
+        const filename = noteName.replace('#', '%23');
+        const audio = new Audio(`/sounds/${filename}.mp3`);
+        audio.volume = volume;
+        audio.play().catch(err => {
+            console.error(`[useHandpanAudio] Fallback audio failed for ${noteName}:`, err);
+        });
     }, []);
 
     return { isLoaded, loadingProgress, playNote };

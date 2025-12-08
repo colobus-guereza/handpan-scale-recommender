@@ -28,7 +28,7 @@ const CameraHandler = ({ isLocked, enableZoom = true, enablePan = true }: { isLo
                 const minDimension = Math.min(size.width, size.height);
 
                 // Target 85% filling to ensure safety margin (avoid cropping)
-                const fitZoom = (minDimension * 0.85) / objectSize;
+                const fitZoom = (minDimension * 0.95) / objectSize;
 
                 // Use the calculated fit zoom for mobile, or cap at 12 for desktop
                 const targetZoom = isMobileView ? fitZoom : 12;
@@ -745,7 +745,7 @@ const ToneFieldMesh = ({
     const animState = useRef({ active: false, time: 0 });
 
     // Sound Breathing Configuration
-    const SUSTAIN_DURATION = 2.5; // Longer duration to match handpan sustain (2.5 seconds)
+    const SUSTAIN_DURATION = 1.2; // Faster fade-out (1.2 seconds)
 
     // Frame Loop for Sound Breathing Animation
     useFrame((_state: any, delta: number) => {
@@ -756,18 +756,30 @@ const ToneFieldMesh = ({
         animState.current.time += delta;
         const progress = Math.min(animState.current.time / SUSTAIN_DURATION, 1);
 
-        // Smooth breathing curve: gentle rise, gentle decay
-        // Use sine wave for natural breathing pattern
-        const breathCurve = Math.sin(progress * Math.PI); // 0 → 1 → 0 (bell curve)
-        const opacity = 0.3 * breathCurve; // Max opacity: 0.3 (subtle)
+        // Fast attack (fade-in), faster decay (fade-out)
+        // Attack phase: first 15% of duration (~0.18 seconds)
+        // Decay phase: remaining 85% (~1.02 seconds)
+        const attackPhase = 0.15; // 15% for fast attack
+        let breathCurve: number;
 
+        if (progress < attackPhase) {
+            // Very fast fade-in: 0 → 1 in first 15%
+            const attackProgress = progress / attackPhase;
+            breathCurve = Math.sin(attackProgress * Math.PI / 2); // Quarter sine for smooth start
+        } else {
+            // Faster fade-out: 1 → 0 in remaining 85%
+            const decayProgress = (progress - attackPhase) / (1 - attackPhase);
+            breathCurve = Math.cos(decayProgress * Math.PI / 2); // Quarter cosine for smooth decay
+        }
+
+        const opacity = 0.05 * breathCurve; // Max opacity: 0.05 (barely visible)
         effectMaterialRef.current.opacity = opacity;
 
-        // Very subtle scale pulse (barely noticeable)
-        const scaleMultiplier = 1 + 0.03 * breathCurve;
+        // Scale pulse
+        const scaleMultiplier = 1 + 0.10 * breathCurve; // 10% scale variation
         effectMeshRef.current.scale.set(
-            finalRadiusX * 1.15 * scaleMultiplier,
-            finalRadiusY * 1.15 * scaleMultiplier,
+            finalRadiusX * 1.05 * scaleMultiplier, // 5% larger (was 15%)
+            finalRadiusY * 1.05 * scaleMultiplier,
             1
         );
 
@@ -860,7 +872,7 @@ const ToneFieldMesh = ({
                 <mesh
                     ref={effectMeshRef}
                     position={[0, 0, 0.5]} // Slightly above tonefield
-                    scale={[finalRadiusX * 1.15, finalRadiusY * 1.15, 1]} // 15% larger than tonefield
+                    scale={[finalRadiusX * 1.05, finalRadiusY * 1.05, 1]} // 5% larger than tonefield
                     visible={pulsing}
                     renderOrder={999}
                 >
@@ -869,7 +881,7 @@ const ToneFieldMesh = ({
                         ref={effectMaterialRef}
                         color="#D4A574"
                         transparent={true}
-                        opacity={0.3}
+                        opacity={0.05}
                         toneMapped={false}
                         depthWrite={false}
                         depthTest={false}

@@ -757,13 +757,15 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
             {/* MiniDigiPan 컴포넌트 - 버튼 영역 위 */}
             {showMiniDigiPan && (
-                <div className="-mt-4 mb-2">
+                <div className="-mt-4 mb-4">
                     <MiniDigiPan key={miniDigiPanKey} scale={currentScale} language={language} />
+                    {/* 시각적 경계선 */}
+                    <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700"></div>
                 </div>
             )}
 
             {/* 스케일 분류기준 및 전체 스케일 토글 버튼 */}
-            <div className="flex items-center justify-end gap-2 mb-2 overflow-x-auto">
+            <div className="flex items-center justify-end gap-2 mb-4 overflow-x-auto pt-2 border-t border-slate-200 dark:border-slate-700">
                 {/* 우측: 기능 버튼 */}
                 <div className="flex gap-2 flex-shrink-0">
                     {/* 디지팬 버튼 - 현재 비활성화 (코드 보존) */}
@@ -811,7 +813,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
             {/* 스케일 분류기준 섹션 */}
             {showClassificationCriteria && (
-                <div className="mb-4 p-6 glass-card border border-glass-border rounded-xl shadow-sm">
+                <div className="mb-4 p-6 glass-card border border-glass-border rounded-xl shadow-sm mt-4 pt-4 border-t-2 border-slate-300 dark:border-slate-600">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {(Object.keys(VECTOR_AXES) as Array<keyof typeof VECTOR_AXES>).map((key) => {
                             // Explicitly type axis to avoid 'never' inference
@@ -872,7 +874,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
             {/* List Section */}
             {showAllScales && (
-                <div className="space-y-3">
+                <div className="space-y-3 pt-4 border-t-2 border-slate-300 dark:border-slate-600">
                     <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-2">
                             <h3 className="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
