@@ -29,7 +29,7 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
     };
 
     return (
-        <div className="w-full h-[500px] md:h-[700px] relative rounded-2xl overflow-hidden bg-white -mt-2">
+        <div className="w-full aspect-square max-h-[500px] md:max-h-[700px] relative rounded-2xl overflow-hidden bg-white -mt-2">
             {is10Notes ? (
                 <Digipan10 {...commonProps} />
             ) : (

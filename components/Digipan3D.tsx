@@ -8,6 +8,7 @@ import { Scale } from '../data/handpanScales';
 import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle } from 'lucide-react';
 import { HANDPAN_CONFIG, getDomeHeight, TONEFIELD_CONFIG } from '../constants/handpanConfig';
 import html2canvas from 'html2canvas';
+import { useHandpanAudio } from '../hooks/useHandpanAudio';
 
 // Inner component to handle camera reset
 const CameraHandler = ({ isLocked, enableZoom = true, enablePan = true }: { isLocked: boolean; enableZoom?: boolean; enablePan?: boolean }) => {
@@ -114,6 +115,9 @@ export default function Digipan3D({
 
     // View Mode: 0 = Default (All), 1 = No Labels, 2 = No Mesh (Levels Only), 3 = Hidden (Interaction Only)
     const [viewMode, setViewMode] = useState<0 | 1 | 2 | 3>(initialViewMode);
+
+    // Audio Preloader Hook - Loads all sounds on mount for instant playback
+    const { isLoaded: isAudioLoaded, playNote } = useHandpanAudio();
 
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -231,7 +235,7 @@ export default function Digipan3D({
     };
 
     return (
-        <div ref={containerRef} className="w-full h-full relative" style={{ background: '#FFFFFF' }}> {/* White Background */}
+        <div ref={containerRef} className="w-full h-full relative" style={{ background: '#FFFFFF', touchAction: 'pan-y' }}> {/* White Background, Allow vertical scroll */}
             {/* Controls Container */}
             <div className="controls-container absolute top-4 right-4 z-50 flex flex-col gap-2 items-center">
                 {/* 1-3. Admin Controls (Camera, Capture, ViewMode) - Toggle via showControls */}
@@ -361,6 +365,7 @@ export default function Digipan3D({
                                 onClick={onNoteClick}
                                 viewMode={viewMode}
                                 demoActive={demoNoteId === note.id}
+                                playNote={playNote}
                             />
                         ))}
                     </group>
@@ -659,7 +664,8 @@ const ToneFieldMesh = ({
     centerY = 500,
     onClick,
     viewMode = 0, // 0: All, 1: No Labels, 2: No Mesh inside, 3: Interaction Only
-    demoActive = false
+    demoActive = false,
+    playNote
 }: {
     note: NoteData;
     centerX?: number;
@@ -667,6 +673,7 @@ const ToneFieldMesh = ({
     onClick?: (id: number) => void;
     viewMode?: 0 | 1 | 2 | 3;
     demoActive?: boolean;
+    playNote?: (noteName: string, volume?: number) => void;
 }) => {
     const [hovered, setHovered] = useState(false);
     const [pulsing, setPulsing] = useState(false);
@@ -722,49 +729,50 @@ const ToneFieldMesh = ({
     // Trigger Demo Effect
     React.useEffect(() => {
         if (demoActive) {
-            // Play Sound
-            const filename = note.label.replace('#', '%23');
-            const audio = new Audio(`/sounds/${filename}.mp3`);
-            audio.volume = 0.6;
-            audio.play().catch(() => { /* Ignore */ });
+            // Play Sound via preloaded Howler (instant playback)
+            if (playNote) {
+                playNote(note.label);
+            }
 
             // Trigger Visual Pulse
             triggerPulse();
         }
-    }, [demoActive, note.label]);
+    }, [demoActive, note.label, playNote]);
 
     // Animation State logic
     const effectMeshRef = useRef<THREE.Mesh>(null);
-    const effectMaterialRef = useRef<THREE.MeshStandardMaterial>(null);
+    const effectMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
     const animState = useRef({ active: false, time: 0 });
 
     // Sound Breathing Configuration
     const SUSTAIN_DURATION = 2.5; // Longer duration to match handpan sustain (2.5 seconds)
-    const MAX_EMISSIVE_INTENSITY = 1.2; // Peak glow intensity
 
     // Frame Loop for Sound Breathing Animation
     useFrame((_state: any, delta: number) => {
-        if (!animState.current.active || !effectMaterialRef.current) {
+        if (!animState.current.active || !effectMeshRef.current || !effectMaterialRef.current) {
             return;
         }
 
         animState.current.time += delta;
         const progress = Math.min(animState.current.time / SUSTAIN_DURATION, 1);
 
-        // Ease-in-out curve for natural breathing effect
-        // Fast rise (like a breath in), slow decay (like exhaling)
-        const easeInOut = progress < 0.3
-            ? Math.pow(progress / 0.3, 2) * 0.3 // Fast rise in first 30%
-            : 0.3 + (1 - 0.3) * (1 - Math.pow((progress - 0.3) / 0.7, 1.5)); // Slow decay in remaining 70%
+        // Smooth breathing curve: gentle rise, gentle decay
+        // Use sine wave for natural breathing pattern
+        const breathCurve = Math.sin(progress * Math.PI); // 0 → 1 → 0 (bell curve)
+        const opacity = 0.3 * breathCurve; // Max opacity: 0.3 (subtle)
 
-        // Animate emissive intensity (glow effect)
-        // Start at 0 → peak at MAX_EMISSIVE_INTENSITY → back to 0
-        const currentIntensity = MAX_EMISSIVE_INTENSITY * Math.sin(easeInOut * Math.PI);
-        effectMaterialRef.current.emissiveIntensity = currentIntensity;
+        effectMaterialRef.current.opacity = opacity;
+
+        // Very subtle scale pulse (barely noticeable)
+        const scaleMultiplier = 1 + 0.03 * breathCurve;
+        effectMeshRef.current.scale.set(
+            finalRadiusX * 1.15 * scaleMultiplier,
+            finalRadiusY * 1.15 * scaleMultiplier,
+            1
+        );
 
         if (progress >= 1) {
             animState.current.active = false;
-            effectMaterialRef.current.emissiveIntensity = 0; // Ensure it's off
             setPulsing(false);
         }
     });
@@ -777,13 +785,13 @@ const ToneFieldMesh = ({
     // }, []);
 
     const triggerPulse = () => {
-        // Start Sound Breathing animation
+        // Start animation
         animState.current = { active: true, time: 0 };
         setPulsing(true);
 
-        // Initialize emissive intensity
+        // Initialize at 0 (animation will fade in)
         if (effectMaterialRef.current) {
-            effectMaterialRef.current.emissiveIntensity = 0;
+            effectMaterialRef.current.opacity = 0;
         }
     };
 
@@ -791,11 +799,10 @@ const ToneFieldMesh = ({
         e.stopPropagation();
         onClick?.(note.id);
 
-        // Play Sound
-        const filename = note.label.replace('#', '%23');
-        const audio = new Audio(`/sounds/${filename}.mp3`);
-        audio.volume = 0.6;
-        audio.play().catch(() => { /* Ignore audio errors */ });
+        // Play Sound via preloaded Howler (instant playback, no network delay)
+        if (playNote) {
+            playNote(note.label);
+        }
 
         // Trigger Sound Breathing effect
         triggerPulse();
@@ -829,26 +836,44 @@ const ToneFieldMesh = ({
                     />
                 </mesh>
 
-                {/* 1-b. Visual Mesh (Wireframe) - Now with Sound Breathing Effect */}
+                {/* 1-b. Visual Mesh (Wireframe) - No events, controlled by ViewMode */}
                 <mesh
-                    ref={effectMeshRef}
                     rotation={[Math.PI / 2, 0, 0]}
                     scale={[finalRadiusX, 0.05, finalRadiusY]}
-                    // Visible in 0 (All) and 1 (No Labels). Hidden in 2 (Labels Only) and 3 (Interaction Only)
                     visible={viewMode === 0 || viewMode === 1}
                 >
                     <sphereGeometry args={[1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
                     <meshStandardMaterial
-                        ref={effectMaterialRef}
-                        color={hovered ? "#60A5FA" : "#FFFFFF"} // Blue Hover, White Idle
-                        emissive="#D4A574" // Warm copper/gold color for breathing effect
-                        emissiveIntensity={0} // Will be animated by useFrame (0 → 0.8 → 0)
+                        color={hovered ? "#60A5FA" : "#FFFFFF"}
+                        emissive={hovered ? "#1E40AF" : "#000000"}
+                        emissiveIntensity={hovered ? 0.5 : 0}
                         roughness={0.9}
                         metalness={0.0}
                         wireframe={true}
                         toneMapped={false}
                         transparent={true}
                         opacity={1}
+                    />
+                </mesh>
+
+                {/* 1-c. Sound Breathing Effect - Subtle Golden Sphere */}
+                <mesh
+                    ref={effectMeshRef}
+                    position={[0, 0, 0.5]} // Slightly above tonefield
+                    scale={[finalRadiusX * 1.15, finalRadiusY * 1.15, 1]} // 15% larger than tonefield
+                    visible={pulsing}
+                    renderOrder={999}
+                >
+                    <sphereGeometry args={[1, 32, 16]} />
+                    <meshBasicMaterial
+                        ref={effectMaterialRef}
+                        color="#D4A574"
+                        transparent={true}
+                        opacity={0.3}
+                        toneMapped={false}
+                        depthWrite={false}
+                        depthTest={false}
+                        side={2}
                     />
                 </mesh>
 
