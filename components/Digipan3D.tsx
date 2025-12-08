@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useMemo, Suspense } from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
+import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Text, OrbitControls, Center, Line, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { Scale } from '../data/handpanScales';
@@ -10,7 +10,7 @@ import { HANDPAN_CONFIG, getDomeHeight, TONEFIELD_CONFIG } from '../constants/ha
 import html2canvas from 'html2canvas';
 
 // Inner component to handle camera reset
-const CameraHandler = ({ isLocked }: { isLocked: boolean }) => {
+const CameraHandler = ({ isLocked, enableZoom = true, enablePan = true }: { isLocked: boolean; enableZoom?: boolean; enablePan?: boolean }) => {
     const { camera, gl } = useThree();
     const controlsRef = useRef<any>(null);
 
@@ -32,8 +32,8 @@ const CameraHandler = ({ isLocked }: { isLocked: boolean }) => {
             ref={controlsRef}
             args={[camera, gl.domElement]}
             enableRotate={!isLocked} // Disable rotation
-            enableZoom={true}
-            enablePan={true}
+            enableZoom={enableZoom}
+            enablePan={enablePan}
             minZoom={5}
             maxZoom={50}
         />
@@ -55,6 +55,8 @@ interface Digipan3DProps {
     backgroundImage?: string | null;
     extraControls?: React.ReactNode;
     noteCountFilter?: number; // Optional filter for scale list
+    enableZoom?: boolean;
+    enablePan?: boolean;
 }
 
 export default function Digipan3D({
@@ -67,7 +69,14 @@ export default function Digipan3D({
     onScaleSelect,
     backgroundImage,
     extraControls,
-    noteCountFilter = 10 // Default to 10 notes
+    noteCountFilter = 10,
+    // Defaults for Dev Mode (Show All)
+    showControls = true,
+    showInfoPanel = true,
+    initialViewMode = 0,
+    enableZoom = true,
+    enablePan = true,
+    showLabelToggle = false
 }: Digipan3DProps) {
     const [isCameraLockedState, setIsCameraLocked] = useState(isCameraLocked);
     const [copySuccess, setCopySuccess] = useState(false);
@@ -77,8 +86,8 @@ export default function Digipan3D({
     const [isPlaying, setIsPlaying] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
-    // View Mode: 0 = Default (All), 1 = No Labels, 2 = No Mesh (Hidden)
-    const [viewMode, setViewMode] = useState<0 | 1 | 2>(0);
+    // View Mode: 0 = Default (All), 1 = No Labels, 2 = No Mesh (Levels Only), 3 = Hidden (Interaction Only)
+    const [viewMode, setViewMode] = useState<0 | 1 | 2 | 3>(initialViewMode);
 
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -189,39 +198,53 @@ export default function Digipan3D({
     };
 
     return (
-        <div ref={containerRef} className="w-full h-full relative" style={{ minHeight: '600px', background: '#FFFFFF' }}> {/* White Background */}
+        <div ref={containerRef} className="w-full h-full relative" style={{ background: '#FFFFFF' }}> {/* White Background */}
             {/* Controls Container */}
             <div className="controls-container absolute top-4 right-4 z-10 flex flex-col gap-2">
-                {/* 1. Camera Toggle */}
-                <button
-                    onClick={() => setIsCameraLocked(prev => !prev)}
-                    className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                    title={isCameraLockedState ? "Unlock View (Free Rotation)" : "Lock View (Top Down)"}
-                >
-                    {isCameraLockedState ? <Lock size={24} /> : <Unlock size={24} />}
-                </button>
+                {/* 1-3. Admin Controls (Camera, Capture, ViewMode) - Toggle via showControls */}
+                {showControls && (
+                    <>
+                        <button
+                            onClick={() => setIsCameraLocked(prev => !prev)}
+                            className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                            title={isCameraLockedState ? "Unlock View (Free Rotation)" : "Lock View (Top Down)"}
+                        >
+                            {isCameraLockedState ? <Lock size={24} /> : <Unlock size={24} />}
+                        </button>
 
-                {/* 2. Screen Capture */}
-                <button
-                    onClick={handleCapture}
-                    className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                    title="Copy Screenshot to Clipboard"
-                >
-                    {copySuccess ? <Check size={24} className="text-green-600" /> : <Camera size={24} />}
-                </button>
+                        <button
+                            onClick={handleCapture}
+                            className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                            title="Copy Screenshot to Clipboard"
+                        >
+                            {copySuccess ? <Check size={24} className="text-green-600" /> : <Camera size={24} />}
+                        </button>
 
-                {/* 3. View Mode Toggle */}
-                <button
-                    onClick={() => setViewMode(prev => (prev + 1) % 3 as 0 | 1 | 2)}
-                    className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                    title="Toggle Visibility: All -> No Labels -> Hidden"
-                >
-                    {viewMode === 0 && <Eye size={24} />}
-                    {viewMode === 1 && <MinusCircle size={24} />}
-                    {viewMode === 2 && <EyeOff size={24} />}
-                </button>
+                        <button
+                            onClick={() => setViewMode(prev => (prev + 1) % 4 as 0 | 1 | 2 | 3)}
+                            className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                            title="Toggle Visibility: All -> No Labels -> Labels Only -> Hidden"
+                        >
+                            {viewMode === 0 && <Eye size={24} />}
+                            {viewMode === 1 && <MinusCircle size={24} />}
+                            {viewMode === 2 && <EyeOff size={24} />}
+                            {viewMode === 3 && <EyeOff size={24} className="opacity-50" />}
+                        </button>
+                    </>
+                )}
 
-                {/* 4. Demo Play */}
+                {/* 3. Label Toggle Button (Simple On/Off for Embedded View) */}
+                {showLabelToggle && (
+                    <button
+                        onClick={() => setViewMode(prev => prev === 3 ? 2 : 3)}
+                        className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                        title={viewMode === 3 ? "Show Labels" : "Hide Labels"}
+                    >
+                        {viewMode === 3 ? <EyeOff size={24} className="opacity-50" /> : <Eye size={24} />}
+                    </button>
+                )}
+
+                {/* 4. Demo Play - Always Visible unless explicitly hidden (could add showPlayButton prop, but default is desired) */}
                 <button
                     onClick={handleDemoPlay}
                     disabled={isPlaying}
@@ -231,8 +254,8 @@ export default function Digipan3D({
                     <PlayCircle size={24} className={isPlaying ? "animate-pulse text-green-600" : ""} />
                 </button>
 
-                {/* 5. Extra Controls (Injected) */}
-                {extraControls}
+                {/* 5. Extra Controls (Injected) - Toggle via showControls to hide external switchers */}
+                {showControls && extraControls}
             </div>
 
             <Canvas
@@ -250,7 +273,7 @@ export default function Digipan3D({
                 <pointLight position={[0, 0, 100]} intensity={0.2} color="#ffffff" />
                 <directionalLight position={[-50, 100, 100]} intensity={0.5} />
 
-                <CameraHandler isLocked={isCameraLockedState} />
+                <CameraHandler isLocked={isCameraLockedState} enableZoom={enableZoom} enablePan={enablePan} />
 
                 <Center>
                     <group>
@@ -313,7 +336,7 @@ export default function Digipan3D({
 
 
             {/* Scale Info Panel - Bottom Right Overlay */}
-            {scale && (
+            {scale && showInfoPanel && (
                 <div className={`absolute bottom-4 right-4 bg-slate-900/90 backdrop-blur-md border border-slate-700 rounded-xl text-white shadow-xl z-20 transition-all duration-300 ease-in-out pointer-events-auto ${isInfoExpanded ? 'p-5 max-w-sm' : 'p-3 max-w-[200px]'}`}>
                     <div className="flex justify-between items-start mb-1">
                         <div>
@@ -479,7 +502,8 @@ const TONEFIELD_RATIO_Y = 0.425;
 interface NoteData {
     id: number;
     label: string; // Note Name (e.g., C#3)
-    frequency: number; // Hz
+    frequency: number; // Hz - Used for Audio and Click Feedback
+    visualFrequency?: number; // Optional: Override for Visual Geometry calculation
     subLabel?: string; // Number (e.g., 1, 2, 8) - inferred from index if missing
     cx?: number;
     cy?: number;
@@ -504,11 +528,19 @@ interface Digipan3DProps {
     backgroundImage?: string | null;
     extraControls?: React.ReactNode;
     noteCountFilter?: number;
+    // External UI Configuration
+    showControls?: boolean;
+    showInfoPanel?: boolean;
+    initialViewMode?: 0 | 1 | 2 | 3;
+    enableZoom?: boolean;
+    enablePan?: boolean;
+    showLabelToggle?: boolean;
 }
 
 // -----------------------------------------------------------------------------
 // Helper Functions
-// -----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------- 
+
 
 // Convert SVG coordinates (Top-Left origin) to 3D coordinates (Center origin, cm units)
 // SVG ViewBox: -400 -1100 1800 3200
@@ -592,18 +624,18 @@ const ToneFieldMesh = ({
     centerX = 500,
     centerY = 500,
     onClick,
-    viewMode = 0, // 0: All, 1: No Labels, 2: No Mesh
+    viewMode = 0, // 0: All, 1: No Labels, 2: No Mesh inside, 3: Interaction Only
     demoActive = false
 }: {
     note: NoteData;
     centerX?: number;
     centerY?: number;
     onClick?: (id: number) => void;
-    viewMode?: 0 | 1 | 2;
+    viewMode?: 0 | 1 | 2 | 3;
     demoActive?: boolean;
 }) => {
     const [hovered, setHovered] = useState(false);
-    const [clicked, setClicked] = useState(false);
+    const [pulsing, setPulsing] = useState(false);
 
     // Calculate position
     const cx = note.cx ?? 500;
@@ -620,9 +652,9 @@ const ToneFieldMesh = ({
 
     // Dimensions Calculation
     // We use Frequency-based calculation to maintain consistency with the original tuning logic.
-    // D Kurd 10 template relies on these specific frequency responses + scaleX/Y modifiers.
-    const hz = note.frequency || 440;
-    const dimensions = getTonefieldDimensions(hz, isDing);
+    // If visualFrequency is provided (e.g. for Digipan 9 fixed layout), use it. Otherwise use the audio frequency.
+    const visualHz = note.visualFrequency ?? (note.frequency || 440);
+    const dimensions = getTonefieldDimensions(visualHz, isDing);
 
     const rx = dimensions.width;
     const ry = dimensions.height;
@@ -635,7 +667,7 @@ const ToneFieldMesh = ({
     // Else -> Small Dimple (0.40)
     // Note: When using fixed layout (note.scale), we don't strictly have frequency driving the size, 
     // but we can still use the note's frequency property to determine dimple ratio.
-    const dimpleRatio = (isDing || (note.frequency || 0) <= TONEFIELD_CONFIG.RATIOS.F_SHARP_3_HZ)
+    const dimpleRatio = (isDing || (visualHz) <= TONEFIELD_CONFIG.RATIOS.F_SHARP_3_HZ)
         ? TONEFIELD_CONFIG.RATIOS.DIMPLE_LARGE
         : TONEFIELD_CONFIG.RATIOS.DIMPLE_SMALL;
 
@@ -657,47 +689,89 @@ const ToneFieldMesh = ({
     React.useEffect(() => {
         if (demoActive) {
             // Play Sound
-            // Use %23 for '#' to prevent it being treated as a URL fragment, matching the actual filename on disk (e.g., D#4.mp3)
             const filename = note.label.replace('#', '%23');
             const audio = new Audio(`/sounds/${filename}.mp3`);
             audio.volume = 0.6;
             audio.play().catch(() => { /* Ignore */ });
 
-            // Trigger Visual Blink
-            setClicked(true);
-
-            // Auto turn off after duration
-            // Important: Use a shorter duration than the interval in parent component (300ms + 100ms gap)
-            const timer = setTimeout(() => {
-                setClicked(false);
-            }, 300);
-
-            return () => {
-                clearTimeout(timer);
-                setClicked(false); // Force cleanup if unmounting or re-triggering quickly
-            };
-        } else {
-            // Ensure it's off if demoActive becomes false externally
-            setClicked(false);
+            // Trigger Visual Pulse
+            triggerPulse();
         }
     }, [demoActive, note.label]);
+
+    // Animation State logic
+    const effectMeshRef = useRef<THREE.Mesh>(null);
+    const effectMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
+    const animState = useRef({ active: false, time: 0 });
+
+    // Pulse Configuration
+    const PULSE_DURATION = 1.0; // Slightly faster but smoother fade
+    const MAX_SCALE_MULT = 1.25; // Expand to 125%
+
+    // Frame Loop for Animation
+    useFrame((_state: any, delta: number) => {
+        // Only run if active (pulsing state handles visibility, but this handles animation values)
+        if (!animState.current.active || !effectMeshRef.current || !effectMaterialRef.current) return;
+
+        animState.current.time += delta;
+        const progress = Math.min(animState.current.time / PULSE_DURATION, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 2); // Quadratic ease out (softer)
+
+        // Animate Opacity (Fade out)
+        // Start at 0.5 opacity, fade to 0
+        effectMaterialRef.current.opacity = 0.5 * (1 - easeOut);
+
+        // Animate Scale (Expand)
+        // Start at 1.0, end at MAX_SCALE_MULT
+        const currentScale = 1 + (MAX_SCALE_MULT - 1) * easeOut;
+
+        // Applying scale to the Group/Mesh. 
+        // Note: resizing ring geometry via scale works.
+        effectMeshRef.current.scale.set(
+            finalRadiusX * currentScale,
+            finalRadiusY * currentScale,
+            1
+        );
+        // Wait! The previous Sphere was scaled [finalRadiusX, 0.05, finalRadiusY].
+        // The container is rotated [-Math.PI/2, 0, 0] (or similar).
+        // Let's check rotation below. 
+        // ToneFieldMesh Group > Group rotationZ > Mesh rotationX=90
+        // If mesh is RingGeometry (XY plane), and we rotate X 90, it lays flat on XZ.
+        // So Scale X acts on X (Width). Scale Y acts on Y (Height -> Depth in 3D).
+        // So scale should be [finalRadiusX * s, finalRadiusY * s, 1].
+
+        if (progress >= 1) {
+            animState.current.active = false;
+            // End of animation
+            setPulsing(false);
+        }
+    });
+
+    const triggerPulse = () => {
+        // Start animation
+        animState.current = { active: true, time: 0 };
+        setPulsing(true); // Make visible via React State
+
+        // Immediate reset of values for the new frame
+        if (effectMeshRef.current && effectMaterialRef.current) {
+            effectMaterialRef.current.opacity = 0.5;
+            effectMeshRef.current.scale.set(finalRadiusX, finalRadiusY, 1);
+            effectMeshRef.current.visible = true; // Safety measure
+        }
+    };
 
     const handlePointerDown = (e: any) => {
         e.stopPropagation();
         onClick?.(note.id);
 
         // Play Sound
-        // Use %23 for '#' to prevent it being treated as a URL fragment, matching the actual filename on disk (e.g., D#4.mp3)
         const filename = note.label.replace('#', '%23');
         const audio = new Audio(`/sounds/${filename}.mp3`);
         audio.volume = 0.6;
-        audio.play().catch(() => {
-            // Ignore if file not found
-        });
+        audio.play().catch(() => { /* Ignore */ });
 
-        // Trigger Blink
-        setClicked(true);
-        setTimeout(() => setClicked(false), 150); // 150ms green flash
+        // Trigger Pulse
+        triggerPulse();
     };
 
     return (
@@ -732,7 +806,8 @@ const ToneFieldMesh = ({
                 <mesh
                     rotation={[Math.PI / 2, 0, 0]}
                     scale={[finalRadiusX, 0.05, finalRadiusY]}
-                    visible={viewMode !== 2} // Completely hide from renderer in hidden mode
+                    // Visible in 0 (All) and 1 (No Labels). Hidden in 2 (Labels Only) and 3 (Interaction Only)
+                    visible={viewMode === 0 || viewMode === 1}
                 >
                     <sphereGeometry args={[1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
                     <meshStandardMaterial
@@ -748,18 +823,25 @@ const ToneFieldMesh = ({
                     />
                 </mesh>
 
-                {/* 2. Click Feedback Ring (Outer Outline Flash) */}
+                {/* 2. Sustain Effect Mesh (Lavender Ring) */}
                 <mesh
-                    position={[0, 0, 0.02]} // Slightly above
-                    scale={[finalRadiusX, finalRadiusY, 1]} // Scale in X-Y plane
-                    visible={clicked} // Only visible on click
+                    ref={effectMeshRef}
+                    position={[0, 0, 0.05]} // Lift slightly above surface to prevent z-fighting
+                    rotation={[Math.PI / 2, 0, 0]} // Lay flat
+                    // Initial Scale
+                    scale={[finalRadiusX, finalRadiusY, 1]}
+                    visible={pulsing} // Controlled by State
                 >
-                    <ringGeometry args={[0.92, 1.0, 64]} /> {/* Thin Ring */}
+                    {/* InnerRadius, OuterRadius, ThetaSegments */}
+                    <ringGeometry args={[0.85, 1.0, 64]} />
                     <meshBasicMaterial
-                        color="#00FF00"
+                        ref={effectMaterialRef}
+                        color="#C8A2C8" // Lilac/Lavender distinct from yellow
                         transparent={true}
-                        opacity={1}
+                        opacity={0}
                         toneMapped={false}
+                        depthWrite={false}
+                        side={THREE.DoubleSide}
                     />
                 </mesh>
 
@@ -768,7 +850,8 @@ const ToneFieldMesh = ({
                     position={[0, 0, 0.01]}
                     rotation={[isDing ? Math.PI / 2 : -Math.PI / 2, 0, 0]}
                     scale={[dimpleRadiusX, 0.05, dimpleRadiusY]}
-                    visible={viewMode !== 2} // Explicitly hide mesh in mode 2
+                    // Visible in 0 (All) and 1 (No Labels). Hidden in 2 (Labels Only) and 3 (Interaction Only)
+                    visible={viewMode === 0 || viewMode === 1}
                 >
                     <sphereGeometry args={[1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
                     <meshStandardMaterial
@@ -777,10 +860,9 @@ const ToneFieldMesh = ({
                         metalness={0.0}
                         wireframe={true}
                         transparent={true}
-                        opacity={viewMode === 2 ? 0 : 1} // Hide visual in mode 2
+                        opacity={1} // Was opacity conditional, now controlled by visible prop
                     />
                 </mesh>
-
             </group>
 
             {/* 3. Labels (Separated from rotation group to stay upright) */}
@@ -826,8 +908,9 @@ const ToneFieldMesh = ({
 
                     const bottomPos = calculateBottomOffset(finalRadiusX, finalRadiusY, rotationZ);
 
-                    // Show labels only if viewMode is 0 (All Visible)
-                    if (viewMode !== 0) return null;
+                    // Show labels only if viewMode is 0 (All Visible) or 2 (Labels Only/No Mesh)
+                    // Mode 1 = Mesh Only (No Labels) and Mode 3 = Interaction Only (No Labels, No Mesh)
+                    if (viewMode === 1 || viewMode === 3) return null;
 
                     return (
                         <>

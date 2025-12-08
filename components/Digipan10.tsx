@@ -11,6 +11,12 @@ interface Digipan10Props {
     onNoteClick?: (noteId: number) => void;
     isCameraLocked?: boolean;
     extraControls?: React.ReactNode;
+    showControls?: boolean;
+    showInfoPanel?: boolean;
+    initialViewMode?: 0 | 1 | 2 | 3;
+    enableZoom?: boolean;
+    enablePan?: boolean;
+    showLabelToggle?: boolean;
 }
 
 export default function Digipan10({
@@ -18,7 +24,13 @@ export default function Digipan10({
     onScaleSelect,
     onNoteClick,
     isCameraLocked = false,
-    extraControls
+    extraControls,
+    showControls = true,
+    showInfoPanel = true,
+    initialViewMode = 3,
+    enableZoom = true,
+    enablePan = true,
+    showLabelToggle = false
 }: Digipan10Props) {
 
     // 10-Note Specific Layout (Coordinates for 10notes.png)
@@ -186,6 +198,12 @@ export default function Digipan10({
             backgroundImage="/images/10notes.png" // Fixed Background for Digipan10
             extraControls={extraControls}
             noteCountFilter={10}
+            showControls={showControls}
+            showInfoPanel={showInfoPanel}
+            initialViewMode={initialViewMode}
+            enableZoom={enableZoom}
+            enablePan={enablePan}
+            showLabelToggle={showLabelToggle}
         />
     );
 }
