@@ -557,7 +557,8 @@ const ToneFieldMesh = ({
     React.useEffect(() => {
         if (demoActive) {
             // Play Sound
-            const filename = note.label.replace('#', 's');
+            // Use %23 for '#' to prevent it being treated as a URL fragment, matching the actual filename on disk (e.g., D#4.mp3)
+            const filename = note.label.replace('#', '%23');
             const audio = new Audio(`/sounds/${filename}.mp3`);
             audio.volume = 0.6;
             audio.play().catch(() => { /* Ignore */ });
@@ -586,8 +587,8 @@ const ToneFieldMesh = ({
         onClick?.(note.id);
 
         // Play Sound
-        // Replace '#' with 's' for filename safety (e.g., C#3 -> Cs3.mp3)
-        const filename = note.label.replace('#', 's');
+        // Use %23 for '#' to prevent it being treated as a URL fragment, matching the actual filename on disk (e.g., D#4.mp3)
+        const filename = note.label.replace('#', '%23');
         const audio = new Audio(`/sounds/${filename}.mp3`);
         audio.volume = 0.6;
         audio.play().catch(() => {

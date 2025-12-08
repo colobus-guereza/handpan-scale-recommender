@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { useTexture, OrbitControls, Center } from '@react-three/drei';
+import { useTexture, OrbitControls, Center, Text } from '@react-three/drei';
 import { useControls, folder } from 'leva';
 import * as THREE from 'three';
 import { HANDPAN_TEMPLATES } from '@/data/handpanTemplates';

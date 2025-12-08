@@ -522,9 +522,9 @@ export default function Home() {
                             {t.title}
                         </h1>
                         <div className="flex items-center justify-center gap-2 flex-wrap max-w-2xl mx-auto">
-                            {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae'].includes(lang.code))
+                            {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'hi'].includes(lang.code))
                                 .sort((a, b) => {
-                                    const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae'];
+                                    const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'hi'];
                                     return order.indexOf(a.code) - order.indexOf(b.code);
                                 })
                                 .map((lang) => (

@@ -599,6 +599,103 @@ const AE_TRANSLATIONS = {
     soldOut: 'نفدت الكمية'
 };
 
+const HI_TRANSLATIONS = {
+    title: 'मेरा सही हैंडपैन स्केल खोजें',
+    vibeSelector: {
+        jamming: 'शुरुआती',
+        meditation: 'योग·ध्यान·उपचार',
+        uplift: 'उज्ज्वल वातावरण',
+        exotic: 'गहरी जातीय'
+    },
+    scaleList: {
+        back: 'फिर से चुनें',
+        scaleClassification: 'वर्गीकरण',
+        allScales: 'सभी स्केल',
+        purchase: 'खरीदें',
+        preparing: 'जल्द ही',
+        share: 'साझा करें',
+        copied: 'कॉपी किया गया',
+        rankRecommendation: 'सिफारिश',
+        popularScale: 'लोकप्रिय',
+        ding: 'Ding',
+        top: 'शीर्ष',
+        bottom: 'नीचे',
+        prev: 'पिछला',
+        next: 'अगला',
+        mutant: 'उत्परिवर्ती',
+        normal: 'सामान्य',
+        viewing: 'देख रहे हैं',
+        select: 'चुनें',
+        filter: 'फ़िल्टर',
+        selectCategory: 'श्रेणी चुनें',
+        selectType: 'प्रकार चुनें',
+        noteCount: 'नोट की संख्या',
+        selectDing: 'Ding चुनें',
+        mood: 'मूड',
+        tone: 'टोन',
+        popularity: 'लोकप्रियता',
+        minor: 'माइनर',
+        major: 'मेजर',
+        pure: 'शुद्ध',
+        spicy: 'मसालेदार',
+        rare: 'दुर्लभ',
+        popular: 'लोकप्रिय',
+        digiPan: 'DigiPan',
+        implementationPending: 'कार्यान्वयन लंबित',
+        axes: {
+            minorMajor: {
+                label: 'मूड',
+                description: 'स्केल के समग्र भावनात्मक वातावरण का प्रतिनिधित्व करता है।',
+                minLabel: 'माइनर',
+                maxLabel: 'मेजर'
+            },
+            pureSpicy: {
+                label: 'टोन',
+                description: 'ध्वनि की सादगी बनाम जटिलता की डिग्री का प्रतिनिधित्व करता है।',
+                minLabel: 'शुद्ध',
+                maxLabel: 'मसालेदार'
+            },
+            rarePopular: {
+                label: 'लोकप्रियता',
+                description: 'बाजार में दुर्लभता और लोकप्रियता का प्रतिनिधित्व करता है।',
+                minLabel: 'दुर्लभ',
+                maxLabel: 'लोकप्रिय'
+            }
+        }
+    },
+    categories: {
+        beginner: 'शुरुआती',
+        healing: 'योग & ध्यान',
+        bright: 'मेजर स्केल',
+        ethnic: 'गहरी जातीय',
+        case: 'हार्ड केस',
+        softCase: 'सॉफ्ट केस',
+        stand: 'स्टैंड'
+    },
+    shipping: {
+        worldwide: 'विश्वव्यापी शिपिंग',
+        worldwideEn: 'Worldwide Shipping'
+    },
+    tags: {
+        minor: 'माइनर',
+        major: 'मेजर',
+        harmonic: 'हार्मोनिक',
+        melodic: 'मधुर',
+        pentatonic: 'पेंटाटोनिक',
+        exotic: 'विदेशी',
+        meditative: 'ध्यानपूर्ण',
+        bright: 'उज्ज्वल',
+        dark: 'अंधेरा',
+        mysterious: 'रहस्यमय',
+        happy: 'खुश',
+        sad: 'उदास',
+        uplifting: 'उत्थानकारी',
+        calm: 'शांत',
+        energetic: 'ऊर्जावान'
+    },
+    soldOut: 'बिक गया'
+};
+
 const ES_TRANSLATIONS = {
     title: 'Encontrar mi escala de handpan perfecta',
     vibeSelector: {
@@ -1093,7 +1190,7 @@ export const TRANSLATIONS: Record<Language, TranslationType> = {
     zh: ZH_TRANSLATIONS,
     tr: EN_TRANSLATIONS,
     ar: EN_TRANSLATIONS,
-    hi: EN_TRANSLATIONS,
+    hi: HI_TRANSLATIONS,
     pt: PT_TRANSLATIONS,
     es: ES_TRANSLATIONS,
     ru: RU_TRANSLATIONS,
