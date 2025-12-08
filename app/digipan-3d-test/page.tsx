@@ -104,9 +104,17 @@ export default function Digipan3DTestPage() {
         // D Kurd 9 has 1 Ding + 8 Top notes = 9 notes
         const currentScaleNotes = [scale.notes.ding, ...scale.notes.top];
 
+        // Template Notes for "D Kurd 9" (Fixed Visual Layout)
+        // These frequencies match the original geometry of the 9notes.png
+        const TEMPLATE_NOTES = ["D3", "A3", "Bb3", "C4", "D4", "E4", "F4", "G4", "A4"];
+
         const notes = initialNotes9.map((n, i) => {
             const noteName = currentScaleNotes[i] || ''; // e.g., "D3", "A3"
             const frequency = getNoteFrequency(noteName);
+
+            // Visual Frequency: Always use the Template's frequency for this index
+            const visualNoteName = TEMPLATE_NOTES[i] || "A4";
+            const visualFrequency = getNoteFrequency(visualNoteName);
 
             return {
                 ...n,
@@ -117,6 +125,7 @@ export default function Digipan3DTestPage() {
                 scaleY: c[`N${n.id}_scaleY`],
                 label: noteName, // Use the actual note name (e.g. "D3") as label
                 frequency: frequency || 440,
+                visualFrequency: visualFrequency || 440, // Lock geometry to template
                 labelOffset: 25
             };
         });
