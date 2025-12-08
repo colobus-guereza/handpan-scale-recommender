@@ -772,11 +772,11 @@ const ToneFieldMesh = ({
             breathCurve = Math.cos(decayProgress * Math.PI / 2); // Quarter cosine for smooth decay
         }
 
-        const opacity = 0.05 * breathCurve; // Max opacity: 0.05 (barely visible)
+        const opacity = 0.1 * breathCurve; // Max opacity: 0.1 (subtle)
         effectMaterialRef.current.opacity = opacity;
 
         // Scale pulse
-        const scaleMultiplier = 1 + 0.10 * breathCurve; // 10% scale variation
+        const scaleMultiplier = 1 + 0.15 * breathCurve; // 15% scale variation
         effectMeshRef.current.scale.set(
             finalRadiusX * 1.05 * scaleMultiplier, // 5% larger (was 15%)
             finalRadiusY * 1.05 * scaleMultiplier,
@@ -881,7 +881,7 @@ const ToneFieldMesh = ({
                         ref={effectMaterialRef}
                         color="#D4A574"
                         transparent={true}
-                        opacity={0.05}
+                        opacity={0.1}
                         toneMapped={false}
                         depthWrite={false}
                         depthTest={false}
