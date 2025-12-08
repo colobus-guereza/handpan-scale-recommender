@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useMemo, Suspense } from 'react';
+import React, { useState, useRef, useMemo, Suspense, useEffect } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Text, OrbitControls, Center, Line, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
@@ -15,16 +15,34 @@ const CameraHandler = ({ isLocked, enableZoom = true, enablePan = true }: { isLo
     const controlsRef = useRef<any>(null);
 
     React.useEffect(() => {
-        if (isLocked) {
-            // Reset to Top View
-            camera.position.set(0, 0, 100); // 1m away
-            camera.lookAt(0, 0, 0);
-            camera.zoom = 12; // Adjusted for 57cm object in ~600px+ viewport
-            camera.updateProjectionMatrix();
-            if (controlsRef.current) {
-                controlsRef.current.reset();
+        const updateZoom = () => {
+            if (isLocked) {
+                // Responsive Zoom Logic
+                // Mobile (< 768px): Zoom 6.5 (Fits width)
+                // Desktop: Zoom 12 (Original)
+                const isMobile = window.innerWidth < 768;
+                const targetZoom = isMobile ? 6.5 : 12;
+
+                // Reset to Top View
+                camera.position.set(0, 0, 100); // 1m away
+                camera.lookAt(0, 0, 0);
+                camera.zoom = targetZoom;
+                camera.updateProjectionMatrix();
+                if (controlsRef.current) {
+                    controlsRef.current.reset();
+                }
             }
-        }
+        };
+
+        // Initial update
+        updateZoom();
+
+        // Add Resize Listener
+        window.addEventListener('resize', updateZoom);
+
+        return () => {
+            window.removeEventListener('resize', updateZoom);
+        };
     }, [isLocked, camera]);
 
     return (
@@ -718,8 +736,8 @@ const ToneFieldMesh = ({
         const easeOut = 1 - Math.pow(1 - progress, 2); // Quadratic ease out (softer)
 
         // Animate Opacity (Fade out)
-        // Start at 0.5 opacity, fade to 0
-        effectMaterialRef.current.opacity = 0.5 * (1 - easeOut);
+        // Start at 0.8 (Stronger) -> 0
+        effectMaterialRef.current.opacity = 0.8 * (1 - easeOut);
 
         // Animate Scale (Expand)
         // Start at 1.0, end at MAX_SCALE_MULT
@@ -747,28 +765,37 @@ const ToneFieldMesh = ({
         }
     });
 
+    // Initialize opacity
+    useEffect(() => {
+        if (effectMaterialRef.current) {
+            effectMaterialRef.current.opacity = 0;
+        }
+    }, []);
+
     const triggerPulse = () => {
+        console.log("Trigger Pulse!", note.id);
         // Start animation
         animState.current = { active: true, time: 0 };
-        setPulsing(true); // Make visible via React State
+        setPulsing(true);
 
-        // Immediate reset of values for the new frame
+        // Immediate reset
         if (effectMeshRef.current && effectMaterialRef.current) {
-            effectMaterialRef.current.opacity = 0.5;
+            effectMaterialRef.current.opacity = 0.8;
             effectMeshRef.current.scale.set(finalRadiusX, finalRadiusY, 1);
-            effectMeshRef.current.visible = true; // Safety measure
+            effectMeshRef.current.visible = true;
         }
     };
 
     const handlePointerDown = (e: any) => {
         e.stopPropagation();
+        console.log("Tonefield Clicked:", note.id);
         onClick?.(note.id);
 
         // Play Sound
         const filename = note.label.replace('#', '%23');
         const audio = new Audio(`/sounds/${filename}.mp3`);
         audio.volume = 0.6;
-        audio.play().catch(() => { /* Ignore */ });
+        audio.play().catch((err) => { console.log("Audio Play Error:", err); });
 
         // Trigger Pulse
         triggerPulse();
@@ -826,21 +853,21 @@ const ToneFieldMesh = ({
                 {/* 2. Sustain Effect Mesh (Lavender Ring) */}
                 <mesh
                     ref={effectMeshRef}
-                    position={[0, 0, 0.05]} // Lift slightly above surface to prevent z-fighting
-                    rotation={[Math.PI / 2, 0, 0]} // Lay flat
-                    // Initial Scale
+                    position={[0, 0, 0.1]} // Lift higher to 0.1 ensure it's above everything
+                    rotation={[Math.PI / 2, 0, 0]}
                     scale={[finalRadiusX, finalRadiusY, 1]}
-                    visible={pulsing} // Controlled by State
+                    visible={pulsing}
                 >
-                    {/* InnerRadius, OuterRadius, ThetaSegments */}
-                    <ringGeometry args={[0.85, 1.0, 64]} />
+                    {/* Thicker Ring for better visibility */}
+                    <ringGeometry args={[0.8, 1.05, 64]} />
                     <meshBasicMaterial
                         ref={effectMaterialRef}
-                        color="#C8A2C8" // Lilac/Lavender distinct from yellow
+                        color="#C8A2C8" // Lilac
                         transparent={true}
-                        opacity={0}
+                        // opacity={0}  <-- REMOVED to prevent R3F overwrite
                         toneMapped={false}
                         depthWrite={false}
+                        depthTest={false} // FORCE DRAW ON TOP
                         side={THREE.DoubleSide}
                     />
                 </mesh>
