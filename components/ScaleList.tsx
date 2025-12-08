@@ -69,7 +69,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
     const [selectedPitches, setSelectedPitches] = useState<Set<string>>(new Set());
     const [showAllScales, setShowAllScales] = useState(true);
     const [showClassificationCriteria, setShowClassificationCriteria] = useState(true);
-    const [showMiniDigiPan, setShowMiniDigiPan] = useState(false);
+    const [showMiniDigiPan, setShowMiniDigiPan] = useState(true);
     const [miniDigiPanKey, setMiniDigiPanKey] = useState(0);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedNoteCount, setSelectedNoteCount] = useState<number | null>(null);
@@ -755,10 +755,18 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                 </div>
             </div>
 
+            {/* MiniDigiPan 컴포넌트 - 버튼 영역 위 */}
+            {showMiniDigiPan && (
+                <div className="-mt-4 mb-2">
+                    <MiniDigiPan key={miniDigiPanKey} scale={currentScale} language={language} />
+                </div>
+            )}
+
             {/* 스케일 분류기준 및 전체 스케일 토글 버튼 */}
             <div className="flex items-center justify-end gap-2 mb-2 overflow-x-auto">
                 {/* 우측: 기능 버튼 */}
                 <div className="flex gap-2 flex-shrink-0">
+                    {/* 디지팬 버튼 - 현재 비활성화 (코드 보존) */}
                     <button
                         onClick={() => {
                             if (!showMiniDigiPan) {
@@ -767,7 +775,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                             }
                             setShowMiniDigiPan(!showMiniDigiPan);
                         }}
-                        className="flex items-center space-x-1 px-2 py-2 text-xs font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm whitespace-nowrap"
+                        className="hidden flex items-center space-x-1 px-2 py-2 text-xs font-medium text-slate-600/50 dark:text-slate-300/50 bg-glass-light border border-glass-border rounded-lg hover:bg-indigo-50 dark:hover:bg-white/5 hover:border-indigo-300 dark:hover:border-cosmic/10 hover:text-indigo-700 dark:hover:text-cosmic transition-all backdrop-blur-sm shadow-sm whitespace-nowrap"
                     >
                         <span className="whitespace-nowrap">{t.scaleList.digiPan}</span>
                         {showMiniDigiPan ? (
@@ -1090,9 +1098,6 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                     />
                 </div>
             )}
-
-            {/* MiniDigiPan 컴포넌트 - 전체 스케일 목록 아래 */}
-            {showMiniDigiPan && <MiniDigiPan key={miniDigiPanKey} scale={currentScale} language={language} />}
         </div>
     );
 }
