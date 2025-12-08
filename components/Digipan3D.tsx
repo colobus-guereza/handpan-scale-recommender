@@ -31,7 +31,7 @@ const CameraHandler = ({ isLocked }: { isLocked: boolean }) => {
         <OrbitControls
             ref={controlsRef}
             args={[camera, gl.domElement]}
-            enableRotate={!isLocked} // Disable rotation if locked
+            enableRotate={!isLocked} // Disable rotation
             enableZoom={true}
             enablePan={true}
             minZoom={5}
@@ -44,6 +44,19 @@ const CameraHandler = ({ isLocked }: { isLocked: boolean }) => {
 
 import { SCALES } from '@/data/handpanScales';
 
+interface Digipan3DProps {
+    notes: NoteData[];
+    scale?: Scale | null;
+    centerX?: number;
+    centerY?: number;
+    onNoteClick?: (noteId: number) => void;
+    isCameraLocked?: boolean;
+    onScaleSelect?: (scale: Scale) => void;
+    backgroundImage?: string | null;
+    extraControls?: React.ReactNode;
+    noteCountFilter?: number; // Optional filter for scale list
+}
+
 export default function Digipan3D({
     notes,
     onNoteClick,
@@ -51,7 +64,10 @@ export default function Digipan3D({
     scale,
     centerX = 500,
     centerY = 500,
-    onScaleSelect
+    onScaleSelect,
+    backgroundImage,
+    extraControls,
+    noteCountFilter = 10 // Default to 10 notes
 }: Digipan3DProps) {
     const [isCameraLockedState, setIsCameraLocked] = useState(isCameraLocked);
     const [copySuccess, setCopySuccess] = useState(false);
@@ -59,19 +75,22 @@ export default function Digipan3D({
     const [isSelectorOpen, setIsSelectorOpen] = useState(false);
     const [demoNoteId, setDemoNoteId] = useState<number | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     // View Mode: 0 = Default (All), 1 = No Labels, 2 = No Mesh (Hidden)
     const [viewMode, setViewMode] = useState<0 | 1 | 2>(0);
 
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Filter for 10-note scales
-    const tenNoteScales = useMemo(() => {
+    // Dynamic Scale Filter based on noteCountFilter and Search Query
+    const filteredScales = useMemo(() => {
         return SCALES.filter(s => {
             const totalNotes = 1 + s.notes.top.length + s.notes.bottom.length;
-            return totalNotes === 10;
+            const matchesCount = totalNotes === noteCountFilter;
+            const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase());
+            return matchesCount && matchesSearch;
         }).sort((a, b) => a.name.localeCompare(b.name));
-    }, []);
+    }, [noteCountFilter, searchQuery]);
 
     const handleCapture = async () => {
         if (!containerRef.current) return;
@@ -211,6 +230,9 @@ export default function Digipan3D({
                 >
                     <PlayCircle size={24} className={isPlaying ? "animate-pulse text-green-600" : ""} />
                 </button>
+
+                {/* 5. Extra Controls (Injected) */}
+                {extraControls}
             </div>
 
             <Canvas
@@ -234,8 +256,44 @@ export default function Digipan3D({
                     <group>
                         {/* Body */}
                         <Suspense fallback={null}>
-                            <HandpanImage />
+                            <HandpanImage backgroundImage={backgroundImage} />
                         </Suspense>
+
+                        {/* Static Labels (Decoupled from N0) */}
+                        {viewMode === 0 && (
+                            <>
+                                <Text
+                                    position={[25, 0, 0.5]} // 25cm right
+                                    fontSize={1.2}
+                                    color="#FFFFFF" // Gold
+                                    anchorX="center"
+                                    anchorY="middle"
+                                    fontWeight="bold"
+                                >
+                                    RS
+                                </Text>
+                                <Text
+                                    position={[-25, 0, 0.5]} // 25cm left
+                                    fontSize={1.2}
+                                    color="#FFFFFF" // Gold
+                                    anchorX="center"
+                                    anchorY="middle"
+                                    fontWeight="bold"
+                                >
+                                    LS
+                                </Text>
+                                <Text
+                                    position={[0, -15, 0.5]} // 15cm down
+                                    fontSize={1.2}
+                                    color="#FFFFFF" // Gold
+                                    anchorX="center"
+                                    anchorY="middle"
+                                    fontWeight="bold"
+                                >
+                                    H
+                                </Text>
+                            </>
+                        )}
 
                         {/* Tone Fields */}
                         {notes.map((note) => (
@@ -287,33 +345,56 @@ export default function Digipan3D({
                                 <button
                                     onClick={() => setIsSelectorOpen(!isSelectorOpen)}
                                     className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded border border-slate-600 transition-colors"
+                                    title="Change Scale"
                                 >
                                     Change
                                 </button>
                             </div>
 
-                            {/* Scale Selector Dropdown */}
                             {isSelectorOpen && (
-                                <div className="mb-4 max-h-40 overflow-y-auto custom-scrollbar bg-slate-800/50 rounded border border-slate-700/50">
-                                    {tenNoteScales.length === 0 ? (
-                                        <div className="p-2 text-xs text-slate-500 text-center">No 10-note scales found</div>
-                                    ) : (
-                                        tenNoteScales.map(s => (
-                                            <div
-                                                key={s.id}
-                                                className={`px-3 py-2 text-sm cursor-pointer hover:bg-slate-700/50 flex justify-between items-center ${s.id === scale.id ? 'bg-blue-900/30 text-blue-200' : 'text-slate-300'}`}
-                                                onClick={() => {
-                                                    if (onScaleSelect) {
-                                                        onScaleSelect(s);
-                                                        setIsSelectorOpen(false);
-                                                    }
-                                                }}
-                                            >
-                                                <span>{s.name}</span>
-                                                {s.id === scale.id && <span className="text-xs text-blue-400">Current</span>}
+                                <div className="mb-4 flex flex-col max-h-60 bg-slate-800/50 rounded border border-slate-700/50">
+                                    {/* Search Input */}
+                                    <div className="p-2 border-b border-slate-700/50">
+                                        <input
+                                            type="text"
+                                            placeholder="Search scales..."
+                                            className="w-full p-2 text-sm bg-slate-700/50 rounded border border-slate-600/50 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            onClick={(e) => e.stopPropagation()}
+                                        />
+                                    </div>
+
+                                    {/* Scrollable Scale List */}
+                                    <div className="flex-1 overflow-y-auto pr-2 space-y-1 custom-scrollbar p-1 relative z-50">
+                                        {filteredScales.length === 0 ? (
+                                            <div className="p-4 text-center text-slate-400 text-xs">
+                                                No scales found.
                                             </div>
-                                        ))
-                                    )}
+                                        ) : (
+                                            filteredScales.map(s => (
+                                                <button
+                                                    key={s.id}
+                                                    type="button"
+                                                    className={`w-full px-3 py-2 text-sm rounded cursor-pointer hover:bg-slate-700/50 flex justify-between items-center transition-colors text-left ${scale?.id === s.id
+                                                        ? 'bg-blue-900/40 text-blue-200 border border-blue-500/30'
+                                                        : 'text-slate-300 border border-transparent'
+                                                        }`}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        console.log("Selected scale:", s.name);
+                                                        if (onScaleSelect) {
+                                                            onScaleSelect(s);
+                                                            setIsSelectorOpen(false);
+                                                        }
+                                                    }}
+                                                >
+                                                    <span>{s.name}</span>
+                                                    {scale?.id === s.id && <span className="text-[10px] bg-blue-500/20 px-1.5 py-0.5 rounded text-blue-300">Active</span>}
+                                                </button>
+                                            ))
+                                        )}
+                                    </div>
                                 </div>
                             )}
 
@@ -420,6 +501,9 @@ interface Digipan3DProps {
     onNoteClick?: (noteId: number) => void;
     isCameraLocked?: boolean;
     onScaleSelect?: (scale: Scale) => void;
+    backgroundImage?: string | null;
+    extraControls?: React.ReactNode;
+    noteCountFilter?: number;
 }
 
 // -----------------------------------------------------------------------------
@@ -471,14 +555,30 @@ const getTonefieldDimensions = (hz: number, isDing: boolean) => {
 // -----------------------------------------------------------------------------
 
 // Image Component
-const HandpanImage = () => {
-    // Load the texture
-    const texture = useTexture('/images/10notes.png');
+const HandpanImage = ({ backgroundImage }: { backgroundImage?: string | null }) => {
+    // Load the texture if provided
+    // Use useTexture inside a conditional or ensure path is valid?
+    // useTexture throws if path is invalid. Ideally we only render if path exists.
 
-    // Size: Based on Outer Radius (57cm diameter)
-    // The image is a square top view, so we map it to a plane.
+    // CAUTION: hooks are unconditional. We must use a valid path for useTexture even if we don't use it, 
+    // or we must structure this so HandpanImage is only mounted when backgroundImage is valid.
+    // However, hooks order matters. 
+    // Easier approach: If no image, render nothing inside, but we need to handle useTexture.
+    // useTexture can take an array or string.
+
+    // Better: Pass the texture url to HandpanImage. HandpanImage calls useTexture.
+    // If we want it optional, we might need a separate component or handle it carefully.
+    // For now, let's assume we pass a valid string or a default transparent placeholder if null?
+    // Actually, simply: Conditional rendering of the component in the parent.
+
+    if (!backgroundImage) return null;
+
+    return <HandpanImageRenderer url={backgroundImage} />;
+};
+
+const HandpanImageRenderer = ({ url }: { url: string }) => {
+    const texture = useTexture(url);
     const size = HANDPAN_CONFIG.OUTER_RADIUS * 2;
-
     return (
         <mesh position={[0, 0, -0.5]} rotation={[0, 0, 0]}>
             <planeGeometry args={[size, size]} />
@@ -777,42 +877,7 @@ const ToneFieldMesh = ({
             </group>
 
             {/* Markers - White */}
-            {
-                note.id === 0 && viewMode === 0 && (
-                    <>
-                        <Text
-                            position={[25, 0, 0.5]} // 25cm right
-                            fontSize={1.2}
-                            color="#FFFFFF" // Gold
-                            anchorX="center"
-                            anchorY="middle"
-                            fontWeight="bold"
-                        >
-                            RS
-                        </Text>
-                        <Text
-                            position={[-25, 0, 0.5]} // 25cm left
-                            fontSize={1.2}
-                            color="#FFFFFF" // Gold
-                            anchorX="center"
-                            anchorY="middle"
-                            fontWeight="bold"
-                        >
-                            LS
-                        </Text>
-                        <Text
-                            position={[0, -15, 0.5]} // 15cm down
-                            fontSize={1.2}
-                            color="#FFFFFF" // Gold
-                            anchorX="center"
-                            anchorY="middle"
-                            fontWeight="bold"
-                        >
-                            H
-                        </Text>
-                    </>
-                )
-            }
+
 
         </group >
     );
