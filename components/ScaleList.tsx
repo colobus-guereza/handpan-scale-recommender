@@ -759,8 +759,6 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
             {showMiniDigiPan && (
                 <div className="-mt-4 mb-4">
                     <MiniDigiPan key={miniDigiPanKey} scale={currentScale} language={language} />
-                    {/* 시각적 경계선 */}
-                    <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700"></div>
                 </div>
             )}
 
