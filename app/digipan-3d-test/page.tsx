@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Digipan10 from '../../components/Digipan10';
 import Digipan9 from '../../components/Digipan9';
+import ScaleInfoPanel from '../../components/ScaleInfoPanel';
 import { SCALES } from '@/data/handpanScales';
 import { Grid, Monitor, Smartphone } from 'lucide-react';
 import { useControls, button } from 'leva';
@@ -133,7 +134,7 @@ export default function Digipan3DTestPage() {
 
     // -------------------------------------------------------------------------
 
-    // Toggle Button Control
+    // Toggle Button Control (Only mode switcher - passed inside Digipan)
     const toggleControl = (
         <div className="flex flex-col gap-2">
             {/* Mode Switcher */}
@@ -156,18 +157,6 @@ export default function Digipan3DTestPage() {
                     <span className="text-[10px] leading-none font-bold">10</span>
                 )}
             </button>
-
-            {/* Mobile Preview Toggle */}
-            <button
-                onClick={() => setIsMobilePreview(!isMobilePreview)}
-                className={`w-12 h-12 flex items-center justify-center backdrop-blur-sm rounded-full shadow-lg transition-all duration-200 border text-slate-700 font-bold text-xs ${isMobilePreview
-                    ? 'bg-blue-100 border-blue-400 text-blue-700'
-                    : 'bg-white/80 border-slate-200 hover:bg-white'
-                    }`}
-                title="Toggle Mobile View"
-            >
-                <Smartphone size={20} />
-            </button>
         </div>
     );
 
@@ -176,10 +165,47 @@ export default function Digipan3DTestPage() {
             {/* Left: 3D Workspace */}
             <div className={`flex-1 relative flex items-center justify-center overflow-hidden transition-all duration-500 ${isMobilePreview ? 'bg-gray-200' : 'bg-white'}`}>
 
+                {/* Mobile Preview Toggle - Outside the frame */}
+                <button
+                    onClick={() => setIsMobilePreview(!isMobilePreview)}
+                    className={`absolute top-4 right-4 z-[60] w-12 h-12 flex items-center justify-center backdrop-blur-sm rounded-full shadow-lg transition-all duration-200 border text-slate-700 font-bold text-xs ${isMobilePreview
+                        ? 'bg-blue-100 border-blue-400 text-blue-700'
+                        : 'bg-white/80 border-slate-200 hover:bg-white'
+                        }`}
+                    title={isMobilePreview ? "Exit Mobile Preview" : "Mobile Preview"}
+                >
+                    <Smartphone size={20} />
+                </button>
+
+                {/* Exit Mobile Preview Button - Outside the frame */}
+                {isMobilePreview && (
+                    <>
+                        <button
+                            onClick={() => setIsMobilePreview(false)}
+                            className="absolute top-4 left-1/2 -translate-x-1/2 z-[60] px-4 py-2 flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white rounded-full shadow-lg transition-all duration-200 border border-slate-600"
+                            title="데스크톱 모드로 돌아가기"
+                        >
+                            <Monitor size={16} />
+                            <span className="text-xs font-medium">데스크톱 모드</span>
+                        </button>
+
+                        {/* Floating Scale Panel - Outside the frame on the left/right */}
+                        {scale && (
+                            <ScaleInfoPanel
+                                scale={scale}
+                                onScaleSelect={handleScaleSelect}
+                                noteCountFilter={mode === '9' ? 9 : 10} // Adjust based on mode
+                                className="absolute right-[calc(50%+200px)] bottom-20 z-[60]"
+                                defaultExpanded={true}
+                            />
+                        )}
+                    </>
+                )}
+
                 {/* 3D Container Wrapper - Changes size based on mode */}
                 <div
                     className={`relative transition-all duration-500 ease-in-out shadow-2xl overflow-hidden bg-white ${isMobilePreview
-                        ? 'w-[375px] h-[700px] rounded-[40px] border-[12px] border-slate-800 ring-2 ring-slate-300/50'
+                        ? 'w-[375px] h-[700px] rounded-[40px] border-[12px] border-slate-800 ring-2 ring-slate-300/50 mt-16'
                         : 'w-full h-full'
                         }`}
                 >
@@ -190,25 +216,28 @@ export default function Digipan3DTestPage() {
                         </div>
                     )}
 
-                    {mode === '9' ? (
+                    {/* Render BOTH components using Opacity/Z-Index to ensure WebGL context initializes on load */}
+                    <div className={`absolute top-0 left-0 w-full h-full transition-opacity duration-300 ${mode === '9' ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'}`}>
                         <Digipan9
                             notes={activeNotes9}
-                            scale={scale}
+                            scale={scale} // Even if scale is 10-note, Digipan9 will just use the first 9 notes safely
                             isCameraLocked={true}
                             onScaleSelect={handleScaleSelect}
-                            extraControls={toggleControl} // Controls are passed here but rendered via portal/absolute in Digipan3D
+                            extraControls={toggleControl}
                             forceCompactView={isMobilePreview}
                         />
-                    ) : (
+                    </div>
+
+                    <div className={`absolute top-0 left-0 w-full h-full transition-opacity duration-300 ${mode === '10' ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'}`}>
                         <Digipan10
-                            scale={scale}
-                            isCameraLocked={true} // Fixed: Enable Camera Handler specific logic (Responsive Zoom)
+                            scale={scale} // Even if scale is 9-note, Digipan10 will safely render 9 notes
+                            isCameraLocked={true}
                             onScaleSelect={handleScaleSelect}
                             onNoteClick={(id) => console.log(`Clicked note ${id}`)}
                             extraControls={toggleControl}
                             forceCompactView={isMobilePreview}
                         />
-                    )}
+                    </div>
                 </div>
             </div>
 
