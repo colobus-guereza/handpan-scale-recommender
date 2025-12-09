@@ -234,66 +234,88 @@ export default function Digipan3D({
         setIsPlaying(false);
     };
 
+    // Determine if we're in mobile mode (either preview or embedded)
+    const isMobileButtonLayout = forceCompactView || showLabelToggle;
+
     return (
         <div ref={containerRef} className="w-full h-full relative" style={{ background: '#FFFFFF', touchAction: 'pan-y' }}> {/* White Background, Allow vertical scroll */}
-            {/* Controls Container */}
-            <div className="controls-container absolute top-4 right-4 z-50 flex flex-col gap-2 items-center">
-                {/* 1-3. Admin Controls (Camera, Capture, ViewMode) - Toggle via showControls */}
-                {showControls && (
-                    <>
-                        <button
-                            onClick={() => setIsCameraLocked(prev => !prev)}
-                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                            title={isCameraLockedState ? "Unlock View (Free Rotation)" : "Lock View (Top Down)"}
-                        >
-                            {isCameraLockedState ? <Lock size={20} /> : <Unlock size={20} />}
-                        </button>
+            {/* Top-Right Controls Container - Hidden in Mobile Layout */}
+            {!isMobileButtonLayout && (
+                <div className="controls-container absolute top-4 right-4 z-50 flex flex-col gap-2 items-center">
+                    {/* 1-3. Admin Controls (Camera, Capture, ViewMode) - Toggle via showControls */}
+                    {showControls && (
+                        <>
+                            <button
+                                onClick={() => setIsCameraLocked(prev => !prev)}
+                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                                title={isCameraLockedState ? "Unlock View (Free Rotation)" : "Lock View (Top Down)"}
+                            >
+                                {isCameraLockedState ? <Lock size={20} /> : <Unlock size={20} />}
+                            </button>
 
-                        <button
-                            onClick={handleCapture}
-                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                            title="Copy Screenshot to Clipboard"
-                        >
-                            {copySuccess ? <Check size={20} className="text-green-600" /> : <Camera size={20} />}
-                        </button>
+                            <button
+                                onClick={handleCapture}
+                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                                title="Copy Screenshot to Clipboard"
+                            >
+                                {copySuccess ? <Check size={20} className="text-green-600" /> : <Camera size={20} />}
+                            </button>
 
-                        <button
-                            onClick={() => setViewMode(prev => (prev + 1) % 4 as 0 | 1 | 2 | 3)}
-                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                            title="Toggle Visibility: All -> No Labels -> Labels Only -> Hidden"
-                        >
-                            {viewMode === 0 && <Eye size={20} />}
-                            {viewMode === 1 && <MinusCircle size={20} />}
-                            {viewMode === 2 && <EyeOff size={20} />}
-                            {viewMode === 3 && <EyeOff size={20} className="opacity-50" />}
-                        </button>
-                    </>
-                )}
+                            <button
+                                onClick={() => setViewMode(prev => (prev + 1) % 4 as 0 | 1 | 2 | 3)}
+                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                                title="Toggle Visibility: All -> No Labels -> Labels Only -> Hidden"
+                            >
+                                {viewMode === 0 && <Eye size={20} />}
+                                {viewMode === 1 && <MinusCircle size={20} />}
+                                {viewMode === 2 && <EyeOff size={20} />}
+                                {viewMode === 3 && <EyeOff size={20} className="opacity-50" />}
+                            </button>
+                        </>
+                    )}
 
-                {/* 3. Label Toggle Button (Simple On/Off for Embedded View) */}
-                {showLabelToggle && (
+                    {/* 4. Demo Play - Always Visible in Desktop Mode */}
                     <button
-                        onClick={() => setViewMode(prev => prev === 3 ? 2 : 3)}
-                        className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                        title={viewMode === 3 ? "Show Labels" : "Hide Labels"}
+                        onClick={handleDemoPlay}
+                        disabled={isPlaying}
+                        className={`w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 ${isPlaying ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        title="Play Scale Demo"
                     >
-                        {viewMode === 3 ? <EyeOff size={20} className="opacity-50" /> : <Eye size={20} />}
+                        <PlayCircle size={24} className={isPlaying ? "animate-pulse text-green-600" : ""} />
                     </button>
-                )}
 
-                {/* 4. Demo Play - Always Visible unless explicitly hidden (could add showPlayButton prop, but default is desired) */}
-                <button
-                    onClick={handleDemoPlay}
-                    disabled={isPlaying}
-                    className={`w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 ${isPlaying ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    title="Play Scale Demo"
-                >
-                    <PlayCircle size={24} className={isPlaying ? "animate-pulse text-green-600" : ""} />
-                </button>
+                    {/* 5. Extra Controls (Injected) - Toggle via showControls to hide external switchers */}
+                    {showControls && extraControls}
+                </div>
+            )}
 
-                {/* 5. Extra Controls (Injected) - Toggle via showControls to hide external switchers */}
-                {showControls && extraControls}
-            </div>
+            {/* Mobile Layout: Bottom Corner Buttons */}
+            {isMobileButtonLayout && (
+                <>
+                    {/* Bottom-Left: Label Toggle (정보 표시/숨김) */}
+                    <div className="absolute bottom-4 left-4 z-50">
+                        <button
+                            onClick={() => setViewMode(prev => prev === 3 ? 2 : 3)}
+                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                            title={viewMode === 3 ? "Show Labels" : "Hide Labels"}
+                        >
+                            {viewMode === 3 ? <EyeOff size={20} className="opacity-50" /> : <Eye size={20} />}
+                        </button>
+                    </div>
+
+                    {/* Bottom-Right: Auto-Play (자동재생) */}
+                    <div className="absolute bottom-4 right-4 z-50">
+                        <button
+                            onClick={handleDemoPlay}
+                            disabled={isPlaying}
+                            className={`w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 ${isPlaying ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            title="Play Scale Demo"
+                        >
+                            <PlayCircle size={24} className={isPlaying ? "animate-pulse text-green-600" : ""} />
+                        </button>
+                    </div>
+                </>
+            )}
 
             <Canvas
                 orthographic
@@ -373,9 +395,10 @@ export default function Digipan3D({
             </Canvas>
 
 
-            {/* Scale Info Panel - Bottom Right Overlay */}
+
+            {/* Scale Info Panel - Bottom Right Overlay (moves up in mobile layout to avoid buttons) */}
             {scale && showInfoPanel && (
-                <div className={`absolute bottom-4 right-4 bg-slate-900/90 backdrop-blur-md border border-slate-700 rounded-xl text-white shadow-xl z-20 transition-all duration-300 ease-in-out pointer-events-auto ${isInfoExpanded ? 'p-5 max-w-sm' : 'p-3 max-w-[200px]'}`}>
+                <div className={`absolute ${isMobileButtonLayout ? 'bottom-20' : 'bottom-4'} right-4 bg-slate-900/90 backdrop-blur-md border border-slate-700 rounded-xl text-white shadow-xl z-20 transition-all duration-300 ease-in-out pointer-events-auto ${isInfoExpanded ? 'p-5 max-w-sm' : 'p-3 max-w-[200px]'}`}>
                     <div className="flex justify-between items-start mb-1">
                         <div>
                             <h3 className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Current Scale</h3>

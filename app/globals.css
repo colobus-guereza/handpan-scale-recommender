@@ -148,3 +148,33 @@ html.light .glass-card:hover {
 .sound-ripple {
   animation: sound-ripple-expand 0.8s ease-out forwards;
 }
+
+/* 모바일에서 호버 효과 비활성화 - PC에서만 호버 효과 적용 */
+@media (hover: hover) {
+  /* ScaleGrid 버튼 호버 효과 - PC에서만 적용 */
+  .scale-grid-button:hover {
+    border-color: rgb(129, 140, 248) !important; /* indigo-300 */
+    background-color: rgb(238, 242, 255) !important; /* indigo-50 */
+  }
+  
+  .dark .scale-grid-button:hover {
+    border-color: rgba(72, 255, 0, 0.1) !important; /* cosmic/10 */
+    background-color: rgba(255, 255, 255, 0.05) !important; /* white/5 */
+  }
+  
+  .scale-grid-button:hover .scale-grid-text {
+    color: rgb(67, 56, 202) !important; /* indigo-700 */
+  }
+  
+  .dark .scale-grid-button:hover .scale-grid-text {
+    color: rgb(72, 255, 0) !important; /* cosmic */
+  }
+  
+  .scale-grid-button:hover .scale-grid-label {
+    color: rgb(79, 70, 229) !important; /* indigo-600 */
+  }
+  
+  .dark .scale-grid-button:hover .scale-grid-label {
+    color: rgba(72, 255, 0, 0.7) !important; /* cosmic/70 */
+  }
+}

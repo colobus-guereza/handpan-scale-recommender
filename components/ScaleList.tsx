@@ -1214,16 +1214,16 @@ const ScaleGrid = React.memo(({
                 <button
                     key={scale.name}
                     onClick={() => onScaleSelect(scale)}
-                    className={`flex items-center justify-between p-4 border rounded-xl transition-all group text-left ${currentScaleName === scale.name
+                    className={`scale-grid-button flex items-center justify-between p-4 border rounded-xl transition-all group text-left ${currentScaleName === scale.name
                         ? 'bg-indigo-50 dark:bg-cosmic/10 border-indigo-200 dark:border-cosmic/30 ring-1 ring-indigo-200 dark:ring-cosmic/20'
-                        : 'bg-glass-light border-glass-border hover:border-indigo-300 dark:hover:border-cosmic/10 hover:bg-indigo-50 dark:hover:bg-white/5'
+                        : 'bg-glass-light border-glass-border'
                         }`}
                 >
-                    <span className={`font-semibold transition-colors ${currentScaleName === scale.name ? 'text-indigo-700 dark:text-cosmic' : 'text-slate-700 dark:text-slate-300 group-hover:text-indigo-700 dark:group-hover:text-cosmic'
+                    <span className={`scale-grid-text font-semibold transition-colors ${currentScaleName === scale.name ? 'text-indigo-700 dark:text-cosmic' : 'text-slate-700 dark:text-slate-300'
                         }`}>
                         {getLocalizedScale(scale, language).name}
                     </span>
-                    <span className={`text-xs ${currentScaleName === scale.name ? 'text-indigo-600 dark:text-cosmic/70' : 'text-slate-500 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-cosmic/70'
+                    <span className={`scale-grid-label text-xs ${currentScaleName === scale.name ? 'text-indigo-600 dark:text-cosmic/70' : 'text-slate-500 dark:text-slate-500'
                         }`}>
                         {currentScaleName === scale.name ? t.scaleList.viewing : t.scaleList.select}
                     </span>
