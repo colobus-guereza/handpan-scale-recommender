@@ -1703,9 +1703,9 @@ export const SCALES: Scale[] = [
         tagsEn: ["Wellness", "Yoga", "Meditation", "Healing", "Celtic Minor", "Malte Marten"],
         description: "웰니스 3대장(Pygmy, Aegean, Amara)의 일원이자 ‘Celtic Minor’로도 불리는 C# Amara 9는, Malte Marten의 명연주로 유명세를 타며 전 세계 요가, 명상, 힐링 커뮤니티에서 독보적인 위치를 차지하고 있습니다. 많은 사랑을 받는 E Amara 18의 입문용 버전이기도 한 이 스케일은, 특유의 신비롭고 스피리추얼한 울림 덕분에 동서양을 막론하고 내면의 평화를 찾는 이들에게 깊은 사랑을 받고 있습니다.",
         descriptionEn: "C# Amara 9, also known as 'Celtic Minor' and a member of the Wellness Trio (Pygmy, Aegean, Amara), holds a unique position in the global yoga, meditation, and healing communities, made famous by Malte Marten's renowned performances. Also an introductory version of the beloved E Amara 18, this scale is deeply loved by those seeking inner peace in both East and West, thanks to its unique mysterious and spiritual resonance.",
-        videoUrl: "",
-        productUrl: "",
-        ownUrl: "",
+        videoUrl: "https://youtu.be/W9QAtyTDrTM?si=Cy7YMKhp-MY2Bv7r",
+        productUrl: "https://smartstore.naver.com/sndhandpan/products/12800221630",
+        ownUrl: "https://handpan.co.kr/shop/?idx=103",
         i18n: {
             fr: {
                 name: "C# Amara 9",

@@ -17,7 +17,9 @@ interface Digipan10Props {
     enableZoom?: boolean;
     enablePan?: boolean;
     showLabelToggle?: boolean;
+
     forceCompactView?: boolean;
+    notes?: any[]; // Allow passing notes for editor mode override
 }
 
 export default function Digipan10({
@@ -32,42 +34,58 @@ export default function Digipan10({
     enableZoom = true,
     enablePan = true,
     showLabelToggle = false,
-    forceCompactView = false
+
+    forceCompactView = false,
+    notes: externalNotes
 }: Digipan10Props) {
 
     // 10-Note Specific Layout (Coordinates for 10notes.png)
     const notes = useMemo(() => {
+        // If external notes are provided (Editor Mode), use them directly
+        // We still need to map the labels and frequencies if they aren't fully populated, 
+        // but for the editor on page.tsx, we will pass fully formed objects.
+        if (scale && forceCompactView === false && React.isValidElement(extraControls) && Object.keys(extraControls).length === 0) {
+            // Heuristic to detect if we are in a "normal" usage or "editor" usage might be tricky without explicit prop.
+            // Actually, `activeNotes10` in page.tsx effectively replaces this entire hook's logic if passed.
+        }
+
+        // HOWEVER, the standard way in Digipan9 was:
+        // const notesToRender = externalNotes || internalNotes;
+
+        // So we should just compute internalNotes and then choose.
+        // Let's copy that pattern.
+
         if (!scale) return [];
 
         // Hardcoded Coordinates for '10notes.png'
         const userProvidedData = [
             {
                 "id": 0,
-                "cx": 505,
+                "cx": 508,
                 "cy": 515,
-                "scale": 202,
+                "scale": 0,
                 "rotate": 89,
                 "position": "center",
                 "angle": 0,
-                "scaleX": 1.3599999999999999,
+                "scaleX": 1.36,
                 "scaleY": 1.16
             },
             {
                 "id": 1,
-                "cx": 643,
-                "cy": 808,
-                "scale": 129,
+                "cx": 639,
+                "cy": 811,
+                "scale": 0,
                 "rotate": 66,
                 "position": "top",
                 "angle": 0,
                 "scaleX": 1,
-                "scaleY": 0.8899999999999999
+                "scaleY": 0.89
             },
             {
                 "id": 2,
-                "cx": 361,
-                "cy": 812,
-                "scale": 285,
+                "cx": 356,
+                "cy": 811,
+                "scale": 0,
                 "rotate": 103,
                 "position": "top",
                 "angle": 0,
@@ -76,9 +94,9 @@ export default function Digipan10({
             },
             {
                 "id": 3,
-                "cx": 825,
-                "cy": 620,
-                "scale": 253,
+                "cx": 822,
+                "cy": 626,
+                "scale": 0,
                 "rotate": 194,
                 "position": "top",
                 "angle": 0,
@@ -87,9 +105,9 @@ export default function Digipan10({
             },
             {
                 "id": 4,
-                "cx": 179,
-                "cy": 620,
-                "scale": 249,
+                "cx": 178,
+                "cy": 609,
+                "scale": 0,
                 "rotate": 163,
                 "position": "top",
                 "angle": 0,
@@ -98,20 +116,20 @@ export default function Digipan10({
             },
             {
                 "id": 5,
-                "cx": 820,
-                "cy": 377,
-                "scale": 237,
+                "cx": 832,
+                "cy": 391,
+                "scale": 0,
                 "rotate": 158,
                 "position": "top",
                 "angle": 0,
-                "scaleX": 0.9400000000000001,
+                "scaleX": 0.94,
                 "scaleY": 0.82
             },
             {
                 "id": 6,
-                "cx": 178,
-                "cy": 379,
-                "scale": 238,
+                "cx": 184,
+                "cy": 367,
+                "scale": 0,
                 "rotate": 28,
                 "position": "top",
                 "angle": 0,
@@ -120,20 +138,20 @@ export default function Digipan10({
             },
             {
                 "id": 7,
-                "cx": 684,
-                "cy": 210,
-                "scale": 201,
+                "cx": 703,
+                "cy": 215,
+                "scale": 0,
                 "rotate": 142,
                 "position": "top",
                 "angle": 0,
                 "scaleX": 1.02,
-                "scaleY": 0.7999999999999999
+                "scaleY": 0.8
             },
             {
                 "id": 8,
-                "cx": 301,
-                "cy": 210,
-                "scale": 265,
+                "cx": 314,
+                "cy": 200,
+                "scale": 0,
                 "rotate": 57,
                 "position": "top",
                 "angle": 0,
@@ -142,14 +160,14 @@ export default function Digipan10({
             },
             {
                 "id": 9,
-                "cx": 492,
-                "cy": 149,
-                "scale": 220,
-                "rotate": 182,
+                "cx": 508,
+                "cy": 143,
+                "scale": 0,
+                "rotate": 138,
                 "position": "top",
                 "angle": 0,
-                "scaleX": 1.23,
-                "scaleY": 0.67
+                "scaleX": 1.07,
+                "scaleY": 0.79
             }
         ];
 
@@ -190,9 +208,12 @@ export default function Digipan10({
         return [dingNote, ...topNotes] as any[];
     }, [scale]);
 
+    // Use external notes if provided (Editor Mode), otherwise use internal default (Standard Component)
+    const notesToRender = externalNotes || notes;
+
     return (
         <Digipan3D
-            notes={notes}
+            notes={notesToRender}
             scale={scale}
             isCameraLocked={isCameraLocked}
             onNoteClick={onNoteClick}

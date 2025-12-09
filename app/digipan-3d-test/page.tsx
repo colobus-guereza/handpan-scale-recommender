@@ -141,6 +141,203 @@ export default function Digipan3DTestPage() {
 
 
     // -------------------------------------------------------------------------
+    // Digipan 10 Logic (Editor Mode)
+    // -------------------------------------------------------------------------
+
+    // Initial Data for Digipan 10
+    const initialNotes10 = useMemo(() => {
+        return [
+            {
+                "id": 0,
+                "cx": 508,
+                "cy": 515,
+                "scale": 0,
+                "rotate": 89,
+                "position": "center",
+                "angle": 0,
+                "scaleX": 1.36,
+                "scaleY": 1.16
+            },
+            {
+                "id": 1,
+                "cx": 639,
+                "cy": 811,
+                "scale": 0,
+                "rotate": 66,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1,
+                "scaleY": 0.89
+            },
+            {
+                "id": 2,
+                "cx": 356,
+                "cy": 811,
+                "scale": 0,
+                "rotate": 103,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.98,
+                "scaleY": 0.9
+            },
+            {
+                "id": 3,
+                "cx": 822,
+                "cy": 626,
+                "scale": 0,
+                "rotate": 194,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1,
+                "scaleY": 0.93
+            },
+            {
+                "id": 4,
+                "cx": 178,
+                "cy": 609,
+                "scale": 0,
+                "rotate": 163,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.99,
+                "scaleY": 0.91
+            },
+            {
+                "id": 5,
+                "cx": 832,
+                "cy": 391,
+                "scale": 0,
+                "rotate": 158,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.94,
+                "scaleY": 0.82
+            },
+            {
+                "id": 6,
+                "cx": 184,
+                "cy": 367,
+                "scale": 0,
+                "rotate": 28,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.97,
+                "scaleY": 0.85
+            },
+            {
+                "id": 7,
+                "cx": 703,
+                "cy": 215,
+                "scale": 0,
+                "rotate": 142,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.02,
+                "scaleY": 0.8
+            },
+            {
+                "id": 8,
+                "cx": 314,
+                "cy": 200,
+                "scale": 0,
+                "rotate": 57,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.98,
+                "scaleY": 0.83
+            },
+            {
+                "id": 9,
+                "cx": 508,
+                "cy": 143,
+                "scale": 0,
+                "rotate": 138,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.07,
+                "scaleY": 0.79
+            }
+        ];
+    }, []);
+
+    const activeNotes10Ref = useRef<any[]>([]);
+    const [copySuccess10, setCopySuccess10] = useState(false);
+
+    const dynamicSchema10 = useMemo(() => {
+        if (mode !== '10') return {};
+
+        const s: any = {};
+        initialNotes10.forEach((note) => {
+            s[`N${note.id}_cx`] = { value: note.cx, min: 0, max: 1000, step: 1, label: `N${note.id} X` };
+            s[`N${note.id}_cy`] = { value: note.cy, min: 0, max: 1000, step: 1, label: `N${note.id} Y` };
+            s[`N${note.id}_rotate`] = { value: note.rotate, min: 0, max: 360, step: 1, label: `N${note.id} Rot` };
+            s[`N${note.id}_scaleX`] = { value: note.scaleX || 1, min: 0.1, max: 3, step: 0.01, label: `N${note.id} SX` };
+            s[`N${note.id}_scaleY`] = { value: note.scaleY || 1, min: 0.1, max: 3, step: 0.01, label: `N${note.id} SY` };
+        });
+
+        const buttonLabel = copySuccess10 ? '✅ Copied!' : 'Export JSON (10)';
+
+        s[buttonLabel] = button(() => {
+            const currentNotes = activeNotes10Ref.current;
+            const exportData = currentNotes.map((n) => ({
+                id: n.id,
+                cx: Math.round(n.cx),
+                cy: Math.round(n.cy),
+                scale: 0, // Using scale 0 to indicate manual scaleX/Y
+                rotate: Math.round(n.rotate),
+                position: n.position || 'top',
+                angle: n.angle || 0,
+                scaleX: n.scaleX,
+                scaleY: n.scaleY
+            }));
+
+            const jsonString = JSON.stringify(exportData, null, 4);
+            navigator.clipboard.writeText(jsonString).then(() => {
+                setCopySuccess10(true);
+                setTimeout(() => setCopySuccess10(false), 2000);
+            });
+        });
+
+        return s;
+    }, [initialNotes10, mode, copySuccess10]);
+
+    const controls10 = useControls('Digipan 10 Tuning', dynamicSchema10, [initialNotes10, mode]);
+
+    const activeNotes10 = useMemo(() => {
+        if (mode !== '10' || !scale) return [];
+        const c = controls10 as any;
+        const currentScaleNotes = [scale.notes.ding, ...scale.notes.top];
+        const TEMPLATE_NOTES = ["D3", "A3", "Bb3", "C4", "D4", "E4", "F4", "G4", "A4", "C5"];
+
+        // Only map up to what we can support (10 notes max)
+        const notes = initialNotes10.map((n, i) => {
+            const noteName = currentScaleNotes[i] || '';
+            const frequency = getNoteFrequency(noteName);
+            const visualNoteName = TEMPLATE_NOTES[i] || "C5";
+            const visualFrequency = getNoteFrequency(visualNoteName);
+
+            return {
+                ...n,
+                cx: c[`N${n.id}_cx`],
+                cy: c[`N${n.id}_cy`],
+                rotate: c[`N${n.id}_rotate`],
+                scaleX: c[`N${n.id}_scaleX`],
+                scaleY: c[`N${n.id}_scaleY`],
+                label: noteName,
+                frequency: frequency || 440,
+                visualFrequency: visualFrequency || 440,
+                labelOffset: 25
+            };
+        });
+        return notes;
+    }, [initialNotes10, controls10, mode, scale]);
+
+    useEffect(() => {
+        activeNotes10Ref.current = activeNotes10;
+    }, [activeNotes10]);
+
+
+    // -------------------------------------------------------------------------
 
     // Toggle Button Control (Only mode switcher - passed inside Digipan)
     const toggleControl = (
@@ -245,6 +442,7 @@ export default function Digipan3DTestPage() {
                             onNoteClick={(id) => console.log(`Clicked note ${id}`)}
                             extraControls={toggleControl}
                             forceCompactView={isMobilePreview}
+                            notes={activeNotes10}
                         />
                     </div>
                 </div>

@@ -517,11 +517,36 @@ export default function Home() {
                         <ThemeToggle />
                     </div>
 
+                    {/* Language Selector - Top Right on Web, Center on Mobile */}
+                    <div className="absolute top-4 right-4 z-50 hidden md:grid md:grid-cols-4 gap-2">
+                        {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae'].includes(lang.code))
+                            .sort((a, b) => {
+                                const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae'];
+                                return order.indexOf(a.code) - order.indexOf(b.code);
+                            })
+                            .map((lang) => (
+                            <button
+                                key={lang.code}
+                                onClick={() => handleLanguageChange(lang.code)}
+                                className="transition-all duration-200 hover:scale-110 focus:outline-none"
+                                aria-label={lang.name}
+                            >
+                                <div className={`w-6 h-6 md:w-7 md:h-7 rounded-full transition-all duration-200 ${language === lang.code
+                                    ? 'ring-2 ring-indigo-600 dark:ring-cosmic shadow-lg dark:shadow-[0_0_10px_rgba(72,255,0,0.3)] scale-105'
+                                    : 'opacity-50 hover:opacity-70 ring-1 ring-gray-300 dark:ring-gray-600'
+                                    }`}>
+                                    <CircleFlag countryCode={lang.flag} height="24" />
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+
                     <header className="text-center space-y-2 pt-2">
                         <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-slate-400 drop-shadow-sm">
                             {t.title}
                         </h1>
-                        <div className="flex items-center justify-center gap-2 flex-wrap max-w-2xl mx-auto">
+                        {/* Language Selector - Center on Mobile */}
+                        <div className="grid grid-cols-4 gap-2 justify-items-center max-w-2xl mx-auto md:hidden">
                             {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae'].includes(lang.code))
                                 .sort((a, b) => {
                                     const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae'];

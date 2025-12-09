@@ -84,6 +84,11 @@ interface Digipan3DProps {
     noteCountFilter?: number; // Optional filter for scale list
     enableZoom?: boolean;
     enablePan?: boolean;
+    showControls?: boolean;
+    showInfoPanel?: boolean;
+    initialViewMode?: 0 | 1 | 2 | 3;
+    showLabelToggle?: boolean;
+    forceCompactView?: boolean;
 }
 
 export default function Digipan3D({
@@ -109,7 +114,7 @@ export default function Digipan3D({
     const pathname = usePathname();
     // ScaleInfoPanel은 /digipan-3d-test 경로에서만 표시
     const isDevPage = pathname === '/digipan-3d-test';
-    
+
     const [isCameraLockedState, setIsCameraLocked] = useState(isCameraLocked);
     const [copySuccess, setCopySuccess] = useState(false);
     // Default expanded unless forced compact
@@ -612,14 +617,14 @@ const ToneFieldMesh = ({
     const CLICK_EFFECT_CONFIG = {
         // Main Sphere Effect (Breathing Glow)
         sphere: {
-            color: '#38BDF8',        // Sky blue - represents metal tension
+            color: '#FF0000',        // Red - TEST
             baseSize: 1.05,          // 5% larger than tonefield
             maxOpacity: 0.1,         // 10% opacity at peak
             scalePulse: 0.15,        // 15% scale variation
         },
         // Impact Ring Effect (Initial strike)
         ring: {
-            color: '#FFFFFF',        // White flash
+            color: '#FFFFFF',        // White - TEST
             maxOpacity: 0.4,         // 40% opacity at start
             duration: 0.3,           // Quick 0.3s flash
             expandScale: 1.5,        // Expands to 150%
@@ -686,6 +691,7 @@ const ToneFieldMesh = ({
                 const ringScale = 1 + (CLICK_EFFECT_CONFIG.ring.expandScale - 1) * ringProgress;
 
                 impactMaterialRef.current.opacity = ringOpacity;
+
                 impactRingRef.current.scale.set(
                     finalRadiusX * ringScale,
                     finalRadiusY * ringScale,
@@ -822,7 +828,7 @@ const ToneFieldMesh = ({
                         ref={effectMaterialRef}
                         color={CLICK_EFFECT_CONFIG.sphere.color}
                         transparent={true}
-                        opacity={CLICK_EFFECT_CONFIG.sphere.maxOpacity}
+                        opacity={0}
                         toneMapped={false}
                         depthWrite={false}
                         depthTest={false}
