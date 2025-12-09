@@ -13,55 +13,68 @@ import { usePathname } from 'next/navigation';
 import ScaleInfoPanel from './ScaleInfoPanel';
 
 // Inner component to handle camera reset
-const CameraHandler = ({ isLocked, enableZoom = true, enablePan = true }: { isLocked: boolean; enableZoom?: boolean; enablePan?: boolean }) => {
+const CameraHandler = ({
+    isLocked,
+    enableZoom = true,
+    enablePan = true,
+    sceneSize = { width: 60, height: 60 }
+}: {
+    isLocked: boolean;
+    enableZoom?: boolean;
+    enablePan?: boolean;
+    sceneSize?: { width: number; height: number; };
+}) => {
     const { camera, gl, size } = useThree();
     const controlsRef = useRef<any>(null);
-
-    // Check if we are in a constrained container (Mobile-ish)
-    // We use 768px as the breakpoint for "Mobile View" logic
-    const isMobileView = size.width < 768;
 
     React.useEffect(() => {
         const updateZoom = () => {
             if (isLocked) {
-                // Responsive Zoom Logic based on Canvas Size
-                const objectSize = 57;
-                // Use a smaller dimension to ensure fit (Landscape vs Portrait)
-                const minDimension = Math.min(size.width, size.height);
+                // Smart Auto-Fit Logic
+                // Calculate zoom needed to fit width and height
+                // Orthographic Camera Zoom = (Screen Dimension / World Dimension) / 2? No.
+                // For R3F Orthographic Camera (default zoom=1 matches 1 unit = 1 pixel?), no.
+                // Standard R3F Orthographic: zoom is a multiplier.
+                // With basic setup, zoom=1 means top=height/2, bottom=-height/2?
+                // Actually Digipan3D uses: <Canvas orthographic camera={{ zoom: 12 ... }}>
+                // This suggests custom handling.
+                // Let's rely on ratio:
+                // Current '12' fits ~60 units into ~700px?
+                // If Screen Width 700 / 12 = 58 units.
+                // So Zoom ~ ScreenDimension / WorldDimension.
 
-                // Target 85% filling to ensure safety margin (avoid cropping)
-                const fitZoom = (minDimension * 0.95) / objectSize;
+                const zoomX = size.width / sceneSize.width;
+                const zoomY = size.height / sceneSize.height;
 
-                // Use the calculated fit zoom for mobile, or cap at 12 for desktop
-                const targetZoom = isMobileView ? fitZoom : 12;
+                // Use the smaller zoom to ensure BOTH dimensions fit (contain)
+                // Multiply by 0.9 for safety margin (padding)
+                const targetZoom = Math.min(zoomX, zoomY) * 0.9;
 
-                // Reset to Top View
-                camera.position.set(0, 0, 100); // 1m away
+                // Apply
+                camera.position.set(0, 0, 100);
                 camera.lookAt(0, 0, 0);
                 camera.zoom = targetZoom;
                 camera.updateProjectionMatrix();
 
                 if (controlsRef.current) {
-                    // Manually sync controls instead of reset() to preserve our new zoom
                     controlsRef.current.target.set(0, 0, 0);
                     controlsRef.current.update();
                 }
             }
         };
 
-        // Update on mount, lock change, or resize
+        // Update on params change or resize
         updateZoom();
-    }, [isLocked, camera, size.width, size.height, isMobileView]);
+    }, [isLocked, camera, size.width, size.height, sceneSize.width, sceneSize.height]);
 
     return (
         <OrbitControls
             ref={controlsRef}
             args={[camera, gl.domElement]}
-            enableRotate={!isLocked} // Disable rotation when locked
-            // Force disable zoom on mobile view to mimic production behavior
-            enableZoom={isMobileView ? false : enableZoom}
+            enableRotate={!isLocked}
+            enableZoom={enableZoom}
             enablePan={enablePan}
-            minZoom={5}
+            minZoom={2} // Allow zooming out more for large vertical stacks
             maxZoom={50}
         />
     );
@@ -89,6 +102,10 @@ interface Digipan3DProps {
     initialViewMode?: 0 | 1 | 2 | 3;
     showLabelToggle?: boolean;
     forceCompactView?: boolean;
+    backgroundContent?: React.ReactNode;
+    tonefieldOffset?: [number, number, number];
+    hideStaticLabels?: boolean;
+    sceneSize?: { width: number; height: number }; // New Prop for Auto-Fit
 }
 
 export default function Digipan3D({
@@ -109,7 +126,11 @@ export default function Digipan3D({
     enableZoom = true,
     enablePan = true,
     showLabelToggle = false,
-    forceCompactView = false
+    forceCompactView = false,
+    backgroundContent,
+    tonefieldOffset = [0, 0, 0],
+    hideStaticLabels = false,
+    sceneSize = { width: 60, height: 60 } // Default for Single Pan
 }: Digipan3DProps) {
     const pathname = usePathname();
     // ScaleInfoPanel은 /digipan-3d-test 경로에서만 표시
@@ -187,7 +208,10 @@ export default function Digipan3D({
         if (isPlaying) return;
         setIsPlaying(true);
 
-        const sortedNotes = [...notes].sort((a, b) => a.id - b.id);
+        // Sort notes by frequency for musical correctness (Low -> High), keeping Ding (ID 0) first
+        const ding = notes.find(n => n.id === 0);
+        const others = notes.filter(n => n.id !== 0).sort((a, b) => a.frequency - b.frequency);
+        const sortedNotes = ding ? [ding, ...others] : others;
 
         // Helper to trigger a single note
         const playNote = async (id: number, duration: number) => {
@@ -343,17 +367,22 @@ export default function Digipan3D({
                 <pointLight position={[0, 0, 100]} intensity={0.2} color="#ffffff" />
                 <directionalLight position={[-50, 100, 100]} intensity={0.5} />
 
-                <CameraHandler isLocked={isCameraLockedState} enableZoom={enableZoom} enablePan={enablePan} />
+                <CameraHandler
+                    isLocked={isCameraLockedState}
+                    enableZoom={enableZoom}
+                    enablePan={enablePan}
+                    sceneSize={sceneSize}
+                />
 
                 <Center>
                     <group>
                         {/* Body */}
                         <Suspense fallback={null}>
-                            <HandpanImage backgroundImage={backgroundImage} />
+                            {backgroundContent ? backgroundContent : <HandpanImage backgroundImage={backgroundImage} />}
                         </Suspense>
 
                         <Text
-                            visible={viewMode === 0}
+                            visible={viewMode === 0 && !hideStaticLabels}
                             position={[25, 0, 0.5]} // 25cm right
                             fontSize={1.2}
                             color="#FFFFFF" // Gold
@@ -364,7 +393,7 @@ export default function Digipan3D({
                             RS
                         </Text>
                         <Text
-                            visible={viewMode === 0}
+                            visible={viewMode === 0 && !hideStaticLabels}
                             position={[-25, 0, 0.5]} // 25cm left
                             fontSize={1.2}
                             color="#FFFFFF" // Gold
@@ -375,7 +404,7 @@ export default function Digipan3D({
                             LS
                         </Text>
                         <Text
-                            visible={viewMode === 0}
+                            visible={viewMode === 0 && !hideStaticLabels}
                             position={[0, -15, 0.5]} // 15cm down
                             fontSize={1.2}
                             color="#FFFFFF" // Gold
@@ -397,6 +426,7 @@ export default function Digipan3D({
                                 viewMode={viewMode}
                                 demoActive={demoNoteId === note.id}
                                 playNote={playNote}
+                                offset={note.offset || tonefieldOffset} // Prefer note offset, fallback to global
                             />
                         ))}
                     </group>
@@ -443,6 +473,7 @@ interface NoteData {
     labelX?: number;
     labelY?: number;
     labelOffset?: number;
+    offset?: [number, number, number]; // Per-note offset
     // ... other props optional for now
 }
 
@@ -537,7 +568,8 @@ const ToneFieldMesh = ({
     onClick,
     viewMode = 0, // 0: All, 1: No Labels, 2: No Mesh inside, 3: Interaction Only
     demoActive = false,
-    playNote
+    playNote,
+    offset
 }: {
     note: NoteData;
     centerX?: number;
@@ -546,6 +578,7 @@ const ToneFieldMesh = ({
     viewMode?: 0 | 1 | 2 | 3;
     demoActive?: boolean;
     playNote?: (noteName: string, volume?: number) => void;
+    offset?: [number, number, number];
 }) => {
     const [hovered, setHovered] = useState(false);
     const [pulsing, setPulsing] = useState(false);
@@ -554,6 +587,12 @@ const ToneFieldMesh = ({
     const cx = note.cx ?? 500;
     const cy = note.cy ?? 500;
     const pos = svgTo3D(cx, cy, centerX, centerY);
+
+    // Apply Offset
+    const [offX, offY, offZ] = offset || [0, 0, 0];
+    const finalPosX = pos.x + offX;
+    const finalPosY = pos.y + offY;
+    const finalPosZ = 0 + offZ; // zPos logic moved here
 
     // Calculate size (Converted to cm)
 
@@ -596,7 +635,7 @@ const ToneFieldMesh = ({
     const finalRadiusY = radiusY * scaleYMult;
 
     // Z-position: Place on the 0,0 coordinate plane (Top of dome)
-    const zPos = 0;
+    const zPos = finalPosZ; // Use offset Z
 
     // Trigger Demo Effect
     React.useEffect(() => {
@@ -741,7 +780,7 @@ const ToneFieldMesh = ({
     };
 
     return (
-        <group position={[pos.x, pos.y, zPos]}>
+        <group position={[finalPosX, finalPosY, zPos]}>
             <group rotation={[0, 0, rotationZ]}>
                 {/* 1. Tone Field Body */}
                 {/* 1-a. Interaction Mesh (Invisible Hit Box) - Always handles events */}
@@ -923,33 +962,23 @@ const ToneFieldMesh = ({
                             </Text>
 
                             {/* Number Label (Visual Bottom / 6 o'clock) */}
-                            {note.id !== 0 && (
-                                <Text
-                                    visible={areLabelsVisible}
-                                    position={[bottomPos.x, bottomPos.y - 0.5, 0]} // Position at bottom point + reduced padding (was 1.5)
-                                    fontSize={1}
-                                    color="#FFFFFF"
-                                    anchorX="center"
-                                    anchorY="top" // Hang below the point
-                                    fontWeight="bold"
-                                >
-                                    {note.id}
-                                </Text>
-                            )}
-
-                            {note.id === 0 && (
-                                <Text
-                                    visible={areLabelsVisible}
-                                    position={[bottomPos.x, bottomPos.y - 0.5, 0]} // Reduced padding
-                                    fontSize={1}
-                                    color="#FFFFFF"
-                                    anchorX="center"
-                                    anchorY="top"
-                                    fontWeight="bold"
-                                >
-                                    D
-                                </Text>
-                            )}
+                            {/* Determine Display Label: Use subLabel if present, otherwise ID (or 'D' for ID 0) */}
+                            {(() => {
+                                const displayText = note.subLabel ? note.subLabel : (note.id === 0 ? 'D' : note.id.toString());
+                                return (
+                                    <Text
+                                        visible={areLabelsVisible}
+                                        position={[bottomPos.x, bottomPos.y - 0.5, 0]}
+                                        fontSize={1}
+                                        color="#FFFFFF"
+                                        anchorX="center"
+                                        anchorY="top"
+                                        fontWeight="bold"
+                                    >
+                                        {displayText}
+                                    </Text>
+                                );
+                            })()}
                         </>
                     );
                 })()}

@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Digipan10 from '../../components/Digipan10';
 import Digipan9 from '../../components/Digipan9';
+import Digipan11 from '../../components/Digipan11';
 import ScaleInfoPanel from '../../components/ScaleInfoPanel';
 import { SCALES } from '@/data/handpanScales';
 import { Grid, Monitor, Smartphone } from 'lucide-react';
@@ -10,8 +11,8 @@ import { useControls, button } from 'leva';
 import { getNoteFrequency } from '@/constants/noteFrequencies';
 
 export default function Digipan3DTestPage() {
-    // Mode State: '9' (Image Only) or '10' (Full Implementation)
-    const [mode, setMode] = useState<'9' | '10'>('9');
+    // Mode State: '9' (Image Only) or '10' (Full Implementation) or '11' (Sandbox)
+    const [mode, setMode] = useState<'9' | '10' | '11'>('9');
     // Mobile Preview State
     const [isMobilePreview, setIsMobilePreview] = useState(false);
 
@@ -32,6 +33,9 @@ export default function Digipan3DTestPage() {
             setMode('9');
         } else if (noteCount === 10) {
             setMode('10');
+        } else {
+            // Default fallback, maybe keep current mode if 11, or default to 9
+            if (mode !== '11') setMode('9');
         }
     }, []);
 
@@ -337,6 +341,233 @@ export default function Digipan3DTestPage() {
     }, [activeNotes10]);
 
 
+
+    // -------------------------------------------------------------------------
+    // Digipan 11 Logic (Sandbox Mode - Cloned from 9)
+    // -------------------------------------------------------------------------
+
+    // Initial Data for Digipan 11 (Clone of 9)
+    const initialNotes11 = useMemo(() => {
+        return [
+            {
+                "id": 0,
+                "cx": 512,
+                "cy": 530,
+                "scale": 0,
+                "rotate": 89,
+                "position": "center",
+                "angle": 0,
+                "scaleX": 1.48,
+                "scaleY": 1.26
+            },
+            {
+                "id": 1,
+                "cx": 662,
+                "cy": 808,
+                "scale": 0,
+                "rotate": 66,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1,
+                "scaleY": 1
+            },
+            {
+                "id": 2,
+                "cx": 349,
+                "cy": 810,
+                "scale": 0,
+                "rotate": 107,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.04,
+                "scaleY": 1.04
+            },
+            {
+                "id": 3,
+                "cx": 837,
+                "cy": 588,
+                "scale": 0,
+                "rotate": 199,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.93,
+                "scaleY": 0.89
+            },
+            {
+                "id": 4,
+                "cx": 175,
+                "cy": 599,
+                "scale": 0,
+                "rotate": 164,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.07,
+                "scaleY": 0.8900000000000001
+            },
+            {
+                "id": 5,
+                "cx": 788,
+                "cy": 316,
+                "scale": 0,
+                "rotate": 145,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.97,
+                "scaleY": 0.92
+            },
+            {
+                "id": 6,
+                "cx": 201,
+                "cy": 348,
+                "scale": 0,
+                "rotate": 43,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.19,
+                "scaleY": 0.8499999999999999
+            },
+            {
+                "id": 7,
+                "cx": 597,
+                "cy": 180,
+                "scale": 0,
+                "rotate": 188,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.17,
+                "scaleY": 0.77
+            },
+            {
+                "id": 8,
+                "cx": 370,
+                "cy": 195,
+                "scale": 0,
+                "rotate": 144,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.18,
+                "scaleY": 0.8099999999999999
+            },
+            {
+                "id": 9,
+                "cx": 813,
+                "cy": 564,
+                "scale": 0,
+                "rotate": 14,
+                "position": "bottom",
+                "angle": 0,
+                "scaleX": 1.32,
+                "scaleY": 1.9
+            },
+            {
+                "id": 10,
+                "cx": 185,
+                "cy": 558,
+                "scale": 0,
+                "rotate": 172,
+                "position": "bottom",
+                "angle": 0,
+                "scaleX": 1.49,
+                "scaleY": 2.1
+            }
+        ];
+    }, []);
+
+    const activeNotes11Ref = useRef<any[]>([]);
+    const [copySuccess11, setCopySuccess11] = useState(false);
+
+    const dynamicSchema11 = useMemo(() => {
+        if (mode !== '11') return {};
+
+        const s: any = {};
+        initialNotes11.forEach((note) => {
+            s[`N${note.id}_cx`] = { value: note.cx, min: 0, max: 1000, step: 1, label: `N${note.id} X` };
+            s[`N${note.id}_cy`] = { value: note.cy, min: 0, max: 1000, step: 1, label: `N${note.id} Y` };
+            s[`N${note.id}_rotate`] = { value: note.rotate, min: 0, max: 360, step: 1, label: `N${note.id} Rot` };
+            s[`N${note.id}_scaleX`] = { value: note.scaleX || 1, min: 0.1, max: 3, step: 0.01, label: `N${note.id} SX` };
+            s[`N${note.id}_scaleY`] = { value: note.scaleY || 1, min: 0.1, max: 3, step: 0.01, label: `N${note.id} SY` };
+        });
+
+        const buttonLabel = copySuccess11 ? '✅ Copied!' : 'Export JSON (11)';
+
+        s[buttonLabel] = button(() => {
+            const currentNotes = activeNotes11Ref.current;
+            const exportData = currentNotes.map((n) => ({
+                id: n.id,
+                cx: Math.round(n.cx),
+                cy: Math.round(n.cy),
+                scale: 0,
+                rotate: Math.round(n.rotate),
+                position: n.position || 'top',
+                angle: n.angle || 0,
+                scaleX: n.scaleX,
+                scaleY: n.scaleY
+            }));
+
+            const jsonString = JSON.stringify(exportData, null, 4);
+            navigator.clipboard.writeText(jsonString).then(() => {
+                setCopySuccess11(true);
+                setTimeout(() => setCopySuccess11(false), 2000);
+            });
+        });
+
+        return s;
+    }, [initialNotes11, mode, copySuccess11]);
+
+    const controls11 = useControls('Digipan 11 Tuning', dynamicSchema11, [initialNotes11, mode]);
+
+    const activeNotes11 = useMemo(() => {
+        if (mode !== '11' || !scale) return [];
+        const c = controls11 as any;
+        const currentScaleNotes = [scale.notes.ding, ...scale.notes.top, ...(scale.notes.bottom || [])];
+        const TEMPLATE_NOTES = ["D3", "A3", "Bb3", "C4", "D4", "E4", "F4", "G4", "A4", "C5", "D5"]; // Extended template
+
+        // 1. Generate Notes with Frequency
+        const generatedNotes = initialNotes11.map((n, i) => {
+            const noteName = currentScaleNotes[i] || '';
+            const frequency = getNoteFrequency(noteName);
+            const visualNoteName = TEMPLATE_NOTES[i] || "A4";
+            const visualFrequency = getNoteFrequency(visualNoteName);
+
+            // Determine offset based on ID (0-8 = Top -> Left, 9-10 = Bottom -> Right)
+            const isBottom = n.id >= 9;
+            const offset: [number, number, number] = isBottom ? [28.5, 0, 0] : [-28.5, 0, 0];
+
+            return {
+                ...n,
+                cx: c[`N${n.id}_cx`],
+                cy: c[`N${n.id}_cy`],
+                rotate: c[`N${n.id}_rotate`],
+                scaleX: c[`N${n.id}_scaleX`],
+                scaleY: c[`N${n.id}_scaleY`],
+                label: noteName,
+                frequency: frequency || 440,
+                visualFrequency: visualFrequency || 440,
+                labelOffset: 25,
+                offset: offset
+            };
+        });
+
+        // 2. Sort by Pitch to determine Rank (1-based index)
+        const sortedByPitch = [...generatedNotes].sort((a, b) => a.frequency - b.frequency);
+
+        // 3. Assign subLabel based on Rank (Ding is 'D', others are Rank)
+        const notes = generatedNotes.map(n => {
+            const rank = sortedByPitch.findIndex(x => x.id === n.id) + 1;
+            // Rank 1 is usually Ding in frequency sort (C#3 < D3).
+            // Assign 'D' if ID=0, otherwise Rank.
+            const subLabel = n.id === 0 ? 'D' : rank.toString();
+            return { ...n, subLabel };
+        });
+
+        return notes;
+    }, [initialNotes11, controls11, mode, scale]);
+
+    useEffect(() => {
+        activeNotes11Ref.current = activeNotes11;
+    }, [activeNotes11]);
+
+
     // -------------------------------------------------------------------------
 
     // Toggle Button Control (Only mode switcher - passed inside Digipan)
@@ -345,21 +576,29 @@ export default function Digipan3DTestPage() {
             {/* Mode Switcher */}
             <button
                 onClick={() => {
-                    const newMode = mode === '9' ? '10' : '9';
+                    let newMode: '9' | '10' | '11' = '9';
+                    if (mode === '9') newMode = '10';
+                    else if (mode === '10') newMode = '11';
+                    else if (mode === '11') newMode = '9';
+
                     setMode(newMode);
                     if (newMode === '9') {
                         setSelectedScaleId('d_kurd_9');
+                    } else if (newMode === '11') {
+                        setSelectedScaleId('cs_pygmy_11');
                     } else {
                         setSelectedScaleId('d_kurd_10');
                     }
                 }}
                 className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 font-bold text-xs"
-                title="Toggle Digipan 9 / 10"
+                title="Toggle Digipan 9 / 10 / 11"
             >
                 {mode === '9' ? (
                     <span className="text-[10px] leading-none font-bold">9</span>
-                ) : (
+                ) : mode === '10' ? (
                     <span className="text-[10px] leading-none font-bold">10</span>
+                ) : (
+                    <span className="text-[10px] leading-none font-bold">11</span>
                 )}
             </button>
         </div>
@@ -445,13 +684,24 @@ export default function Digipan3DTestPage() {
                             notes={activeNotes10}
                         />
                     </div>
+
+                    <div className={`absolute top-0 left-0 w-full h-full transition-opacity duration-300 ${mode === '11' ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'}`}>
+                        <Digipan11
+                            notes={activeNotes11}
+                            scale={scale}
+                            isCameraLocked={true}
+                            onScaleSelect={handleScaleSelect}
+                            extraControls={toggleControl}
+                            forceCompactView={isMobilePreview}
+                        />
+                    </div>
                 </div>
             </div>
 
             {/* Right: Data Panel */}
             <div className="w-[300px] bg-slate-800 border-l border-slate-700 p-6 flex flex-col shadow-2xl z-10 transition-colors duration-500">
                 <h2 className="text-xl font-bold text-white mb-2">
-                    {mode === '9' ? '📷 Digipan 9 Preview' : '🎵 Digipan 10 Demo'}
+                    {mode === '9' ? '📷 Digipan 9 Preview' : mode === '10' ? '🎵 Digipan 10 Demo' : '🧪 Digipan 11 Sandbox'}
                 </h2>
                 <div className="mb-6 flex items-center gap-2">
                     <span className={`px-2 py-1 rounded text-xs font-bold ${isMobilePreview ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400'}`}>
@@ -470,7 +720,9 @@ export default function Digipan3DTestPage() {
                 <p className="text-slate-400 text-sm mb-4">
                     {mode === '9'
                         ? "Digipan 9 Editor Mode. Adjust tonefield positions."
-                        : "Fully interactive 10-note implementation with tonefields and sound."
+                        : mode === '10'
+                            ? "Fully interactive 10-note implementation with tonefields and sound."
+                            : "Experimental sandbox mode (Digipan 11) for testing new image layers."
                     }
                 </p>
                 {isMobilePreview && (
