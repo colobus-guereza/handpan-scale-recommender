@@ -9,6 +9,7 @@ import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle } fro
 import { HANDPAN_CONFIG, getDomeHeight, TONEFIELD_CONFIG } from '../constants/handpanConfig';
 import html2canvas from 'html2canvas';
 import { useHandpanAudio } from '../hooks/useHandpanAudio';
+import { usePathname } from 'next/navigation';
 import ScaleInfoPanel from './ScaleInfoPanel';
 
 // Inner component to handle camera reset
@@ -105,6 +106,10 @@ export default function Digipan3D({
     showLabelToggle = false,
     forceCompactView = false
 }: Digipan3DProps) {
+    const pathname = usePathname();
+    // ScaleInfoPanel은 /digipan-3d-test 경로에서만 표시
+    const isDevPage = pathname === '/digipan-3d-test';
+    
     const [isCameraLockedState, setIsCameraLocked] = useState(isCameraLocked);
     const [copySuccess, setCopySuccess] = useState(false);
     // Default expanded unless forced compact
@@ -395,16 +400,17 @@ export default function Digipan3D({
 
 
 
-            {/* Scale Info Panel - Bottom Right Overlay (hidden in mobile preview mode) */}
-            <ScaleInfoPanel
-                scale={scale}
-                onScaleSelect={onScaleSelect}
-                noteCountFilter={noteCountFilter} // Still passed, but overridden by showAllScales
-                className={`absolute ${isMobileButtonLayout ? 'bottom-20 right-4' : 'bottom-4 right-4'}`}
-                isMobileButtonLayout={isMobileButtonLayout}
-                defaultExpanded={isInfoExpanded}
-                showAllScales={true} // Forcing Global List Logic
-            />
+            {/* Scale Info Panel - Bottom Right Overlay (only shown in /digipan-3d-test dev page) */}
+            {isDevPage && scale && (
+                <ScaleInfoPanel
+                    scale={scale}
+                    onScaleSelect={onScaleSelect}
+                    noteCountFilter={noteCountFilter} // Still passed, but overridden by showAllScales
+                    className={`absolute ${isMobileButtonLayout ? 'bottom-20 right-4' : 'bottom-4 right-4'}`}
+                    isMobileButtonLayout={isMobileButtonLayout}
+                    defaultExpanded={isInfoExpanded}
+                    showAllScales={true} // Forcing Global List Logic
+                />
             )}
         </div>
     );
