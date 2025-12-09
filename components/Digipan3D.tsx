@@ -396,15 +396,15 @@ export default function Digipan3D({
 
 
             {/* Scale Info Panel - Bottom Right Overlay (hidden in mobile preview mode) */}
-            {scale && showInfoPanel && !forceCompactView && (
-                <ScaleInfoPanel
-                    scale={scale}
-                    onScaleSelect={onScaleSelect}
-                    noteCountFilter={noteCountFilter}
-                    className={`absolute ${isMobileButtonLayout ? 'bottom-20 right-4' : 'bottom-4 right-4'}`}
-                    isMobileButtonLayout={isMobileButtonLayout}
-                    defaultExpanded={isInfoExpanded}
-                />
+            <ScaleInfoPanel
+                scale={scale}
+                onScaleSelect={onScaleSelect}
+                noteCountFilter={noteCountFilter} // Still passed, but overridden by showAllScales
+                className={`absolute ${isMobileButtonLayout ? 'bottom-20 right-4' : 'bottom-4 right-4'}`}
+                isMobileButtonLayout={isMobileButtonLayout}
+                defaultExpanded={isInfoExpanded}
+                showAllScales={true} // Forcing Global List Logic
+            />
             )}
         </div>
     );
@@ -435,26 +435,7 @@ interface NoteData {
     // ... other props optional for now
 }
 
-interface Digipan3DProps {
-    notes: NoteData[];
-    scale?: Scale | null;
-    centerX?: number;
-    centerY?: number;
-    onNoteClick?: (noteId: number) => void;
-    isCameraLocked?: boolean;
-    onScaleSelect?: (scale: Scale) => void;
-    backgroundImage?: string | null;
-    extraControls?: React.ReactNode;
-    noteCountFilter?: number;
-    // External UI Configuration
-    showControls?: boolean;
-    showInfoPanel?: boolean;
-    initialViewMode?: 0 | 1 | 2 | 3;
-    enableZoom?: boolean;
-    enablePan?: boolean;
-    showLabelToggle?: boolean;
-    forceCompactView?: boolean;
-}
+// Duplicate interface removed
 
 // -----------------------------------------------------------------------------
 // Helper Functions
@@ -619,15 +600,42 @@ const ToneFieldMesh = ({
         }
     }, [demoActive, note.label, playNote]);
 
+    // ========================================
+    // CLICK EFFECT CONFIGURATION
+    // ========================================
+    const CLICK_EFFECT_CONFIG = {
+        // Main Sphere Effect (Breathing Glow)
+        sphere: {
+            color: '#38BDF8',        // Sky blue - represents metal tension
+            baseSize: 1.05,          // 5% larger than tonefield
+            maxOpacity: 0.1,         // 10% opacity at peak
+            scalePulse: 0.15,        // 15% scale variation
+        },
+        // Impact Ring Effect (Initial strike)
+        ring: {
+            color: '#FFFFFF',        // White flash
+            maxOpacity: 0.4,         // 40% opacity at start
+            duration: 0.3,           // Quick 0.3s flash
+            expandScale: 1.5,        // Expands to 150%
+        },
+        // Timing
+        timing: {
+            duration: 1.2,           // Total duration (1.2 seconds)
+            attackPhase: 0.15,       // Fast attack (15% of duration)
+        }
+    };
+
     // Animation State logic
     const effectMeshRef = useRef<THREE.Mesh>(null);
     const effectMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
+    const impactRingRef = useRef<THREE.Mesh>(null);
+    const impactMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
     const animState = useRef({ active: false, time: 0 });
 
     // Sound Breathing Configuration
-    const SUSTAIN_DURATION = 1.2; // Faster fade-out (1.2 seconds)
+    const SUSTAIN_DURATION = CLICK_EFFECT_CONFIG.timing.duration;
 
-    // Frame Loop for Sound Breathing Animation
+    // Frame Loop for Click Effects Animation
     useFrame((_state: any, delta: number) => {
         if (!animState.current.active || !effectMeshRef.current || !effectMaterialRef.current) {
             return;
@@ -636,32 +644,52 @@ const ToneFieldMesh = ({
         animState.current.time += delta;
         const progress = Math.min(animState.current.time / SUSTAIN_DURATION, 1);
 
-        // Fast attack (fade-in), faster decay (fade-out)
-        // Attack phase: first 15% of duration (~0.18 seconds)
-        // Decay phase: remaining 85% (~1.02 seconds)
-        const attackPhase = 0.15; // 15% for fast attack
+        // === EFFECT 1: Main Sphere (Breathing Glow) ===
+        const attackPhase = CLICK_EFFECT_CONFIG.timing.attackPhase;
         let breathCurve: number;
 
         if (progress < attackPhase) {
             // Very fast fade-in: 0 → 1 in first 15%
             const attackProgress = progress / attackPhase;
-            breathCurve = Math.sin(attackProgress * Math.PI / 2); // Quarter sine for smooth start
+            breathCurve = Math.sin(attackProgress * Math.PI / 2);
         } else {
             // Faster fade-out: 1 → 0 in remaining 85%
             const decayProgress = (progress - attackPhase) / (1 - attackPhase);
-            breathCurve = Math.cos(decayProgress * Math.PI / 2); // Quarter cosine for smooth decay
+            breathCurve = Math.cos(decayProgress * Math.PI / 2);
         }
 
-        const opacity = 0.1 * breathCurve; // Max opacity: 0.1 (subtle)
+        const opacity = CLICK_EFFECT_CONFIG.sphere.maxOpacity * breathCurve;
         effectMaterialRef.current.opacity = opacity;
 
-        // Scale pulse
-        const scaleMultiplier = 1 + 0.15 * breathCurve; // 15% scale variation
+        const scaleMultiplier = 1 + CLICK_EFFECT_CONFIG.sphere.scalePulse * breathCurve;
         effectMeshRef.current.scale.set(
-            finalRadiusX * 1.05 * scaleMultiplier, // 5% larger (was 15%)
-            finalRadiusY * 1.05 * scaleMultiplier,
+            finalRadiusX * CLICK_EFFECT_CONFIG.sphere.baseSize * scaleMultiplier,
+            finalRadiusY * CLICK_EFFECT_CONFIG.sphere.baseSize * scaleMultiplier,
             1
         );
+
+        // === EFFECT 2: Impact Ring (Initial Strike Flash) ===
+        if (impactRingRef.current && impactMaterialRef.current) {
+            const ringDuration = CLICK_EFFECT_CONFIG.ring.duration;
+            const ringProgress = Math.min(animState.current.time / ringDuration, 1);
+
+            if (ringProgress < 1) {
+                // Quick fade-out with expansion
+                const ringCurve = Math.cos(ringProgress * Math.PI / 2); // 1 → 0
+                const ringOpacity = CLICK_EFFECT_CONFIG.ring.maxOpacity * ringCurve;
+                const ringScale = 1 + (CLICK_EFFECT_CONFIG.ring.expandScale - 1) * ringProgress;
+
+                impactMaterialRef.current.opacity = ringOpacity;
+                impactRingRef.current.scale.set(
+                    finalRadiusX * ringScale,
+                    finalRadiusY * ringScale,
+                    1
+                );
+            } else {
+                // Hide ring after duration
+                impactMaterialRef.current.opacity = 0;
+            }
+        }
 
         if (progress >= 1) {
             animState.current.active = false;
@@ -748,20 +776,47 @@ const ToneFieldMesh = ({
                     />
                 </mesh>
 
-                {/* 1-c. Sound Breathing Effect - Subtle Golden Sphere */}
+                {/* === CLICK EFFECTS === */}
+
+                {/* EFFECT 1: Impact Ring (White Flash) */}
+                <mesh
+                    ref={impactRingRef}
+                    position={[0, 0, 0.6]} // Above the main sphere
+                    scale={[finalRadiusX, finalRadiusY, 1]}
+                    visible={pulsing}
+                    renderOrder={1000} // Above main sphere
+                >
+                    <sphereGeometry args={[1, 32, 16]} />
+                    <meshBasicMaterial
+                        ref={impactMaterialRef}
+                        color={CLICK_EFFECT_CONFIG.ring.color}
+                        transparent={true}
+                        opacity={0}
+                        toneMapped={false}
+                        depthWrite={false}
+                        depthTest={false}
+                        side={2}
+                    />
+                </mesh>
+
+                {/* EFFECT 2: Main Sphere (Breathing Glow) */}
                 <mesh
                     ref={effectMeshRef}
                     position={[0, 0, 0.5]} // Slightly above tonefield
-                    scale={[finalRadiusX * 1.05, finalRadiusY * 1.05, 1]} // 5% larger than tonefield
+                    scale={[
+                        finalRadiusX * CLICK_EFFECT_CONFIG.sphere.baseSize,
+                        finalRadiusY * CLICK_EFFECT_CONFIG.sphere.baseSize,
+                        1
+                    ]}
                     visible={pulsing}
                     renderOrder={999}
                 >
                     <sphereGeometry args={[1, 32, 16]} />
                     <meshBasicMaterial
                         ref={effectMaterialRef}
-                        color="#D4A574"
+                        color={CLICK_EFFECT_CONFIG.sphere.color}
                         transparent={true}
-                        opacity={0.1}
+                        opacity={CLICK_EFFECT_CONFIG.sphere.maxOpacity}
                         toneMapped={false}
                         depthWrite={false}
                         depthTest={false}

@@ -25,6 +25,14 @@ export default function Digipan3DTestPage() {
     const handleScaleSelect = React.useCallback((newScale: any) => {
         console.log("Scale selected in Page:", newScale.name);
         setSelectedScaleId(newScale.id);
+
+        // Auto-switch Mode based on Note Count
+        const noteCount = 1 + newScale.notes.top.length + newScale.notes.bottom.length;
+        if (noteCount === 9) {
+            setMode('9');
+        } else if (noteCount === 10) {
+            setMode('10');
+        }
     }, []);
 
     // -------------------------------------------------------------------------
@@ -194,7 +202,8 @@ export default function Digipan3DTestPage() {
                             <ScaleInfoPanel
                                 scale={scale}
                                 onScaleSelect={handleScaleSelect}
-                                noteCountFilter={mode === '9' ? 9 : 10} // Adjust based on mode
+                                noteCountFilter={mode === '9' ? 9 : 10} // Still pass it, but showAllScales overrides it
+                                showAllScales={true}
                                 className="absolute right-[calc(50%+200px)] bottom-20 z-[60]"
                                 defaultExpanded={true}
                             />
