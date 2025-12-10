@@ -450,25 +450,25 @@ export default function Digipan3DTestPage() {
             },
             {
                 "id": 9,
-                "cx": 813,
-                "cy": 564,
+                "cx": 1000,
+                "cy": 759,
                 "scale": 0,
-                "rotate": 14,
+                "rotate": 19,
                 "position": "bottom",
                 "angle": 0,
-                "scaleX": 1.32,
-                "scaleY": 1.9
+                "scaleX": 1.25,
+                "scaleY": 1.48
             },
             {
                 "id": 10,
-                "cx": 185,
-                "cy": 558,
+                "cx": 0,
+                "cy": 762,
                 "scale": 0,
-                "rotate": 172,
+                "rotate": 158,
                 "position": "bottom",
                 "angle": 0,
-                "scaleX": 1.49,
-                "scaleY": 2.1
+                "scaleX": 1.29,
+                "scaleY": 1.61
             }
         ];
     }, []);
@@ -530,8 +530,7 @@ export default function Digipan3DTestPage() {
             const visualFrequency = getNoteFrequency(visualNoteName);
 
             // Determine offset based on ID (0-8 = Top -> Left, 9-10 = Bottom -> Right)
-            const isBottom = n.id >= 9;
-            const offset: [number, number, number] = isBottom ? [28.5, 0, 0] : [-28.5, 0, 0];
+            // No offset needed as we are now using a consolidated single view
 
             return {
                 ...n,
@@ -544,7 +543,7 @@ export default function Digipan3DTestPage() {
                 frequency: frequency || 440,
                 visualFrequency: visualFrequency || 440,
                 labelOffset: 25,
-                offset: offset
+                offset: [0, 0, 0] as [number, number, number]
             };
         });
 

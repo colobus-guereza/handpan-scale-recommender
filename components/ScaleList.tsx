@@ -762,6 +762,13 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                 </div>
             </div>
 
+            {/* 독립적인 텍스트 컨테이너 - glass-card와 MiniDigiPan 사이 */}
+            <div className="w-full mb-4 pt-12 pb-8 min-h-[120px]">
+                <p className="text-slate-700 dark:text-slate-300 text-center font-medium leading-tight whitespace-nowrap text-[80px]">
+                    {t.scaleList.tryPlaying}
+                </p>
+            </div>
+
             {/* MiniDigiPan 컴포넌트 - 버튼 영역 위 */}
             {showMiniDigiPan && (
                 <div className="-mt-4 mb-4">
@@ -1219,7 +1226,7 @@ const ScaleGrid = React.memo(({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {filteredScales.map((scale) => (
                 <button
-                    key={scale.name}
+                    key={scale.id}
                     onClick={() => onScaleSelect(scale)}
                     className={`scale-grid-button flex items-center justify-between p-4 border rounded-xl transition-all group text-left ${currentScaleName === scale.name
                         ? 'bg-indigo-50 dark:bg-cosmic/10 border-indigo-200 dark:border-cosmic/30 ring-1 ring-indigo-200 dark:ring-cosmic/20'

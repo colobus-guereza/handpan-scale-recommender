@@ -60,6 +60,7 @@ const EN_TRANSLATIONS = {
         popular: 'Popular',
         digiPan: 'DigiPan',
         implementationPending: 'Implementation Pending',
+        tryPlaying: 'Try playing it yourself.',
         axes: {
             minorMajor: {
                 label: 'Mood',
@@ -157,6 +158,7 @@ const FR_TRANSLATIONS = {
         popular: 'Populaire',
         digiPan: 'DigiPan',
         implementationPending: 'Implémentation en attente',
+        tryPlaying: 'Essayez de le jouer vous-même.',
         axes: {
             minorMajor: {
                 label: 'Ambiance',
@@ -254,6 +256,7 @@ const DE_TRANSLATIONS = {
         popular: 'Beliebt',
         digiPan: 'DigiPan',
         implementationPending: 'Implementierung ausstehend',
+        tryPlaying: 'Probieren Sie es selbst aus.',
         axes: {
             minorMajor: {
                 label: 'Stimmung',
@@ -351,6 +354,7 @@ const RU_TRANSLATIONS = {
         popular: 'Популярная',
         digiPan: 'DigiPan',
         implementationPending: 'Реализация ожидается',
+        tryPlaying: 'Попробуйте сыграть сами.',
         axes: {
             minorMajor: {
                 label: 'Настроение',
@@ -448,6 +452,7 @@ const FA_TRANSLATIONS = {
         popular: 'محبوب',
         digiPan: 'DigiPan',
         implementationPending: 'پیاده‌سازی در انتظار',
+        tryPlaying: 'خودتان بنوازید',
         axes: {
             minorMajor: {
                 label: 'حال‌وهوا',
@@ -545,6 +550,7 @@ const AE_TRANSLATIONS = {
         popular: 'شائع',
         digiPan: 'DigiPan',
         implementationPending: 'قيد التنفيذ',
+        tryPlaying: 'جرّب العزف بنفسك.',
         axes: {
             minorMajor: {
                 label: 'المزاج',
@@ -642,6 +648,7 @@ const ES_TRANSLATIONS = {
         popular: 'Popular',
         digiPan: 'DigiPan',
         implementationPending: 'Implementación pendiente',
+        tryPlaying: 'Prueba a tocarlo tú mismo.',
         axes: {
             minorMajor: {
                 label: 'Estado de ánimo',
@@ -739,6 +746,7 @@ const PT_TRANSLATIONS = {
         popular: 'Popular',
         digiPan: 'DigiPan',
         implementationPending: 'Implementação pendente',
+        tryPlaying: 'Toque você mesmo.',
         axes: {
             minorMajor: {
                 label: 'Humor',
@@ -836,6 +844,7 @@ const IT_TRANSLATIONS = {
         popular: 'Popolare',
         digiPan: 'DigiPan',
         implementationPending: 'Implementazione in sospeso',
+        tryPlaying: 'Prova a suonarlo tu stesso.',
         axes: {
             minorMajor: {
                 label: 'Umore',
@@ -933,6 +942,7 @@ const JA_TRANSLATIONS = {
         popular: '人気',
         digiPan: 'DigiPan',
         implementationPending: '実装予定',
+        tryPlaying: 'ご自身で演奏してみてください。',
         axes: {
             minorMajor: {
                 label: '調性',
@@ -1030,6 +1040,7 @@ const ZH_TRANSLATIONS = {
         popular: '流行',
         digiPan: 'DigiPan',
         implementationPending: '待实现',
+        tryPlaying: '自己试着演奏一下。',
         axes: {
             minorMajor: {
                 label: '调性',
@@ -1130,6 +1141,7 @@ export const TRANSLATIONS: Record<Language, TranslationType> = {
             popular: '대중적',
             digiPan: '디지팬',
             implementationPending: '구현 예정',
+            tryPlaying: '직접 연주해보세요.',
             axes: {
                 minorMajor: {
                     label: '조성 (Mood)',

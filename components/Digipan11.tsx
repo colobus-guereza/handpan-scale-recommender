@@ -1,38 +1,104 @@
+
 import React, { useMemo } from 'react';
-import Digipan3D from './Digipan3D';
+import Digipan3D, { svgTo3D, getTonefieldDimensions } from './Digipan3D';
 import { useTexture } from '@react-three/drei';
 import { HANDPAN_CONFIG } from '../constants/handpanConfig';
 import { Scale } from '../data/handpanScales';
 import { getNoteFrequency } from '../constants/noteFrequencies';
+import * as THREE from 'three';
 
 // Composite Background Component for Digipan 11
-const Digipan11Background = ({ useVerticalLayout }: { useVerticalLayout: boolean }) => {
-    // Load both textures
+const Digipan11Background = ({ centerX = 500, centerY = 500, visualNotes = [] }: { centerX?: number; centerY?: number; visualNotes?: any[] }) => {
+    // Load texture
     const tex1 = useTexture('/images/9notes.png');
-    const tex2 = useTexture('/images/bottom_2notes.png');
 
     const size = HANDPAN_CONFIG.OUTER_RADIUS * 2; // 57cm
 
-    // Layout configuration
-    // Desktop: Left (-28.5) / Right (+28.5)
-    // Vertical Layout (Mobile/Tablet/Narrow PC): Top (+28) / Bottom (-28)
-    const pos1: [number, number, number] = useVerticalLayout ? [0, 28, -0.5] : [-28.5, 0, -0.5];
-    const pos2: [number, number, number] = useVerticalLayout ? [0, -28, -0.5] : [28.5, 0, -0.5];
+    // Calculate Image Position to adjust for Center Offset
+    // Using exported svgTo3D from Digipan3D relative to the CENTER of the SVG (500, 500)
+    const pos = svgTo3D(500, 500, centerX, centerY);
 
     return (
         <group>
-            {/* Top/Left Image */}
-            <mesh position={pos1} rotation={[0, 0, 0]}>
+            {/* Top Image (Centered relative to adjusted origin) */}
+            <mesh position={[pos.x, pos.y, -0.5]} rotation={[0, 0, 0]}>
                 <planeGeometry args={[size, size]} />
                 <meshBasicMaterial map={tex1} transparent opacity={1} />
             </mesh>
 
-            {/* Bottom/Right Image */}
-            <mesh position={pos2} rotation={[0, 0, 0]}>
-                <planeGeometry args={[size, size]} />
-                <meshBasicMaterial map={tex2} transparent opacity={1} />
-            </mesh>
-        </group>
+            {/* Permanent Visual Tonefields for Bottom Notes (N9, N10) */}
+            {visualNotes.map((note) => {
+                const cx = note.cx ?? 500;
+                const cy = note.cy ?? 500;
+                const notePos = svgTo3D(cx, cy, centerX, centerY);
+                const rotationZ = -THREE.MathUtils.degToRad(note.rotate || 0);
+
+                // Dimension Calc
+                const isDing = note.id === 0;
+                const visualHz = note.visualFrequency ?? (note.frequency || 440);
+                const dims = getTonefieldDimensions(visualHz, isDing);
+
+                const rx = dims.width;
+                const ry = dims.height;
+                const radiusX = rx / 2;
+                const radiusY = ry / 2;
+
+                const scaleXMult = note.scaleX ?? 1;
+                const scaleYMult = note.scaleY ?? 1;
+                const finalRadiusX = radiusX * scaleXMult;
+                const finalRadiusY = radiusY * scaleYMult;
+
+                return (
+                    <group key={`vis-${note.id}`} position={[notePos.x, notePos.y, -0.1]}>
+                        <group rotation={[0, 0, rotationZ]}>
+                            {/* 1. Main Tonefield Fill (Transparent - 60% Intensity) */}
+                            <mesh
+                                position={[0, 0, -0.001]} // Slightly behind outline
+                                rotation={[0, 0, 0]}
+                                scale={[finalRadiusX, finalRadiusY, 1]}
+                            >
+                                <circleGeometry args={[0.98, 64]} />
+                                <meshBasicMaterial
+                                    color="#A0522D"
+                                    transparent={true}
+                                    opacity={0.15}
+                                    side={THREE.DoubleSide}
+                                />
+                            </mesh>
+
+                            {/* 2. Main Tonefield Outline (60% Opacity) */}
+                            <mesh
+                                rotation={[0, 0, 0]}
+                                scale={[finalRadiusX, finalRadiusY, 1]}
+                            >
+                                <ringGeometry args={[0.98, 1, 64]} />
+                                <meshBasicMaterial
+                                    color="#A0522D"
+                                    transparent={true}
+                                    opacity={0.6}
+                                    side={THREE.DoubleSide}
+                                />
+                            </mesh>
+
+                            {/* 3. Inner Dimple Outline (60% Opacity) */}
+                            <mesh
+                                position={[0, 0, 0.01]}
+                                rotation={[0, 0, 0]}
+                                scale={[finalRadiusX * 0.4, finalRadiusY * 0.4, 1]}
+                            >
+                                <ringGeometry args={[0.95, 1, 64]} />
+                                <meshBasicMaterial
+                                    color="#A0522D"
+                                    transparent={true}
+                                    opacity={0.6}
+                                    side={THREE.DoubleSide}
+                                />
+                            </mesh>
+                        </group>
+                    </group>
+                );
+            })}
+        </group >
     );
 };
 
@@ -68,15 +134,6 @@ export default function Digipan11({
     showLabelToggle = false,
     forceCompactView = false
 }: Digipan11Props) {
-    const [useVerticalLayout, setUseVerticalLayout] = React.useState(false);
-
-    React.useEffect(() => {
-        // Use a wider breakpoint (1280px) to prevent cropping on narrow desktop windows/tablets
-        const checkLayout = () => setUseVerticalLayout(window.innerWidth < 1280);
-        checkLayout();
-        window.addEventListener('resize', checkLayout);
-        return () => window.removeEventListener('resize', checkLayout);
-    }, []);
 
     // Internal Note Generation (C# Pygmy 11 Layout)
     const internalNotes = useMemo(() => {
@@ -84,18 +141,127 @@ export default function Digipan11({
 
         // Fine-tuned 11-Note Coordinates (from digipan-3d-test/page.tsx)
         const templateData = [
-            { "id": 0, "cx": 512, "cy": 530, "scale": 0, "rotate": 89, "position": "center", "angle": 0, "scaleX": 1.48, "scaleY": 1.26 },
-            { "id": 1, "cx": 662, "cy": 808, "scale": 0, "rotate": 66, "position": "top", "angle": 0, "scaleX": 1, "scaleY": 1 },
-            { "id": 2, "cx": 349, "cy": 810, "scale": 0, "rotate": 107, "position": "top", "angle": 0, "scaleX": 1.04, "scaleY": 1.04 },
-            { "id": 3, "cx": 837, "cy": 588, "scale": 0, "rotate": 199, "position": "top", "angle": 0, "scaleX": 0.93, "scaleY": 0.89 },
-            { "id": 4, "cx": 175, "cy": 599, "scale": 0, "rotate": 164, "position": "top", "angle": 0, "scaleX": 1.07, "scaleY": 0.8900000000000001 },
-            { "id": 5, "cx": 788, "cy": 316, "scale": 0, "rotate": 145, "position": "top", "angle": 0, "scaleX": 0.97, "scaleY": 0.92 },
-            { "id": 6, "cx": 201, "cy": 348, "scale": 0, "rotate": 43, "position": "top", "angle": 0, "scaleX": 1.19, "scaleY": 0.8499999999999999 },
-            { "id": 7, "cx": 597, "cy": 180, "scale": 0, "rotate": 188, "position": "top", "angle": 0, "scaleX": 1.17, "scaleY": 0.77 },
-            { "id": 8, "cx": 370, "cy": 195, "scale": 0, "rotate": 144, "position": "top", "angle": 0, "scaleX": 1.18, "scaleY": 0.8099999999999999 },
-            // Bottom Notes
-            { "id": 9, "cx": 813, "cy": 564, "scale": 0, "rotate": 14, "position": "bottom", "angle": 0, "scaleX": 1.32, "scaleY": 1.9 },
-            { "id": 10, "cx": 185, "cy": 558, "scale": 0, "rotate": 172, "position": "bottom", "angle": 0, "scaleX": 1.49, "scaleY": 2.1 }
+            {
+                "id": 0,
+                "cx": 512,
+                "cy": 530,
+                "scale": 0,
+                "rotate": 89,
+                "position": "center",
+                "angle": 0,
+                "scaleX": 1.48,
+                "scaleY": 1.26
+            },
+            {
+                "id": 1,
+                "cx": 662,
+                "cy": 808,
+                "scale": 0,
+                "rotate": 66,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1,
+                "scaleY": 1
+            },
+            {
+                "id": 2,
+                "cx": 349,
+                "cy": 810,
+                "scale": 0,
+                "rotate": 107,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.04,
+                "scaleY": 1.04
+            },
+            {
+                "id": 3,
+                "cx": 837,
+                "cy": 588,
+                "scale": 0,
+                "rotate": 199,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.93,
+                "scaleY": 0.89
+            },
+            {
+                "id": 4,
+                "cx": 175,
+                "cy": 599,
+                "scale": 0,
+                "rotate": 164,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.07,
+                "scaleY": 0.8900000000000001
+            },
+            {
+                "id": 5,
+                "cx": 788,
+                "cy": 316,
+                "scale": 0,
+                "rotate": 145,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.97,
+                "scaleY": 0.92
+            },
+            {
+                "id": 6,
+                "cx": 201,
+                "cy": 348,
+                "scale": 0,
+                "rotate": 43,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.19,
+                "scaleY": 0.8499999999999999
+            },
+            {
+                "id": 7,
+                "cx": 597,
+                "cy": 180,
+                "scale": 0,
+                "rotate": 188,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.17,
+                "scaleY": 0.77
+            },
+            {
+                "id": 8,
+                "cx": 370,
+                "cy": 195,
+                "scale": 0,
+                "rotate": 144,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.18,
+                "scaleY": 0.8099999999999999
+            },
+            {
+                "id": 9,
+                "cx": 1000,
+                "cy": 759,
+                "scale": 0,
+                "rotate": 19,
+                "position": "bottom",
+                "angle": 0,
+                "scaleX": 1.25,
+                "scaleY": 1.48
+            },
+            {
+                "id": 10,
+                "cx": 0,
+                "cy": 762,
+                "scale": 0,
+                "rotate": 158,
+                "position": "bottom",
+                "angle": 0,
+                "scaleX": 1.29,
+                "scaleY": 1.61
+            }
         ];
 
         // Template Notes for frequency lookup (Visual Sizing)
@@ -111,30 +277,13 @@ export default function Digipan11({
             const visualNoteName = TEMPLATE_NOTES[i] || "A4";
             const visualFrequency = getNoteFrequency(visualNoteName);
 
-            // Determine offset based on ID (0-8 = Top -> Left, 9-10 = Bottom -> Right)
-            const isBottom = n.id >= 9;
-
-            // Dynamic Offset Logic
-            let offset: [number, number, number];
-            if (useVerticalLayout) {
-                // Vertical Layout: Top-Bottom
-                // Top Shell: Move UP (+28)
-                // Bottom Shell: Move DOWN (-28)
-                offset = isBottom ? [0, -28, 0] : [0, 28, 0];
-            } else {
-                // Horizontal Layout: Left-Right
-                // Top Shell: Move LEFT (-28.5)
-                // Bottom Shell: Move RIGHT (+28.5)
-                offset = isBottom ? [28.5, 0, 0] : [-28.5, 0, 0];
-            }
-
             return {
                 ...n,
                 label: noteName, // Default label
                 frequency: frequency || 440,
                 visualFrequency: visualFrequency || 440,
                 labelOffset: 25,
-                offset: offset
+                offset: [0, 0, 0] as [number, number, number] // Centered for all notes
             };
         });
 
@@ -150,17 +299,14 @@ export default function Digipan11({
 
         return finalNotes;
 
-    }, [scale, externalNotes, useVerticalLayout]);
+    }, [scale, externalNotes]); // removed useVerticalLayout dep
 
     // Use external notes if provided (Editor Mode), otherwise use internal default (Standard Component)
     const notesToRender = externalNotes || internalNotes;
 
     // Calculate Scene Size for Camera Auto-Fit
-    // Horizontal (Desktop): Width ~120, Height ~60
-    // Vertical (Mobile/Tablet): Width ~60, Height ~115 (Tighter fit)
-    const sceneSize = useVerticalLayout
-        ? { width: 60, height: 115 } // Tighter vertical fit
-        : { width: 125, height: 60 };
+    // Now just a fixed single size since we removed the split view
+    const sceneSize = { width: 60, height: 60 };
 
     return (
         <Digipan3D
@@ -170,7 +316,13 @@ export default function Digipan11({
             onNoteClick={onNoteClick}
             onScaleSelect={onScaleSelect}
             // Background is simpler now - we pass content instead of string
-            backgroundContent={<Digipan11Background useVerticalLayout={useVerticalLayout} />}
+            backgroundContent={
+                <Digipan11Background
+                    centerX={500} // Default is 500 now, implicit 
+                    centerY={500}
+                    visualNotes={notesToRender.filter(n => n.id >= 9)}
+                />
+            }
             // tonefieldOffset={[-28.5, 0, 0]} // REMOVED global offset, will use per-note offset
             extraControls={extraControls}
             noteCountFilter={9} // Keep filter as 9 for now as it duplicates 9

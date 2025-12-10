@@ -374,63 +374,61 @@ export default function Digipan3D({
                     sceneSize={sceneSize}
                 />
 
-                <Center>
-                    <group>
-                        {/* Body */}
-                        <Suspense fallback={null}>
-                            {backgroundContent ? backgroundContent : <HandpanImage backgroundImage={backgroundImage} />}
-                        </Suspense>
+                <group>
+                    {/* Body */}
+                    <Suspense fallback={null}>
+                        {backgroundContent ? backgroundContent : <HandpanImage backgroundImage={backgroundImage} centerX={centerX} centerY={centerY} />}
+                    </Suspense>
 
-                        <Text
-                            visible={viewMode === 0 && !hideStaticLabels}
-                            position={[25, 0, 0.5]} // 25cm right
-                            fontSize={1.2}
-                            color="#FFFFFF" // Gold
-                            anchorX="center"
-                            anchorY="middle"
-                            fontWeight="bold"
-                        >
-                            RS
-                        </Text>
-                        <Text
-                            visible={viewMode === 0 && !hideStaticLabels}
-                            position={[-25, 0, 0.5]} // 25cm left
-                            fontSize={1.2}
-                            color="#FFFFFF" // Gold
-                            anchorX="center"
-                            anchorY="middle"
-                            fontWeight="bold"
-                        >
-                            LS
-                        </Text>
-                        <Text
-                            visible={viewMode === 0 && !hideStaticLabels}
-                            position={[0, -15, 0.5]} // 15cm down
-                            fontSize={1.2}
-                            color="#FFFFFF" // Gold
-                            anchorX="center"
-                            anchorY="middle"
-                            fontWeight="bold"
-                        >
-                            H
-                        </Text>
+                    <Text
+                        visible={viewMode === 0 && !hideStaticLabels}
+                        position={[25, 0, 0.5]} // 25cm right
+                        fontSize={1.2}
+                        color="#FFFFFF" // Gold
+                        anchorX="center"
+                        anchorY="middle"
+                        fontWeight="bold"
+                    >
+                        RS
+                    </Text>
+                    <Text
+                        visible={viewMode === 0 && !hideStaticLabels}
+                        position={[-25, 0, 0.5]} // 25cm left
+                        fontSize={1.2}
+                        color="#FFFFFF" // Gold
+                        anchorX="center"
+                        anchorY="middle"
+                        fontWeight="bold"
+                    >
+                        LS
+                    </Text>
+                    <Text
+                        visible={viewMode === 0 && !hideStaticLabels}
+                        position={[0, -15, 0.5]} // 15cm down
+                        fontSize={1.2}
+                        color="#FFFFFF" // Gold
+                        anchorX="center"
+                        anchorY="middle"
+                        fontWeight="bold"
+                    >
+                        H
+                    </Text>
 
-                        {/* Tone Fields */}
-                        {notes.map((note) => (
-                            <ToneFieldMesh
-                                key={note.id}
-                                note={note}
-                                centerX={centerX}
-                                centerY={centerY}
-                                onClick={onNoteClick}
-                                viewMode={viewMode}
-                                demoActive={demoNoteId === note.id}
-                                playNote={playNote}
-                                offset={note.offset || tonefieldOffset} // Prefer note offset, fallback to global
-                            />
-                        ))}
-                    </group>
-                </Center>
+                    {/* Tone Fields */}
+                    {notes.map((note) => (
+                        <ToneFieldMesh
+                            key={note.id}
+                            note={note}
+                            centerX={centerX}
+                            centerY={centerY}
+                            onClick={onNoteClick}
+                            viewMode={viewMode}
+                            demoActive={demoNoteId === note.id}
+                            playNote={playNote}
+                            offset={note.offset || tonefieldOffset} // Prefer note offset, fallback to global
+                        />
+                    ))}
+                </group>
             </Canvas>
 
 
@@ -489,7 +487,7 @@ interface NoteData {
 // SVG Center: 500, 500
 // SVG Radius: ~480
 // Real Radius: 28.5 cm
-const svgTo3D = (x: number, y: number, centerX: number = 500, centerY: number = 500) => {
+export const svgTo3D = (x: number, y: number, centerX: number = 500, centerY: number = 500) => {
     const svgScale = HANDPAN_CONFIG.PAN_RADIUS / 480; // Map 480px to 28.5cm
     return {
         x: (x - centerX) * svgScale,
@@ -498,7 +496,7 @@ const svgTo3D = (x: number, y: number, centerX: number = 500, centerY: number = 
 };
 
 // Helper to calculate parametric tonefield dimensions
-const getTonefieldDimensions = (hz: number, isDing: boolean) => {
+export const getTonefieldDimensions = (hz: number, isDing: boolean) => {
     const { DING, NORMAL, RATIOS } = TONEFIELD_CONFIG;
     const refConfig = isDing ? DING : NORMAL;
 
@@ -529,32 +527,23 @@ const getTonefieldDimensions = (hz: number, isDing: boolean) => {
 // -----------------------------------------------------------------------------
 
 // Image Component
-const HandpanImage = ({ backgroundImage }: { backgroundImage?: string | null }) => {
-    // Load the texture if provided
-    // Use useTexture inside a conditional or ensure path is valid?
-    // useTexture throws if path is invalid. Ideally we only render if path exists.
-
-    // CAUTION: hooks are unconditional. We must use a valid path for useTexture even if we don't use it, 
-    // or we must structure this so HandpanImage is only mounted when backgroundImage is valid.
-    // However, hooks order matters. 
-    // Easier approach: If no image, render nothing inside, but we need to handle useTexture.
-    // useTexture can take an array or string.
-
-    // Better: Pass the texture url to HandpanImage. HandpanImage calls useTexture.
-    // If we want it optional, we might need a separate component or handle it carefully.
-    // For now, let's assume we pass a valid string or a default transparent placeholder if null?
-    // Actually, simply: Conditional rendering of the component in the parent.
-
+const HandpanImage = ({ backgroundImage, centerX = 500, centerY = 500 }: { backgroundImage?: string | null; centerX?: number; centerY?: number; }) => {
     if (!backgroundImage) return null;
 
-    return <HandpanImageRenderer url={backgroundImage} />;
+    // Calculate Image Position to adjust for Center Offset
+    // We want the SVG Center (500, 500) to align with the calculated 3D position
+    // If centerX/Y is different from 500, the origin (0,0) moves to that point.
+    // The Image (centered at 500,500) must move relative to the new origin.
+    const pos = svgTo3D(500, 500, centerX, centerY);
+
+    return <HandpanImageRenderer url={backgroundImage} position={[pos.x, pos.y, -0.5]} />;
 };
 
-const HandpanImageRenderer = ({ url }: { url: string }) => {
+const HandpanImageRenderer = ({ url, position }: { url: string; position: [number, number, number] }) => {
     const texture = useTexture(url);
     const size = HANDPAN_CONFIG.OUTER_RADIUS * 2;
     return (
-        <mesh position={[0, 0, -0.5]} rotation={[0, 0, 0]}>
+        <mesh position={position} rotation={[0, 0, 0]}>
             <planeGeometry args={[size, size]} />
             <meshBasicMaterial map={texture} transparent opacity={1} />
         </mesh>

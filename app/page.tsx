@@ -8,7 +8,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { SCALES } from '@/data/handpanScales';
 import { PRODUCTS as ACCESSORY_PRODUCTS } from '@/data/products';
-import { CircleFlag } from 'react-circle-flags';
+// import { CircleFlag } from 'react-circle-flags'; // Removed
 import { TRANSLATIONS, SUPPORTED_LANGUAGES, Language } from '@/constants/translations';
 import { getLocalizedProduct } from '../utils/i18n';
 import ThemeToggle from "@/components/ThemeToggle";
@@ -443,6 +443,7 @@ export default function Home() {
     const [step, setStep] = useState<'selection' | 'result'>('result');
     const [selectedVibe, setSelectedVibe] = useState<Vibe | null>(initialVibe);
     const [isLoading, setIsLoading] = useState(true);
+    const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
 
     // 언어 전환 핸들러
     const handleLanguageChange = (lang: Language) => {
@@ -517,56 +518,88 @@ export default function Home() {
                         <ThemeToggle />
                     </div>
 
-                    {/* Language Selector - Top Right on Web, Center on Mobile */}
-                    <div className="absolute top-4 right-4 z-50 hidden md:grid md:grid-cols-4 gap-2">
-                        {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'].includes(lang.code))
-                            .sort((a, b) => {
-                                const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'];
-                                return order.indexOf(a.code) - order.indexOf(b.code);
-                            })
-                            .map((lang) => (
+                    {/* Language Selector - Top Right on Web - Dropdown */}
+                    <div className="absolute top-4 right-4 z-50 hidden md:flex flex-row items-center gap-3">
+                        <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pt-0.5">Language</span>
+                        <div className="relative">
                             <button
-                                key={lang.code}
-                                onClick={() => handleLanguageChange(lang.code)}
-                                className="transition-all duration-200 hover:scale-110 focus:outline-none"
-                                aria-label={lang.name}
+                                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                                className="transition-all duration-200 px-4 py-2 rounded-full text-sm font-medium bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 ring-1 ring-gray-200 dark:ring-gray-600 shadow-sm flex items-center gap-2"
+                                aria-label="Select Language"
+                                aria-expanded={isLangMenuOpen}
                             >
-                                <div className={`w-6 h-6 md:w-7 md:h-7 rounded-full transition-all duration-200 ${language === lang.code
-                                    ? 'ring-2 ring-indigo-600 dark:ring-cosmic shadow-lg dark:shadow-[0_0_10px_rgba(72,255,0,0.3)] scale-105'
-                                    : 'opacity-50 hover:opacity-70 ring-1 ring-gray-300 dark:ring-gray-600'
-                                    }`}>
-                                    <CircleFlag countryCode={lang.flag} height="24" />
-                                </div>
+                                <span>{SUPPORTED_LANGUAGES.find(l => l.code === language)?.name || 'Language'}</span>
+                                <svg className={`w-4 h-4 transition-transform duration-200 ${isLangMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
-                        ))}
+
+                            {isLangMenuOpen && (
+                                <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden py-1 max-h-[80vh] overflow-y-auto">
+                                    {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'].includes(lang.code))
+                                        .sort((a, b) => {
+                                            const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'];
+                                            return order.indexOf(a.code) - order.indexOf(b.code);
+                                        })
+                                        .map((lang) => (
+                                            <button
+                                                key={lang.code}
+                                                onClick={() => {
+                                                    handleLanguageChange(lang.code);
+                                                    setIsLangMenuOpen(false);
+                                                }}
+                                                className={`w-full text-left px-4 py-3 text-sm transition-colors duration-150 ${language === lang.code
+                                                    ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-semibold'
+                                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'
+                                                    }`}
+                                            >
+                                                {lang.name}
+                                            </button>
+                                        ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     <header className="text-center space-y-2 pt-2">
                         <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-slate-400 drop-shadow-sm">
                             {t.title}
                         </h1>
-                        {/* Language Selector - Center on Mobile */}
-                        <div className="grid grid-cols-4 gap-2 justify-items-center max-w-2xl mx-auto md:hidden">
-                            {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'].includes(lang.code))
-                                .sort((a, b) => {
-                                    const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'];
-                                    return order.indexOf(a.code) - order.indexOf(b.code);
-                                })
-                                .map((lang) => (
-                                <button
-                                    key={lang.code}
-                                    onClick={() => handleLanguageChange(lang.code)}
-                                    className="transition-all duration-200 hover:scale-110 focus:outline-none"
-                                    aria-label={lang.name}
-                                >
-                                    <div className={`w-6 h-6 md:w-7 md:h-7 rounded-full transition-all duration-200 ${language === lang.code
-                                        ? 'ring-2 ring-indigo-600 dark:ring-cosmic shadow-lg dark:shadow-[0_0_10px_rgba(72,255,0,0.3)] scale-105'
-                                        : 'opacity-50 hover:opacity-70 ring-1 ring-gray-300 dark:ring-gray-600'
-                                        }`}>
-                                        <CircleFlag countryCode={lang.flag} height="24" />
-                                    </div>
-                                </button>
-                            ))}
+                        {/* Language Selector - Center on Mobile - Dropdown */}
+                        <div className="relative flex flex-row items-center justify-center md:hidden px-4 z-40 gap-3 mt-2">
+                            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pt-0.5">Language</span>
+                            <button
+                                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                                className="transition-all duration-200 px-4 py-2 rounded-full text-sm font-medium bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 ring-1 ring-gray-200 dark:ring-gray-600 shadow-sm flex items-center gap-2"
+                                aria-label="Select Language"
+                                aria-expanded={isLangMenuOpen}
+                            >
+                                <span>{SUPPORTED_LANGUAGES.find(l => l.code === language)?.name || 'Language'}</span>
+                                <svg className={`w-4 h-4 transition-transform duration-200 ${isLangMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+
+                            {isLangMenuOpen && (
+                                <div className="absolute top-full mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden py-1 max-h-[60vh] overflow-y-auto left-1/2 transform -translate-x-1/2 z-50">
+                                    {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'].includes(lang.code))
+                                        .sort((a, b) => {
+                                            const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'];
+                                            return order.indexOf(a.code) - order.indexOf(b.code);
+                                        })
+                                        .map((lang) => (
+                                            <button
+                                                key={lang.code}
+                                                onClick={() => {
+                                                    handleLanguageChange(lang.code);
+                                                    setIsLangMenuOpen(false);
+                                                }}
+                                                className={`w-full text-left px-4 py-3 text-sm transition-colors duration-150 ${language === lang.code
+                                                    ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-semibold'
+                                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'
+                                                    }`}
+                                            >
+                                                {lang.name}
+                                            </button>
+                                        ))}
+                                </div>
+                            )}
                         </div>
                     </header>
 

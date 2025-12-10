@@ -699,69 +699,6 @@ export const SCALES: Scale[] = [
         }
     },
 
-    // 10-2. C# Pygmy 11 (Extended Low)
-    {
-        id: "cs_pygmy_11",
-        name: "C# Pygmy 11",
-        nameEn: "C# Pygmy 11",
-        notes: {
-            ding: "C#3",
-            top: ["F#3", "G#3", "A3", "C#4", "E4", "F#4", "G#4", "A4"],
-            bottom: ["A2", "B2"]
-        },
-        vector: { minorMajor: -0.7, pureSpicy: 0.1, rarePopular: 0.7 },
-        tags: ["피그미", "트랜스", "저음보강", "확장판"],
-        tagsEn: ["Pygmy", "Trance", "Bass Boost", "Extended"],
-        description: "클래식 C# Pygmy 9에 저음(A2, B2)을 추가하여 더욱 깊고 웅장한 울림을 선사하는 11노트 확장판입니다. 저음부가 강화되어 더욱 몽환적인 트랜스 상태를 유도합니다.",
-        descriptionEn: "An 11-note extended version of the classic C# Pygmy 9 with added bass notes (A2, B2) for a deeper and grander resonance. The enhanced bass section induces an even more dreamy trance state.",
-        videoUrl: "https://youtu.be/WcREkpJ5I_0?si=YUyV1CEIOLyXWesW", // Using same video as Pygmy 9 for now
-        productUrl: "https://smartstore.naver.com/sndhandpan/products/8521877785",
-        ownUrl: "https://handpan.co.kr/shop/?idx=88",
-        ownUrlEn: "",
-        i18n: {
-            fr: {
-                name: "C# Pygmy 11",
-                description: "Version étendue de la C# Pygmy 9 avec des basses (A2, B2) ajoutées. Offre une résonance plus profonde et majestueuse, idéale pour une immersion totale."
-            },
-            ja: {
-                name: "C# Pygmy 11",
-                description: "クラシックなC# Pygmy 9に低音（A2, B2）を追加した11音の拡張版です。より深く壮大な響きが特徴で、幻想的な没入感を高めます。"
-            },
-            zh: {
-                name: "C# Pygmy 11",
-                description: "在经典 C# Pygmy 9 基础上增加低音（A2, B2）的 11 音扩展版。更深沉宏大的共鸣，带来更极致的梦幻体验。"
-            },
-            de: {
-                name: "C# Pygmy 11",
-                description: "Eine auf 11 Töne erweiterte Version der C# Pygmy 9 mit zusätzlichen Bässen (A2, B2). Der Klang gewinnt an Tiefe und Grandezza und verstärkt die tranceartige Wirkung."
-            },
-            es: {
-                name: "C# Pygmy 11",
-                description: "Versión extendida de 11 notas de la C# Pygmy 9, con bajos añadidos (A2, B2). Ofrece una resonancia más profunda y grandiosa, intensificando el estado de trance onírico."
-            },
-            ru: {
-                name: "C# Pygmy 11",
-                description: "Расширенная 11-нотная версия C# Pygmy 9 с дополнительными басами (A2, B2). Звучание становится еще глубже и грандиознее, способствуя более полному погружению."
-            },
-            fa: {
-                name: "C# Pygmy 11",
-                description: "نسخهٔ گسترش‌یافتهٔ ۱۱ نتی از گام کلاسیک C# Pygmy 9 با نت‌های باس اضافی (A2, B2). رزونانسی عمیق‌تر و باشکوه‌تر برای تجربه‌ای غرق‌کننده‌تر."
-            },
-            pt: {
-                name: "C# Pygmy 11",
-                description: "Versão estendida de 11 notas da C# Pygmy 9, com graves adicionados (A2, B2). Proporciona uma ressonância mais profunda e grandiosa, ideal para imersão total."
-            },
-            ae: {
-                name: "C# Pygmy 11",
-                description: "نسخة موسعة من 11 نغمة لسلم C# Pygmy 9 مع إضافة بيس (A2, B2). تمنح رنينًا أعمق وأكثر فخامة لتجربة أكثر انغماسًا."
-            },
-            it: {
-                name: "C# Pygmy 11",
-                description: "Versione estesa a 11 note della C# Pygmy 9 con bassi aggiunti (A2, B2). Offre una risonanza più profonda e maestosa, ideale per un'immersione totale."
-            }
-        }
-    },
-
     // 11. D Asha 15 (2-Octave Major) - Mutant
     {
         id: "d_asha_15_mutant",
