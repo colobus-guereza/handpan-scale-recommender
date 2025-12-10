@@ -306,6 +306,20 @@ const CASE_PRODUCTS = [
 // 소프트케이스 카테고리용 제품 목록
 const SOFT_CASE_PRODUCTS = [
     {
+        id: 1,
+        name: 'Avaja, L, Black(뮤턴트용)',
+        nameEn: 'Avaja, L, Black(뮤턴트용)',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/avaja_titanmid_grey.png',
+        i18n: {
+            fr: {
+                name: 'Avaja, L, Noir(뮤턴트용)'
+            }
+        }
+    },
+    {
         id: 2,
         name: 'Avaja Premium (M, Grey)',
         nameEn: 'Avaja Premium (M, Grey)',
@@ -390,22 +404,21 @@ const productNameMap: Record<string, string> = {
 };
 
 // 제품명으로 productUrl을 찾는 헬퍼 함수
-const getProductUrl = (productName: string): string | null => {
+const getProductUrl = (productName: string, language: Language = 'ko'): string | null => {
     // 먼저 스케일에서 찾기
     const scale = SCALES.find(s => s.name === productName);
-    if (scale?.ownUrl) {
-        return scale.ownUrl;
-    }
-    // ownUrl이 없으면 productUrl 사용
-    if (scale?.productUrl) {
-        return scale.productUrl;
+    if (scale) {
+        if (language !== 'ko' && scale.ownUrlEn) return scale.ownUrlEn;
+        if (scale.ownUrl) return scale.ownUrl;
+        if (scale.productUrl) return scale.productUrl;
     }
 
     // Avaja Premium 제품들은 모두 같은 링크 사용
     if (productName.includes('Avaja Premium')) {
         const avajaProduct = ACCESSORY_PRODUCTS.find(p => p.name === 'Avaja 고급 소프트케이스');
-        if (avajaProduct?.ownUrl) {
-            return avajaProduct.ownUrl;
+        if (avajaProduct) {
+            if (language !== 'ko' && avajaProduct.ownUrlEn) return avajaProduct.ownUrlEn;
+            if (avajaProduct.ownUrl) return avajaProduct.ownUrl;
         }
     }
 
@@ -414,7 +427,12 @@ const getProductUrl = (productName: string): string | null => {
 
     // PRODUCTS에서 찾기
     const product = ACCESSORY_PRODUCTS.find(p => p.name === mappedName || p.name === productName);
-    return product?.ownUrl || null;
+    if (product) {
+        if (language !== 'ko' && product.ownUrlEn) return product.ownUrlEn;
+        return product.ownUrl || null;
+    }
+
+    return null;
 };
 
 export default function Home() {
@@ -521,7 +539,7 @@ export default function Home() {
                     {/* Language Selector - Top Right on Web - Dropdown */}
                     <div className="absolute top-4 right-4 z-50 hidden md:flex flex-row items-center gap-3">
                         <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pt-0.5">Language</span>
-                        <div className="relative">
+                        <div className="relative" onMouseEnter={() => setIsLangMenuOpen(true)} onMouseLeave={() => setIsLangMenuOpen(false)}>
                             <button
                                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
                                 className="transition-all duration-200 px-4 py-2 rounded-full text-sm font-medium bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 ring-1 ring-gray-200 dark:ring-gray-600 shadow-sm flex items-center gap-2"
@@ -533,12 +551,9 @@ export default function Home() {
                             </button>
 
                             {isLangMenuOpen && (
-                                <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden py-1 max-h-[80vh] overflow-y-auto">
+                                <div className="absolute top-[calc(100%-0.5rem)] right-0 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden py-1 max-h-[80vh] overflow-y-auto pt-6">
                                     {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'].includes(lang.code))
-                                        .sort((a, b) => {
-                                            const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'];
-                                            return order.indexOf(a.code) - order.indexOf(b.code);
-                                        })
+                                        .sort((a, b) => a.code.localeCompare(b.code))
                                         .map((lang) => (
                                             <button
                                                 key={lang.code}
@@ -566,40 +581,39 @@ export default function Home() {
                         {/* Language Selector - Center on Mobile - Dropdown */}
                         <div className="relative flex flex-row items-center justify-center md:hidden px-4 z-40 gap-3 mt-2">
                             <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pt-0.5">Language</span>
-                            <button
-                                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                                className="transition-all duration-200 px-4 py-2 rounded-full text-sm font-medium bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 ring-1 ring-gray-200 dark:ring-gray-600 shadow-sm flex items-center gap-2"
-                                aria-label="Select Language"
-                                aria-expanded={isLangMenuOpen}
-                            >
-                                <span>{SUPPORTED_LANGUAGES.find(l => l.code === language)?.name || 'Language'}</span>
-                                <svg className={`w-4 h-4 transition-transform duration-200 ${isLangMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-                            </button>
+                            <div className="relative" onMouseEnter={() => setIsLangMenuOpen(true)} onMouseLeave={() => setIsLangMenuOpen(false)}>
+                                <button
+                                    onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                                    className="transition-all duration-200 px-4 py-2 rounded-full text-sm font-medium bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 ring-1 ring-gray-200 dark:ring-gray-600 shadow-sm flex items-center gap-2"
+                                    aria-label="Select Language"
+                                    aria-expanded={isLangMenuOpen}
+                                >
+                                    <span>{SUPPORTED_LANGUAGES.find(l => l.code === language)?.name || 'Language'}</span>
+                                    <svg className={`w-4 h-4 transition-transform duration-200 ${isLangMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
 
-                            {isLangMenuOpen && (
-                                <div className="absolute top-full mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden py-1 max-h-[60vh] overflow-y-auto left-1/2 transform -translate-x-1/2 z-50">
-                                    {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'].includes(lang.code))
-                                        .sort((a, b) => {
-                                            const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'];
-                                            return order.indexOf(a.code) - order.indexOf(b.code);
-                                        })
-                                        .map((lang) => (
-                                            <button
-                                                key={lang.code}
-                                                onClick={() => {
-                                                    handleLanguageChange(lang.code);
-                                                    setIsLangMenuOpen(false);
-                                                }}
-                                                className={`w-full text-left px-4 py-3 text-sm transition-colors duration-150 ${language === lang.code
-                                                    ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-semibold'
-                                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'
-                                                    }`}
-                                            >
-                                                {lang.name}
-                                            </button>
-                                        ))}
-                                </div>
-                            )}
+                                {isLangMenuOpen && (
+                                    <div className="absolute top-[calc(100%-0.5rem)] left-1/2 transform -translate-x-1/2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden py-1 max-h-[60vh] overflow-y-auto z-50 pt-6">
+                                        {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'].includes(lang.code))
+                                            .sort((a, b) => a.code.localeCompare(b.code))
+                                            .map((lang) => (
+                                                <button
+                                                    key={lang.code}
+                                                    onClick={() => {
+                                                        handleLanguageChange(lang.code);
+                                                        setIsLangMenuOpen(false);
+                                                    }}
+                                                    className={`w-full text-left px-4 py-3 text-sm transition-colors duration-150 ${language === lang.code
+                                                        ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-semibold'
+                                                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'
+                                                        }`}
+                                                >
+                                                    {lang.name}
+                                                </button>
+                                            ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </header>
 
@@ -655,7 +669,7 @@ export default function Home() {
                         className="mySwiper !pb-10 !px-2"
                     >
                         {PRODUCTS.map((product) => {
-                            const productUrl = getProductUrl(product.name);
+                            const productUrl = getProductUrl(product.name, language);
 
                             return (
                                 <SwiperSlide key={product.id}>
@@ -734,7 +748,7 @@ export default function Home() {
                         className="mySwiper !pb-10 !px-2"
                     >
                         {HEALING_PRODUCTS.map((product) => {
-                            const productUrl = getProductUrl(product.name);
+                            const productUrl = getProductUrl(product.name, language);
 
                             return (
                                 <SwiperSlide key={product.id}>
@@ -813,7 +827,7 @@ export default function Home() {
                         className="mySwiper !pb-10 !px-2"
                     >
                         {MAJOR_SCALE_PRODUCTS.map((product) => {
-                            const productUrl = getProductUrl(product.name);
+                            const productUrl = getProductUrl(product.name, language);
 
                             return (
                                 <SwiperSlide key={product.id}>
@@ -892,7 +906,7 @@ export default function Home() {
                         className="mySwiper !pb-10 !px-2"
                     >
                         {DEEP_ETHNIC_PRODUCTS.map((product) => {
-                            const productUrl = getProductUrl(product.name);
+                            const productUrl = getProductUrl(product.name, language);
 
                             return (
                                 <SwiperSlide key={product.id}>
@@ -971,7 +985,7 @@ export default function Home() {
                         className="mySwiper !pb-10 !px-2"
                     >
                         {CASE_PRODUCTS.map((product) => {
-                            const productUrl = getProductUrl(product.name);
+                            const productUrl = getProductUrl(product.name, language);
                             const isSoldOut = (product as any).soldOut || false;
 
                             return (
@@ -1059,7 +1073,7 @@ export default function Home() {
                         className="mySwiper !pb-10 !px-2"
                     >
                         {SOFT_CASE_PRODUCTS.map((product) => {
-                            const productUrl = getProductUrl(product.name);
+                            const productUrl = getProductUrl(product.name, language);
                             const isSoldOut = (product as any).soldOut || false;
 
                             return (
@@ -1147,7 +1161,7 @@ export default function Home() {
                         className="mySwiper !pb-10 !px-2"
                     >
                         {STAND_PRODUCTS.map((product) => {
-                            const productUrl = getProductUrl(product.name);
+                            const productUrl = getProductUrl(product.name, language);
 
                             return (
                                 <SwiperSlide key={product.id}>
