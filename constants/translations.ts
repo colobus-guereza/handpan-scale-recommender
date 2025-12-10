@@ -1,19 +1,20 @@
-export type Language = 'ko' | 'en' | 'fr' | 'de' | 'ja' | 'zh' | 'tr' | 'ar' | 'pt' | 'es' | 'ru' | 'fa' | 'ae';
+export type Language = 'ko' | 'en' | 'fr' | 'de' | 'ja' | 'zh' | 'tr' | 'ar' | 'pt' | 'es' | 'ru' | 'fa' | 'ae' | 'it';
 
 export const SUPPORTED_LANGUAGES = [
     { code: 'ko', name: '한국어', flag: 'kr' },
     { code: 'en', name: 'English', flag: 'us' },
-    { code: 'fr', name: 'Français', flag: 'fr' },
-    { code: 'de', name: 'Deutsch', flag: 'de' },
-    { code: 'ja', name: '日本語', flag: 'jp' },
     { code: 'zh', name: '中文', flag: 'cn' },
-    { code: 'tr', name: 'Türkçe', flag: 'tr' },
-    { code: 'ar', name: 'العربية', flag: 'sa' },
-    { code: 'pt', name: 'Português', flag: 'pt' },
+    { code: 'fr', name: 'Français', flag: 'fr' },
+    { code: 'ja', name: '日本語', flag: 'jp' },
+    { code: 'de', name: 'Deutsch', flag: 'de' },
     { code: 'es', name: 'Español', flag: 'es' },
     { code: 'ru', name: 'Русский', flag: 'ru' },
     { code: 'fa', name: 'فارسی', flag: 'ir' },
-    { code: 'ae', name: 'العربية (UAE)', flag: 'ae' }
+    { code: 'pt', name: 'Português', flag: 'pt' },
+    { code: 'ae', name: 'العربية (UAE)', flag: 'ae' },
+    { code: 'it', name: 'Italiano', flag: 'it' },
+    { code: 'tr', name: 'Türkçe', flag: 'tr' },
+    { code: 'ar', name: 'العربية', flag: 'sa' }
 ] as const;
 
 const EN_TRANSLATIONS = {
@@ -792,6 +793,103 @@ const PT_TRANSLATIONS = {
     soldOut: 'Esgotado'
 };
 
+const IT_TRANSLATIONS = {
+    title: 'Trovare la mia scala di handpan ideale',
+    vibeSelector: {
+        jamming: 'Principiante',
+        meditation: 'Yoga·Meditazione·Guarigione',
+        uplift: 'Atmosfera luminosa',
+        exotic: 'Etnico profondo'
+    },
+    scaleList: {
+        back: 'Seleziona di nuovo',
+        scaleClassification: 'Classificazione',
+        allScales: 'Tutte le scale',
+        purchase: 'Acquista',
+        preparing: 'Prossimamente',
+        share: 'Condividi',
+        copied: 'Copiato',
+        rankRecommendation: 'Raccomandazione',
+        popularScale: 'Popolare',
+        ding: 'Ding',
+        top: 'Superiore',
+        bottom: 'Inferiore',
+        prev: 'Precedente',
+        next: 'Successivo',
+        mutant: 'Mutante',
+        normal: 'Normale',
+        viewing: 'Visualizzazione',
+        select: 'Seleziona',
+        filter: 'Filtro',
+        selectCategory: 'Seleziona categoria',
+        selectType: 'Seleziona tipo',
+        noteCount: 'Numero di note',
+        selectDing: 'Seleziona Ding',
+        mood: 'Umore',
+        tone: 'Tono',
+        popularity: 'Popolarità',
+        minor: 'Minore',
+        major: 'Maggiore',
+        pure: 'Puro',
+        spicy: 'Piccante',
+        rare: 'Raro',
+        popular: 'Popolare',
+        digiPan: 'DigiPan',
+        implementationPending: 'Implementazione in sospeso',
+        axes: {
+            minorMajor: {
+                label: 'Umore',
+                description: 'Rappresenta l\'atmosfera emotiva complessiva della scala.',
+                minLabel: 'Minore',
+                maxLabel: 'Maggiore'
+            },
+            pureSpicy: {
+                label: 'Tono',
+                description: 'Rappresenta il grado di semplicità o complessità del suono.',
+                minLabel: 'Puro',
+                maxLabel: 'Piccante'
+            },
+            rarePopular: {
+                label: 'Popolarità',
+                description: 'Rappresenta la rarità e la popolarità sul mercato.',
+                minLabel: 'Raro',
+                maxLabel: 'Popolare'
+            }
+        }
+    },
+    categories: {
+        beginner: 'Principiante',
+        healing: 'Yoga & Meditazione',
+        bright: 'Scala Maggiore',
+        ethnic: 'Etnico profondo',
+        case: 'Custodia rigida',
+        softCase: 'Custodia morbida',
+        stand: 'Supporto'
+    },
+    shipping: {
+        worldwide: 'Spedizione mondiale',
+        worldwideEn: 'Worldwide Shipping'
+    },
+    tags: {
+        minor: 'Minore',
+        major: 'Maggiore',
+        harmonic: 'Armonico',
+        melodic: 'Melodico',
+        pentatonic: 'Pentatonico',
+        exotic: 'Esotico',
+        meditative: 'Meditativo',
+        bright: 'Luminoso',
+        dark: 'Scuro',
+        mysterious: 'Misterioso',
+        happy: 'Felice',
+        sad: 'Triste',
+        uplifting: 'Elevante',
+        calm: 'Calmo',
+        energetic: 'Energetico'
+    },
+    soldOut: 'Esaurito'
+};
+
 const JA_TRANSLATIONS = {
     title: '自分に合ったハンドパン・スケールを見つける',
     vibeSelector: {
@@ -1096,6 +1194,7 @@ export const TRANSLATIONS: Record<Language, TranslationType> = {
     es: ES_TRANSLATIONS,
     ru: RU_TRANSLATIONS,
     fa: FA_TRANSLATIONS,
-    ae: AE_TRANSLATIONS
+    ae: AE_TRANSLATIONS,
+    it: IT_TRANSLATIONS
 } as const;
 

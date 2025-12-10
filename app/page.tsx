@@ -519,9 +519,9 @@ export default function Home() {
 
                     {/* Language Selector - Top Right on Web, Center on Mobile */}
                     <div className="absolute top-4 right-4 z-50 hidden md:grid md:grid-cols-4 gap-2">
-                        {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae'].includes(lang.code))
+                        {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'].includes(lang.code))
                             .sort((a, b) => {
-                                const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae'];
+                                const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'];
                                 return order.indexOf(a.code) - order.indexOf(b.code);
                             })
                             .map((lang) => (
@@ -547,9 +547,9 @@ export default function Home() {
                         </h1>
                         {/* Language Selector - Center on Mobile */}
                         <div className="grid grid-cols-4 gap-2 justify-items-center max-w-2xl mx-auto md:hidden">
-                            {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae'].includes(lang.code))
+                            {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'].includes(lang.code))
                                 .sort((a, b) => {
-                                    const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae'];
+                                    const order = ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'];
                                     return order.indexOf(a.code) - order.indexOf(b.code);
                                 })
                                 .map((lang) => (
