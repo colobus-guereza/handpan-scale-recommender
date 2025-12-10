@@ -44,10 +44,10 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
     }, []);
 
     // For 11-note scales in Vertical Layout, use a taller aspect ratio
-    // Normal: aspect-square (1:1)
-    // Vertical 11: aspect-[5/8] (approx 1:1.6) to allow vertical stacking
+    // Scene Size Ratio is roughly 60:115 (~1:1.92)
+    // We use aspect-[1/2] (1:2.0) which is slightly taller, providing a tight, efficient fit without cropping.
     const containerClass = (is11Notes && isVerticalLayout)
-        ? "w-full aspect-[5/8] max-h-[800px] relative rounded-2xl overflow-hidden bg-white -mt-2"
+        ? "w-full aspect-[1/2] relative rounded-2xl overflow-hidden bg-white -mt-2"
         : "w-full aspect-square max-h-[500px] md:max-h-[700px] relative rounded-2xl overflow-hidden bg-white -mt-2";
 
     return (

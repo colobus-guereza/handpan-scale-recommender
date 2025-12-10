@@ -25,6 +25,7 @@ export interface Scale {
     videoUrl?: string;
     productUrl?: string;
     ownUrl?: string;
+    ownUrlEn?: string;
     i18n?: Record<string, LocalizedContent>;
 }
 
@@ -86,6 +87,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/IvdeC_YuSIg",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/9206864886",
         ownUrl: "https://handpan.co.kr/shop/?idx=75",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=75",
         i18n: {
             fr: {
                 name: "D Kurd 9",
@@ -148,6 +150,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/uL40C1bqKik?si=DpqHwPB_RLpcA5mc",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/7514024868",
         ownUrl: "https://handpan.co.kr/shop/?idx=74",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=75",
         i18n: {
             fr: {
                 name: "D Kurd 10",
@@ -210,6 +213,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/v9pXYwhylPg?si=Em_dHnMGyeU19YkE",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12351119980",
         ownUrl: "https://handpan.co.kr/shop/?idx=78",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=74",
         i18n: {
             fr: {
                 name: "E Equinox 14",
@@ -272,6 +276,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/SthKlH686Pc?si=_YG050uZwcbIoP0X",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12070387231",
         ownUrl: "https://handpan.co.kr/shop/?idx=97",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=78",
         i18n: {
             fr: {
                 name: "F# Low Pygmy 14",
@@ -334,6 +339,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/BH45TEboAgE?si=SLlNpG-5vTLSWAsx",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/9561986680",
         ownUrl: "https://handpan.co.kr/shop/?idx=71",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=71",
         i18n: {
             fr: {
                 name: "F Aeolian 10",
@@ -396,6 +402,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/gTEsQG3dfKQ?si=IJcS8SYJe9468WgP",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8681747137",
         ownUrl: "https://handpan.co.kr/shop/?idx=72",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=72",
         i18n: {
             fr: {
                 name: "E Romanian Hijaz 10",
@@ -458,6 +465,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/OJWGyT1OxIg?si=RM_0FkjjEuxaWPJu",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8669289024",
         ownUrl: "https://handpan.co.kr/shop/?idx=85",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=85",
         i18n: {
             fr: {
                 name: "D Saladin 9",
@@ -520,6 +528,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/4tgdyOhT-RI?si=9SQ66sdPiwvgxoP7",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8497384066",
         ownUrl: "https://handpan.co.kr/shop/?idx=87",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=87",
         i18n: {
             fr: {
                 name: "D Asha 9",
@@ -582,6 +591,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/B-7jukbN3hw?si=ci_6mlElCZvu_WGH",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8490886007",
         ownUrl: "https://handpan.co.kr/shop/?idx=73",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=87",
         i18n: {
             fr: {
                 name: "E La Sirena 10",
@@ -644,6 +654,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/WcREkpJ5I_0?si=YUyV1CEIOLyXWesW",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8521877785",
         ownUrl: "https://handpan.co.kr/shop/?idx=88",
+        ownUrlEn: "",
         i18n: {
             fr: {
                 name: "C# Pygmy 9",
@@ -688,6 +699,69 @@ export const SCALES: Scale[] = [
         }
     },
 
+    // 10-2. C# Pygmy 11 (Extended Low)
+    {
+        id: "cs_pygmy_11",
+        name: "C# Pygmy 11",
+        nameEn: "C# Pygmy 11",
+        notes: {
+            ding: "C#3",
+            top: ["F#3", "G#3", "A3", "C#4", "E4", "F#4", "G#4", "A4"],
+            bottom: ["A2", "B2"]
+        },
+        vector: { minorMajor: -0.7, pureSpicy: 0.1, rarePopular: 0.7 },
+        tags: ["피그미", "트랜스", "저음보강", "확장판"],
+        tagsEn: ["Pygmy", "Trance", "Bass Boost", "Extended"],
+        description: "클래식 C# Pygmy 9에 저음(A2, B2)을 추가하여 더욱 깊고 웅장한 울림을 선사하는 11노트 확장판입니다. 저음부가 강화되어 더욱 몽환적인 트랜스 상태를 유도합니다.",
+        descriptionEn: "An 11-note extended version of the classic C# Pygmy 9 with added bass notes (A2, B2) for a deeper and grander resonance. The enhanced bass section induces an even more dreamy trance state.",
+        videoUrl: "https://youtu.be/WcREkpJ5I_0?si=YUyV1CEIOLyXWesW", // Using same video as Pygmy 9 for now
+        productUrl: "https://smartstore.naver.com/sndhandpan/products/8521877785",
+        ownUrl: "https://handpan.co.kr/shop/?idx=88",
+        ownUrlEn: "",
+        i18n: {
+            fr: {
+                name: "C# Pygmy 11",
+                description: "Version étendue de la C# Pygmy 9 avec des basses (A2, B2) ajoutées. Offre une résonance plus profonde et majestueuse, idéale pour une immersion totale."
+            },
+            ja: {
+                name: "C# Pygmy 11",
+                description: "クラシックなC# Pygmy 9に低音（A2, B2）を追加した11音の拡張版です。より深く壮大な響きが特徴で、幻想的な没入感を高めます。"
+            },
+            zh: {
+                name: "C# Pygmy 11",
+                description: "在经典 C# Pygmy 9 基础上增加低音（A2, B2）的 11 音扩展版。更深沉宏大的共鸣，带来更极致的梦幻体验。"
+            },
+            de: {
+                name: "C# Pygmy 11",
+                description: "Eine auf 11 Töne erweiterte Version der C# Pygmy 9 mit zusätzlichen Bässen (A2, B2). Der Klang gewinnt an Tiefe und Grandezza und verstärkt die tranceartige Wirkung."
+            },
+            es: {
+                name: "C# Pygmy 11",
+                description: "Versión extendida de 11 notas de la C# Pygmy 9, con bajos añadidos (A2, B2). Ofrece una resonancia más profunda y grandiosa, intensificando el estado de trance onírico."
+            },
+            ru: {
+                name: "C# Pygmy 11",
+                description: "Расширенная 11-нотная версия C# Pygmy 9 с дополнительными басами (A2, B2). Звучание становится еще глубже и грандиознее, способствуя более полному погружению."
+            },
+            fa: {
+                name: "C# Pygmy 11",
+                description: "نسخهٔ گسترش‌یافتهٔ ۱۱ نتی از گام کلاسیک C# Pygmy 9 با نت‌های باس اضافی (A2, B2). رزونانسی عمیق‌تر و باشکوه‌تر برای تجربه‌ای غرق‌کننده‌تر."
+            },
+            pt: {
+                name: "C# Pygmy 11",
+                description: "Versão estendida de 11 notas da C# Pygmy 9, com graves adicionados (A2, B2). Proporciona uma ressonância mais profunda e grandiosa, ideal para imersão total."
+            },
+            ae: {
+                name: "C# Pygmy 11",
+                description: "نسخة موسعة من 11 نغمة لسلم C# Pygmy 9 مع إضافة بيس (A2, B2). تمنح رنينًا أعمق وأكثر فخامة لتجربة أكثر انغماسًا."
+            },
+            it: {
+                name: "C# Pygmy 11",
+                description: "Versione estesa a 11 note della C# Pygmy 9 con bassi aggiunti (A2, B2). Offre una risonanza più profonda e maestosa, ideale per un'immersione totale."
+            }
+        }
+    },
+
     // 11. D Asha 15 (2-Octave Major) - Mutant
     {
         id: "d_asha_15_mutant",
@@ -706,6 +780,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/aGKx4zLFvRo",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12655523545",
         ownUrl: "https://handpan.co.kr/shop/?idx=77",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=88",
         i18n: {
             fr: {
                 name: "D Asha 15",
@@ -768,6 +843,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/OcQ64DyA9xM?si=40_8I1KnB_rxCNQO",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12320335441",
         ownUrl: "https://handpan.co.kr/shop/?idx=79",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=85",
         i18n: {
             fr: {
                 name: "E Equinox 12",
@@ -830,6 +906,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/8t8MqTelD9k?si=4gbYwCubpVxb_URT",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12320275460",
         ownUrl: "https://handpan.co.kr/shop/?idx=80",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=80",
         i18n: {
             fr: {
                 name: "E Equinox 10",
@@ -892,6 +969,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/UxsvhXeDok0?si=GnSeCzBk0qe8snYr",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689630331",
         ownUrl: "https://handpan.co.kr/shop/?idx=76",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=80",
         i18n: {
             fr: {
                 name: "F# Low Pygmy 18",
@@ -954,6 +1032,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/QoUbOkhGGR8?si=TIKXYdCKX4RiuaLY",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12276307998",
         ownUrl: "https://handpan.co.kr/shop/?idx=81",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=73",
         i18n: {
             fr: {
                 name: "C# Pygmy 11",
@@ -1016,6 +1095,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/_3jpTdVfOBc?si=W9bAL_AqZ5e25Rj8",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8611436986",
         ownUrl: "https://handpan.co.kr/shop/?idx=82",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=72",
         i18n: {
             fr: {
                 name: "F Low Pygmy 12",
@@ -1078,6 +1158,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/KXDSbCdPjTM?si=3GD2eOil-5WsmVHa",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12070396728",
         ownUrl: "https://handpan.co.kr/shop/?idx=83",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=71",
         i18n: {
             fr: {
                 name: "D Kurd 12",
@@ -1140,6 +1221,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/61g8qreUeJk?si=NgBTdfaU51SV__5O",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12085324936",
         ownUrl: "https://handpan.co.kr/shop/?idx=86",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=86",
         i18n: {
             fr: {
                 name: "F Low Pygmy 9",
@@ -1202,6 +1284,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/HSHDfm9PEM4?si=930q4Eu3DT2URi50",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8513450652",
         ownUrl: "https://handpan.co.kr/shop/?idx=89",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=89",
         i18n: {
             fr: {
                 name: "C# Annapurna 9",
@@ -1260,6 +1343,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/2peCXnJP2U0?si=bVePs8DvAlPEwI7v",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12751985321",
         ownUrl: "https://handpan.co.kr/shop/?idx=91",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=89",
         i18n: {
             fr: {
                 name: "C Major 10",
@@ -1322,6 +1406,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/u9dsmUSd_SY?si=rMBMQOFvj5Yec7vs",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12751991029",
         ownUrl: "https://handpan.co.kr/shop/?idx=92",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=86",
         i18n: {
             fr: {
                 name: "C Rasavali 10",
@@ -1384,6 +1469,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/pMKoFUicrFw?si=5HPgyOp8NM0qXMNU",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689651421",
         ownUrl: "https://handpan.co.kr/shop/?idx=84",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=91",
         i18n: {
             fr: {
                 name: "C# Deepasia 14",
@@ -1446,6 +1532,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/mY-Uvw-VKO4?si=Ail972LckjNWKp8S",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689712335",
         ownUrl: "https://handpan.co.kr/shop/?idx=90",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=90",
         i18n: {
             fr: {
                 name: "C# Blues 9",
@@ -1508,6 +1595,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/0IGtmQlb1X4?si=y9oZiE4w-_Zkyih6",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8513504905",
         ownUrl: "https://handpan.co.kr/shop/?idx=96",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=90",
         i18n: {
             fr: {
                 name: "Eb MUJU 10",
@@ -1570,6 +1658,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/_fB5VHpE1f0?si=v6RDSBTJJUsiAZXK",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12752009418",
         ownUrl: "https://handpan.co.kr/shop/?idx=102",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=102",
         i18n: {
             fr: {
                 name: "C Yunsl 9",
@@ -1632,6 +1721,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/V1bfHlVl9VY?si=yREB5-6dey1kvC_4",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12752029521",
         ownUrl: "https://handpan.co.kr/shop/?idx=93",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=102",
         i18n: {
             fr: {
                 name: "C# Sapphire 9",
@@ -1694,6 +1784,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/Z3bVZYykphA?si=zJAD4lmQPxMQ0xq8",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12085316070",
         ownUrl: "https://handpan.co.kr/shop/?idx=94",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=94",
         i18n: {
             fr: {
                 name: "C# Annaziska 9",
@@ -1756,6 +1847,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/MRyGVe5k4Y8?si=VEoopVqXSO9gJ6Rd",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12085332035",
         ownUrl: "https://handpan.co.kr/shop/?idx=95",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=95",
         i18n: {
             fr: {
                 name: "E Hijaz 9",
@@ -1818,6 +1910,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/W9QAtyTDrTM?si=Cy7YMKhp-MY2Bv7r",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12800221630",
         ownUrl: "https://handpan.co.kr/shop/?idx=103",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=103",
         i18n: {
             fr: {
                 name: "C# Amara 9",

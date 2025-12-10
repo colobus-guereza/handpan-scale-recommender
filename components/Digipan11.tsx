@@ -157,9 +157,9 @@ export default function Digipan11({
 
     // Calculate Scene Size for Camera Auto-Fit
     // Horizontal (Desktop): Width ~120, Height ~60
-    // Vertical (Mobile/Tablet): Width ~60, Height ~120
+    // Vertical (Mobile/Tablet): Width ~60, Height ~115 (Tighter fit)
     const sceneSize = useVerticalLayout
-        ? { width: 60, height: 125 } // Slightly taller to account for gaps
+        ? { width: 60, height: 115 } // Tighter vertical fit
         : { width: 125, height: 60 };
 
     return (

@@ -436,7 +436,7 @@ export default function Digipan3D({
 
 
             {/* Scale Info Panel - Bottom Right Overlay (only shown in /digipan-3d-test dev page) */}
-            {isDevPage && scale && (
+            {isDevPage && scale && !forceCompactView && (
                 <ScaleInfoPanel
                     scale={scale}
                     onScaleSelect={onScaleSelect}

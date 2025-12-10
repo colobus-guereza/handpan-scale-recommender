@@ -629,16 +629,23 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                         {currentScale.id.includes('mutant') ? t.scaleList.mutant : t.scaleList.normal}
                                     </span>
                                     <div className="flex gap-2 flex-shrink-0">
-                                        {/* Official Mall Button */}
                                         {(() => {
-                                            // currentScale의 ownUrl을 직접 참조하여 항상 최신 값 사용
-                                            const purchaseUrl = displayScales[currentIndex]?.ownUrl;
-                                            const scaleId = displayScales[currentIndex]?.id;
-                                            const scaleName = displayScales[currentIndex]?.name;
+                                            // Select URL based on language
+                                            // If language is Korean ('ko'), use ownUrl (Korean store)
+                                            // For ALL other languages (en, ja, etc.), use ownUrlEn (English global store)
+                                            const currentScaleData = displayScales[currentIndex];
+                                            const ownUrl = currentScaleData?.ownUrl;
+                                            const ownUrlEn = currentScaleData?.ownUrlEn;
+
+                                            // Priority: 1. English URL if lang is NOT 'ko', 2. Korean URL (default)
+                                            let purchaseUrl = ownUrl;
+                                            if (language !== 'ko' && ownUrlEn) {
+                                                purchaseUrl = ownUrlEn;
+                                            }
 
                                             return purchaseUrl ? (
                                                 <a
-                                                    key={`purchase-${scaleId}-${currentIndex}`}
+                                                    key={`purchase-${currentScaleData.id}-${currentIndex}`}
                                                     href={purchaseUrl}
                                                     className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 text-white hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap"
                                                     title={`${language === 'en' ? (currentScale.nameEn || currentScale.name) : currentScale.name} - ${t.scaleList.purchase}`}
