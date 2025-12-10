@@ -633,9 +633,9 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                             // Select URL based on language
                                             // If language is Korean ('ko'), use ownUrl (Korean store)
                                             // For ALL other languages (en, ja, etc.), use ownUrlEn (English global store)
-                                            const currentScaleData = displayScales[currentIndex];
-                                            const ownUrl = currentScaleData?.ownUrl;
-                                            const ownUrlEn = currentScaleData?.ownUrlEn;
+                                            // Use currentScale directly to ensure we're using the correct scale data
+                                            const ownUrl = currentScale?.ownUrl;
+                                            const ownUrlEn = currentScale?.ownUrlEn;
 
                                             // Priority: 1. English URL if lang is NOT 'ko', 2. Korean URL (default)
                                             let purchaseUrl = ownUrl;
@@ -645,7 +645,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
                                             return purchaseUrl ? (
                                                 <a
-                                                    key={`purchase-${currentScaleData.id}-${currentIndex}`}
+                                                    key={`purchase-${currentScale.id}-${currentIndex}`}
                                                     href={purchaseUrl}
                                                     className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 text-white hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap"
                                                     title={`${language === 'en' ? (currentScale.nameEn || currentScale.name) : currentScale.name} - ${t.scaleList.purchase}`}
@@ -654,7 +654,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                                 </a>
                                             ) : (
                                                 <button
-                                                    key={`purchase-disabled-${scaleId}-${currentIndex}`}
+                                                    key={`purchase-disabled-${currentScale.id}-${currentIndex}`}
                                                     disabled
                                                     className="px-4 py-2 rounded-lg text-sm font-medium shadow-md bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-50 text-slate-500 whitespace-nowrap"
                                                 >
