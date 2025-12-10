@@ -15,6 +15,7 @@ export interface Product {
     description?: string;
     naverUrl?: string;
     ownUrl?: string;
+    ownUrlEn?: string;
     i18n?: Record<string, LocalizedProductContent>;
 }
 
@@ -30,6 +31,7 @@ export const PRODUCTS: Product[] = [
         options: ["M", "Black"],
         naverUrl: "https://smartstore.naver.com/sndhandpan/products/9455037225",
         ownUrl: "https://handpan.co.kr/shop_view/?idx=99",
+        ownUrlEn: "https://handpanen.imweb.me/56635130/?idx=99",
         i18n: {
             fr: {
                 name: "Étui rigide HTC Evatek",
@@ -50,6 +52,7 @@ export const PRODUCTS: Product[] = [
         description: "Made in Iran",
         naverUrl: "https://smartstore.naver.com/sndhandpan/products/12070010394",
         ownUrl: "https://handpan.co.kr/shop_view/?idx=98",
+        ownUrlEn: "https://handpanen.imweb.me/56635130/?idx=98",
         i18n: {
             fr: {
                 name: "Étui souple Premium Avaja",
@@ -67,6 +70,7 @@ export const PRODUCTS: Product[] = [
         category: "Stand",
         naverUrl: "https://smartstore.naver.com/sndhandpan/products/7352234142",
         ownUrl: "https://handpan.co.kr/shop_view/?idx=100",
+        ownUrlEn: "https://handpanen.imweb.me/23/?idx=100",
         i18n: {
             fr: {
                 name: "Support de handpan en bois S"
@@ -82,6 +86,7 @@ export const PRODUCTS: Product[] = [
         category: "Stand",
         naverUrl: "https://smartstore.naver.com/sndhandpan/products/7371144021",
         ownUrl: "https://handpan.co.kr/shop_view/?idx=101",
+        ownUrlEn: "https://handpanen.imweb.me/23/?idx=101",
         i18n: {
             fr: {
                 name: "Support de handpan en bois M"

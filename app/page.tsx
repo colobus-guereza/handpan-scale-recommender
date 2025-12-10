@@ -7,7 +7,7 @@ import ScaleList from "@/components/ScaleList";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { SCALES } from '@/data/handpanScales';
-import { PRODUCTS as ACCESSORY_PRODUCTS } from '@/data/products';
+import { PRODUCTS as ACCESSORY_PRODUCTS, Product } from '@/data/products';
 // import { CircleFlag } from 'react-circle-flags'; // Removed
 import { TRANSLATIONS, SUPPORTED_LANGUAGES, Language } from '@/constants/translations';
 import { getLocalizedProduct } from '../utils/i18n';
@@ -306,20 +306,6 @@ const CASE_PRODUCTS = [
 // 소프트케이스 카테고리용 제품 목록
 const SOFT_CASE_PRODUCTS = [
     {
-        id: 1,
-        name: 'Avaja, L, Black(뮤턴트용)',
-        nameEn: 'Avaja, L, Black(뮤턴트용)',
-        price: '484,000원',
-        rating: 4.8,
-        reviewCount: 120,
-        image: '/images/products/avaja_titanmid_grey.png',
-        i18n: {
-            fr: {
-                name: 'Avaja, L, Noir(뮤턴트용)'
-            }
-        }
-    },
-    {
         id: 2,
         name: 'Avaja Premium (M, Grey)',
         nameEn: 'Avaja Premium (M, Grey)',
@@ -401,6 +387,7 @@ const STAND_PRODUCTS = [
 const productNameMap: Record<string, string> = {
     '고급 원목스탠드 S': '원목 핸드팬스탠드 S',
     '고급 원목스탠드 M': '원목 핸드팬스탠드 M',
+    'HTC Evatek (M, Black)': 'HTC Evatek 하드케이스',
 };
 
 // 제품명으로 productUrl을 찾는 헬퍼 함수
@@ -415,7 +402,7 @@ const getProductUrl = (productName: string, language: Language = 'ko'): string |
 
     // Avaja Premium 제품들은 모두 같은 링크 사용
     if (productName.includes('Avaja Premium')) {
-        const avajaProduct = ACCESSORY_PRODUCTS.find(p => p.name === 'Avaja 고급 소프트케이스');
+        const avajaProduct = ACCESSORY_PRODUCTS.find(p => p.name === 'Avaja 고급 소프트케이스') as Product | undefined;
         if (avajaProduct) {
             if (language !== 'ko' && avajaProduct.ownUrlEn) return avajaProduct.ownUrlEn;
             if (avajaProduct.ownUrl) return avajaProduct.ownUrl;
@@ -426,7 +413,7 @@ const getProductUrl = (productName: string, language: Language = 'ko'): string |
     const mappedName = productNameMap[productName] || productName;
 
     // PRODUCTS에서 찾기
-    const product = ACCESSORY_PRODUCTS.find(p => p.name === mappedName || p.name === productName);
+    const product = ACCESSORY_PRODUCTS.find(p => p.name === mappedName || p.name === productName) as Product | undefined;
     if (product) {
         if (language !== 'ko' && product.ownUrlEn) return product.ownUrlEn;
         return product.ownUrl || null;
