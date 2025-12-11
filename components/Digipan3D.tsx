@@ -1033,7 +1033,7 @@ const ToneFieldMesh = ({
                                 return (
                                     <Text
                                         visible={areLabelsVisible}
-                                        position={[bottomPos.x, bottomPos.y - 1.0, 0]}
+                                        position={[bottomPos.x, bottomPos.y - 0.2, 0]}
                                         fontSize={2.0}
                                         color={labelColor}
                                         anchorX="center"
