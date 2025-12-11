@@ -1397,7 +1397,7 @@ export const SCALES: Scale[] = [
         notes: {
             ding: "C#3",
             top: ["G#3", "A#3", "C#4", "F4", "F#4", "G#4", "C#5", "D#5", "F5"],
-            bottom: ["D#3", "F3", "D#4", "F4"]
+            bottom: ["D#3", "F3"]
         },
         vector: { minorMajor: -0.5, pureSpicy: 0.5, rarePopular: 0.4 },
         tags: ["딥아시아", "동양적", "확장형", "깊음"],

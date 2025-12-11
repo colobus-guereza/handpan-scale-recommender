@@ -777,7 +777,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
             )}
 
             {/* 스케일 분류기준 및 전체 스케일 토글 버튼 */}
-            <div className="flex items-center justify-end gap-2 mb-4 overflow-x-auto pt-2 border-t border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-end gap-2 mb-4 overflow-x-auto pt-2 mt-8 border-t border-slate-200 dark:border-slate-700">
                 {/* 우측: 기능 버튼 */}
                 <div className="flex gap-2 flex-shrink-0">
                     {/* 디지팬 버튼 - 현재 비활성화 (코드 보존) */}

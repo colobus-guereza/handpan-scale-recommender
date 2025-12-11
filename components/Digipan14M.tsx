@@ -9,7 +9,7 @@ import { VisualTonefield } from './VisualTonefield';
 import { useTexture } from '@react-three/drei';
 import { HANDPAN_CONFIG } from '../constants/handpanConfig';
 
-interface Digipan14Props {
+interface Digipan14MProps {
     scale?: Scale | null;
     onScaleSelect?: (scale: Scale) => void;
     onNoteClick?: (noteId: number) => void;
@@ -29,10 +29,10 @@ interface Digipan14Props {
     showAxes?: boolean;
 }
 
-// Composite Background Component for Digipan 14 (10 notes image + 4 visual tonefields)
-const Digipan14Background = ({ centerX = 500, centerY = 500, visualNotes = [], viewMode }: { centerX?: number; centerY?: number; visualNotes?: any[]; viewMode?: number }) => {
-    // Load texture (Using 10notes.png as base)
-    const tex1 = useTexture('/images/10notes.png');
+// Composite Background Component for Digipan 14M (Mutant image + 4 visual tonefields)
+const Digipan14MBackground = ({ centerX = 500, centerY = 500, visualNotes = [], viewMode }: { centerX?: number; centerY?: number; visualNotes?: any[]; viewMode?: number }) => {
+    // Load texture (Using 12notes_mutant.png)
+    const tex1 = useTexture('/images/12notes_mutant.png');
 
     const size = HANDPAN_CONFIG.OUTER_RADIUS * 2; // 57cm
 
@@ -41,7 +41,7 @@ const Digipan14Background = ({ centerX = 500, centerY = 500, visualNotes = [], v
 
     return (
         <group>
-            {/* Top Image (10 Notes) */}
+            {/* Top Image (12 Notes Mutant) */}
             <mesh position={[pos.x, pos.y, -0.5]} rotation={[0, 0, 0]}>
                 <planeGeometry args={[size, size]} />
                 <meshBasicMaterial map={tex1} transparent opacity={1} />
@@ -88,7 +88,7 @@ const Digipan14Background = ({ centerX = 500, centerY = 500, visualNotes = [], v
 };
 
 
-const Digipan14 = React.forwardRef<Digipan3DHandle, Digipan14Props>(({
+const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
     scale,
     onScaleSelect,
     onNoteClick,
@@ -107,7 +107,7 @@ const Digipan14 = React.forwardRef<Digipan3DHandle, Digipan14Props>(({
     showAxes = false
 }, ref) => {
 
-    // 10-Note Base Coordinates (from Digipan10.tsx)
+    // 10-Note Base Coordinates (from Digipan10.tsx) - Starting point for 14M as well
     const baseNotes10 = useMemo(() => [
         {
             "id": 0,
@@ -287,12 +287,6 @@ const Digipan14 = React.forwardRef<Digipan3DHandle, Digipan14Props>(({
             if (n.id === 11) freqForVisual = getNoteFrequency("D5"); // Match D12
 
             // New notes logic:
-            // "D5 톤필드 사이즈는 C5보다 살짝 작게." -> C5 is ~523Hz. D5 is ~587Hz. 
-            // "E5 톤필드 사이즈는 D5보다 살짝 작게." -> D5 is ~587Hz. E5 is ~659Hz.
-            // Using actual frequencies will naturally result in smaller sizes due to the formula in getTonefieldDimensions
-            // But let's enforce it visually via overrides if needed.
-            // Requirement said "N13(D5) size slightly smaller than C5". N14(E5) slightly smaller than D5.
-
             if (n.id === 12) freqForVisual = getNoteFrequency("D5");
             if (n.id === 13) freqForVisual = getNoteFrequency("E5");
 
@@ -340,7 +334,7 @@ const Digipan14 = React.forwardRef<Digipan3DHandle, Digipan14Props>(({
             enableZoom={enableZoom}
             enablePan={enablePan}
             showLabelToggle={showLabelToggle}
-            backgroundContent={<Digipan14Background visualNotes={visualNotes} viewMode={viewMode} />}
+            backgroundContent={<Digipan14MBackground visualNotes={visualNotes} viewMode={viewMode} />}
             forceCompactView={forceCompactView}
             hideStaticLabels={true}
             cameraTargetY={3} // Reduced shift for slight headroom (-20px range)
@@ -350,4 +344,4 @@ const Digipan14 = React.forwardRef<Digipan3DHandle, Digipan14Props>(({
     );
 });
 
-export default Digipan14;
+export default Digipan14M;

@@ -5,12 +5,13 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Text, OrbitControls, Center, Line, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { Scale } from '../data/handpanScales';
-import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle } from 'lucide-react';
+import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Ship } from 'lucide-react';
 import { HANDPAN_CONFIG, getDomeHeight, TONEFIELD_CONFIG } from '../constants/handpanConfig';
 import html2canvas from 'html2canvas';
 import { useHandpanAudio } from '../hooks/useHandpanAudio';
 import { usePathname } from 'next/navigation';
 import ScaleInfoPanel from './ScaleInfoPanel';
+import CyberBoat from './CyberBoat';
 
 // Inner component to handle camera reset
 const CameraHandler = ({
@@ -161,6 +162,36 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     const [isPlaying, setIsPlaying] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
+    // Idle State Logic
+    const [isIdle, setIsIdle] = useState(false);
+    const [showIdleBoat, setShowIdleBoat] = useState(true); // Control Toggle State
+    const lastInteractionTime = useRef(Date.now());
+    const IDLE_TIMEOUT = 5000; // 5 seconds
+    const idleCheckInterval = useRef<NodeJS.Timeout | null>(null);
+
+    const resetIdleTimer = (delayOverhead = 0) => {
+        // Reset timer to Current Time + Delay Overhead (e.g. Sound Duration)
+        // This effectively postpones the "5s check" until the sound finishes
+        lastInteractionTime.current = Date.now() + delayOverhead;
+        if (isIdle) {
+            setIsIdle(false);
+        }
+    };
+
+    useEffect(() => {
+        // Start Interval to check idle state
+        idleCheckInterval.current = setInterval(() => {
+            const now = Date.now();
+            if (now - lastInteractionTime.current > IDLE_TIMEOUT) {
+                setIsIdle(true);
+            }
+        }, 1000); // Check every second
+
+        return () => {
+            if (idleCheckInterval.current) clearInterval(idleCheckInterval.current);
+        };
+    }, [isIdle]);
+
     // View Mode: 0 = Default (All), 1 = No Labels, 2 = No Mesh (Levels Only), 3 = Hidden (Interaction Only), 4 = Guide (Image + Dots)
     // Initialize with controlled prop if available, else initialViewMode
     const [internalViewMode, setInternalViewMode] = useState<0 | 1 | 2 | 3 | 4>(
@@ -219,6 +250,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     }, [noteCountFilter, searchQuery]);
 
     const handleCapture = async () => {
+        resetIdleTimer(0);
         if (!containerRef.current) return;
 
         try {
@@ -277,6 +309,13 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
             await new Promise(resolve => setTimeout(resolve, 30));
         };
 
+        // Reset Timer for the total duration of the Demo
+        // Rough estimate: ~12 notes * ~500ms avg = 6000ms
+        // We act conservatively: just reset on start, and maybe at end?
+        // Better: Reset with large overhead or keep resetting. 
+        // Simple approach: Reset at start with LONG overhead.
+        resetIdleTimer(10000); // Assume demo takes ~10s
+
         // 1. Ascending (Low -> High)
         for (let i = 0; i < sortedNotes.length; i++) {
             const id = sortedNotes[i].id;
@@ -328,12 +367,17 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
         handleCapture,
         handleDemoPlay,
         toggleViewMode: () => {
+            resetIdleTimer(0);
             setViewMode(prev => (prev + 1) % 5 as 0 | 1 | 2 | 3 | 4);
         }
     }));
 
     return (
-        <div ref={containerRef} className="w-full h-full relative" style={{ background: '#FFFFFF', touchAction: 'pan-y' }}> {/* White Background, Allow vertical scroll */}
+        <div
+            ref={containerRef}
+            className="w-full h-full relative"
+            style={{ background: '#FFFFFF', touchAction: 'pan-y' }}
+        > {/* White Background, Allow vertical scroll */}
             {/* Top-Right Controls Container - Hidden in Mobile Layout */}
             {!isMobileButtonLayout && (
                 <div className="controls-container absolute top-4 right-4 z-50 flex flex-col gap-2 items-center">
@@ -341,7 +385,10 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     {showControls && (
                         <>
                             <button
-                                onClick={() => setIsCameraLocked(prev => !prev)}
+                                onClick={() => {
+                                    setIsCameraLocked(prev => !prev);
+                                    resetIdleTimer(0);
+                                }}
                                 className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
                                 title={isCameraLockedState ? "Unlock View (Free Rotation)" : "Lock View (Top Down)"}
                             >
@@ -357,7 +404,10 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                             </button>
 
                             <button
-                                onClick={() => setViewMode(prev => (prev + 1) % 5 as 0 | 1 | 2 | 3 | 4)}
+                                onClick={() => {
+                                    setViewMode(prev => (prev + 1) % 5 as 0 | 1 | 2 | 3 | 4);
+                                    resetIdleTimer(0);
+                                }}
                                 className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
                                 title={`Toggle Visibility (Current: Mode ${viewMode + 1})`}
                             >
@@ -386,6 +436,20 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                         <PlayCircle size={24} className={isPlaying ? "animate-pulse text-green-600" : ""} />
                     </button>
 
+                    {/* 5. Idle Boat Toggle */}
+                    {showControls && (
+                        <button
+                            onClick={() => {
+                                setShowIdleBoat(prev => !prev);
+                                resetIdleTimer(0);
+                            }}
+                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                            title={showIdleBoat ? "Hide Idle Boat" : "Show Idle Boat"}
+                        >
+                            <Ship size={20} className={showIdleBoat ? "text-blue-500" : "opacity-30"} />
+                        </button>
+                    )}
+
                     {/* 5. Extra Controls (Injected) - Toggle via showControls to hide external switchers */}
                     {showControls && extraControls}
                 </div>
@@ -404,7 +468,10 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     {/* Top-Left: Label Toggle (정보 표시/숨김) */}
                     <div className="absolute top-2 left-2 z-50">
                         <button
-                            onClick={() => setViewMode(prev => prev === 3 ? 2 : 3)}
+                            onClick={() => {
+                                setViewMode(prev => prev === 3 ? 2 : 3);
+                                resetIdleTimer(0);
+                            }}
                             className="w-[38.4px] h-[38.4px] flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
                             title={viewMode === 3 ? "Show Labels" : "Hide Labels"}
                         >
@@ -450,6 +517,9 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                 />
 
                 <group>
+                    {/* CyberBoat (Tech Sailboat) - always mounted, handles its own vis/anim */}
+                    {/* Pass combined idle state: Only true if system is idle AND user wants to show it */}
+                    <CyberBoat isIdle={isIdle && showIdleBoat} />
                     {/* Body */}
                     <Suspense fallback={null}>
                         {backgroundContent ? backgroundContent : <HandpanImage backgroundImage={backgroundImage} centerX={centerX} centerY={centerY} />}
@@ -463,7 +533,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                                 <sphereGeometry args={[0.5, 16, 16]} />
                                 <meshBasicMaterial color="#ff0000" />
                             </mesh>
-                            
+
                             {/* Center Coordinates Label */}
                             <Text
                                 position={[0, -1.5, 0]}
@@ -474,7 +544,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                             >
                                 (0, 0, 0)
                             </Text>
-                            
+
                             {/* X-axis (Blue - Right) */}
                             <mesh position={[10, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
                                 <cylinderGeometry args={[0.1, 0.1, 20, 8]} />
@@ -493,7 +563,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                             >
                                 X
                             </Text>
-                            
+
                             {/* Y-axis (Red - Up) */}
                             <mesh position={[0, 10, 0]}>
                                 <cylinderGeometry args={[0.1, 0.1, 20, 8]} />
@@ -512,7 +582,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                             >
                                 Y
                             </Text>
-                            
+
                             {/* Z-axis (Green - Depth) */}
                             <mesh position={[0, 0, 10]} rotation={[Math.PI / 2, 0, 0]}>
                                 <cylinderGeometry args={[0.1, 0.1, 20, 8]} />
@@ -541,7 +611,12 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                             note={note}
                             centerX={centerX}
                             centerY={centerY}
-                            onClick={onNoteClick}
+                            onClick={(id) => {
+                                // Reset Idle Timer with Sound Duration Overhead 
+                                // (Assume ~3-4 seconds sustain)
+                                resetIdleTimer(3500);
+                                if (onNoteClick) onNoteClick(id);
+                            }}
                             viewMode={viewMode}
                             demoActive={demoNoteId === note.id}
                             playNote={playNote}
@@ -559,9 +634,9 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     scale={scale}
                     onScaleSelect={onScaleSelect}
                     noteCountFilter={noteCountFilter} // Still passed, but overridden by showAllScales
-                    className={`absolute ${isMobileButtonLayout ? 'bottom-20 right-4' : 'bottom-4 right-4'}`}
+                    className="" // Managed by DraggablePanel
                     isMobileButtonLayout={isMobileButtonLayout}
-                    defaultExpanded={isInfoExpanded}
+                    defaultExpanded={true}
                     showAllScales={true} // Forcing Global List Logic
                 />
             )}
@@ -737,7 +812,7 @@ const ToneFieldMesh = ({
         : TONEFIELD_CONFIG.RATIOS.DIMPLE_SMALL;
 
     const dimpleRadiusX = radiusX * dimpleRatio;
-    const dimpleRadiusY = radiusY * dimpleRatio;
+    const dimpleRadiusY = ry * dimpleRatio;
 
     // Apply Overrides (Multipliers)
     // If scaleX/Y are provided, they multiply the calculated radius (or base unit).
@@ -769,14 +844,14 @@ const ToneFieldMesh = ({
     const CLICK_EFFECT_CONFIG = {
         // Main Sphere Effect (Breathing Glow)
         sphere: {
-            color: '#FF0000',        // Red - TEST
+            color: '#00FF00',        // Green - TEST
             baseSize: 1.05,          // 5% larger than tonefield
             maxOpacity: 0.1,         // 10% opacity at peak
             scalePulse: 0.15,        // 15% scale variation
         },
         // Impact Ring Effect (Initial strike)
         ring: {
-            color: '#FFFFFF',        // White - TEST
+            color: '#FFFF00',        // Yellow - TEST
             maxOpacity: 0.4,         // 40% opacity at start
             duration: 0.3,           // Quick 0.3s flash
             expandScale: 1.5,        // Expands to 150%

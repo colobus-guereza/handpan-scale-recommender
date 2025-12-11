@@ -56,18 +56,23 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
         : "w-full aspect-square max-h-[500px] md:max-h-[700px] relative rounded-2xl overflow-hidden bg-white -mt-2";
 
     return (
-        <div className={containerClass}>
-            {is14Notes ? (
-                <Digipan14 {...commonProps} />
-            ) : is12Notes ? (
-                <Digipan12 {...commonProps} />
-            ) : is11Notes ? (
-                <Digipan11 {...commonProps} />
-            ) : is10Notes ? (
-                <Digipan10 {...commonProps} />
-            ) : (
-                <Digipan9 {...commonProps} />
-            )}
+        <div className="w-full">
+            <div className={containerClass}>
+                {is14Notes ? (
+                    <Digipan14 {...commonProps} />
+                ) : is12Notes ? (
+                    <Digipan12 {...commonProps} />
+                ) : is11Notes ? (
+                    <Digipan11 {...commonProps} />
+                ) : is10Notes ? (
+                    <Digipan10 {...commonProps} />
+                ) : (
+                    <Digipan9 {...commonProps} />
+                )}
+            </div>
+            <p className="text-center font-black text-zinc-800 dark:text-zinc-100 mt-6 tracking-tight uppercase drop-shadow-lg whitespace-nowrap text-[clamp(28px,7vw,100px)] leading-tight">
+                {scale.name}
+            </p>
         </div>
     );
 }
