@@ -603,7 +603,7 @@ const ToneFieldMesh = ({
     centerX?: number;
     centerY?: number;
     onClick?: (id: number) => void;
-    viewMode?: 0 | 1 | 2 | 3;
+    viewMode?: 0 | 1 | 2 | 3 | 4;
     demoActive?: boolean;
     playNote?: (noteName: string, volume?: number) => void;
     offset?: [number, number, number];
