@@ -136,7 +136,7 @@ export default function Digipan3DTestPage() {
         return s;
     }, [initialNotes12, mode, copySuccess12]);
 
-    const controls12 = useControls('Digipan 12 Tuning', dynamicSchema12, { collapsed: true });
+    const controls12 = useControls('Digipan 12 Tuning', dynamicSchema12, [initialNotes12, mode]);
 
     const activeNotes12 = useMemo(() => {
         if (mode !== '12' || !scale) return [];
@@ -387,7 +387,7 @@ export default function Digipan3DTestPage() {
         return s;
     }, [initialNotes14, mode, copySuccess14]);
 
-    const controls14 = useControls('Digipan 14 Tuning', dynamicSchema14, { collapsed: true });
+    const controls14 = useControls('Digipan 14 Tuning', dynamicSchema14, [initialNotes14, mode]);
 
     const activeNotes14 = useMemo(() => {
         if (mode !== '14' || !scale) return [];
@@ -641,8 +641,7 @@ export default function Digipan3DTestPage() {
         return s;
     }, [initialNotes14M, mode, copySuccess14M]);
 
-
-    const controls14M = useControls('Digipan 14M Tuning', dynamicSchema14M, { collapsed: true });
+    const controls14M = useControls('Digipan 14M Tuning', dynamicSchema14M, [initialNotes14M, mode]);
 
     const activeNotes14M = useMemo(() => {
         if (mode !== '14M' || !scale) return [];
@@ -800,7 +799,7 @@ export default function Digipan3DTestPage() {
         return s;
     }, [initialNotes9, mode, copySuccess9]);
 
-    const controls9 = useControls('Digipan 9 Tuning', dynamicSchema9, { collapsed: true });
+    const controls9 = useControls('Digipan 9 Tuning', dynamicSchema9, [initialNotes9, mode]);
 
     // Construct Active Notes for Mode 9
     const activeNotes9 = useMemo(() => {
@@ -998,7 +997,7 @@ export default function Digipan3DTestPage() {
         return s;
     }, [initialNotes10, mode, copySuccess10]);
 
-    const controls10 = useControls('Digipan 10 Tuning', dynamicSchema10, { collapsed: true });
+    const controls10 = useControls('Digipan 10 Tuning', dynamicSchema10, [initialNotes10, mode]);
 
     const activeNotes10 = useMemo(() => {
         if (mode !== '10' || !scale) return [];
@@ -1207,7 +1206,7 @@ export default function Digipan3DTestPage() {
         return s;
     }, [initialNotes11, mode, copySuccess11]);
 
-    const controls11 = useControls('Digipan 11 Tuning', dynamicSchema11, { collapsed: true });
+    const controls11 = useControls('Digipan 11 Tuning', dynamicSchema11, [initialNotes11, mode]);
 
     const activeNotes11 = useMemo(() => {
         if (mode !== '11' || !scale) return [];
@@ -1265,14 +1264,6 @@ export default function Digipan3DTestPage() {
 
     return (
         <div className="w-full h-screen flex flex-col bg-slate-900">
-            {/* Global CSS for Leva positioning */}
-            <style jsx global>{`
-                div[class*="leva-c-"] {
-                    top: 170px !important;
-                    left: 20px !important;
-                    right: auto !important;
-                }
-            `}</style>
 
             {/* Leva Panel Configuration */}
             <Leva
@@ -1328,7 +1319,7 @@ export default function Digipan3DTestPage() {
                                         onClick={() => setMode('14')}
                                         className={`px-4 py-2 rounded ${mode === '14' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
                                     >
-                                        14
+                                        14N
                                     </button>
                                     <button
                                         onClick={() => setMode('14M')}
