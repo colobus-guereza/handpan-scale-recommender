@@ -851,7 +851,7 @@ const ToneFieldMesh = ({
         },
         // Impact Ring Effect (Initial strike)
         ring: {
-            color: '#FFFF00',        // Yellow - TEST
+            color: '#000000',        // Black - TEST
             maxOpacity: 0.4,         // 40% opacity at start
             duration: 0.3,           // Quick 0.3s flash
             expandScale: 1.5,        // Expands to 150%
