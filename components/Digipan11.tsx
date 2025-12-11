@@ -85,6 +85,7 @@ interface Digipan11Props {
     enablePan?: boolean;
     showLabelToggle?: boolean;
     forceCompactView?: boolean;
+    showAxes?: boolean;
 }
 
 const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
@@ -102,7 +103,8 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
     enableZoom = true,
     enablePan = true,
     showLabelToggle = false,
-    forceCompactView = false
+    forceCompactView = false,
+    showAxes = false
 }, ref) => {
 
     // Internal Note Generation (C# Pygmy 11 Layout)
@@ -276,7 +278,7 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
 
     // Calculate Scene Size for Camera Auto-Fit
     // Now just a fixed single size since we removed the split view
-    const sceneSize = { width: 60, height: 60 };
+    const sceneSize = forceCompactView ? { width: 66, height: 50 } : { width: 64, height: 60 };
 
     return (
         <Digipan3D
@@ -300,6 +302,7 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
             enablePan={enablePan}
             showLabelToggle={showLabelToggle}
             forceCompactView={forceCompactView}
+            showAxes={showAxes}
             hideStaticLabels={true} // Hide RS/LS/H labels
             sceneSize={sceneSize} // Pass dynamic scene size
         />

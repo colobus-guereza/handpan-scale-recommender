@@ -111,6 +111,7 @@ interface Digipan3DProps {
     hideStaticLabels?: boolean;
     sceneSize?: { width: number; height: number }; // New Prop for Auto-Fit
     cameraTargetY?: number;
+    showAxes?: boolean; // Show/hide x, y, z axes and coordinates
 }
 
 export interface Digipan3DHandle {
@@ -144,7 +145,8 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     tonefieldOffset = [0, 0, 0],
     hideStaticLabels = false,
     sceneSize = { width: 60, height: 60 }, // Default for Single Pan
-    cameraTargetY = 0 // Vertical Shift Target
+    cameraTargetY = 0, // Vertical Shift Target
+    showAxes = false // Default to false, will be controlled by parent
 }, ref) => {
     const pathname = usePathname();
     // ScaleInfoPanel은 /digipan-3d-test 경로에서만 표시
@@ -453,8 +455,8 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                         {backgroundContent ? backgroundContent : <HandpanImage backgroundImage={backgroundImage} centerX={centerX} centerY={centerY} />}
                     </Suspense>
 
-                    {/* Center Point and Axes (only in dev page) */}
-                    {isDevPage && (
+                    {/* Center Point and Axes (only in dev page and when showAxes is true) */}
+                    {isDevPage && showAxes && (
                         <>
                             {/* Center Point */}
                             <mesh position={[0, 0, 0]}>

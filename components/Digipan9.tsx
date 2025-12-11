@@ -22,6 +22,7 @@ export interface Digipan9Props {
     enablePan?: boolean;
     showLabelToggle?: boolean;
     forceCompactView?: boolean;
+    showAxes?: boolean;
 }
 
 const Digipan9 = React.forwardRef<Digipan3DHandle, Digipan9Props>(({
@@ -39,7 +40,8 @@ const Digipan9 = React.forwardRef<Digipan3DHandle, Digipan9Props>(({
     enableZoom = true,
     enablePan = true,
     showLabelToggle = false,
-    forceCompactView = false
+    forceCompactView = false,
+    showAxes = false
 }, ref) => {
 
     // Internal Note Generation (Standard 9-Note D Kurd Layout)
@@ -128,6 +130,8 @@ const Digipan9 = React.forwardRef<Digipan3DHandle, Digipan9Props>(({
             enablePan={enablePan}
             showLabelToggle={showLabelToggle}
             forceCompactView={forceCompactView}
+            showAxes={showAxes}
+            sceneSize={forceCompactView ? { width: 66, height: 50 } : { width: 64, height: 60 }}
         />
     );
 });

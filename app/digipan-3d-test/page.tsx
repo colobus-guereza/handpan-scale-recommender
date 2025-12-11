@@ -29,6 +29,7 @@ export default function Digipan3DTestPage() {
     const [isCameraLocked, setIsCameraLocked] = useState(false);
     const [viewMode, setViewMode] = useState<0 | 1 | 2 | 3 | 4>(3);
     const [showLabels, setShowLabels] = useState(false);
+    const [showAxes, setShowAxes] = useState(false); // Default to false - axes hidden on page load
 
     // External Control Ref
     const digipanRef = useRef<Digipan3DHandle>(null);
@@ -457,7 +458,7 @@ export default function Digipan3DTestPage() {
                 ) : mode === '12' ? (
                     <span className="text-[10px] leading-none font-bold">12</span>
                 ) : (
-                    <span className="text-[10px] leading-none font-bold">14</span>
+                    <span className="text-[10px] leading-none font-bold">14N</span>
                 )}
             </button>
             {/* ... other buttons ... */}
@@ -1000,6 +1001,18 @@ export default function Digipan3DTestPage() {
             {/* Left: 3D Workspace */}
             <div className={`flex-1 relative flex items-center justify-center overflow-hidden transition-all duration-500 ${isMobilePreview ? 'bg-gray-200' : 'bg-white'}`}>
 
+                {/* Axes Toggle - Outside the frame */}
+                <button
+                    onClick={() => setShowAxes(!showAxes)}
+                    className={`absolute top-4 right-36 z-[60] w-12 h-12 flex items-center justify-center backdrop-blur-sm rounded-full shadow-lg transition-all duration-200 border text-slate-700 font-bold text-xs ${showAxes
+                        ? 'bg-blue-100 border-blue-400 text-blue-700'
+                        : 'bg-white/80 border-slate-200 hover:bg-white'
+                        }`}
+                    title={showAxes ? "축 및 좌표 숨기기" : "축 및 좌표 표시"}
+                >
+                    <Grid size={20} />
+                </button>
+
                 {/* Camera Lock Toggle - Outside the frame */}
                 <button
                     onClick={() => setIsCameraLocked(!isCameraLocked)}
@@ -1014,7 +1027,13 @@ export default function Digipan3DTestPage() {
 
                 {/* Mobile Preview Toggle - Outside the frame */}
                 <button
-                    onClick={() => setIsMobilePreview(!isMobilePreview)}
+                    onClick={() => {
+                        const nextState = !isMobilePreview;
+                        setIsMobilePreview(nextState);
+                        if (nextState) {
+                            setIsCameraLocked(true); // Auto-lock camera for correct zoom in mobile
+                        }
+                    }}
                     className={`absolute top-4 right-4 z-[60] w-12 h-12 flex items-center justify-center backdrop-blur-sm rounded-full shadow-lg transition-all duration-200 border text-slate-700 font-bold text-xs ${isMobilePreview
                         ? 'bg-blue-100 border-blue-400 text-blue-700'
                         : 'bg-white/80 border-slate-200 hover:bg-white'
@@ -1092,7 +1111,7 @@ export default function Digipan3DTestPage() {
                                     mode === '10' ? <span className="text-[10px] leading-none font-bold">10</span> :
                                         mode === '11' ? <span className="text-[10px] leading-none font-bold">11</span> :
                                             mode === '12' ? <span className="text-[10px] leading-none font-bold">12</span> :
-                                                <span className="text-[10px] leading-none font-bold">14</span>}
+                                                <span className="text-[10px] leading-none font-bold">14N</span>}
                             </button>
                         </div>
 
@@ -1142,6 +1161,7 @@ export default function Digipan3DTestPage() {
                                 enablePan={!isCameraLocked}
                                 showLabelToggle={showLabels} // Pass label visibility state
                                 forceCompactView={isMobilePreview}
+                                showAxes={showAxes}
                             />
                         ) : mode === '10' ? (
                             <Digipan10
@@ -1159,6 +1179,7 @@ export default function Digipan3DTestPage() {
                                 enablePan={!isCameraLocked}
                                 showLabelToggle={showLabels}
                                 forceCompactView={isMobilePreview}
+                                showAxes={showAxes}
                             />
 
                         ) : mode === '11' ? (
@@ -1177,6 +1198,7 @@ export default function Digipan3DTestPage() {
                                 enablePan={!isCameraLocked}
                                 showLabelToggle={showLabels}
                                 forceCompactView={isMobilePreview}
+                                showAxes={showAxes}
                             />
                         ) : mode === '12' ? (
                             <Digipan12
@@ -1194,6 +1216,7 @@ export default function Digipan3DTestPage() {
                                 enablePan={!isCameraLocked}
                                 showLabelToggle={showLabels}
                                 forceCompactView={isMobilePreview}
+                                showAxes={showAxes}
                             />
 
                         ) : mode === '14' ? (
@@ -1212,6 +1235,7 @@ export default function Digipan3DTestPage() {
                                 enablePan={!isCameraLocked}
                                 showLabelToggle={showLabels}
                                 forceCompactView={isMobilePreview}
+                                showAxes={showAxes}
                             />
                         ) : null /* Default case if mode is not 9, 10, 11, 12 or 14 */}
 

@@ -26,6 +26,7 @@ interface Digipan14Props {
 
     forceCompactView?: boolean;
     notes?: any[]; // Allow passing notes for editor mode override
+    showAxes?: boolean;
 }
 
 // Composite Background Component for Digipan 14 (10 notes image + 4 visual tonefields)
@@ -102,7 +103,8 @@ const Digipan14 = React.forwardRef<Digipan3DHandle, Digipan14Props>(({
     enablePan = true,
     showLabelToggle = false,
     forceCompactView = false,
-    notes: externalNotes
+    notes: externalNotes,
+    showAxes = false
 }, ref) => {
 
     // 10-Note Base Coordinates (from Digipan10.tsx)
@@ -342,7 +344,8 @@ const Digipan14 = React.forwardRef<Digipan3DHandle, Digipan14Props>(({
             forceCompactView={forceCompactView}
             hideStaticLabels={true}
             cameraTargetY={3} // Reduced shift for slight headroom (-20px range)
-            sceneSize={{ width: 60, height: 66 }} // Tighter vertical bounds (60 + 10%)
+            sceneSize={forceCompactView ? { width: 66, height: 66 } : { width: 64, height: 66 }} // Tighter vertical bounds (60 + 10%)
+            showAxes={showAxes}
         />
     );
 });
