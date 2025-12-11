@@ -463,11 +463,33 @@ export default function Home() {
         }
     };
 
+    // 가격 변환 맵 (KRW -> USD)
+    const priceConversionMap: Record<string, string> = {
+        '2,640,000': '1,800',
+        '2,860,000': '1,950',
+        '3,300,000': '2,250',
+        '3,520,000': '2,400',
+        '3,960,000': '2,700',
+        '4,400,000': '3,000',
+        '4,730,000': '3,250',
+        '5,720,000': '3,900',
+        '484,000': '330',
+        '85,000': '60',
+        '105,000': '75',
+    };
+
     // 가격 포맷 변환 함수
     const formatPrice = (price: string): string => {
         if (language !== 'ko') {
-            // "2,860,000원" -> "KRW 2,860,000"
-            return price.replace('원', '').trim() ? `KRW ${price.replace('원', '').trim()}` : price;
+            // "2,860,000원" -> 숫자 부분 추출
+            const krwAmount = price.replace('원', '').trim();
+            // 변환 맵에서 찾기
+            const usdAmount = priceConversionMap[krwAmount];
+            if (usdAmount) {
+                return `$${usdAmount}`;
+            }
+            // 변환 맵에 없으면 원래 로직 사용 (KRW 표시)
+            return krwAmount ? `KRW ${krwAmount}` : price;
         }
         // 한글 모드: 그대로 반환
         return price;

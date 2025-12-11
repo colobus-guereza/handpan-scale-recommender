@@ -6,6 +6,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 import { SCALES } from '@/data/handpanScales';
 import { PRODUCTS as ACCESSORY_PRODUCTS } from '@/data/products';
 import IframeResizer from '@/components/IframeResizer';
+import { SUPPORTED_LANGUAGES, Language } from '@/constants/translations';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -314,6 +315,7 @@ const getProductUrl = (productName: string): string | null => {
 
 export default function CategorySliderPage() {
     const [isLoading, setIsLoading] = useState(true);
+    const [language, setLanguage] = useState<Language>('ko');
 
     useEffect(() => {
         // 페이지 로드 완료 후 로딩 상태 해제
@@ -325,6 +327,50 @@ export default function CategorySliderPage() {
             clearTimeout(timer);
         };
     }, []);
+
+    // URL에서 언어 파라미터 읽기
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            const lang = params.get('lang');
+            const isSupported = SUPPORTED_LANGUAGES.some(l => l.code === lang);
+            if (isSupported && lang) {
+                setLanguage(lang as Language);
+            }
+        }
+    }, []);
+
+    // 가격 변환 맵 (KRW -> USD)
+    const priceConversionMap: Record<string, string> = {
+        '2,640,000': '1,800',
+        '2,860,000': '1,950',
+        '3,300,000': '2,250',
+        '3,520,000': '2,400',
+        '3,960,000': '2,700',
+        '4,400,000': '3,000',
+        '4,730,000': '3,250',
+        '5,720,000': '3,900',
+        '484,000': '330',
+        '85,000': '60',
+        '105,000': '75',
+    };
+
+    // 가격 포맷 변환 함수
+    const formatPrice = (price: string): string => {
+        if (language !== 'ko') {
+            // "2,860,000원" -> 숫자 부분 추출
+            const krwAmount = price.replace('원', '').trim();
+            // 변환 맵에서 찾기
+            const usdAmount = priceConversionMap[krwAmount];
+            if (usdAmount) {
+                return `$${usdAmount}`;
+            }
+            // 변환 맵에 없으면 원래 로직 사용 (KRW 표시)
+            return krwAmount ? `KRW ${krwAmount}` : price;
+        }
+        // 한글 모드: 그대로 반환
+        return price;
+    };
 
     // 로딩 중일 때 로딩 인디케이터 표시
     if (isLoading) {
@@ -411,7 +457,7 @@ export default function CategorySliderPage() {
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
-                                                    {product.price}
+                                                    {formatPrice(product.price)}
                                                 </span>
                                             </div>
                                         </div>
@@ -490,7 +536,7 @@ export default function CategorySliderPage() {
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
-                                                    {product.price}
+                                                    {formatPrice(product.price)}
                                                 </span>
                                             </div>
                                         </div>
@@ -569,7 +615,7 @@ export default function CategorySliderPage() {
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
-                                                    {product.price}
+                                                    {formatPrice(product.price)}
                                                 </span>
                                             </div>
                                         </div>
@@ -648,7 +694,7 @@ export default function CategorySliderPage() {
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
-                                                    {product.price}
+                                                    {formatPrice(product.price)}
                                                 </span>
                                             </div>
                                         </div>
@@ -727,7 +773,7 @@ export default function CategorySliderPage() {
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
-                                                    {product.price}
+                                                    {formatPrice(product.price)}
                                                 </span>
                                             </div>
                                         </div>
@@ -806,7 +852,7 @@ export default function CategorySliderPage() {
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
-                                                    {product.price}
+                                                    {formatPrice(product.price)}
                                                 </span>
                                             </div>
                                         </div>
