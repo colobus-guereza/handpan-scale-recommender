@@ -7,6 +7,7 @@ import Digipan9 from './Digipan9';
 import Digipan10 from './Digipan10';
 import Digipan11 from './Digipan11';
 import Digipan12 from './Digipan12';
+import Digipan14 from './Digipan14';
 
 interface MiniDigiPanProps {
     scale: Scale;
@@ -17,6 +18,7 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
 
     // Determine which component to render based on note count
     const totalNotes = 1 + scale.notes.top.length + scale.notes.bottom.length;
+    const is14Notes = totalNotes === 14;
     const is12Notes = totalNotes === 12;
     const is11Notes = totalNotes === 11;
     const is10Notes = totalNotes === 10;
@@ -49,13 +51,15 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
     // Scene Size Ratio is roughly 60:115 (~1:1.92)
     // We use aspect-[1/2] (1:2.0) which is slightly taller, providing a tight, efficient fit without cropping.
     const useVerticalAspect = false; // Forced to false based on user feedback to match Digipan 9/10/11
-    const containerClass = useVerticalAspect
-        ? "w-full aspect-[1/2] relative rounded-2xl overflow-hidden bg-white -mt-2"
+    const containerClass = is14Notes
+        ? "w-full aspect-[10/11] max-h-[500px] md:max-h-[700px] relative rounded-2xl overflow-hidden bg-white -mt-2" // Optimized ratio (60:66) with max-height
         : "w-full aspect-square max-h-[500px] md:max-h-[700px] relative rounded-2xl overflow-hidden bg-white -mt-2";
 
     return (
         <div className={containerClass}>
-            {is12Notes ? (
+            {is14Notes ? (
+                <Digipan14 {...commonProps} />
+            ) : is12Notes ? (
                 <Digipan12 {...commonProps} />
             ) : is11Notes ? (
                 <Digipan11 {...commonProps} />

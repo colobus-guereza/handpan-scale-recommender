@@ -341,8 +341,8 @@ const Digipan14 = React.forwardRef<Digipan3DHandle, Digipan14Props>(({
             backgroundContent={<Digipan14Background visualNotes={visualNotes} viewMode={viewMode} />}
             forceCompactView={forceCompactView}
             hideStaticLabels={true}
-            cameraTargetY={15} // Shift camera up to allow headroom
-            sceneSize={{ width: 60, height: 75 }} // Expand vertical bounds to 75 (adds 15 units headroom)
+            cameraTargetY={3} // Reduced shift for slight headroom (-20px range)
+            sceneSize={{ width: 60, height: 66 }} // Tighter vertical bounds (60 + 10%)
         />
     );
 });

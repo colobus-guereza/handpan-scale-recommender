@@ -349,7 +349,7 @@ export default function Digipan3DTestPage() {
         const s: any = {};
         initialNotes14.forEach((note) => {
             s[`N${note.id}_cx`] = { value: note.cx, min: 0, max: 1000, step: 1, label: `N${note.id} X` };
-            s[`N${note.id}_cy`] = { value: note.cy, min: -500, max: 1500, step: 1, label: `N${note.id} Y` };
+            s[`N${note.id}_cy`] = { value: note.cy, min: -50, max: 1500, step: 1, label: `N${note.id} Y` };
             s[`N${note.id}_rotate`] = { value: note.rotate, min: 0, max: 360, step: 1, label: `N${note.id} Rot` };
             s[`N${note.id}_scaleX`] = { value: note.scaleX || 1, min: 0.1, max: 3, step: 0.01, label: `N${note.id} SX` };
             s[`N${note.id}_scaleY`] = { value: note.scaleY || 1, min: 0.1, max: 3, step: 0.01, label: `N${note.id} SY` };

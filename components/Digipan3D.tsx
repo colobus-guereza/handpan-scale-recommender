@@ -453,7 +453,84 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                         {backgroundContent ? backgroundContent : <HandpanImage backgroundImage={backgroundImage} centerX={centerX} centerY={centerY} />}
                     </Suspense>
 
-
+                    {/* Center Point and Axes (only in dev page) */}
+                    {isDevPage && (
+                        <>
+                            {/* Center Point */}
+                            <mesh position={[0, 0, 0]}>
+                                <sphereGeometry args={[0.5, 16, 16]} />
+                                <meshBasicMaterial color="#ff0000" />
+                            </mesh>
+                            
+                            {/* Center Coordinates Label */}
+                            <Text
+                                position={[0, -1.5, 0]}
+                                fontSize={1}
+                                color="#000000"
+                                anchorX="center"
+                                anchorY="middle"
+                            >
+                                (0, 0, 0)
+                            </Text>
+                            
+                            {/* X-axis (Blue - Right) */}
+                            <mesh position={[10, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
+                                <cylinderGeometry args={[0.1, 0.1, 20, 8]} />
+                                <meshBasicMaterial color="#0000ff" />
+                            </mesh>
+                            <mesh position={[20, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
+                                <coneGeometry args={[0.3, 1, 8]} />
+                                <meshBasicMaterial color="#0000ff" />
+                            </mesh>
+                            <Text
+                                position={[21, 0, 0]}
+                                fontSize={0.8}
+                                color="#0000ff"
+                                anchorX="left"
+                                anchorY="middle"
+                            >
+                                X
+                            </Text>
+                            
+                            {/* Y-axis (Red - Up) */}
+                            <mesh position={[0, 10, 0]}>
+                                <cylinderGeometry args={[0.1, 0.1, 20, 8]} />
+                                <meshBasicMaterial color="#ff0000" />
+                            </mesh>
+                            <mesh position={[0, 20, 0]}>
+                                <coneGeometry args={[0.3, 1, 8]} />
+                                <meshBasicMaterial color="#ff0000" />
+                            </mesh>
+                            <Text
+                                position={[0, 21, 0]}
+                                fontSize={0.8}
+                                color="#ff0000"
+                                anchorX="center"
+                                anchorY="bottom"
+                            >
+                                Y
+                            </Text>
+                            
+                            {/* Z-axis (Green - Depth) */}
+                            <mesh position={[0, 0, 10]} rotation={[Math.PI / 2, 0, 0]}>
+                                <cylinderGeometry args={[0.1, 0.1, 20, 8]} />
+                                <meshBasicMaterial color="#00ff00" />
+                            </mesh>
+                            <mesh position={[0, 0, 20]} rotation={[Math.PI / 2, 0, 0]}>
+                                <coneGeometry args={[0.3, 1, 8]} />
+                                <meshBasicMaterial color="#00ff00" />
+                            </mesh>
+                            <Text
+                                position={[0, 0, 21]}
+                                fontSize={0.8}
+                                color="#00ff00"
+                                anchorX="center"
+                                anchorY="middle"
+                            >
+                                Z
+                            </Text>
+                        </>
+                    )}
 
                     {/* Tone Fields */}
                     {notes.map((note) => (
