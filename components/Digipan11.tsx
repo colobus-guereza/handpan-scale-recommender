@@ -9,7 +9,7 @@ import * as THREE from 'three';
 import { VisualTonefield } from './VisualTonefield';
 
 // Composite Background Component for Digipan 11
-const Digipan11Background = ({ centerX = 500, centerY = 500, visualNotes = [] }: { centerX?: number; centerY?: number; visualNotes?: any[] }) => {
+const Digipan11Background = ({ centerX = 500, centerY = 500, visualNotes = [], viewMode }: { centerX?: number; centerY?: number; visualNotes?: any[]; viewMode?: number }) => {
     // Load texture
     const tex1 = useTexture('/images/9notes.png');
 
@@ -28,7 +28,8 @@ const Digipan11Background = ({ centerX = 500, centerY = 500, visualNotes = [] }:
             </mesh>
 
             {/* Permanent Visual Tonefields for Bottom Notes (N9, N10) */}
-            {visualNotes.map((note) => {
+            {/* Show in Modes 0-3 (UI 1-4), Hide in Mode 4 (UI 5 - Guide Mode uses Spheres) */}
+            {viewMode !== 4 && visualNotes.map((note) => {
                 const cx = note.cx ?? 500;
                 const cy = note.cy ?? 500;
                 const notePos = svgTo3D(cx, cy, centerX, centerY);
@@ -62,6 +63,7 @@ const Digipan11Background = ({ centerX = 500, centerY = 500, visualNotes = [] }:
                     />
                 );
             })}
+            {/* Permanent Visual Tonefields for Bottom Notes REMOVED - Handled by ToneFieldMesh in Digipan3D now */}
         </group >
     );
 };
@@ -76,9 +78,9 @@ interface Digipan11Props {
     // New Props
     showControls?: boolean;
     showInfoPanel?: boolean;
-    initialViewMode?: 0 | 1 | 2 | 3;
-    viewMode?: 0 | 1 | 2 | 3;
-    onViewModeChange?: (mode: 0 | 1 | 2 | 3) => void;
+    initialViewMode?: 0 | 1 | 2 | 3 | 4;
+    viewMode?: 0 | 1 | 2 | 3 | 4;
+    onViewModeChange?: (mode: 0 | 1 | 2 | 3 | 4) => void;
     enableZoom?: boolean;
     enablePan?: boolean;
     showLabelToggle?: boolean;
@@ -216,8 +218,8 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
                 "rotate": 21,
                 "position": "bottom",
                 "angle": 0,
-                "scaleX": 1.24,
-                "scaleY": 1.48
+                "scaleX": 1.0,
+                "scaleY": 1.2
             },
             {
                 "id": 10,
@@ -227,8 +229,8 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
                 "rotate": 158,
                 "position": "bottom",
                 "angle": 0,
-                "scaleX": 1.29,
-                "scaleY": 1.61
+                "scaleX": 1.0,
+                "scaleY": 1.3
             }
         ];
 
@@ -285,13 +287,7 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
             onNoteClick={onNoteClick}
             onScaleSelect={onScaleSelect}
             // Background is simpler now - we pass content instead of string
-            backgroundContent={
-                <Digipan11Background
-                    centerX={500} // Default is 500 now, implicit 
-                    centerY={500}
-                    visualNotes={notesToRender.filter(n => n.id >= 9)}
-                />
-            }
+            backgroundContent={<Digipan11Background visualNotes={notesToRender.filter(n => n.id >= 9)} viewMode={viewMode} />}
             // tonefieldOffset={[-28.5, 0, 0]} // REMOVED global offset, will use per-note offset
             extraControls={extraControls}
             noteCountFilter={9} // Keep filter as 9 for now as it duplicates 9

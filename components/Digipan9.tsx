@@ -15,9 +15,9 @@ export interface Digipan9Props {
     // New Props
     showControls?: boolean;
     showInfoPanel?: boolean;
-    initialViewMode?: 0 | 1 | 2 | 3;
-    viewMode?: 0 | 1 | 2 | 3;
-    onViewModeChange?: (mode: 0 | 1 | 2 | 3) => void;
+    initialViewMode?: 0 | 1 | 2 | 3 | 4;
+    viewMode?: 0 | 1 | 2 | 3 | 4;
+    onViewModeChange?: (mode: 0 | 1 | 2 | 3 | 4) => void;
     enableZoom?: boolean;
     enablePan?: boolean;
     showLabelToggle?: boolean;
@@ -77,7 +77,8 @@ const Digipan9 = React.forwardRef<Digipan3DHandle, Digipan9Props>(({
         const currentScaleNotes = [scale.notes.ding, ...scale.notes.top];
 
         // Map data
-        return templateData.map((t, i) => {
+        // Map data
+        const generatedNotes = templateData.map((t, i) => {
             const noteName = currentScaleNotes[i] || '';
             const frequency = getNoteFrequency(noteName);
             const visualFrequency = TEMPLATE_FREQUENCIES[i] || 440;
@@ -88,6 +89,17 @@ const Digipan9 = React.forwardRef<Digipan3DHandle, Digipan9Props>(({
                 frequency: frequency || 440,
                 visualFrequency: visualFrequency, // Fixed visual size
                 labelOffset: 25
+            };
+        });
+
+        // Sort by frequency to determine 1-based numbering
+        const sorted = [...generatedNotes].sort((a, b) => a.frequency - b.frequency);
+
+        return generatedNotes.map(n => {
+            const rank = sorted.findIndex(x => x.id === n.id) + 1;
+            return {
+                ...n,
+                subLabel: rank.toString()
             };
         });
 

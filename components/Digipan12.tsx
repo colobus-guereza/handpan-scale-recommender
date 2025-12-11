@@ -17,9 +17,9 @@ interface Digipan12Props {
     extraControls?: React.ReactNode;
     showControls?: boolean;
     showInfoPanel?: boolean;
-    initialViewMode?: 0 | 1 | 2 | 3;
-    viewMode?: 0 | 1 | 2 | 3;
-    onViewModeChange?: (mode: 0 | 1 | 2 | 3) => void;
+    initialViewMode?: 0 | 1 | 2 | 3 | 4;
+    viewMode?: 0 | 1 | 2 | 3 | 4;
+    onViewModeChange?: (mode: 0 | 1 | 2 | 3 | 4) => void;
     enableZoom?: boolean;
     enablePan?: boolean;
     showLabelToggle?: boolean;
@@ -29,7 +29,7 @@ interface Digipan12Props {
 }
 
 // Composite Background Component for Digipan 12 (10 notes image + 2 visual tonefields)
-const Digipan12Background = ({ centerX = 500, centerY = 500, visualNotes = [] }: { centerX?: number; centerY?: number; visualNotes?: any[] }) => {
+const Digipan12Background = ({ centerX = 500, centerY = 500, visualNotes = [], viewMode }: { centerX?: number; centerY?: number; visualNotes?: any[]; viewMode?: number }) => {
     // Load texture (Using 10notes.png as base)
     const tex1 = useTexture('/images/10notes.png');
 
@@ -46,8 +46,9 @@ const Digipan12Background = ({ centerX = 500, centerY = 500, visualNotes = [] }:
                 <meshBasicMaterial map={tex1} transparent opacity={1} />
             </mesh>
 
-            {/* Permanent Visual Tonefields for Bottom Notes (N10, N11 in D12 context) */}
-            {visualNotes.map((note) => {
+            {/* Permanent Visual Tonefields for Bottom Notes (N10, N11) */}
+            {/* Show in Modes 0-3 (UI 1-4), Hide in Mode 4 (UI 5 - Guide Mode uses Spheres) */}
+            {viewMode !== 4 && visualNotes.map((note) => {
                 const cx = note.cx ?? 500;
                 const cy = note.cy ?? 500;
                 const notePos = svgTo3D(cx, cy, centerX, centerY);
@@ -82,6 +83,8 @@ const Digipan12Background = ({ centerX = 500, centerY = 500, visualNotes = [] }:
                     />
                 );
             })}
+
+            {/* Permanent Visual Tonefields for Bottom Notes REMOVED - Handled by ToneFieldMesh in Digipan3D now */}
         </group>
     );
 };
@@ -118,8 +121,8 @@ const Digipan12 = React.forwardRef<Digipan3DHandle, Digipan12Props>(({
         { "id": 8, "cx": 314, "cy": 200, "scale": 0, "rotate": 57, "position": "top", "angle": 0, "scaleX": 0.98, "scaleY": 0.83 },
         { "id": 9, "cx": 508, "cy": 143, "scale": 0, "rotate": 138, "position": "top", "angle": 0, "scaleX": 1.07, "scaleY": 0.79 },
         // Appended Bottom Tonefields (from Digipan 11 N9, N10 -> here N10, N11)
-        { "id": 10, "cx": 1000, "cy": 762, "scale": 0, "rotate": 21, "position": "bottom", "angle": 0, "scaleX": 1.24, "scaleY": 1.48 },
-        { "id": 11, "cx": 4, "cy": 762, "scale": 0, "rotate": 158, "position": "bottom", "angle": 0, "scaleX": 1.29, "scaleY": 1.61 }
+        { "id": 10, "cx": 1000, "cy": 762, "scale": 0, "rotate": 21, "position": "bottom", "angle": 0, "scaleX": 1.0, "scaleY": 1.2 },
+        { "id": 11, "cx": 4, "cy": 762, "scale": 0, "rotate": 158, "position": "bottom", "angle": 0, "scaleX": 1.0, "scaleY": 1.3 }
     ], []);
 
     const internalNotes = useMemo(() => {
@@ -216,7 +219,7 @@ const Digipan12 = React.forwardRef<Digipan3DHandle, Digipan12Props>(({
             enableZoom={enableZoom}
             enablePan={enablePan}
             showLabelToggle={showLabelToggle}
-            backgroundContent={<Digipan12Background visualNotes={visualNotes} />}
+            backgroundContent={<Digipan12Background visualNotes={visualNotes} viewMode={viewMode} />}
             forceCompactView={forceCompactView}
             hideStaticLabels={true}
         />

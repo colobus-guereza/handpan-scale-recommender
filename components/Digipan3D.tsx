@@ -99,9 +99,9 @@ interface Digipan3DProps {
     enablePan?: boolean;
     showControls?: boolean;
     showInfoPanel?: boolean;
-    initialViewMode?: 0 | 1 | 2 | 3;
-    viewMode?: 0 | 1 | 2 | 3;
-    onViewModeChange?: (mode: 0 | 1 | 2 | 3) => void;
+    initialViewMode?: 0 | 1 | 2 | 3 | 4;
+    viewMode?: 0 | 1 | 2 | 3 | 4;
+    onViewModeChange?: (mode: 0 | 1 | 2 | 3 | 4) => void;
     showLabelToggle?: boolean;
     forceCompactView?: boolean;
     backgroundContent?: React.ReactNode;
@@ -155,9 +155,9 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     const [isPlaying, setIsPlaying] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
-    // View Mode: 0 = Default (All), 1 = No Labels, 2 = No Mesh (Levels Only), 3 = Hidden (Interaction Only)
+    // View Mode: 0 = Default (All), 1 = No Labels, 2 = No Mesh (Levels Only), 3 = Hidden (Interaction Only), 4 = Guide (Image + Dots)
     // Initialize with controlled prop if available, else initialViewMode
-    const [internalViewMode, setInternalViewMode] = useState<0 | 1 | 2 | 3>(
+    const [internalViewMode, setInternalViewMode] = useState<0 | 1 | 2 | 3 | 4>(
         controlledViewMode !== undefined ? controlledViewMode : initialViewMode
     );
 
@@ -170,8 +170,8 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
 
     const viewMode = controlledViewMode !== undefined ? controlledViewMode : internalViewMode;
 
-    const setViewMode = (modeOrFn: 0 | 1 | 2 | 3 | ((prev: 0 | 1 | 2 | 3) => 0 | 1 | 2 | 3)) => {
-        let newMode: 0 | 1 | 2 | 3;
+    const setViewMode = (modeOrFn: 0 | 1 | 2 | 3 | 4 | ((prev: 0 | 1 | 2 | 3 | 4) => 0 | 1 | 2 | 3 | 4)) => {
+        let newMode: 0 | 1 | 2 | 3 | 4;
         if (typeof modeOrFn === 'function') {
             newMode = modeOrFn(viewMode);
         } else {
@@ -322,7 +322,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
         handleCapture,
         handleDemoPlay,
         toggleViewMode: () => {
-            setViewMode(prev => (prev + 1) % 4 as 0 | 1 | 2 | 3);
+            setViewMode(prev => (prev + 1) % 5 as 0 | 1 | 2 | 3 | 4);
         }
     }));
 
@@ -351,14 +351,21 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                             </button>
 
                             <button
-                                onClick={() => setViewMode(prev => (prev + 1) % 4 as 0 | 1 | 2 | 3)}
+                                onClick={() => setViewMode(prev => (prev + 1) % 5 as 0 | 1 | 2 | 3 | 4)}
                                 className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                                title="Toggle Visibility: All -> No Labels -> Labels Only -> Hidden"
+                                title={`Toggle Visibility (Current: Mode ${viewMode + 1})`}
                             >
-                                {viewMode === 0 && <Eye size={20} />}
-                                {viewMode === 1 && <MinusCircle size={20} />}
-                                {viewMode === 2 && <EyeOff size={20} />}
-                                {viewMode === 3 && <EyeOff size={20} className="opacity-50" />}
+                                <div className="relative flex items-center justify-center w-full h-full">
+                                    {/* Background Icon (Faint) */}
+                                    {viewMode === 0 && <Eye size={20} className="opacity-30" />}
+                                    {viewMode === 1 && <MinusCircle size={20} className="opacity-30" />}
+                                    {viewMode === 2 && <EyeOff size={20} className="opacity-30" />}
+                                    {viewMode === 3 && <EyeOff size={20} className="opacity-30" />}
+                                    {viewMode === 4 && <Eye size={20} className="opacity-30 text-blue-500" />}
+
+                                    {/* Number Overlay */}
+                                    <span className="absolute text-sm font-bold text-slate-800">{viewMode + 1}</span>
+                                </div>
                             </button>
                         </>
                     )}
@@ -381,8 +388,15 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
             {/* Mobile Layout: Bottom Corner Buttons */}
             {isMobileButtonLayout && (
                 <>
-                    {/* Bottom-Left: Label Toggle (정보 표시/숨김) */}
-                    <div className="absolute bottom-2 left-2 z-50">
+                    {/* Top-Right: Extra Controls (e.g., Mode Switcher) - Positioned below status bar */}
+                    {showControls && extraControls && (
+                        <div className="controls-container absolute top-12 right-4 z-50 flex flex-col gap-2 items-center">
+                            {extraControls}
+                        </div>
+                    )}
+
+                    {/* Top-Left: Label Toggle (정보 표시/숨김) */}
+                    <div className="absolute top-2 left-2 z-50">
                         <button
                             onClick={() => setViewMode(prev => prev === 3 ? 2 : 3)}
                             className="w-[38.4px] h-[38.4px] flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
@@ -392,8 +406,8 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                         </button>
                     </div>
 
-                    {/* Bottom-Right: Auto-Play (자동재생) */}
-                    <div className="absolute bottom-2 right-2 z-50">
+                    {/* Top-Right: Auto-Play (자동재생) */}
+                    <div className="absolute top-2 right-2 z-50">
                         <button
                             onClick={handleDemoPlay}
                             disabled={isPlaying}
@@ -434,39 +448,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                         {backgroundContent ? backgroundContent : <HandpanImage backgroundImage={backgroundImage} centerX={centerX} centerY={centerY} />}
                     </Suspense>
 
-                    <Text
-                        visible={viewMode === 0 && !hideStaticLabels}
-                        position={[25, 0, 0.5]} // 25cm right
-                        fontSize={1.2}
-                        color="#FFFFFF" // Gold
-                        anchorX="center"
-                        anchorY="middle"
-                        fontWeight="bold"
-                    >
-                        RS
-                    </Text>
-                    <Text
-                        visible={viewMode === 0 && !hideStaticLabels}
-                        position={[-25, 0, 0.5]} // 25cm left
-                        fontSize={1.2}
-                        color="#FFFFFF" // Gold
-                        anchorX="center"
-                        anchorY="middle"
-                        fontWeight="bold"
-                    >
-                        LS
-                    </Text>
-                    <Text
-                        visible={viewMode === 0 && !hideStaticLabels}
-                        position={[0, -15, 0.5]} // 15cm down
-                        fontSize={1.2}
-                        color="#FFFFFF" // Gold
-                        anchorX="center"
-                        anchorY="middle"
-                        fontWeight="bold"
-                    >
-                        H
-                    </Text>
+
 
                     {/* Tone Fields */}
                     {notes.map((note) => (
@@ -647,6 +629,7 @@ const ToneFieldMesh = ({
 
     // Ding logic
     const isDing = note.id === 0;
+    const isBottom = note.position === 'bottom';
 
     // Dimensions Calculation
     // We use Frequency-based calculation to maintain consistency with the original tuning logic.
@@ -830,6 +813,7 @@ const ToneFieldMesh = ({
             <group rotation={[0, 0, rotationZ]}>
                 {/* 1. Tone Field Body */}
                 {/* 1-a. Interaction Mesh (Invisible Hit Box) - Always handles events */}
+                {/* Placed at z=0.2 to be IN FRONT of the visual dot (z=0.1) for reliable interaction */}
                 <mesh
                     onPointerDown={handlePointerDown}
                     onPointerOver={() => {
@@ -842,18 +826,20 @@ const ToneFieldMesh = ({
                     }}
                     rotation={[Math.PI / 2, 0, 0]}
                     scale={[finalRadiusX, 0.05, finalRadiusY]} // Flattened
+                    position={[0, 0, 0.2]} // Moved forward to ensure it captures clicks
                     visible={true} // Must be visible to receive raycast events
                 >
                     <sphereGeometry args={[1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
                     <meshBasicMaterial
                         transparent={true}
                         opacity={0} // Invisible
-                        depthWrite={false} // Prevent depth issues
+                        depthWrite={false}
                         side={THREE.DoubleSide}
                     />
                 </mesh>
 
-                {/* 1-b. Visual Mesh (Wireframe) - No events, controlled by ViewMode */}
+                {/* 1-b. Visual Mesh (Wireframe) - Standard Tonefields */}
+                {/* Visible in Modes 0 (1) and 1 (2) for ALL notes (including Bottom) */}
                 <mesh
                     rotation={[Math.PI / 2, 0, 0]}
                     scale={[finalRadiusX, 0.05, finalRadiusY]}
@@ -872,6 +858,28 @@ const ToneFieldMesh = ({
                         opacity={1}
                     />
                 </mesh>
+
+                {/* 1-c. Bottom Dot Visual (Sienna Guide) */}
+                {/* Visible ONLY in Guide Mode (Mode 4 / UI Mode 5) */}
+                {isBottom && (
+                    <mesh
+                        position={[0, 0, 0.1]} // Behind interaction mesh (z=0.1)
+                        rotation={[0, 0, 0]}
+                        scale={[1.5 * (note.scaleX ?? 1), 1.5 * (note.scaleX ?? 1), 1.5 * (note.scaleX ?? 1)]} // Scaled Spherical Dot
+                        visible={viewMode === 4} // Only visible in 5th mode
+                    >
+                        <sphereGeometry args={[1, 16, 16]} />
+                        <meshStandardMaterial
+                            color={hovered ? "#60A5FA" : "#A0522D"} // Hover Blue, Default Sienna
+                            emissive={hovered ? "#1E40AF" : "#000000"}
+                            emissiveIntensity={hovered ? 0.5 : 0}
+                            roughness={0.4}
+                            metalness={0.0}
+                            transparent={true}
+                            opacity={0.9}
+                        />
+                    </mesh>
+                )}
 
                 {/* === CLICK EFFECTS === */}
 
@@ -921,24 +929,26 @@ const ToneFieldMesh = ({
                     />
                 </mesh>
 
-                {/* 2. Dimple - Wireframe */}
-                <mesh
-                    position={[0, 0, 0.01]}
-                    rotation={[isDing ? Math.PI / 2 : -Math.PI / 2, 0, 0]}
-                    scale={[dimpleRadiusX, 0.05, dimpleRadiusY]}
-                    // Visible in 0 (All) and 1 (No Labels). Hidden in 2 (Labels Only) and 3 (Interaction Only)
-                    visible={viewMode === 0 || viewMode === 1}
-                >
-                    <sphereGeometry args={[1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
-                    <meshStandardMaterial
-                        color="#FFFFFF"
-                        roughness={0.9}
-                        metalness={0.0}
-                        wireframe={true}
-                        transparent={true}
-                        opacity={1} // Was opacity conditional, now controlled by visible prop
-                    />
-                </mesh>
+                {/* 2. Dimple - Wireframe (Standard Only) */}
+                {!isBottom && (
+                    <mesh
+                        position={[0, 0, 0.01]}
+                        rotation={[isDing ? Math.PI / 2 : -Math.PI / 2, 0, 0]}
+                        scale={[dimpleRadiusX, 0.05, dimpleRadiusY]}
+                        // Visible in 0 (All) and 1 (No Labels). Hidden in 2 (Labels Only) and 3 (Interaction Only)
+                        visible={viewMode === 0 || viewMode === 1}
+                    >
+                        <sphereGeometry args={[1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
+                        <meshStandardMaterial
+                            color="#FFFFFF"
+                            roughness={0.9}
+                            metalness={0.0}
+                            wireframe={true}
+                            transparent={true}
+                            opacity={1} // Was opacity conditional, now controlled by visible prop
+                        />
+                    </mesh>
+                )}
             </group>
 
             {/* 3. Labels (Separated from rotation group to stay upright) */}
@@ -996,12 +1006,12 @@ const ToneFieldMesh = ({
                             {(() => {
                                 // Use black color for bottom position notes (white background outside pan)
                                 const pitchLabelColor = note.position === 'bottom' ? '#333333' : '#FFFFFF';
-                                const outlineColor = note.position === 'bottom' ? '#CCCCCC' : '#1E50A0';
+                                const outlineColor = note.position === 'bottom' ? '#CCCCCC' : '#000000';
                                 return (
                                     <Text
                                         visible={areLabelsVisible}
                                         position={[0, 0, 0]}
-                                        fontSize={1.5}
+                                        fontSize={3.0}
                                         color={pitchLabelColor}
                                         anchorX="center"
                                         anchorY="middle"
@@ -1017,14 +1027,14 @@ const ToneFieldMesh = ({
                             {/* Number Label (Visual Bottom / 6 o'clock) */}
                             {/* Determine Display Label: Use subLabel if present, otherwise ID (or 'D' for ID 0) */}
                             {(() => {
-                                const displayText = note.subLabel ? note.subLabel : (note.id === 0 ? 'D' : note.id.toString());
+                                const displayText = note.subLabel ? note.subLabel : (note.id + 1).toString();
                                 // Use black color for bottom position notes (white background outside pan)
                                 const labelColor = note.position === 'bottom' ? '#333333' : '#FFFFFF';
                                 return (
                                     <Text
                                         visible={areLabelsVisible}
-                                        position={[bottomPos.x, bottomPos.y - 0.5, 0]}
-                                        fontSize={1}
+                                        position={[bottomPos.x, bottomPos.y - 1.0, 0]}
+                                        fontSize={2.0}
                                         color={labelColor}
                                         anchorX="center"
                                         anchorY="top"

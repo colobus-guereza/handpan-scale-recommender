@@ -15,9 +15,9 @@ interface Digipan10Props {
     extraControls?: React.ReactNode;
     showControls?: boolean;
     showInfoPanel?: boolean;
-    initialViewMode?: 0 | 1 | 2 | 3;
-    viewMode?: 0 | 1 | 2 | 3;
-    onViewModeChange?: (mode: 0 | 1 | 2 | 3) => void;
+    initialViewMode?: 0 | 1 | 2 | 3 | 4;
+    viewMode?: 0 | 1 | 2 | 3 | 4;
+    onViewModeChange?: (mode: 0 | 1 | 2 | 3 | 4) => void;
     enableZoom?: boolean;
     enablePan?: boolean;
     showLabelToggle?: boolean;
@@ -211,7 +211,18 @@ const Digipan10 = React.forwardRef<Digipan3DHandle, Digipan10Props>(({
             };
         }).filter(n => n !== null);
 
-        return [dingNote, ...topNotes] as any[];
+        const generatedNotes = [dingNote, ...topNotes] as any[];
+
+        // Sort by frequency to determine 1-based numbering
+        const sorted = [...generatedNotes].sort((a, b) => a.frequency - b.frequency);
+
+        return generatedNotes.map(n => {
+            const rank = sorted.findIndex(x => x.id === n.id) + 1;
+            return {
+                ...n,
+                subLabel: rank.toString()
+            };
+        });
     }, [scale]);
 
     // Use external notes if provided (Editor Mode), otherwise use internal default (Standard Component)

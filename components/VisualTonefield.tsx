@@ -9,6 +9,7 @@ interface VisualTonefieldProps {
     color?: string;
     opacity?: number;
     fillOpacity?: number;
+    dimpleFillOpacity?: number;
     dimpleScale?: number;
 }
 
@@ -19,7 +20,8 @@ export const VisualTonefield: React.FC<VisualTonefieldProps> = ({
     radiusY,
     color = "#A0522D",
     opacity = 0.6,
-    fillOpacity = 0.15,
+    fillOpacity = 0.2,
+    dimpleFillOpacity = 0.5,
     dimpleScale = 0.4
 }) => {
     return (
@@ -62,6 +64,20 @@ export const VisualTonefield: React.FC<VisualTonefieldProps> = ({
                         color={color}
                         transparent={true}
                         opacity={opacity}
+                        side={THREE.DoubleSide}
+                    />
+                </mesh>
+
+                {/* 4. Inner Dimple Fill */}
+                <mesh
+                    position={[0, 0, 0.009]} // Just behind dimple outline
+                    scale={[radiusX * dimpleScale, radiusY * dimpleScale, 1]}
+                >
+                    <circleGeometry args={[0.95, 64]} />
+                    <meshBasicMaterial
+                        color={color}
+                        transparent={true}
+                        opacity={dimpleFillOpacity}
                         side={THREE.DoubleSide}
                     />
                 </mesh>

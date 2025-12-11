@@ -26,7 +26,7 @@ export default function Digipan3DTestPage() {
 
     // Shared Digipan Control States
     const [isCameraLocked, setIsCameraLocked] = useState(false);
-    const [viewMode, setViewMode] = useState<0 | 1 | 2 | 3>(3);
+    const [viewMode, setViewMode] = useState<0 | 1 | 2 | 3 | 4>(3);
     const [showLabels, setShowLabels] = useState(false);
 
     // External Control Ref
@@ -812,6 +812,30 @@ export default function Digipan3DTestPage() {
                             >
                                 <PlayCircle size={24} />
                             </button>
+
+                            {/* 4. Digipan Mode Toggle (New) */}
+                            <button
+                                onClick={() => {
+                                    let newMode: '9' | '10' | '11' | '12' = '9';
+                                    if (mode === '9') newMode = '10';
+                                    else if (mode === '10') newMode = '11';
+                                    else if (mode === '11') newMode = '12';
+                                    else if (mode === '12') newMode = '9';
+
+                                    setMode(newMode);
+                                    if (newMode === '9') setSelectedScaleId('d_kurd_9');
+                                    else if (newMode === '10') setSelectedScaleId('d_kurd_10');
+                                    else if (newMode === '11') setSelectedScaleId('cs_pygmy_11');
+                                    else if (newMode === '12') setSelectedScaleId('d_kurd_12');
+                                }}
+                                className="w-12 h-12 flex items-center justify-center bg-white/90 backdrop-blur-md rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 font-bold text-xs"
+                                title="Toggle Digipan 9 / 10 / 11 / 12"
+                            >
+                                {mode === '9' ? <span className="text-[10px] leading-none font-bold">9</span> :
+                                    mode === '10' ? <span className="text-[10px] leading-none font-bold">10</span> :
+                                        mode === '11' ? <span className="text-[10px] leading-none font-bold">11</span> :
+                                            <span className="text-[10px] leading-none font-bold">12</span>}
+                            </button>
                         </div>
 
                         {/* Floating Scale Panel - Outside the frame on the left/right */}
@@ -850,7 +874,7 @@ export default function Digipan3DTestPage() {
                                 scale={scale} // Pass selected scale
                                 notes={activeNotes9.length > 0 ? activeNotes9 : undefined}
                                 isCameraLocked={isCameraLocked}
-                                extraControls={toggleControl} // Pass the mode toggle
+                                extraControls={isMobilePreview ? undefined : toggleControl} // Hide internal mode toggle in mobile preview
                                 showControls={true}
                                 showInfoPanel={false} // Hide inside 3D view (moved to overlay)
                                 initialViewMode={viewMode}
@@ -867,7 +891,7 @@ export default function Digipan3DTestPage() {
                                 scale={scale}
                                 notes={activeNotes10.length > 0 ? activeNotes10 : undefined}
                                 isCameraLocked={isCameraLocked}
-                                extraControls={toggleControl}
+                                extraControls={isMobilePreview ? undefined : toggleControl}
                                 showControls={true}
                                 showInfoPanel={false}
                                 initialViewMode={viewMode}
@@ -885,7 +909,7 @@ export default function Digipan3DTestPage() {
                                 scale={scale} // C# Pygmy 11
                                 notes={activeNotes11.length > 0 ? activeNotes11 : undefined}
                                 isCameraLocked={isCameraLocked}
-                                extraControls={toggleControl}
+                                extraControls={isMobilePreview ? undefined : toggleControl}
                                 showControls={true}
                                 showInfoPanel={false}
                                 initialViewMode={viewMode} // Use shared view mode
@@ -902,7 +926,7 @@ export default function Digipan3DTestPage() {
                                 scale={scale}
                                 notes={activeNotes12.length > 0 ? activeNotes12 : undefined}
                                 isCameraLocked={isCameraLocked}
-                                extraControls={toggleControl}
+                                extraControls={isMobilePreview ? undefined : toggleControl}
                                 showControls={true}
                                 showInfoPanel={false}
                                 initialViewMode={viewMode}
