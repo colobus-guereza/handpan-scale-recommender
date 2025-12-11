@@ -25,6 +25,7 @@ export const NOTE_FREQUENCIES: Record<string, number> = {
     'F3': 174.61,
     'G3': 196.00,
     'Eb3': 155.56,
+    'Db3': 138.59, // Same as C#3
     'Ab3': 207.65, // Same as G#3
     'F#3': 185.00,
     'Eb4': 311.13, // Same as D#4

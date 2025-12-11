@@ -1,3 +1,4 @@
+// Updated: 2024-12-11 (Force Rebuild)
 export interface LocalizedContent {
     name: string;
     description?: string;
@@ -150,7 +151,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/uL40C1bqKik?si=DpqHwPB_RLpcA5mc",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/7514024868",
         ownUrl: "https://handpan.co.kr/shop/?idx=74",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=75",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=74",
         i18n: {
             fr: {
                 name: "D Kurd 10",
@@ -213,7 +214,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/v9pXYwhylPg?si=Em_dHnMGyeU19YkE",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12351119980",
         ownUrl: "https://handpan.co.kr/shop/?idx=78",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=74",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=78",
         i18n: {
             fr: {
                 name: "E Equinox 14",
@@ -276,7 +277,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/SthKlH686Pc?si=_YG050uZwcbIoP0X",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12070387231",
         ownUrl: "https://handpan.co.kr/shop/?idx=97",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=78",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=97",
         i18n: {
             fr: {
                 name: "F# Low Pygmy 14",
@@ -591,7 +592,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/B-7jukbN3hw?si=ci_6mlElCZvu_WGH",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8490886007",
         ownUrl: "https://handpan.co.kr/shop/?idx=73",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=87",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=73",
         i18n: {
             fr: {
                 name: "E La Sirena 10",
@@ -654,7 +655,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/WcREkpJ5I_0?si=YUyV1CEIOLyXWesW",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8521877785",
         ownUrl: "https://handpan.co.kr/shop/?idx=88",
-        ownUrlEn: "",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=88",
         i18n: {
             fr: {
                 name: "C# Pygmy 9",
@@ -717,7 +718,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/aGKx4zLFvRo",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12655523545",
         ownUrl: "https://handpan.co.kr/shop/?idx=77",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=88",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=77",
         i18n: {
             fr: {
                 name: "D Asha 15",
@@ -770,7 +771,7 @@ export const SCALES: Scale[] = [
         notes: {
             ding: "E3",
             top: ["G3", "B3", "C4", "D4", "E4", "F#4", "G4", "B4", "C5"],
-            bottom: ["C3", "D3"]
+            bottom: ["D3", "C3"]
         },
         vector: { minorMajor: -0.3, pureSpicy: 0.3, rarePopular: 0.6 },
         tags: ["하이브리드", "저음보강", "감성적", "밸런스"],
@@ -780,7 +781,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/OcQ64DyA9xM?si=40_8I1KnB_rxCNQO",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12320335441",
         ownUrl: "https://handpan.co.kr/shop/?idx=79",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=85",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=79",
         i18n: {
             fr: {
                 name: "E Equinox 12",
@@ -906,7 +907,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/UxsvhXeDok0?si=GnSeCzBk0qe8snYr",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689630331",
         ownUrl: "https://handpan.co.kr/shop/?idx=76",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=80",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=76",
         i18n: {
             fr: {
                 name: "F# Low Pygmy 18",
@@ -969,7 +970,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/QoUbOkhGGR8?si=TIKXYdCKX4RiuaLY",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12276307998",
         ownUrl: "https://handpan.co.kr/shop/?idx=81",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=73",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=81",
         i18n: {
             fr: {
                 name: "C# Pygmy 11",
@@ -1022,7 +1023,7 @@ export const SCALES: Scale[] = [
         notes: {
             ding: "F3",
             top: ["G3", "Ab3", "C4", "Eb4", "F4", "G4", "Ab4", "C5", "Eb5"],
-            bottom: ["Db3", "Eb3"]
+            bottom: ["Eb3", "Db3"]
         },
         vector: { minorMajor: -0.6, pureSpicy: 0.1, rarePopular: 0.75 },
         tags: ["피그미", "저음보강", "따뜻함", "몽환적"],
@@ -1032,7 +1033,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/_3jpTdVfOBc?si=W9bAL_AqZ5e25Rj8",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8611436986",
         ownUrl: "https://handpan.co.kr/shop/?idx=82",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=72",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=82",
         i18n: {
             fr: {
                 name: "F Low Pygmy 12",
@@ -1095,7 +1096,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/KXDSbCdPjTM?si=3GD2eOil-5WsmVHa",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12070396728",
         ownUrl: "https://handpan.co.kr/shop/?idx=83",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=71",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=83",
         i18n: {
             fr: {
                 name: "D Kurd 12",
@@ -1280,7 +1281,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/2peCXnJP2U0?si=bVePs8DvAlPEwI7v",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12751985321",
         ownUrl: "https://handpan.co.kr/shop/?idx=91",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=89",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=91",
         i18n: {
             fr: {
                 name: "C Major 10",
@@ -1343,7 +1344,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/u9dsmUSd_SY?si=rMBMQOFvj5Yec7vs",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12751991029",
         ownUrl: "https://handpan.co.kr/shop/?idx=92",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=86",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=92",
         i18n: {
             fr: {
                 name: "C Rasavali 10",
@@ -1406,7 +1407,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/pMKoFUicrFw?si=5HPgyOp8NM0qXMNU",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689651421",
         ownUrl: "https://handpan.co.kr/shop/?idx=84",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=91",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=84",
         i18n: {
             fr: {
                 name: "C# Deepasia 14",
@@ -1532,7 +1533,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/0IGtmQlb1X4?si=y9oZiE4w-_Zkyih6",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8513504905",
         ownUrl: "https://handpan.co.kr/shop/?idx=96",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=90",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=96",
         i18n: {
             fr: {
                 name: "Eb MUJU 10",
@@ -1658,7 +1659,7 @@ export const SCALES: Scale[] = [
         videoUrl: "https://youtu.be/V1bfHlVl9VY?si=yREB5-6dey1kvC_4",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12752029521",
         ownUrl: "https://handpan.co.kr/shop/?idx=93",
-        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=102",
+        ownUrlEn: "https://handpanen.imweb.me/shop/?idx=93",
         i18n: {
             fr: {
                 name: "C# Sapphire 9",

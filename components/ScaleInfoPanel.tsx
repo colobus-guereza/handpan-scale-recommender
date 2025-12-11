@@ -32,7 +32,7 @@ export default function ScaleInfoPanel({
             // If showAllScales is true, we ONLY show 9 and 10 (supported modes).
             // Otherwise, we match the strict filter.
             const matchesCount = showAllScales
-                ? (totalNotes === 9 || totalNotes === 10)
+                ? true
                 : totalNotes === noteCountFilter;
 
             const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase());
