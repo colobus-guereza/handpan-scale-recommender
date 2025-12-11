@@ -52,7 +52,7 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
     // We use aspect-[1/2] (1:2.0) which is slightly taller, providing a tight, efficient fit without cropping.
     const useVerticalAspect = false; // Forced to false based on user feedback to match Digipan 9/10/11
     const containerClass = is14Notes
-        ? "w-full aspect-[10/11] max-h-[500px] md:max-h-[700px] relative rounded-2xl overflow-hidden bg-white -mt-2" // Optimized ratio (60:66) with max-height
+        ? "w-full aspect-[10/11] max-h-[550px] md:max-h-[800px] relative rounded-2xl overflow-hidden bg-white -mt-2" // Taller max-height to allow same pixel-per-unit scale
         : "w-full aspect-square max-h-[500px] md:max-h-[700px] relative rounded-2xl overflow-hidden bg-white -mt-2";
 
     return (
