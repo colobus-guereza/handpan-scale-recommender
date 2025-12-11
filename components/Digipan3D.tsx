@@ -670,6 +670,9 @@ interface NoteData {
     labelOffset?: number;
     offset?: [number, number, number]; // Per-note offset
     position?: string; // 'center', 'top', 'bottom'
+    hideGuide?: boolean; // Explicitly hide the "Bottom Guide" sienna mesh
+    textColor?: string; // Override Text Color
+    outlineColor?: string; // Override Outline Color
     // ... other props optional for now
 }
 
@@ -1020,7 +1023,7 @@ const ToneFieldMesh = ({
 
                 {/* 1-c. Bottom Dot Visual (Sienna Guide) */}
                 {/* Visible ONLY in Guide Mode (Mode 4 / UI Mode 5) */}
-                {isBottom && (
+                {isBottom && !note.hideGuide && (
                     <mesh
                         position={[0, 0, 0.1]} // Behind interaction mesh (z=0.1)
                         rotation={[0, 0, 0]}
@@ -1164,8 +1167,8 @@ const ToneFieldMesh = ({
                             {/* Pitch Label (Center) - Remains at 0,0 but upright */}
                             {(() => {
                                 // Use black color for bottom position notes (white background outside pan)
-                                const pitchLabelColor = note.position === 'bottom' ? '#333333' : '#FFFFFF';
-                                const outlineColor = note.position === 'bottom' ? '#CCCCCC' : '#000000';
+                                const pitchLabelColor = note.textColor || (note.position === 'bottom' ? '#333333' : '#FFFFFF');
+                                const outlineColor = note.outlineColor || (note.position === 'bottom' ? '#CCCCCC' : '#000000');
                                 return (
                                     <Text
                                         visible={areLabelsVisible}
@@ -1188,7 +1191,7 @@ const ToneFieldMesh = ({
                             {(() => {
                                 const displayText = note.subLabel ? note.subLabel : (note.id + 1).toString();
                                 // Use black color for bottom position notes (white background outside pan)
-                                const labelColor = note.position === 'bottom' ? '#333333' : '#FFFFFF';
+                                const labelColor = note.textColor || (note.position === 'bottom' ? '#333333' : '#FFFFFF');
                                 return (
                                     <Text
                                         visible={areLabelsVisible}
@@ -1198,6 +1201,8 @@ const ToneFieldMesh = ({
                                         anchorX="center"
                                         anchorY="top"
                                         fontWeight="bold"
+                                        outlineWidth={0.05} // Added outline to subLabel for consistency if needed, strictly requested for Pitch but let's see
+                                        outlineColor={note.outlineColor || (note.position === 'bottom' ? '#CCCCCC' : '#000000')}
                                     >
                                         {displayText}
                                     </Text>

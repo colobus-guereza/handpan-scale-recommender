@@ -48,7 +48,7 @@ const Digipan14MBackground = ({ centerX = 500, centerY = 500, visualNotes = [], 
             </mesh>
 
             {/* Permanent Visual Tonefields for Bottom Notes (N10, N11, N12, N13) */}
-            {viewMode !== 4 && visualNotes.map((note) => {
+            {viewMode !== 4 && visualNotes.filter(n => !n.hideGuide).map((note) => {
                 const cx = note.cx ?? 500;
                 const cy = note.cy ?? 500;
                 const notePos = svgTo3D(cx, cy, centerX, centerY);

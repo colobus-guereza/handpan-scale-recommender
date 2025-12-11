@@ -577,7 +577,10 @@ export default function Digipan3DTestPage() {
                 "cy": 316,
                 "scale": 0,
                 "rotate": 58,
-                "position": "bottom",
+                "position": "top",
+                "hideGuide": true,
+                "textColor": "#FFFFFF",
+                "outlineColor": "#000000",
                 "angle": 0,
                 "scaleX": 0.9,
                 "scaleY": 0.89
@@ -588,7 +591,10 @@ export default function Digipan3DTestPage() {
                 "cy": 311,
                 "scale": 0,
                 "rotate": 117,
-                "position": "bottom",
+                "position": "top",
+                "hideGuide": true,
+                "textColor": "#FFFFFF",
+                "outlineColor": "#000000",
                 "angle": 0,
                 "scaleX": 0.85,
                 "scaleY": 0.9199999999999999
