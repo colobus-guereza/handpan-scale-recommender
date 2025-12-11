@@ -217,6 +217,7 @@ const Digipan12 = React.forwardRef<Digipan3DHandle, Digipan12Props>(({
             enablePan={enablePan}
             showLabelToggle={showLabelToggle}
             backgroundContent={<Digipan12Background visualNotes={visualNotes} />}
+            forceCompactView={forceCompactView}
             hideStaticLabels={true}
         />
     );
