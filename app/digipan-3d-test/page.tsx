@@ -4,15 +4,17 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Digipan10 from '../../components/Digipan10';
 import Digipan9 from '../../components/Digipan9';
 import Digipan11 from '../../components/Digipan11';
+import Digipan12 from '../../components/Digipan12';
 import ScaleInfoPanel from '../../components/ScaleInfoPanel';
 import { SCALES } from '@/data/handpanScales';
-import { Grid, Monitor, Smartphone } from 'lucide-react';
+import { Grid, Monitor, Smartphone, Lock, Unlock, Camera, Check, PlayCircle, Eye, EyeOff, MinusCircle } from 'lucide-react';
+import { Digipan3DHandle } from '../../components/Digipan3D';
 import { useControls, button } from 'leva';
 import { getNoteFrequency } from '@/constants/noteFrequencies';
 
 export default function Digipan3DTestPage() {
-    // Mode State: '9' (Image Only) or '10' (Full Implementation) or '11' (Sandbox)
-    const [mode, setMode] = useState<'9' | '10' | '11'>('9');
+    // Mode State: '9', '10', '11', '12'
+    const [mode, setMode] = useState<'9' | '10' | '11' | '12'>('9');
     // Mobile Preview State
     const [isMobilePreview, setIsMobilePreview] = useState(false);
 
@@ -22,22 +24,191 @@ export default function Digipan3DTestPage() {
     // Derived Scale Object
     const scale = SCALES.find(s => s.id === selectedScaleId) || SCALES[0];
 
+    // Shared Digipan Control States
+    const [isCameraLocked, setIsCameraLocked] = useState(false);
+    const [viewMode, setViewMode] = useState<0 | 1 | 2 | 3>(3);
+    const [showLabels, setShowLabels] = useState(false);
+
+    // External Control Ref
+    const digipanRef = useRef<Digipan3DHandle>(null);
+    const [copySuccess, setCopySuccess] = useState(false);
+
+    const handleExternalCapture = async () => {
+        if (digipanRef.current) {
+            await digipanRef.current.handleCapture();
+            setCopySuccess(true);
+            setTimeout(() => setCopySuccess(false), 2000);
+        }
+    };
+
+    const handleExternalDemoPlay = () => {
+        if (digipanRef.current) {
+            digipanRef.current.handleDemoPlay();
+        }
+    };
+
     // Handle Scale Change
     const handleScaleSelect = React.useCallback((newScale: any) => {
         console.log("Scale selected in Page:", newScale.name);
         setSelectedScaleId(newScale.id);
 
         // Auto-switch Mode based on Note Count
-        const noteCount = 1 + newScale.notes.top.length + newScale.notes.bottom.length;
-        if (noteCount === 9) {
-            setMode('9');
-        } else if (noteCount === 10) {
-            setMode('10');
-        } else {
-            // Default fallback, maybe keep current mode if 11, or default to 9
-            if (mode !== '11') setMode('9');
-        }
+        const totalNotes = 1 + newScale.notes.top.length + newScale.notes.bottom.length;
+        if (totalNotes === 9) setMode('9');
+        else if (totalNotes === 10) setMode('10');
+        else if (totalNotes === 11) setMode('11');
+        else if (totalNotes === 12) setMode('12');
     }, []);
+
+    // ... (Digipan 9, 10, 11 logic remains same, collapsing for brevity in tool call if not modifying them) ...
+
+    // ... Keeping 9, 10, 11 sections as is ...
+
+    // -------------------------------------------------------------------------
+    // Digipan 12 Logic (Based on 10 + 2 Bottom from 11)
+    // -------------------------------------------------------------------------
+
+    const initialNotes12 = useMemo(() => {
+        return [
+            // 0-9 from Digipan 10
+            { "id": 0, "cx": 508, "cy": 515, "scale": 0, "rotate": 89, "position": "center", "angle": 0, "scaleX": 1.36, "scaleY": 1.16 },
+            { "id": 1, "cx": 639, "cy": 811, "scale": 0, "rotate": 66, "position": "top", "angle": 0, "scaleX": 1, "scaleY": 0.89 },
+            { "id": 2, "cx": 356, "cy": 811, "scale": 0, "rotate": 103, "position": "top", "angle": 0, "scaleX": 0.98, "scaleY": 0.9 },
+            { "id": 3, "cx": 822, "cy": 626, "scale": 0, "rotate": 194, "position": "top", "angle": 0, "scaleX": 1, "scaleY": 0.93 },
+            { "id": 4, "cx": 178, "cy": 609, "scale": 0, "rotate": 163, "position": "top", "angle": 0, "scaleX": 0.99, "scaleY": 0.91 },
+            { "id": 5, "cx": 832, "cy": 391, "scale": 0, "rotate": 158, "position": "top", "angle": 0, "scaleX": 0.94, "scaleY": 0.82 },
+            { "id": 6, "cx": 184, "cy": 367, "scale": 0, "rotate": 28, "position": "top", "angle": 0, "scaleX": 0.97, "scaleY": 0.85 },
+            { "id": 7, "cx": 703, "cy": 215, "scale": 0, "rotate": 142, "position": "top", "angle": 0, "scaleX": 1.02, "scaleY": 0.8 },
+            { "id": 8, "cx": 314, "cy": 200, "scale": 0, "rotate": 57, "position": "top", "angle": 0, "scaleX": 0.98, "scaleY": 0.83 },
+            { "id": 9, "cx": 508, "cy": 143, "scale": 0, "rotate": 138, "position": "top", "angle": 0, "scaleX": 1.07, "scaleY": 0.79 },
+            // Appended Bottom Tonefields (Matches Digipan 11's N9, N10 positions)
+            { "id": 10, "cx": 1000, "cy": 762, "scale": 0, "rotate": 21, "position": "bottom", "angle": 0, "scaleX": 1.24, "scaleY": 1.48 },
+            { "id": 11, "cx": 4, "cy": 762, "scale": 0, "rotate": 158, "position": "bottom", "angle": 0, "scaleX": 1.29, "scaleY": 1.61 }
+        ];
+    }, []);
+
+    const activeNotes12Ref = useRef<any[]>([]);
+    const [copySuccess12, setCopySuccess12] = useState(false);
+
+    const dynamicSchema12 = useMemo(() => {
+        if (mode !== '12') return {};
+
+        const s: any = {};
+        initialNotes12.forEach((note) => {
+            s[`N${note.id}_cx`] = { value: note.cx, min: 0, max: 1000, step: 1, label: `N${note.id} X` };
+            s[`N${note.id}_cy`] = { value: note.cy, min: 0, max: 1000, step: 1, label: `N${note.id} Y` };
+            s[`N${note.id}_rotate`] = { value: note.rotate, min: 0, max: 360, step: 1, label: `N${note.id} Rot` };
+            s[`N${note.id}_scaleX`] = { value: note.scaleX || 1, min: 0.1, max: 3, step: 0.01, label: `N${note.id} SX` };
+            s[`N${note.id}_scaleY`] = { value: note.scaleY || 1, min: 0.1, max: 3, step: 0.01, label: `N${note.id} SY` };
+        });
+
+        const buttonLabel = copySuccess12 ? '✅ Copied!' : 'Export JSON (12)';
+        s[buttonLabel] = button(() => {
+            const currentNotes = activeNotes12Ref.current;
+            const exportData = currentNotes.map((n) => ({
+                id: n.id,
+                cx: Math.round(n.cx),
+                cy: Math.round(n.cy),
+                scale: 0,
+                rotate: Math.round(n.rotate),
+                position: n.position || 'top',
+                angle: n.angle || 0,
+                scaleX: n.scaleX,
+                scaleY: n.scaleY
+            }));
+            const jsonString = JSON.stringify(exportData, null, 4);
+            navigator.clipboard.writeText(jsonString).then(() => {
+                setCopySuccess12(true);
+                setTimeout(() => setCopySuccess12(false), 2000);
+            });
+        });
+
+        return s;
+    }, [initialNotes12, mode, copySuccess12]);
+
+    const controls12 = useControls('Digipan 12 Tuning', dynamicSchema12, [initialNotes12, mode]);
+
+    const activeNotes12 = useMemo(() => {
+        if (mode !== '12' || !scale) return [];
+        const c = controls12 as any;
+        const currentScaleNotes = [scale.notes.ding, ...scale.notes.top, ...(scale.notes.bottom || [])];
+        const TEMPLATE_NOTES = ["D3", "A3", "Bb3", "C4", "D4", "E4", "F4", "G4", "A4", "C5", "D5", "E5"];
+
+        // Only map what we have
+        const notes = initialNotes12.map((n, i) => {
+            const noteName = currentScaleNotes[i] || '';
+            const frequency = getNoteFrequency(noteName);
+            const visualNoteName = TEMPLATE_NOTES[i] || "C5";
+            const visualFrequency = getNoteFrequency(visualNoteName);
+
+            // Manual visual frequency override for bottom notes to match D11 sizing if needed
+            let freqForVisual = visualFrequency;
+            if (n.id === 10) freqForVisual = getNoteFrequency("C5");
+            if (n.id === 11) freqForVisual = getNoteFrequency("D5");
+
+            return {
+                ...n,
+                cx: c[`N${n.id}_cx`],
+                cy: c[`N${n.id}_cy`],
+                rotate: c[`N${n.id}_rotate`],
+                scaleX: c[`N${n.id}_scaleX`],
+                scaleY: c[`N${n.id}_scaleY`],
+                label: noteName,
+                frequency: frequency || 440,
+                visualFrequency: freqForVisual || 440,
+                labelOffset: 25
+            };
+        });
+
+        // Sort by frequency for subLabel assignment (lowest = 1)
+        const sortedByPitch = [...notes].sort((a, b) => a.frequency - b.frequency);
+
+        // Assign subLabel based on frequency ranking
+        return notes.map(n => {
+            const rank = sortedByPitch.findIndex(x => x.id === n.id) + 1;
+            return { ...n, subLabel: rank.toString() };
+        });
+    }, [initialNotes12, controls12, mode, scale]);
+
+    useEffect(() => {
+        activeNotes12Ref.current = activeNotes12;
+    }, [activeNotes12]);
+
+    // ... Toggle Logic ...
+    const toggleControl = (
+        <div className="flex flex-col gap-2">
+            {/* Mode Switcher */}
+            <button
+                onClick={() => {
+                    let newMode: '9' | '10' | '11' | '12' = '9';
+                    if (mode === '9') newMode = '10';
+                    else if (mode === '10') newMode = '11';
+                    else if (mode === '11') newMode = '12';
+                    else if (mode === '12') newMode = '9';
+
+                    setMode(newMode);
+                    if (newMode === '9') setSelectedScaleId('d_kurd_9');
+                    else if (newMode === '10') setSelectedScaleId('d_kurd_10');
+                    else if (newMode === '11') setSelectedScaleId('cs_pygmy_11');
+                    else if (newMode === '12') setSelectedScaleId('d_kurd_12');
+                }}
+                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 font-bold text-xs"
+                title="Toggle Digipan 9 / 10 / 11 / 12"
+            >
+                {mode === '9' ? (
+                    <span className="text-[10px] leading-none font-bold">9</span>
+                ) : mode === '10' ? (
+                    <span className="text-[10px] leading-none font-bold">10</span>
+                ) : mode === '11' ? (
+                    <span className="text-[10px] leading-none font-bold">11</span>
+                ) : (
+                    <span className="text-[10px] leading-none font-bold">12</span>
+                )}
+            </button>
+            {/* ... other buttons ... */}
+        </div>
+    );
+
 
     // -------------------------------------------------------------------------
     // Digipan 9 Logic (Editor Mode)
@@ -451,17 +622,17 @@ export default function Digipan3DTestPage() {
             {
                 "id": 9,
                 "cx": 1000,
-                "cy": 759,
+                "cy": 762,
                 "scale": 0,
-                "rotate": 19,
+                "rotate": 21,
                 "position": "bottom",
                 "angle": 0,
-                "scaleX": 1.25,
+                "scaleX": 1.24,
                 "scaleY": 1.48
             },
             {
                 "id": 10,
-                "cx": 0,
+                "cx": 1,
                 "cy": 762,
                 "scale": 0,
                 "rotate": 158,
@@ -569,44 +740,22 @@ export default function Digipan3DTestPage() {
 
     // -------------------------------------------------------------------------
 
-    // Toggle Button Control (Only mode switcher - passed inside Digipan)
-    const toggleControl = (
-        <div className="flex flex-col gap-2">
-            {/* Mode Switcher */}
-            <button
-                onClick={() => {
-                    let newMode: '9' | '10' | '11' = '9';
-                    if (mode === '9') newMode = '10';
-                    else if (mode === '10') newMode = '11';
-                    else if (mode === '11') newMode = '9';
-
-                    setMode(newMode);
-                    if (newMode === '9') {
-                        setSelectedScaleId('d_kurd_9');
-                    } else if (newMode === '11') {
-                        setSelectedScaleId('cs_pygmy_11');
-                    } else {
-                        setSelectedScaleId('d_kurd_10');
-                    }
-                }}
-                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 font-bold text-xs"
-                title="Toggle Digipan 9 / 10 / 11"
-            >
-                {mode === '9' ? (
-                    <span className="text-[10px] leading-none font-bold">9</span>
-                ) : mode === '10' ? (
-                    <span className="text-[10px] leading-none font-bold">10</span>
-                ) : (
-                    <span className="text-[10px] leading-none font-bold">11</span>
-                )}
-            </button>
-        </div>
-    );
-
     return (
         <div className="w-full h-screen flex bg-gray-100">
             {/* Left: 3D Workspace */}
             <div className={`flex-1 relative flex items-center justify-center overflow-hidden transition-all duration-500 ${isMobilePreview ? 'bg-gray-200' : 'bg-white'}`}>
+
+                {/* Camera Lock Toggle - Outside the frame */}
+                <button
+                    onClick={() => setIsCameraLocked(!isCameraLocked)}
+                    className={`absolute top-4 right-20 z-[60] w-12 h-12 flex items-center justify-center backdrop-blur-sm rounded-full shadow-lg transition-all duration-200 border text-slate-700 font-bold text-xs ${isCameraLocked
+                        ? 'bg-green-100 border-green-400 text-green-700'
+                        : 'bg-white/80 border-slate-200 hover:bg-white'
+                        }`}
+                    title={isCameraLocked ? "카메라 잠금 해제 (회전 활성화)" : "카메라 잠금 (시점 초기화 및 회전 비활성화)"}
+                >
+                    {isCameraLocked ? <Lock size={20} /> : <Unlock size={20} />}
+                </button>
 
                 {/* Mobile Preview Toggle - Outside the frame */}
                 <button
@@ -632,6 +781,39 @@ export default function Digipan3DTestPage() {
                             <span className="text-xs font-medium">데스크톱 모드</span>
                         </button>
 
+                        {/* External Controls for Mobile Preview (Outside Frame) */}
+                        <div className="absolute top-20 right-4 z-[60] flex flex-col gap-3">
+                            {/* 1. Capture Button */}
+                            <button
+                                onClick={handleExternalCapture}
+                                className="w-12 h-12 flex items-center justify-center bg-white/90 backdrop-blur-md rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                                title="스크린샷 캡처"
+                            >
+                                {copySuccess ? <Check size={20} className="text-green-600" /> : <Camera size={20} />}
+                            </button>
+
+                            {/* 2. View Mode Toggle */}
+                            <button
+                                onClick={() => setViewMode(prev => (prev + 1) % 4 as 0 | 1 | 2 | 3)}
+                                className="w-12 h-12 flex items-center justify-center bg-white/90 backdrop-blur-md rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                                title="보기 모드 변경"
+                            >
+                                {viewMode === 0 && <Eye size={20} />}
+                                {viewMode === 1 && <MinusCircle size={20} />}
+                                {viewMode === 2 && <EyeOff size={20} />}
+                                {viewMode === 3 && <EyeOff size={20} className="opacity-50" />}
+                            </button>
+
+                            {/* 3. Demo Play Button */}
+                            <button
+                                onClick={handleExternalDemoPlay}
+                                className="w-12 h-12 flex items-center justify-center bg-white/90 backdrop-blur-md rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                                title="데모 재생"
+                            >
+                                <PlayCircle size={24} />
+                            </button>
+                        </div>
+
                         {/* Floating Scale Panel - Outside the frame on the left/right */}
                         {scale && (
                             <ScaleInfoPanel
@@ -648,7 +830,7 @@ export default function Digipan3DTestPage() {
 
                 {/* 3D Container Wrapper - Changes size based on mode */}
                 <div
-                    className={`relative transition-all duration-500 ease-in-out shadow-2xl overflow-hidden bg-white ${isMobilePreview
+                    className={`relative flex flex-col transition-all duration-500 ease-in-out shadow-2xl overflow-hidden bg-white ${isMobilePreview
                         ? 'w-[375px] h-[700px] rounded-[40px] border-[12px] border-slate-800 ring-2 ring-slate-300/50 mt-16'
                         : 'w-full h-full'
                         }`}
@@ -660,39 +842,92 @@ export default function Digipan3DTestPage() {
                         </div>
                     )}
 
-                    {/* Render BOTH components using Opacity/Z-Index to ensure WebGL context initializes on load */}
-                    <div className={`absolute top-0 left-0 w-full h-full transition-opacity duration-300 ${mode === '9' ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'}`}>
-                        <Digipan9
-                            notes={activeNotes9}
-                            scale={scale} // Even if scale is 10-note, Digipan9 will just use the first 9 notes safely
-                            isCameraLocked={true}
-                            onScaleSelect={handleScaleSelect}
-                            extraControls={toggleControl}
-                            forceCompactView={isMobilePreview}
-                        />
-                    </div>
+                    {/* 3D Digipan View */}
+                    <div className="flex-1 w-full h-full relative flex items-center justify-center bg-slate-100 overflow-hidden">
+                        {mode === '9' ? (
+                            <Digipan9
+                                ref={digipanRef}
+                                scale={scale} // Pass selected scale
+                                notes={activeNotes9.length > 0 ? activeNotes9 : undefined}
+                                isCameraLocked={isCameraLocked}
+                                extraControls={toggleControl} // Pass the mode toggle
+                                showControls={true}
+                                showInfoPanel={false} // Hide inside 3D view (moved to overlay)
+                                initialViewMode={viewMode}
+                                viewMode={viewMode}
+                                onViewModeChange={setViewMode}
+                                enableZoom={true} // Dynamic Zoom handled inside
+                                enablePan={!isCameraLocked}
+                                showLabelToggle={showLabels} // Pass label visibility state
+                                forceCompactView={isMobilePreview}
+                            />
+                        ) : mode === '10' ? (
+                            <Digipan10
+                                ref={digipanRef}
+                                scale={scale}
+                                notes={activeNotes10.length > 0 ? activeNotes10 : undefined}
+                                isCameraLocked={isCameraLocked}
+                                extraControls={toggleControl}
+                                showControls={true}
+                                showInfoPanel={false}
+                                initialViewMode={viewMode}
+                                viewMode={viewMode}
+                                onViewModeChange={setViewMode}
+                                enableZoom={true}
+                                enablePan={!isCameraLocked}
+                                showLabelToggle={showLabels}
+                                forceCompactView={isMobilePreview}
+                            />
 
-                    <div className={`absolute top-0 left-0 w-full h-full transition-opacity duration-300 ${mode === '10' ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'}`}>
-                        <Digipan10
-                            scale={scale} // Even if scale is 9-note, Digipan10 will safely render 9 notes
-                            isCameraLocked={true}
-                            onScaleSelect={handleScaleSelect}
-                            onNoteClick={(id) => console.log(`Clicked note ${id}`)}
-                            extraControls={toggleControl}
-                            forceCompactView={isMobilePreview}
-                            notes={activeNotes10}
-                        />
-                    </div>
+                        ) : mode === '11' ? (
+                            <Digipan11
+                                ref={digipanRef}
+                                scale={scale} // C# Pygmy 11
+                                notes={activeNotes11.length > 0 ? activeNotes11 : undefined}
+                                isCameraLocked={isCameraLocked}
+                                extraControls={toggleControl}
+                                showControls={true}
+                                showInfoPanel={false}
+                                initialViewMode={viewMode} // Use shared view mode
+                                viewMode={viewMode}
+                                onViewModeChange={setViewMode}
+                                enableZoom={true}
+                                enablePan={!isCameraLocked}
+                                showLabelToggle={showLabels}
+                                forceCompactView={isMobilePreview}
+                            />
+                        ) : mode === '12' ? (
+                            <Digipan12
+                                ref={digipanRef}
+                                scale={scale}
+                                notes={activeNotes12.length > 0 ? activeNotes12 : undefined}
+                                isCameraLocked={isCameraLocked}
+                                extraControls={toggleControl}
+                                showControls={true}
+                                showInfoPanel={false}
+                                initialViewMode={viewMode}
+                                viewMode={viewMode}
+                                onViewModeChange={setViewMode}
+                                enableZoom={true}
+                                enablePan={!isCameraLocked}
+                                showLabelToggle={showLabels}
+                                forceCompactView={isMobilePreview}
+                            />
+                        ) : null /* Default case if mode is not 9, 10, 11, or 12 */}
 
-                    <div className={`absolute top-0 left-0 w-full h-full transition-opacity duration-300 ${mode === '11' ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'}`}>
-                        <Digipan11
-                            notes={activeNotes11}
-                            scale={scale}
-                            isCameraLocked={true}
-                            onScaleSelect={handleScaleSelect}
-                            extraControls={toggleControl}
-                            forceCompactView={isMobilePreview}
-                        />
+
+                        {/* Scale Info Panel Overlay (Desktop: Absolute, Mobile: Hidden/Outside) */}
+                        {!isMobilePreview && (
+                            <div className="absolute top-4 left-4 z-10 w-80 pointer-events-auto">
+                                <ScaleInfoPanel
+                                    scale={scale}
+                                    onScaleSelect={handleScaleSelect}
+                                    showAllScales={true}
+                                />
+                            </div>
+                        )}
+
+
                     </div>
                 </div>
             </div>

@@ -5,6 +5,8 @@ import Digipan3D from './Digipan3D';
 import { Scale } from '../data/handpanScales';
 import { getNoteFrequency } from '../constants/noteFrequencies';
 
+import { Digipan3DHandle } from './Digipan3D';
+
 interface Digipan10Props {
     scale?: Scale | null;
     onScaleSelect?: (scale: Scale) => void;
@@ -14,6 +16,8 @@ interface Digipan10Props {
     showControls?: boolean;
     showInfoPanel?: boolean;
     initialViewMode?: 0 | 1 | 2 | 3;
+    viewMode?: 0 | 1 | 2 | 3;
+    onViewModeChange?: (mode: 0 | 1 | 2 | 3) => void;
     enableZoom?: boolean;
     enablePan?: boolean;
     showLabelToggle?: boolean;
@@ -22,7 +26,7 @@ interface Digipan10Props {
     notes?: any[]; // Allow passing notes for editor mode override
 }
 
-export default function Digipan10({
+const Digipan10 = React.forwardRef<Digipan3DHandle, Digipan10Props>(({
     scale,
     onScaleSelect,
     onNoteClick,
@@ -31,13 +35,15 @@ export default function Digipan10({
     showControls = true,
     showInfoPanel = true,
     initialViewMode = 3,
+    viewMode,
+    onViewModeChange,
     enableZoom = true,
     enablePan = true,
     showLabelToggle = false,
 
     forceCompactView = false,
     notes: externalNotes
-}: Digipan10Props) {
+}, ref) => {
 
     // 10-Note Specific Layout (Coordinates for 10notes.png)
     const notes = useMemo(() => {
@@ -213,6 +219,7 @@ export default function Digipan10({
 
     return (
         <Digipan3D
+            ref={ref}
             notes={notesToRender}
             scale={scale}
             isCameraLocked={isCameraLocked}
@@ -224,10 +231,14 @@ export default function Digipan10({
             showControls={showControls}
             showInfoPanel={showInfoPanel}
             initialViewMode={initialViewMode}
+            viewMode={viewMode}
+            onViewModeChange={onViewModeChange}
             enableZoom={enableZoom}
             enablePan={enablePan}
             showLabelToggle={showLabelToggle}
             forceCompactView={forceCompactView}
         />
     );
-}
+});
+
+export default Digipan10;

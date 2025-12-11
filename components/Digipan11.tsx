@@ -1,11 +1,12 @@
 
 import React, { useMemo } from 'react';
-import Digipan3D, { svgTo3D, getTonefieldDimensions } from './Digipan3D';
+import Digipan3D, { svgTo3D, getTonefieldDimensions, Digipan3DHandle } from './Digipan3D';
 import { useTexture } from '@react-three/drei';
 import { HANDPAN_CONFIG } from '../constants/handpanConfig';
 import { Scale } from '../data/handpanScales';
 import { getNoteFrequency } from '../constants/noteFrequencies';
 import * as THREE from 'three';
+import { VisualTonefield } from './VisualTonefield';
 
 // Composite Background Component for Digipan 11
 const Digipan11Background = ({ centerX = 500, centerY = 500, visualNotes = [] }: { centerX?: number; centerY?: number; visualNotes?: any[] }) => {
@@ -49,53 +50,16 @@ const Digipan11Background = ({ centerX = 500, centerY = 500, visualNotes = [] }:
                 const finalRadiusY = radiusY * scaleYMult;
 
                 return (
-                    <group key={`vis-${note.id}`} position={[notePos.x, notePos.y, -0.1]}>
-                        <group rotation={[0, 0, rotationZ]}>
-                            {/* 1. Main Tonefield Fill (Transparent - 60% Intensity) */}
-                            <mesh
-                                position={[0, 0, -0.001]} // Slightly behind outline
-                                rotation={[0, 0, 0]}
-                                scale={[finalRadiusX, finalRadiusY, 1]}
-                            >
-                                <circleGeometry args={[0.98, 64]} />
-                                <meshBasicMaterial
-                                    color="#A0522D"
-                                    transparent={true}
-                                    opacity={0.15}
-                                    side={THREE.DoubleSide}
-                                />
-                            </mesh>
-
-                            {/* 2. Main Tonefield Outline (60% Opacity) */}
-                            <mesh
-                                rotation={[0, 0, 0]}
-                                scale={[finalRadiusX, finalRadiusY, 1]}
-                            >
-                                <ringGeometry args={[0.98, 1, 64]} />
-                                <meshBasicMaterial
-                                    color="#A0522D"
-                                    transparent={true}
-                                    opacity={0.6}
-                                    side={THREE.DoubleSide}
-                                />
-                            </mesh>
-
-                            {/* 3. Inner Dimple Outline (60% Opacity) */}
-                            <mesh
-                                position={[0, 0, 0.01]}
-                                rotation={[0, 0, 0]}
-                                scale={[finalRadiusX * 0.4, finalRadiusY * 0.4, 1]}
-                            >
-                                <ringGeometry args={[0.95, 1, 64]} />
-                                <meshBasicMaterial
-                                    color="#A0522D"
-                                    transparent={true}
-                                    opacity={0.6}
-                                    side={THREE.DoubleSide}
-                                />
-                            </mesh>
-                        </group>
-                    </group>
+                    <VisualTonefield
+                        key={`vis-${note.id}`}
+                        position={[notePos.x, notePos.y, -0.1]}
+                        rotationZ={rotationZ}
+                        radiusX={finalRadiusX}
+                        radiusY={finalRadiusY}
+                        color="#A0522D"
+                        opacity={0.6}
+                        fillOpacity={0.15}
+                    />
                 );
             })}
         </group >
@@ -113,13 +77,15 @@ interface Digipan11Props {
     showControls?: boolean;
     showInfoPanel?: boolean;
     initialViewMode?: 0 | 1 | 2 | 3;
+    viewMode?: 0 | 1 | 2 | 3;
+    onViewModeChange?: (mode: 0 | 1 | 2 | 3) => void;
     enableZoom?: boolean;
     enablePan?: boolean;
     showLabelToggle?: boolean;
     forceCompactView?: boolean;
 }
 
-export default function Digipan11({
+const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
     scale,
     onScaleSelect,
     onNoteClick,
@@ -129,11 +95,13 @@ export default function Digipan11({
     showControls = true,
     showInfoPanel = true,
     initialViewMode = 3,
+    viewMode,
+    onViewModeChange,
     enableZoom = true,
     enablePan = true,
     showLabelToggle = false,
     forceCompactView = false
-}: Digipan11Props) {
+}, ref) => {
 
     // Internal Note Generation (C# Pygmy 11 Layout)
     const internalNotes = useMemo(() => {
@@ -243,17 +211,17 @@ export default function Digipan11({
             {
                 "id": 9,
                 "cx": 1000,
-                "cy": 759,
+                "cy": 762,
                 "scale": 0,
-                "rotate": 19,
+                "rotate": 21,
                 "position": "bottom",
                 "angle": 0,
-                "scaleX": 1.25,
+                "scaleX": 1.24,
                 "scaleY": 1.48
             },
             {
                 "id": 10,
-                "cx": 0,
+                "cx": 1,
                 "cy": 762,
                 "scale": 0,
                 "rotate": 158,
@@ -290,10 +258,10 @@ export default function Digipan11({
         // 2. Sort by Pitch to determine Rank (1-based index) for subLabel
         const sortedByPitch = [...generatedNotes].sort((a, b) => a.frequency - b.frequency);
 
-        // 3. Assign subLabel based on Rank (Ding is 'D', others are Rank)
+        // 3. Assign subLabel based on Rank (All notes including Ding get their rank number)
         const finalNotes = generatedNotes.map(n => {
             const rank = sortedByPitch.findIndex(x => x.id === n.id) + 1;
-            const subLabel = n.id === 0 ? 'D' : rank.toString();
+            const subLabel = rank.toString(); // All notes get rank number
             return { ...n, subLabel };
         });
 
@@ -310,6 +278,7 @@ export default function Digipan11({
 
     return (
         <Digipan3D
+            ref={ref}
             notes={notesToRender}
             scale={scale}
             isCameraLocked={isCameraLocked}
@@ -329,6 +298,8 @@ export default function Digipan11({
             showControls={showControls}
             showInfoPanel={showInfoPanel}
             initialViewMode={initialViewMode}
+            viewMode={viewMode}
+            onViewModeChange={onViewModeChange}
             enableZoom={enableZoom}
             enablePan={enablePan}
             showLabelToggle={showLabelToggle}
@@ -337,4 +308,6 @@ export default function Digipan11({
             sceneSize={sceneSize} // Pass dynamic scene size
         />
     );
-}
+});
+
+export default Digipan11;

@@ -3,7 +3,9 @@ import Digipan3D from './Digipan3D';
 import { Scale } from '../data/handpanScales';
 import { getNoteFrequency } from '../constants/noteFrequencies';
 
-interface Digipan9Props {
+import { Digipan3DHandle } from './Digipan3D';
+
+export interface Digipan9Props {
     scale?: Scale | null;
     onScaleSelect?: (scale: Scale) => void;
     onNoteClick?: (noteId: number) => void;
@@ -14,13 +16,15 @@ interface Digipan9Props {
     showControls?: boolean;
     showInfoPanel?: boolean;
     initialViewMode?: 0 | 1 | 2 | 3;
+    viewMode?: 0 | 1 | 2 | 3;
+    onViewModeChange?: (mode: 0 | 1 | 2 | 3) => void;
     enableZoom?: boolean;
     enablePan?: boolean;
     showLabelToggle?: boolean;
     forceCompactView?: boolean;
 }
 
-export default function Digipan9({
+const Digipan9 = React.forwardRef<Digipan3DHandle, Digipan9Props>(({
     scale,
     onScaleSelect,
     onNoteClick,
@@ -30,11 +34,13 @@ export default function Digipan9({
     showControls = true,
     showInfoPanel = true,
     initialViewMode = 3,
+    viewMode,
+    onViewModeChange,
     enableZoom = true,
     enablePan = true,
     showLabelToggle = false,
     forceCompactView = false
-}: Digipan9Props) {
+}, ref) => {
 
     // Internal Note Generation (Standard 9-Note D Kurd Layout)
     const internalNotes = useMemo(() => {
@@ -92,6 +98,7 @@ export default function Digipan9({
 
     return (
         <Digipan3D
+            ref={ref}
             notes={notesToRender}
             scale={scale}
             isCameraLocked={isCameraLocked}
@@ -103,10 +110,14 @@ export default function Digipan9({
             showControls={showControls}
             showInfoPanel={showInfoPanel}
             initialViewMode={initialViewMode}
+            viewMode={viewMode}
+            onViewModeChange={onViewModeChange}
             enableZoom={enableZoom}
             enablePan={enablePan}
             showLabelToggle={showLabelToggle}
             forceCompactView={forceCompactView}
         />
     );
-}
+});
+
+export default Digipan9;

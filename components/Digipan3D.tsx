@@ -100,6 +100,8 @@ interface Digipan3DProps {
     showControls?: boolean;
     showInfoPanel?: boolean;
     initialViewMode?: 0 | 1 | 2 | 3;
+    viewMode?: 0 | 1 | 2 | 3;
+    onViewModeChange?: (mode: 0 | 1 | 2 | 3) => void;
     showLabelToggle?: boolean;
     forceCompactView?: boolean;
     backgroundContent?: React.ReactNode;
@@ -108,7 +110,13 @@ interface Digipan3DProps {
     sceneSize?: { width: number; height: number }; // New Prop for Auto-Fit
 }
 
-export default function Digipan3D({
+export interface Digipan3DHandle {
+    handleCapture: () => Promise<void>;
+    handleDemoPlay: () => Promise<void>;
+    toggleViewMode: () => void;
+}
+
+const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     notes,
     onNoteClick,
     isCameraLocked = false,
@@ -123,6 +131,8 @@ export default function Digipan3D({
     showControls = true,
     showInfoPanel = true,
     initialViewMode = 0,
+    viewMode: controlledViewMode, // New Prop for Controlled Mode
+    onViewModeChange,
     enableZoom = true,
     enablePan = true,
     showLabelToggle = false,
@@ -131,7 +141,7 @@ export default function Digipan3D({
     tonefieldOffset = [0, 0, 0],
     hideStaticLabels = false,
     sceneSize = { width: 60, height: 60 } // Default for Single Pan
-}: Digipan3DProps) {
+}, ref) => {
     const pathname = usePathname();
     // ScaleInfoPanel은 /digipan-3d-test 경로에서만 표시
     const isDevPage = pathname === '/digipan-3d-test';
@@ -146,7 +156,34 @@ export default function Digipan3D({
     const [searchQuery, setSearchQuery] = useState('');
 
     // View Mode: 0 = Default (All), 1 = No Labels, 2 = No Mesh (Levels Only), 3 = Hidden (Interaction Only)
-    const [viewMode, setViewMode] = useState<0 | 1 | 2 | 3>(initialViewMode);
+    // Initialize with controlled prop if available, else initialViewMode
+    const [internalViewMode, setInternalViewMode] = useState<0 | 1 | 2 | 3>(
+        controlledViewMode !== undefined ? controlledViewMode : initialViewMode
+    );
+
+    // Sync state with controlled prop if it changes
+    useEffect(() => {
+        if (controlledViewMode !== undefined) {
+            setInternalViewMode(controlledViewMode);
+        }
+    }, [controlledViewMode]);
+
+    const viewMode = controlledViewMode !== undefined ? controlledViewMode : internalViewMode;
+
+    const setViewMode = (modeOrFn: 0 | 1 | 2 | 3 | ((prev: 0 | 1 | 2 | 3) => 0 | 1 | 2 | 3)) => {
+        let newMode: 0 | 1 | 2 | 3;
+        if (typeof modeOrFn === 'function') {
+            newMode = modeOrFn(viewMode);
+        } else {
+            newMode = modeOrFn;
+        }
+
+        if (onViewModeChange) {
+            onViewModeChange(newMode);
+        } else {
+            setInternalViewMode(newMode);
+        }
+    };
 
     // Audio Preloader Hook - Loads all sounds on mount for instant playback
     const { isLoaded: isAudioLoaded, playNote } = useHandpanAudio();
@@ -159,6 +196,11 @@ export default function Digipan3D({
             setIsInfoExpanded(false);
         }
     }, [forceCompactView]);
+
+    // Sync internal camera lock state with prop from parent
+    useEffect(() => {
+        setIsCameraLocked(isCameraLocked);
+    }, [isCameraLocked]);
 
     // Dynamic Scale Filter based on noteCountFilter and Search Query
     const filteredScales = useMemo(() => {
@@ -208,10 +250,14 @@ export default function Digipan3D({
         if (isPlaying) return;
         setIsPlaying(true);
 
-        // Sort notes by frequency for musical correctness (Low -> High), keeping Ding (ID 0) first
-        const ding = notes.find(n => n.id === 0);
-        const others = notes.filter(n => n.id !== 0).sort((a, b) => a.frequency - b.frequency);
-        const sortedNotes = ding ? [ding, ...others] : others;
+        // Sort ALL notes by frequency (Low -> High)
+        // This handles both cases:
+        // - Type 1 (D Kurd 12): Ding is lowest, starts from Ding
+        // - Type 2 (E Equinox 12): Bottom notes are lower than Ding, starts from bottom
+        const sortedNotes = [...notes].sort((a, b) => a.frequency - b.frequency);
+
+        // The LOWEST frequency note gets the root emphasis (not necessarily Ding)
+        const lowestNoteId = sortedNotes.length > 0 ? sortedNotes[0].id : -1;
 
         // Helper to trigger a single note
         const playNote = async (id: number, duration: number) => {
@@ -225,23 +271,23 @@ export default function Digipan3D({
             await new Promise(resolve => setTimeout(resolve, 30));
         };
 
-        // 1. Ascending (0 -> Max)
+        // 1. Ascending (Low -> High)
         for (let i = 0; i < sortedNotes.length; i++) {
             const id = sortedNotes[i].id;
-            const isDing = id === 0;
+            const isRoot = id === lowestNoteId; // Root = Lowest frequency note
             const isTop = i === sortedNotes.length - 1;
 
             // Timing Logic:
-            // - Ding (Root): 500ms (Heavy start)
+            // - Root (Lowest): 500ms (Heavy start)
             // - Top Note: 800ms (Fermata/Peak linger)
             // - Others: 180ms (Fluid flow)
-            let baseTime = isDing ? 500 : 180;
+            let baseTime = isRoot ? 500 : 180;
             if (isTop) baseTime = 800; // Linger at the peak
 
             await playNote(id, baseTime);
 
-            // [Modified] 1. Initial Ding Emphasis: Add breath after the first Ding
-            if (isDing) {
+            // Root Emphasis: Add breath after the first (lowest) note
+            if (isRoot) {
                 await new Promise(resolve => setTimeout(resolve, 600));
             }
         }
@@ -249,19 +295,18 @@ export default function Digipan3D({
         // Explicit Pause/Breath at the Top before descending
         await new Promise(resolve => setTimeout(resolve, 400));
 
-        // 2. Descending (Max -> 0)
-        // Repeats the top note to start the descent, as per "D...9 9...D" structure
+        // 2. Descending (High -> Low)
         for (let i = sortedNotes.length - 1; i >= 0; i--) {
             const id = sortedNotes[i].id;
-            const isDing = id === 0;
+            const isRoot = id === lowestNoteId;
 
-            // [Modified] 2. Ending Emphasis: Add breath before the final Ding
-            if (isDing) {
+            // Ending Emphasis: Add breath before the final (lowest) note
+            if (isRoot) {
                 await new Promise(resolve => setTimeout(resolve, 600));
             }
 
-            // Standard flow for descent, Ding lasts longer at the end
-            const baseTime = isDing ? 800 : 180;
+            // Standard flow for descent, Root lasts longer at the end
+            const baseTime = isRoot ? 800 : 180;
 
             await playNote(id, baseTime);
         }
@@ -271,6 +316,15 @@ export default function Digipan3D({
 
     // Determine if we're in mobile mode (either preview or embedded)
     const isMobileButtonLayout = forceCompactView || showLabelToggle;
+
+    // Expose methods via ref
+    React.useImperativeHandle(ref, () => ({
+        handleCapture,
+        handleDemoPlay,
+        toggleViewMode: () => {
+            setViewMode(prev => (prev + 1) % 4 as 0 | 1 | 2 | 3);
+        }
+    }));
 
     return (
         <div ref={containerRef} className="w-full h-full relative" style={{ background: '#FFFFFF', touchAction: 'pan-y' }}> {/* White Background, Allow vertical scroll */}
@@ -328,25 +382,25 @@ export default function Digipan3D({
             {isMobileButtonLayout && (
                 <>
                     {/* Bottom-Left: Label Toggle (정보 표시/숨김) */}
-                    <div className="absolute bottom-4 left-4 z-50">
+                    <div className="absolute bottom-2 left-2 z-50">
                         <button
                             onClick={() => setViewMode(prev => prev === 3 ? 2 : 3)}
-                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                            className="w-[38.4px] h-[38.4px] flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
                             title={viewMode === 3 ? "Show Labels" : "Hide Labels"}
                         >
-                            {viewMode === 3 ? <EyeOff size={20} className="opacity-50" /> : <Eye size={20} />}
+                            {viewMode === 3 ? <EyeOff size={16} className="opacity-50" /> : <Eye size={16} />}
                         </button>
                     </div>
 
                     {/* Bottom-Right: Auto-Play (자동재생) */}
-                    <div className="absolute bottom-4 right-4 z-50">
+                    <div className="absolute bottom-2 right-2 z-50">
                         <button
                             onClick={handleDemoPlay}
                             disabled={isPlaying}
-                            className={`w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 ${isPlaying ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            className={`w-[38.4px] h-[38.4px] flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 ${isPlaying ? 'opacity-50 cursor-not-allowed' : ''}`}
                             title="Play Scale Demo"
                         >
-                            <PlayCircle size={24} className={isPlaying ? "animate-pulse text-green-600" : ""} />
+                            <PlayCircle size={19.2} className={isPlaying ? "animate-pulse text-green-600" : ""} />
                         </button>
                     </div>
                 </>
@@ -434,7 +488,7 @@ export default function Digipan3D({
 
 
             {/* Scale Info Panel - Bottom Right Overlay (only shown in /digipan-3d-test dev page) */}
-            {isDevPage && scale && !forceCompactView && (
+            {isDevPage && scale && !forceCompactView && showInfoPanel && (
                 <ScaleInfoPanel
                     scale={scale}
                     onScaleSelect={onScaleSelect}
@@ -447,7 +501,9 @@ export default function Digipan3D({
             )}
         </div>
     );
-}
+});
+
+export default Digipan3D;
 
 // -----------------------------------------------------------------------------
 // Constants & Types
@@ -472,6 +528,7 @@ interface NoteData {
     labelY?: number;
     labelOffset?: number;
     offset?: [number, number, number]; // Per-note offset
+    position?: string; // 'center', 'top', 'bottom'
     // ... other props optional for now
 }
 
@@ -936,30 +993,39 @@ const ToneFieldMesh = ({
                     return (
                         <>
                             {/* Pitch Label (Center) - Remains at 0,0 but upright */}
-                            <Text
-                                visible={areLabelsVisible}
-                                position={[0, 0, 0]}
-                                fontSize={1.5}
-                                color="#FFFFFF"
-                                anchorX="center"
-                                anchorY="middle"
-                                fontWeight="bold"
-                                outlineWidth={0.05}
-                                outlineColor="#1E50A0"
-                            >
-                                {note.label}
-                            </Text>
+                            {(() => {
+                                // Use black color for bottom position notes (white background outside pan)
+                                const pitchLabelColor = note.position === 'bottom' ? '#333333' : '#FFFFFF';
+                                const outlineColor = note.position === 'bottom' ? '#CCCCCC' : '#1E50A0';
+                                return (
+                                    <Text
+                                        visible={areLabelsVisible}
+                                        position={[0, 0, 0]}
+                                        fontSize={1.5}
+                                        color={pitchLabelColor}
+                                        anchorX="center"
+                                        anchorY="middle"
+                                        fontWeight="bold"
+                                        outlineWidth={0.05}
+                                        outlineColor={outlineColor}
+                                    >
+                                        {note.label}
+                                    </Text>
+                                );
+                            })()}
 
                             {/* Number Label (Visual Bottom / 6 o'clock) */}
                             {/* Determine Display Label: Use subLabel if present, otherwise ID (or 'D' for ID 0) */}
                             {(() => {
                                 const displayText = note.subLabel ? note.subLabel : (note.id === 0 ? 'D' : note.id.toString());
+                                // Use black color for bottom position notes (white background outside pan)
+                                const labelColor = note.position === 'bottom' ? '#333333' : '#FFFFFF';
                                 return (
                                     <Text
                                         visible={areLabelsVisible}
                                         position={[bottomPos.x, bottomPos.y - 0.5, 0]}
                                         fontSize={1}
-                                        color="#FFFFFF"
+                                        color={labelColor}
                                         anchorX="center"
                                         anchorY="top"
                                         fontWeight="bold"
