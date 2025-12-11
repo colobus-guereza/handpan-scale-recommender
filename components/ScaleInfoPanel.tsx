@@ -83,8 +83,9 @@ export default function ScaleInfoPanel({
     return (
         <DraggablePanel
             title="Scale Selector"
-            initialPosition={{ x: window.innerWidth - 420, y: 80 }} // Position top rightish
+            initialPosition={{ x: 20, y: 80 }} // Position top left
             className="w-[400px] h-[600px] max-h-[80vh]" // Fixed size initially
+            defaultExpanded={false} // Start collapsed
         >
             <div className="flex flex-col h-full bg-slate-900 text-slate-200">
                 {/* Controls Area */}
@@ -137,35 +138,83 @@ export default function ScaleInfoPanel({
                             No scales match your filter.
                         </div>
                     ) : (
-                        <div className="grid grid-cols-2 gap-2">
-                            {filteredScales.map(s => {
-                                const isActive = scale?.id === s.id;
-                                const noteCount = 1 + s.notes.top.length + s.notes.bottom.length;
-                                return (
-                                    <button
-                                        key={s.id}
-                                        onClick={() => onScaleSelect && onScaleSelect(s)}
-                                        className={`
-                                            relative flex flex-col items-start justify-center p-2 rounded-lg border transition-all text-left h-14 group
-                                            ${isActive
-                                                ? 'bg-blue-600 border-blue-400 text-white shadow-md shadow-blue-500/20'
-                                                : 'bg-slate-800 border-slate-700 hover:bg-slate-700 hover:border-slate-500 text-slate-300'}
-                                        `}
-                                    >
-                                        <div className="flex items-center justify-between w-full mb-0.5">
-                                            <span className={`text-[10px] font-bold px-1.5 rounded-sm ${isActive ? 'bg-blue-800 text-blue-200' : 'bg-slate-900 text-slate-500'}`}>
-                                                {noteCount === 14 && (s.id.includes('mutant') || s.tags?.includes('Mutant')) ? '14M' : `${noteCount}N`}
+                        <div className="space-y-3">
+                            {/* Featured: Currently Selected Scale */}
+                            {scale && (
+                                <div className="mb-4">
+                                    <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-2 px-1 flex items-center gap-1.5">
+                                        <Music2 size={12} />
+                                        <span>Current Scale</span>
+                                    </div>
+                                    <div className="relative p-4 rounded-xl border-2 border-blue-500 bg-gradient-to-br from-blue-950 to-slate-900 shadow-lg shadow-blue-500/20">
+                                        <div className="absolute top-2 right-2 flex items-center gap-1">
+                                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white">
+                                                {(() => {
+                                                    const noteCount = 1 + scale.notes.top.length + scale.notes.bottom.length;
+                                                    return noteCount === 14 && (scale.id.includes('mutant') || scale.tags?.includes('Mutant')) ? '14M' : `${noteCount}N`;
+                                                })()}
                                             </span>
-                                            {s.id.includes('mutant') && (
-                                                <span className="w-1.5 h-1.5 rounded-full bg-purple-500" title="Mutant" />
+                                            {scale.id.includes('mutant') && (
+                                                <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" title="Mutant" />
                                             )}
                                         </div>
-                                        <span className={`text-xs font-semibold truncate w-full ${isActive ? 'text-white' : 'text-slate-200 group-hover:text-white'}`}>
-                                            {s.name}
-                                        </span>
-                                    </button>
-                                );
-                            })}
+                                        <div className="pr-14">
+                                            <h3 className="text-lg font-bold text-white mb-2 leading-tight">
+                                                {scale.name}
+                                            </h3>
+                                            <div className="text-xs text-blue-200 space-y-1">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-slate-400">Ding:</span>
+                                                    <span className="font-mono font-semibold">{scale.notes.ding}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-slate-400">Notes:</span>
+                                                    <span className="font-mono text-[10px]">
+                                                        {[scale.notes.ding, ...scale.notes.top, ...scale.notes.bottom].join(' • ')}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Grid: Other Scales */}
+                            <div>
+                                <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-2 px-1">
+                                    All Scales ({filteredScales.length})
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {filteredScales.map(s => {
+                                        const isActive = scale?.id === s.id;
+                                        const noteCount = 1 + s.notes.top.length + s.notes.bottom.length;
+                                        return (
+                                            <button
+                                                key={s.id}
+                                                onClick={() => onScaleSelect && onScaleSelect(s)}
+                                                className={`
+                                                    relative flex flex-col items-start justify-center p-2 rounded-lg border transition-all text-left h-14 group
+                                                    ${isActive
+                                                        ? 'bg-blue-600/50 border-blue-400 text-white ring-2 ring-blue-500/30'
+                                                        : 'bg-slate-800 border-slate-700 hover:bg-slate-700 hover:border-slate-500 text-slate-300'}
+                                                `}
+                                            >
+                                                <div className="flex items-center justify-between w-full mb-0.5">
+                                                    <span className={`text-[10px] font-bold px-1.5 rounded-sm ${isActive ? 'bg-blue-700 text-blue-100' : 'bg-slate-900 text-slate-500'}`}>
+                                                        {noteCount === 14 && (s.id.includes('mutant') || s.tags?.includes('Mutant')) ? '14M' : `${noteCount}N`}
+                                                    </span>
+                                                    {s.id.includes('mutant') && (
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-purple-500" title="Mutant" />
+                                                    )}
+                                                </div>
+                                                <span className={`text-xs font-semibold truncate w-full ${isActive ? 'text-white' : 'text-slate-200 group-hover:text-white'}`}>
+                                                    {s.name}
+                                                </span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>

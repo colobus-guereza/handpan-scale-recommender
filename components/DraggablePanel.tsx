@@ -18,7 +18,7 @@ export default function DraggablePanel({
     initialPosition = { x: 20, y: 20 },
     className = '',
     onClose,
-    defaultExpanded = true
+    defaultExpanded = false
 }: DraggablePanelProps) {
     const [position, setPosition] = useState(initialPosition);
     const [isDragging, setIsDragging] = useState(false);

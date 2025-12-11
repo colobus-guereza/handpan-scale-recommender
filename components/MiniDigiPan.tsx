@@ -8,6 +8,7 @@ import Digipan10 from './Digipan10';
 import Digipan11 from './Digipan11';
 import Digipan12 from './Digipan12';
 import Digipan14 from './Digipan14';
+import Digipan14M from './Digipan14M';
 
 interface MiniDigiPanProps {
     scale: Scale;
@@ -59,7 +60,12 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
         <div className="w-full">
             <div className={containerClass}>
                 {is14Notes ? (
-                    <Digipan14 {...commonProps} />
+                    // Check if this is F# Low Pygmy 14 (Mutant) - use Digipan14M
+                    scale.id === 'fs_low_pygmy_14_mutant' ? (
+                        <Digipan14M {...commonProps} />
+                    ) : (
+                        <Digipan14 {...commonProps} />
+                    )
                 ) : is12Notes ? (
                     <Digipan12 {...commonProps} />
                 ) : is11Notes ? (

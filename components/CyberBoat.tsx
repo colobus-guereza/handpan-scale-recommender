@@ -108,9 +108,10 @@ const CyberBoat = ({ isIdle }: CyberBoatProps) => {
         wasIdle.current = isIdle;
     }, [isIdle]);
 
-    const BOUNDARY_RADIUS = 15;
+    const BOUNDARY_RADIUS = 25; // Expanded movement range
     const SPEED = 0.02;
     const FLY_HEIGHT = 30;
+    const Z_VARIANCE = 8; // Random Z-axis movement range
 
     const generateNewTarget = () => {
         const r = BOUNDARY_RADIUS * Math.sqrt(Math.random());
@@ -119,7 +120,11 @@ const CyberBoat = ({ isIdle }: CyberBoatProps) => {
         // Digipan View: X-Y Plane is horizontal
         const x = r * Math.cos(theta);
         const y = r * Math.sin(theta);
-        return new THREE.Vector3(x, y, 0);
+
+        // Add random Z-axis variation for 3D movement
+        const zOffset = (Math.random() - 0.5) * 2 * Z_VARIANCE;
+
+        return new THREE.Vector3(x, y, zOffset);
     };
 
     useFrame((state, delta) => {
@@ -140,12 +145,14 @@ const CyberBoat = ({ isIdle }: CyberBoatProps) => {
         groupRef.current.scale.set(nextScale, nextScale, nextScale);
 
 
-        // 2. [자유 비행 로직]
+        // 2. [자유 비행 로직] - Enhanced 3D Movement
         const currentPos = groupRef.current.position.clone();
-        currentPos.z = 0;
+
+        // 3D distance calculation (including Z-axis)
         const dist = Math.sqrt(
             Math.pow(currentPos.x - target.x, 2) +
-            Math.pow(currentPos.y - target.y, 2)
+            Math.pow(currentPos.y - target.y, 2) +
+            Math.pow(currentPos.z - (FLY_HEIGHT + target.z), 2)
         );
 
         if (dist < 3) {
@@ -155,8 +162,10 @@ const CyberBoat = ({ isIdle }: CyberBoatProps) => {
         const nextX = THREE.MathUtils.lerp(groupRef.current.position.x, target.x, SPEED);
         const nextY = THREE.MathUtils.lerp(groupRef.current.position.y, target.y, SPEED);
 
+        // Combine random Z target with gentle sine wave bobbing
         const t = state.clock.getElapsedTime();
-        const nextZ = FLY_HEIGHT + Math.sin(t * 2) * 2.25;
+        const targetZ = FLY_HEIGHT + target.z + Math.sin(t * 2) * 1.5;
+        const nextZ = THREE.MathUtils.lerp(currentPos.z, targetZ, SPEED * 1.5);
 
         groupRef.current.position.set(nextX, nextY, nextZ);
 
@@ -179,18 +188,73 @@ const CyberBoat = ({ isIdle }: CyberBoatProps) => {
                 {/* 돗단배 모델 그룹 */}
                 <group ref={boatRef}>
 
-                    {/* [선체 - Hull] Brilliant Gold Theme */}
-                    <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-                        <coneGeometry args={[4.5, 2.25, 4]} />
-                        <meshStandardMaterial
-                            color="#FFD700" // Pure Brilliant Gold
-                            emissive="#FF8C00" // Dark Orange Gold Glow
-                            emissiveIntensity={0.8}
-                            roughness={0.1} // Very shiny
-                            metalness={1.0} // Full metal
-                            flatShading={true}
-                        />
-                    </mesh>
+                    {/* [선체 - Hull] Brilliant Gold Theme - 뗏목 모양 */}
+                    <group position={[0, 0, 0]}>
+                        {/* 뗏목 바닥판 - 평평한 직사각형 */}
+                        <mesh position={[0, 0, -0.3]} rotation={[0, 0, 0]}>
+                            <boxGeometry args={[6, 3, 0.2]} />
+                            <meshStandardMaterial
+                                color="#FFD700" // Pure Brilliant Gold
+                                emissive="#FF8C00" // Dark Orange Gold Glow
+                                emissiveIntensity={0.8}
+                                roughness={0.1} // Very shiny
+                                metalness={1.0} // Full metal
+                                flatShading={true}
+                            />
+                        </mesh>
+
+                        {/* 뗏목 앞쪽 측면 - 약간 올라간 형태 */}
+                        <mesh position={[0, -1.4, 0]} rotation={[Math.PI / 6, 0, 0]}>
+                            <boxGeometry args={[6, 0.3, 0.8]} />
+                            <meshStandardMaterial
+                                color="#FFD700"
+                                emissive="#FF8C00"
+                                emissiveIntensity={0.8}
+                                roughness={0.1}
+                                metalness={1.0}
+                                flatShading={true}
+                            />
+                        </mesh>
+
+                        {/* 뗏목 뒤쪽 측면 - 약간 올라간 형태 */}
+                        <mesh position={[0, 1.4, 0]} rotation={[-Math.PI / 6, 0, 0]}>
+                            <boxGeometry args={[6, 0.3, 0.8]} />
+                            <meshStandardMaterial
+                                color="#FFD700"
+                                emissive="#FF8C00"
+                                emissiveIntensity={0.8}
+                                roughness={0.1}
+                                metalness={1.0}
+                                flatShading={true}
+                            />
+                        </mesh>
+
+                        {/* 뗏목 좌측 측면 */}
+                        <mesh position={[-2.9, 0, 0]} rotation={[0, 0, Math.PI / 6]}>
+                            <boxGeometry args={[0.3, 3, 0.8]} />
+                            <meshStandardMaterial
+                                color="#FFD700"
+                                emissive="#FF8C00"
+                                emissiveIntensity={0.8}
+                                roughness={0.1}
+                                metalness={1.0}
+                                flatShading={true}
+                            />
+                        </mesh>
+
+                        {/* 뗏목 우측 측면 */}
+                        <mesh position={[2.9, 0, 0]} rotation={[0, 0, -Math.PI / 6]}>
+                            <boxGeometry args={[0.3, 3, 0.8]} />
+                            <meshStandardMaterial
+                                color="#FFD700"
+                                emissive="#FF8C00"
+                                emissiveIntensity={0.8}
+                                roughness={0.1}
+                                metalness={1.0}
+                                flatShading={true}
+                            />
+                        </mesh>
+                    </group>
 
                     {/* [돛 - Sail] Golden Light Panel */}
                     <mesh position={[0, 5.25, 1.5]} rotation={[-0.2, 0, 0]}>

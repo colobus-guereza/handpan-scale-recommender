@@ -111,8 +111,8 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
     const baseNotes10 = useMemo(() => [
         {
             "id": 0,
-            "cx": 508,
-            "cy": 515,
+            "cx": 503,
+            "cy": 519,
             "scale": 0,
             "rotate": 89,
             "position": "center",
@@ -122,8 +122,8 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
         },
         {
             "id": 1,
-            "cx": 639,
-            "cy": 811,
+            "cx": 645,
+            "cy": 814,
             "scale": 0,
             "rotate": 66,
             "position": "top",
@@ -133,10 +133,10 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
         },
         {
             "id": 2,
-            "cx": 356,
-            "cy": 811,
+            "cx": 377,
+            "cy": 822,
             "scale": 0,
-            "rotate": 103,
+            "rotate": 108,
             "position": "top",
             "angle": 0,
             "scaleX": 0.98,
@@ -144,8 +144,8 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
         },
         {
             "id": 3,
-            "cx": 822,
-            "cy": 626,
+            "cx": 836,
+            "cy": 638,
             "scale": 0,
             "rotate": 194,
             "position": "top",
@@ -155,8 +155,8 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
         },
         {
             "id": 4,
-            "cx": 178,
-            "cy": 609,
+            "cx": 182,
+            "cy": 658,
             "scale": 0,
             "rotate": 163,
             "position": "top",
@@ -166,8 +166,8 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
         },
         {
             "id": 5,
-            "cx": 832,
-            "cy": 391,
+            "cx": 848,
+            "cy": 393,
             "scale": 0,
             "rotate": 158,
             "position": "top",
@@ -177,8 +177,8 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
         },
         {
             "id": 6,
-            "cx": 184,
-            "cy": 367,
+            "cx": 155,
+            "cy": 413,
             "scale": 0,
             "rotate": 28,
             "position": "top",
@@ -188,40 +188,40 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
         },
         {
             "id": 7,
-            "cx": 703,
-            "cy": 215,
+            "cx": 717,
+            "cy": 182,
             "scale": 0,
-            "rotate": 142,
+            "rotate": 121,
             "position": "top",
             "angle": 0,
             "scaleX": 1.02,
-            "scaleY": 0.8
+            "scaleY": 0.89
         },
         {
             "id": 8,
-            "cx": 314,
-            "cy": 200,
+            "cx": 258,
+            "cy": 204,
             "scale": 0,
-            "rotate": 57,
+            "rotate": 54,
             "position": "top",
             "angle": 0,
             "scaleX": 0.98,
-            "scaleY": 0.83
+            "scaleY": 0.99
         },
         {
             "id": 9,
-            "cx": 508,
-            "cy": 142,
+            "cx": 487,
+            "cy": 135,
             "scale": 0,
-            "rotate": 138,
+            "rotate": 93,
             "position": "top",
             "angle": 0,
             "scaleX": 1.07,
-            "scaleY": 0.79
+            "scaleY": 1.05
         },
         {
             "id": 10,
-            "cx": 0,
+            "cx": -21,
             "cy": 762,
             "scale": 0,
             "rotate": 158,
@@ -232,10 +232,10 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
         },
         {
             "id": 11,
-            "cx": 998,
+            "cx": 1017,
             "cy": 762,
             "scale": 0,
-            "rotate": 21,
+            "rotate": 24,
             "position": "bottom",
             "angle": 0,
             "scaleX": 1.24,
@@ -243,25 +243,31 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
         },
         {
             "id": 12,
-            "cx": 386,
-            "cy": -21,
+            "cx": 381,
+            "cy": 316,
             "scale": 0,
-            "rotate": 76,
-            "position": "bottom",
+            "rotate": 58,
+            "position": "top",
+            "hideGuide": true,
+            "textColor": "#FFFFFF",
+            "outlineColor": "#000000",
             "angle": 0,
             "scaleX": 0.9,
-            "scaleY": 0.9
+            "scaleY": 0.89
         },
         {
             "id": 13,
-            "cx": 635,
-            "cy": -14,
+            "cx": 625,
+            "cy": 311,
             "scale": 0,
-            "rotate": 101,
-            "position": "bottom",
+            "rotate": 117,
+            "position": "top",
+            "hideGuide": true,
+            "textColor": "#FFFFFF",
+            "outlineColor": "#000000",
             "angle": 0,
             "scaleX": 0.85,
-            "scaleY": 0.85
+            "scaleY": 0.9199999999999999
         }
     ], []);
 
