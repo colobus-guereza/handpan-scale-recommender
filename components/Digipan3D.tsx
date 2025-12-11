@@ -17,12 +17,14 @@ const CameraHandler = ({
     isLocked,
     enableZoom = true,
     enablePan = true,
-    sceneSize = { width: 60, height: 60 }
+    sceneSize = { width: 60, height: 60 },
+    cameraTargetY = 0
 }: {
     isLocked: boolean;
     enableZoom?: boolean;
     enablePan?: boolean;
     sceneSize?: { width: number; height: number; };
+    cameraTargetY?: number;
 }) => {
     const { camera, gl, size } = useThree();
     const controlsRef = useRef<any>(null);
@@ -51,13 +53,13 @@ const CameraHandler = ({
                 const targetZoom = Math.min(zoomX, zoomY) * 0.9;
 
                 // Apply
-                camera.position.set(0, 0, 100);
-                camera.lookAt(0, 0, 0);
+                camera.position.set(0, cameraTargetY, 100);
+                camera.lookAt(0, cameraTargetY, 0);
                 camera.zoom = targetZoom;
                 camera.updateProjectionMatrix();
 
                 if (controlsRef.current) {
-                    controlsRef.current.target.set(0, 0, 0);
+                    controlsRef.current.target.set(0, cameraTargetY, 0);
                     controlsRef.current.update();
                 }
             }
@@ -108,6 +110,7 @@ interface Digipan3DProps {
     tonefieldOffset?: [number, number, number];
     hideStaticLabels?: boolean;
     sceneSize?: { width: number; height: number }; // New Prop for Auto-Fit
+    cameraTargetY?: number;
 }
 
 export interface Digipan3DHandle {
@@ -140,7 +143,8 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     backgroundContent,
     tonefieldOffset = [0, 0, 0],
     hideStaticLabels = false,
-    sceneSize = { width: 60, height: 60 } // Default for Single Pan
+    sceneSize = { width: 60, height: 60 }, // Default for Single Pan
+    cameraTargetY = 0 // Vertical Shift Target
 }, ref) => {
     const pathname = usePathname();
     // ScaleInfoPanel은 /digipan-3d-test 경로에서만 표시
@@ -440,6 +444,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     enableZoom={enableZoom}
                     enablePan={enablePan}
                     sceneSize={sceneSize}
+                    cameraTargetY={cameraTargetY}
                 />
 
                 <group>

@@ -107,22 +107,160 @@ const Digipan14 = React.forwardRef<Digipan3DHandle, Digipan14Props>(({
 
     // 10-Note Base Coordinates (from Digipan10.tsx)
     const baseNotes10 = useMemo(() => [
-        { "id": 0, "cx": 508, "cy": 515, "scale": 0, "rotate": 89, "position": "center", "angle": 0, "scaleX": 1.36, "scaleY": 1.16 },
-        { "id": 1, "cx": 639, "cy": 811, "scale": 0, "rotate": 66, "position": "top", "angle": 0, "scaleX": 1, "scaleY": 0.89 },
-        { "id": 2, "cx": 356, "cy": 811, "scale": 0, "rotate": 103, "position": "top", "angle": 0, "scaleX": 0.98, "scaleY": 0.9 },
-        { "id": 3, "cx": 822, "cy": 626, "scale": 0, "rotate": 194, "position": "top", "angle": 0, "scaleX": 1, "scaleY": 0.93 },
-        { "id": 4, "cx": 178, "cy": 609, "scale": 0, "rotate": 163, "position": "top", "angle": 0, "scaleX": 0.99, "scaleY": 0.91 },
-        { "id": 5, "cx": 832, "cy": 391, "scale": 0, "rotate": 158, "position": "top", "angle": 0, "scaleX": 0.94, "scaleY": 0.82 },
-        { "id": 6, "cx": 184, "cy": 367, "scale": 0, "rotate": 28, "position": "top", "angle": 0, "scaleX": 0.97, "scaleY": 0.85 },
-        { "id": 7, "cx": 703, "cy": 215, "scale": 0, "rotate": 142, "position": "top", "angle": 0, "scaleX": 1.02, "scaleY": 0.8 },
-        { "id": 8, "cx": 314, "cy": 200, "scale": 0, "rotate": 57, "position": "top", "angle": 0, "scaleX": 0.98, "scaleY": 0.83 },
-        { "id": 9, "cx": 508, "cy": 143, "scale": 0, "rotate": 138, "position": "top", "angle": 0, "scaleX": 1.07, "scaleY": 0.79 },
-        // Bottom Tonefields (N10, N11 swapped for E Equinox 14)
-        { "id": 10, "cx": 4, "cy": 762, "scale": 0, "rotate": 158, "position": "bottom", "angle": 0, "scaleX": 1.0, "scaleY": 1.3 },
-        { "id": 11, "cx": 1000, "cy": 762, "scale": 0, "rotate": 21, "position": "bottom", "angle": 0, "scaleX": 1.0, "scaleY": 1.2 },
-        // New Bottom Tonefields for 14N (N12, N13) - Position Swapped
-        { "id": 12, "cx": 200, "cy": 900, "scale": 0, "rotate": 135, "position": "bottom", "angle": 0, "scaleX": 0.9, "scaleY": 0.9 }, // N13 (D5) - Now Left
-        { "id": 13, "cx": 800, "cy": 900, "scale": 0, "rotate": 45, "position": "bottom", "angle": 0, "scaleX": 0.85, "scaleY": 0.85 } // N14 (E5) - Now Right
+        {
+            "id": 0,
+            "cx": 508,
+            "cy": 515,
+            "scale": 0,
+            "rotate": 89,
+            "position": "center",
+            "angle": 0,
+            "scaleX": 1.36,
+            "scaleY": 1.16
+        },
+        {
+            "id": 1,
+            "cx": 639,
+            "cy": 811,
+            "scale": 0,
+            "rotate": 66,
+            "position": "top",
+            "angle": 0,
+            "scaleX": 1,
+            "scaleY": 0.89
+        },
+        {
+            "id": 2,
+            "cx": 356,
+            "cy": 811,
+            "scale": 0,
+            "rotate": 103,
+            "position": "top",
+            "angle": 0,
+            "scaleX": 0.98,
+            "scaleY": 0.9
+        },
+        {
+            "id": 3,
+            "cx": 822,
+            "cy": 626,
+            "scale": 0,
+            "rotate": 194,
+            "position": "top",
+            "angle": 0,
+            "scaleX": 1,
+            "scaleY": 0.93
+        },
+        {
+            "id": 4,
+            "cx": 178,
+            "cy": 609,
+            "scale": 0,
+            "rotate": 163,
+            "position": "top",
+            "angle": 0,
+            "scaleX": 0.99,
+            "scaleY": 0.91
+        },
+        {
+            "id": 5,
+            "cx": 832,
+            "cy": 391,
+            "scale": 0,
+            "rotate": 158,
+            "position": "top",
+            "angle": 0,
+            "scaleX": 0.94,
+            "scaleY": 0.82
+        },
+        {
+            "id": 6,
+            "cx": 184,
+            "cy": 367,
+            "scale": 0,
+            "rotate": 28,
+            "position": "top",
+            "angle": 0,
+            "scaleX": 0.97,
+            "scaleY": 0.85
+        },
+        {
+            "id": 7,
+            "cx": 703,
+            "cy": 215,
+            "scale": 0,
+            "rotate": 142,
+            "position": "top",
+            "angle": 0,
+            "scaleX": 1.02,
+            "scaleY": 0.8
+        },
+        {
+            "id": 8,
+            "cx": 314,
+            "cy": 200,
+            "scale": 0,
+            "rotate": 57,
+            "position": "top",
+            "angle": 0,
+            "scaleX": 0.98,
+            "scaleY": 0.83
+        },
+        {
+            "id": 9,
+            "cx": 508,
+            "cy": 142,
+            "scale": 0,
+            "rotate": 138,
+            "position": "top",
+            "angle": 0,
+            "scaleX": 1.07,
+            "scaleY": 0.79
+        },
+        {
+            "id": 10,
+            "cx": 0,
+            "cy": 762,
+            "scale": 0,
+            "rotate": 158,
+            "position": "bottom",
+            "angle": 0,
+            "scaleX": 1.29,
+            "scaleY": 1.61
+        },
+        {
+            "id": 11,
+            "cx": 998,
+            "cy": 762,
+            "scale": 0,
+            "rotate": 21,
+            "position": "bottom",
+            "angle": 0,
+            "scaleX": 1.24,
+            "scaleY": 1.48
+        },
+        {
+            "id": 12,
+            "cx": 386,
+            "cy": -21,
+            "scale": 0,
+            "rotate": 76,
+            "position": "bottom",
+            "angle": 0,
+            "scaleX": 0.9,
+            "scaleY": 0.9
+        },
+        {
+            "id": 13,
+            "cx": 635,
+            "cy": -12,
+            "scale": 0,
+            "rotate": 101,
+            "position": "bottom",
+            "angle": 0,
+            "scaleX": 0.85,
+            "scaleY": 0.85
+        }
     ], []);
 
     const internalNotes = useMemo(() => {
@@ -203,6 +341,8 @@ const Digipan14 = React.forwardRef<Digipan3DHandle, Digipan14Props>(({
             backgroundContent={<Digipan14Background visualNotes={visualNotes} viewMode={viewMode} />}
             forceCompactView={forceCompactView}
             hideStaticLabels={true}
+            cameraTargetY={15} // Shift camera up to allow headroom
+            sceneSize={{ width: 60, height: 75 }} // Expand vertical bounds to 75 (adds 15 units headroom)
         />
     );
 });
