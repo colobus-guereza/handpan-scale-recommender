@@ -78,7 +78,7 @@ const ExplosionParticles = ({ active, position }: { active: boolean; position: T
 // DIGIBALL COMPONENT
 // =============================================================================
 
-type BallState = 'SPAWNING' | 'DECIDING' | 'MOVING' | 'HOVERING' | 'TELEPORT_OUT' | 'TELEPORT_IN';
+type BallState = 'SPAWNING' | 'DECIDING' | 'MOVING' | 'HOVERING' | 'TELEPORT_OUT' | 'TELEPORT_IN' | 'PATTERN_INFINITY' | 'PATTERN_HELIX';
 
 const DigiBall = ({ isIdle }: DigiBallProps) => {
     const groupRef = useRef<THREE.Group>(null);
@@ -102,13 +102,12 @@ const DigiBall = ({ isIdle }: DigiBallProps) => {
     // Animation Refs
     const moveDuration = useRef(2.0);
     const moveProgress = useRef(0);
-    const moveDuration = useRef(2.0);
-    const moveProgress = useRef(0);
     const hoverBaseY = useRef(0); // Base Z height for hovering
     const teleportSpeed = useRef(0.1); // Speed of teleport fade in/out
+    const patternCenter = useRef(new THREE.Vector3(0, 0, 0)); // Center for special patterns
 
     // Constants
-    const BOUNDARY_RADIUS = 35; // Increased range
+    const BOUNDARY_RADIUS = 20; // Reduced range to prevent clipping
     const FLY_HEIGHT_MIN = 25;
     const FLY_HEIGHT_MAX = 45;
 
@@ -125,9 +124,18 @@ const DigiBall = ({ isIdle }: DigiBallProps) => {
     // Helper: Select Next State
     const pickNextState = (): BallState => {
         const rand = Math.random();
-        if (rand < 0.05) return 'TELEPORT_OUT'; // 5% Chance Teleport (Reduced from 20%)
-        if (rand < 0.45) return 'HOVERING';     // 40% Chance Hover
-        return 'MOVING';                       // 55% Chance Move
+        // 5% Teleport
+        if (rand < 0.05) return 'TELEPORT_OUT';
+
+        // 10% Special Patterns (5% Infinity, 5% Helix)
+        if (rand < 0.10) return 'PATTERN_INFINITY';
+        if (rand < 0.15) return 'PATTERN_HELIX';
+
+        // 45% Hover (Remaining) -> Total 60% with prev
+        if (rand < 0.60) return 'HOVERING';
+
+        // 40% Move (Remaining)
+        return 'MOVING';
     };
 
     // Handle System Idle Changes (Appearance/Explosion)
@@ -193,9 +201,9 @@ const DigiBall = ({ isIdle }: DigiBallProps) => {
                         // Calculate Control Point (Midpoint + Random Offset)
                         const mid = new THREE.Vector3().addVectors(startPos.current, targetPos.current).multiplyScalar(0.5);
                         const offset = new THREE.Vector3(
-                            (Math.random() - 0.5) * 60,
-                            (Math.random() - 0.5) * 60,
-                            (Math.random() - 0.5) * 20
+                            (Math.random() - 0.5) * 40,
+                            (Math.random() - 0.5) * 40,
+                            (Math.random() - 0.5) * 15
                         );
                         controlPoint.current.addVectors(mid, offset);
 
@@ -210,6 +218,17 @@ const DigiBall = ({ isIdle }: DigiBallProps) => {
                     } else if (next === 'TELEPORT_OUT') {
                         // Random Teleport Speed: 0.05 (Slow fade) to 0.4 (Fast pop)
                         teleportSpeed.current = 0.05 + Math.random() * 0.35;
+                    } else if (next === 'PATTERN_INFINITY') {
+                        // Setup Infinity (Figure 8)
+                        patternCenter.current.copy(currentPos.current);
+                        moveDuration.current = 6.0; // 6 seconds for full loop
+                        moveProgress.current = 0;
+                    } else if (next === 'PATTERN_HELIX') {
+                        // Setup Helix (Spiral Scan)
+                        moveDuration.current = 8.0; // 8 seconds scan
+                        moveProgress.current = 0;
+                        // Start high up in center
+                        startPos.current.set(0, 0, 50);
                     }
                     break;
 
@@ -248,6 +267,67 @@ const DigiBall = ({ isIdle }: DigiBallProps) => {
                     }
                     break;
 
+                case 'PATTERN_INFINITY':
+                    moveProgress.current += delta / moveDuration.current;
+                    if (moveProgress.current >= 1) {
+                        state.current = 'DECIDING';
+                    } else {
+                        // Lissajous Figure (Figure 8)
+                        // x = A * sin(t), y = B * sin(2t)
+                        const t = moveProgress.current * Math.PI * 2; // Full cycle
+                        const width = 15;
+                        const height = 15;
+
+                        // Relative to where it started (or center?)
+                        // Let's do relative to center of screen for dramatic effect, or current pos.
+                        // Let's use patternCenter + offset
+                        // Actually, 'Infinity' looks best if it's horizontal.
+
+                        const x = Math.sin(t) * width;
+                        const y = Math.sin(t * 2) * (width * 0.5);
+
+                        // Conserve Z but bob slightly
+                        const z = patternCenter.current.z + Math.cos(t) * 2;
+
+                        currentPos.current.set(
+                            patternCenter.current.x + x,
+                            patternCenter.current.y + y,
+                            z
+                        );
+                    }
+                    break;
+
+                case 'PATTERN_HELIX':
+                    moveProgress.current += delta / moveDuration.current;
+                    if (moveProgress.current >= 1) {
+                        state.current = 'DECIDING';
+                    } else {
+                        // Spiral Down and Up
+                        const t = moveProgress.current; // 0 to 1
+
+                        // Radius shrinks then grows? Or constant?
+                        // Let's do constant radius spiral
+                        const radius = 15;
+                        const turns = 3;
+                        const angle = t * Math.PI * 2 * turns;
+
+                        const x = Math.cos(angle) * radius;
+                        const y = Math.sin(angle) * radius;
+
+                        // Z goes down then up (PingPong)
+                        // 0 -> 0.5 (Down) -> 1.0 (Up)
+                        // Map t 0..0.5 to 50..20, t 0.5..1 to 20..50
+                        let z = 0;
+                        if (t < 0.5) {
+                            z = THREE.MathUtils.lerp(50, 20, t * 2);
+                        } else {
+                            z = THREE.MathUtils.lerp(20, 50, (t - 0.5) * 2);
+                        }
+
+                        currentPos.current.set(x, y, z);
+                    }
+                    break;
+
                 case 'TELEPORT_OUT':
                     // Shrink to 0 with variable speed
                     nextGlobalScale = THREE.MathUtils.lerp(currentGlobalScale, 0, teleportSpeed.current);
@@ -276,20 +356,43 @@ const DigiBall = ({ isIdle }: DigiBallProps) => {
             }
         }
 
-        // Apply Transforms
-        groupRef.current.scale.setScalar(nextGlobalScale);
+        // Breathing Effect (Organic Scale Oscillation)
+        const time = threeState.clock.getElapsedTime();
+        const isMoving = state.current === 'MOVING';
+
+        const breathSpeed = isMoving ? 6.0 : 2.0; // Fast breath when moving
+        const breathAmp = isMoving ? 0.05 : 0.02; // Deeper breath when moving
+        const breath = 1.0 + Math.sin(time * breathSpeed) * breathAmp;
+
+        // Apply Transforms (Scale moves from nextGlobalScale * breath)
+        groupRef.current.scale.setScalar(nextGlobalScale * breath);
         groupRef.current.position.copy(currentPos.current);
 
-        // Slow Rotation
-        groupRef.current.rotation.x += delta * 0.2;
-        groupRef.current.rotation.y += delta * 0.3;
+        // Dynamic Rotation (Banking/Spinning)
+        if (isMoving) {
+            // Spin faster to simulate activity/banking
+            groupRef.current.rotation.x += delta * 2.0;
+            groupRef.current.rotation.y += delta * 1.5;
+        } else {
+            // Slow idle drift
+            groupRef.current.rotation.x += delta * 0.2;
+            groupRef.current.rotation.y += delta * 0.3;
+        }
 
-        // Color Animation (Rainbow HSL)
+        // Color Animation (Rainbow HSL with Heartbeat Pulse)
         if (sphereMatRef.current) {
-            const t = threeState.clock.getElapsedTime();
-            const hue = (t * 0.1) % 1;
+            const hue = (time * 0.1) % 1;
+
+            // Pulse Intensity Logic
+            const pulseSpeed = isMoving ? 8.0 : 3.0;
+            const baseIntensity = isMoving ? 0.4 : 0.2;
+            const pulseAmp = isMoving ? 0.4 : 0.2;
+
+            const pulse = Math.sin(time * pulseSpeed) * 0.5 + 0.5; // 0~1
+            const finalIntensity = baseIntensity + pulse * pulseAmp;
+
             sphereMatRef.current.color.setHSL(hue, 1.0, 0.5);
-            sphereMatRef.current.emissive.setHSL(hue, 1.0, 0.2);
+            sphereMatRef.current.emissive.setHSL(hue, 1.0, finalIntensity);
         }
     });
 
