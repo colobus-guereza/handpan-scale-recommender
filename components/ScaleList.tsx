@@ -1099,8 +1099,9 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                         onScaleSelect={(scale) => {
                             setDisplayScales([scale]);
                             setCurrentIndex(0);
-                            // Only scroll to top on desktop (md breakpoint)
-                            if (window.innerWidth >= 768) {
+                            // Only scroll to top on desktop (lg breakpoint: 1024px)
+                            // Mobile/Tablet devices often behave erratically with smooth scroll + layout shift
+                            if (window.innerWidth >= 1024) {
                                 window.scrollTo({ top: 0, behavior: 'smooth' });
                             }
                         }}
