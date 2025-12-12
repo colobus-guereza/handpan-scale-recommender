@@ -102,7 +102,10 @@ const DigiBall = ({ isIdle }: DigiBallProps) => {
     // Animation Refs
     const moveDuration = useRef(2.0);
     const moveProgress = useRef(0);
+    const moveDuration = useRef(2.0);
+    const moveProgress = useRef(0);
     const hoverBaseY = useRef(0); // Base Z height for hovering
+    const teleportSpeed = useRef(0.1); // Speed of teleport fade in/out
 
     // Constants
     const BOUNDARY_RADIUS = 35; // Increased range
@@ -190,9 +193,9 @@ const DigiBall = ({ isIdle }: DigiBallProps) => {
                         // Calculate Control Point (Midpoint + Random Offset)
                         const mid = new THREE.Vector3().addVectors(startPos.current, targetPos.current).multiplyScalar(0.5);
                         const offset = new THREE.Vector3(
-                            (Math.random() - 0.5) * 30,
-                            (Math.random() - 0.5) * 30,
-                            (Math.random() - 0.5) * 10
+                            (Math.random() - 0.5) * 60,
+                            (Math.random() - 0.5) * 60,
+                            (Math.random() - 0.5) * 20
                         );
                         controlPoint.current.addVectors(mid, offset);
 
@@ -204,8 +207,10 @@ const DigiBall = ({ isIdle }: DigiBallProps) => {
                         // Setup Hover
                         hoverBaseY.current = currentPos.current.z;
                         moveDuration.current = 3.0 + Math.random() * 3.0; // Hover for 3~6s
+                    } else if (next === 'TELEPORT_OUT') {
+                        // Random Teleport Speed: 0.05 (Slow fade) to 0.4 (Fast pop)
+                        teleportSpeed.current = 0.05 + Math.random() * 0.35;
                     }
-                    // TELEPORT_OUT needs no setup
                     break;
 
                 case 'MOVING':
@@ -244,8 +249,8 @@ const DigiBall = ({ isIdle }: DigiBallProps) => {
                     break;
 
                 case 'TELEPORT_OUT':
-                    // Shrink to 0
-                    nextGlobalScale = THREE.MathUtils.lerp(currentGlobalScale, 0, 0.1);
+                    // Shrink to 0 with variable speed
+                    nextGlobalScale = THREE.MathUtils.lerp(currentGlobalScale, 0, teleportSpeed.current);
                     if (nextGlobalScale < 0.05) {
                         // Position Reset
                         currentPos.current = getRandomPosition();
@@ -255,8 +260,8 @@ const DigiBall = ({ isIdle }: DigiBallProps) => {
                     break;
 
                 case 'TELEPORT_IN':
-                    // Grow to 1
-                    nextGlobalScale = THREE.MathUtils.lerp(currentGlobalScale, 1, 0.1);
+                    // Grow to 1 with variable speed
+                    nextGlobalScale = THREE.MathUtils.lerp(currentGlobalScale, 1, teleportSpeed.current);
                     if (Math.abs(nextGlobalScale - 1) < 0.01) {
                         state.current = 'DECIDING';
                     }

@@ -10,6 +10,7 @@ import Digipan12 from './Digipan12';
 import Digipan14 from './Digipan14';
 import Digipan14M from './Digipan14M';
 import Digipan15M from './Digipan15M';
+import Digipan18M from './Digipan18M';
 
 interface MiniDigiPanProps {
     scale: Scale;
@@ -19,12 +20,18 @@ interface MiniDigiPanProps {
 export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
 
     // Determine which component to render based on note count
-    const totalNotes = 1 + scale.notes.top.length + scale.notes.bottom.length;
+    const bottomCount = scale.notes.bottom ? scale.notes.bottom.length : 0;
+    const totalNotes = 1 + scale.notes.top.length + bottomCount;
+
+    console.log(`MiniDigiPan Render: ${scale.id} (${scale.name}), notes: ${totalNotes}`);
+
+    const is18Notes = totalNotes === 18;
     const is15Notes = totalNotes === 15;
     const is14Notes = totalNotes === 14;
     const is12Notes = totalNotes === 12;
     const is11Notes = totalNotes === 11;
     const is10Notes = totalNotes === 10;
+    const is9Notes = totalNotes === 9;
 
     const commonProps = {
         scale: scale,
@@ -54,14 +61,16 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
     // Scene Size Ratio is roughly 60:115 (~1:1.92)
     // We use aspect-[1/2] (1:2.0) which is slightly taller, providing a tight, efficient fit without cropping.
     const useVerticalAspect = false; // Forced to false based on user feedback to match Digipan 9/10/11
-    const containerClass = is14Notes || is15Notes
+    const containerClass = is14Notes || is15Notes || is18Notes
         ? "w-full aspect-[10/11] max-h-[550px] md:max-h-[800px] relative rounded-2xl overflow-hidden bg-white -mt-2" // Taller max-height to allow same pixel-per-unit scale
         : "w-full aspect-square max-h-[500px] md:max-h-[700px] relative rounded-2xl overflow-hidden bg-white -mt-2";
 
     return (
         <div className="w-full">
             <div className={containerClass}>
-                {is15Notes ? (
+                {is18Notes ? (
+                    <Digipan18M {...commonProps} />
+                ) : is15Notes ? (
                     <Digipan15M {...commonProps} />
                 ) : is14Notes ? (
                     // Check if this is F# Low Pygmy 14 (Mutant) - use Digipan14M
@@ -76,8 +85,12 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
                     <Digipan11 {...commonProps} />
                 ) : is10Notes ? (
                     <Digipan10 {...commonProps} />
-                ) : (
+                ) : is9Notes ? (
                     <Digipan9 {...commonProps} />
+                ) : (
+                    <div className="flex items-center justify-center w-full h-full bg-slate-100 text-slate-400">
+                        Unknown Note Layout ({totalNotes})
+                    </div>
                 )}
             </div>
             <p className="text-center font-black text-zinc-800 dark:text-zinc-100 mt-1 tracking-tight uppercase drop-shadow-lg whitespace-nowrap text-[clamp(28px,7vw,100px)] leading-tight">

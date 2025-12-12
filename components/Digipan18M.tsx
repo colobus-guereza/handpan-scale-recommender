@@ -183,17 +183,6 @@ const Digipan18M = React.forwardRef<Digipan3DHandle, Digipan18MProps>(({
         },
         {
             "id": 6,
-            "cx": 717,
-            "cy": 182,
-            "scale": 0,
-            "rotate": 121,
-            "position": "top",
-            "angle": 0,
-            "scaleX": 1.02,
-            "scaleY": 0.89
-        },
-        {
-            "id": 7,
             "cx": 155,
             "cy": 413,
             "scale": 0,
@@ -202,6 +191,17 @@ const Digipan18M = React.forwardRef<Digipan3DHandle, Digipan18MProps>(({
             "angle": 0,
             "scaleX": 0.97,
             "scaleY": 0.85
+        },
+        {
+            "id": 7,
+            "cx": 717,
+            "cy": 182,
+            "scale": 0,
+            "rotate": 121,
+            "position": "top",
+            "angle": 0,
+            "scaleX": 1.02,
+            "scaleY": 0.89
         },
         {
             "id": 8,
@@ -271,17 +271,6 @@ const Digipan18M = React.forwardRef<Digipan3DHandle, Digipan18MProps>(({
         },
         {
             "id": 14,
-            "cx": 2,
-            "cy": 260,
-            "scale": 0,
-            "rotate": 24,
-            "position": "bottom",
-            "angle": 0,
-            "scaleX": 1.2999999999999998,
-            "scaleY": 1.5
-        },
-        {
-            "id": 15,
             "cx": 998,
             "cy": 260,
             "scale": 0,
@@ -290,6 +279,17 @@ const Digipan18M = React.forwardRef<Digipan3DHandle, Digipan18MProps>(({
             "angle": 0,
             "scaleX": 1.25,
             "scaleY": 1.3800000000000001
+        },
+        {
+            "id": 15,
+            "cx": 2,
+            "cy": 260,
+            "scale": 0,
+            "rotate": 24,
+            "position": "bottom",
+            "angle": 0,
+            "scaleX": 1.2999999999999998,
+            "scaleY": 1.5
         },
         {
             "id": 16,
