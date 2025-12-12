@@ -470,7 +470,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                         <button
                             onClick={() => {
                                 setViewMode(prev => prev === 3 ? 2 : 3);
-                                resetIdleTimer(0);
+                                // resetIdleTimer(0); // Removed to prevent dismissing CyberBoat
                             }}
                             className="w-[38.4px] h-[38.4px] flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
                             title={viewMode === 3 ? "Show Labels" : "Hide Labels"}

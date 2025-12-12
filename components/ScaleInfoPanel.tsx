@@ -24,7 +24,7 @@ export default function ScaleInfoPanel({
     const [searchQuery, setSearchQuery] = useState('');
 
     // Filter States
-    const [activeNoteFilter, setActiveNoteFilter] = useState<number | 'ALL' | '14M'>('ALL');
+    const [activeNoteFilter, setActiveNoteFilter] = useState<number | 'ALL' | '14M' | '15M'>('ALL');
     const [sortBy, setSortBy] = useState<'NAME' | 'COUNT' | 'POPULARITY'>('NAME');
     const [sortDir, setSortDir] = useState<'ASC' | 'DESC'>('ASC');
 
@@ -40,6 +40,8 @@ export default function ScaleInfoPanel({
                 matchesCount = true;
             } else if (activeNoteFilter === '14M') {
                 matchesCount = totalNotes === 14 && (s.id.includes('mutant') || s.tags?.includes('Mutant') || s.name.includes('Mutant'));
+            } else if (activeNoteFilter === '15M') {
+                matchesCount = totalNotes === 15;
             } else if (activeNoteFilter === 14) {
                 // 14N (Standard) - exclude mutants
                 matchesCount = totalNotes === 14 && !(s.id.includes('mutant') || s.tags?.includes('Mutant') || s.name.includes('Mutant'));
@@ -112,6 +114,7 @@ export default function ScaleInfoPanel({
                         <FilterButton label="12N" active={activeNoteFilter === 12} onClick={() => setActiveNoteFilter(12)} />
                         <FilterButton label="14N" active={activeNoteFilter === 14} onClick={() => setActiveNoteFilter(14)} />
                         <FilterButton label="14M" active={activeNoteFilter === '14M'} onClick={() => setActiveNoteFilter('14M')} />
+                        <FilterButton label="15M" active={activeNoteFilter === '15M'} onClick={() => setActiveNoteFilter('15M')} />
                     </div>
 
                     {/* Sort Row */}

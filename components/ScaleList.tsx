@@ -762,13 +762,6 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                 </div>
             </div>
 
-            {/* 독립적인 텍스트 컨테이너 - glass-card와 MiniDigiPan 사이 */}
-            <div className="w-full mb-4 pt-12 pb-8 min-h-[120px] overflow-hidden">
-                <p className="text-slate-700 dark:text-slate-300 text-center font-medium leading-tight whitespace-nowrap text-[clamp(20px,6vw,80px)]">
-                    {t.scaleList.tryPlaying}
-                </p>
-            </div>
-
             {/* MiniDigiPan 컴포넌트 - 버튼 영역 위 */}
             {showMiniDigiPan && (
                 <div className="-mt-4 mb-4">

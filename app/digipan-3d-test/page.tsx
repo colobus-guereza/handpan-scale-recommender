@@ -62,7 +62,6 @@ export default function Digipan3DTestPage() {
         else if (totalNotes === 11) setMode('11');
         else if (totalNotes === 12) setMode('12');
         else if (totalNotes === 15) setMode('15M');
-        else if (totalNotes === 15) setMode('15M');
         else if (totalNotes === 14) {
             // Check for Mutant tag or ID pattern to switch to 14M
             if (newScale.id.includes('mutant') || newScale.tags?.includes('Mutant') || newScale.name.includes('Mutant')) {
@@ -74,11 +73,12 @@ export default function Digipan3DTestPage() {
     }, []);
 
     // 15M Auto-Select
-    useEffect(() => {
-        if (mode === '15M' && selectedScaleId !== 'd_asha_15_mutant') {
-            setSelectedScaleId('d_asha_15_mutant');
-        }
-    }, [mode, selectedScaleId]);
+    // 15M Auto-Select logic removed to prevent overriding user selection
+    // useEffect(() => {
+    //    if (mode === '15M' && selectedScaleId !== 'd_asha_15_mutant') {
+    //        setSelectedScaleId('d_asha_15_mutant');
+    //    }
+    // }, [mode, selectedScaleId]);
 
     // ... (Digipan 9, 10, 11 logic remains same, collapsing for brevity in tool call if not modifying them) ...
 
@@ -633,6 +633,7 @@ export default function Digipan3DTestPage() {
     }, []);
 
     const activeNotes14MRef = useRef<any[]>([]);
+    const activeNotes15MRef = useRef<any[]>([]);
     const [copySuccess14M, setCopySuccess14M] = useState(false);
     const [copySuccess15M, setCopySuccess15M] = useState(false);
 
@@ -717,8 +718,6 @@ export default function Digipan3DTestPage() {
     useEffect(() => {
         activeNotes14MRef.current = activeNotes14M;
     }, [activeNotes14M]);
-
-    const activeNotes15MRef = useRef<any[]>([]);
 
     const dynamicSchema15M = useMemo(() => {
         if (mode !== '15M') return {};
@@ -811,34 +810,38 @@ export default function Digipan3DTestPage() {
     // D Asha 15 Auto-Select Manual Trigger
     useEffect(() => {
         // If switched to 15M and scale is not D Asha 15, force select it
-        if (mode === '15M' && selectedScaleId !== 'd_asha_15_mutant') {
+        if (mode === '15M') {
             setSelectedScaleId('d_asha_15_mutant');
+        } else if (mode === '14M') {
+            setSelectedScaleId('fs_low_pygmy_14_mutant');
         }
     }, [mode]);
+
+    const toggleCycle = () => {
+        let newMode: '9' | '10' | '11' | '12' | '14' | '14M' | '15M' = '9';
+        if (mode === '9') newMode = '10';
+        else if (mode === '10') newMode = '11';
+        else if (mode === '11') newMode = '12';
+        else if (mode === '12') newMode = '14';
+        else if (mode === '14') newMode = '14M';
+        else if (mode === '14M') newMode = '15M';
+        else newMode = '9'; // Cycle back to 9
+
+        setMode(newMode);
+        if (newMode === '9') setSelectedScaleId('cs_amara_9');
+        else if (newMode === '10') setSelectedScaleId('d_kurd_10');
+        else if (newMode === '11') setSelectedScaleId('cs_pygmy_11');
+        else if (newMode === '12') setSelectedScaleId('f_low_pygmy_12');
+        else if (newMode === '14') setSelectedScaleId('e_equinox_14');
+        else if (newMode === '14M') setSelectedScaleId('fs_low_pygmy_14_mutant');
+        else if (newMode === '15M') setSelectedScaleId('d_asha_15_mutant');
+    };
 
     const toggleControl = (
         <div className="flex flex-col gap-2">
             {/* Mode Switcher */}
             <button
-                onClick={() => {
-                    let newMode: '9' | '10' | '11' | '12' | '14' | '14M' | '15M' = '9';
-                    if (mode === '9') newMode = '10';
-                    else if (mode === '10') newMode = '11';
-                    else if (mode === '11') newMode = '12';
-                    else if (mode === '12') newMode = '14';
-                    else if (mode === '14') newMode = '14M';
-                    else if (mode === '14M') newMode = '15M';
-                    else if (mode === '15M') newMode = '9';
-
-                    setMode(newMode);
-                    if (newMode === '9') setSelectedScaleId('d_kurd_9');
-                    else if (newMode === '10') setSelectedScaleId('d_kurd_10');
-                    else if (newMode === '11') setSelectedScaleId('cs_pygmy_11');
-                    else if (newMode === '12') setSelectedScaleId('d_kurd_12');
-                    else if (newMode === '14') setSelectedScaleId('e_equinox_14');
-                    else if (newMode === '14M') setSelectedScaleId('fs_low_pygmy_14_mutant');
-                    else if (newMode === '15M') setSelectedScaleId('d_asha_15_mutant');
-                }}
+                onClick={toggleCycle}
                 className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 font-bold text-xs"
                 title="Toggle Digipan 9 / 10 / 11 / 12"
             >
@@ -1391,8 +1394,8 @@ export default function Digipan3DTestPage() {
     }, [activeNotes11]);
 
 
-
     // -------------------------------------------------------------------------
+
 
     return (
         <div className="w-full h-screen flex flex-col bg-slate-900">
@@ -1424,51 +1427,67 @@ export default function Digipan3DTestPage() {
                             {!isMobilePreview && (
                                 <>
                                     <button
-                                        onClick={() => setMode('9')}
+                                        onClick={() => {
+                                            setMode('9');
+                                            setSelectedScaleId('cs_amara_9');
+                                        }}
                                         className={`px-4 py-2 rounded ${mode === '9' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
                                     >
                                         9
                                     </button>
                                     <button
-                                        onClick={() => setMode('10')}
+                                        onClick={() => {
+                                            setMode('10');
+                                            setSelectedScaleId('d_kurd_10');
+                                        }}
                                         className={`px-4 py-2 rounded ${mode === '10' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
                                     >
                                         10
                                     </button>
                                     <button
-                                        onClick={() => setMode('11')}
+                                        onClick={() => {
+                                            setMode('11');
+                                            setSelectedScaleId('cs_pygmy_11');
+                                        }}
                                         className={`px-4 py-2 rounded ${mode === '11' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
                                     >
                                         11
                                     </button>
                                     <button
-                                        onClick={() => setMode('12')}
+                                        onClick={() => {
+                                            setMode('12');
+                                            setSelectedScaleId('f_low_pygmy_12');
+                                        }}
                                         className={`px-4 py-2 rounded ${mode === '12' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
                                     >
                                         12
                                     </button>
                                     <button
-                                        onClick={() => setMode('14')}
+                                        onClick={() => {
+                                            setMode('14');
+                                            setSelectedScaleId('e_equinox_14');
+                                        }}
                                         className={`px-4 py-2 rounded ${mode === '14' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
                                     >
                                         14N
                                     </button>
                                     <button
-                                        onClick={() => setMode('14M')}
+                                        onClick={() => {
+                                            setMode('14M');
+                                            setSelectedScaleId('fs_low_pygmy_14_mutant');
+                                        }}
                                         className={`px-4 py-2 rounded ${mode === '14M' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
                                     >
                                         14M
                                     </button>
                                     <button
-                                        onClick={() => setMode('15M')}
+                                        onClick={() => {
+                                            setMode('15M');
+                                            setSelectedScaleId('d_asha_15_mutant');
+                                        }}
                                         className={`px-4 py-2 rounded ${mode === '15M' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
                                     >
                                         15M
-                                    </button>
-                                    <button
-                                        className="px-4 py-2 rounded bg-slate-700 text-slate-300 hover:bg-slate-600"
-                                    >
-                                        18M
                                     </button>
                                 </>
                             )}
@@ -1536,13 +1555,14 @@ export default function Digipan3DTestPage() {
                                         {/* Mode Switcher Buttons */}
                                         <button
                                             onClick={() => {
-                                                let newMode: '9' | '10' | '11' | '12' | '14' | '14M' = '9';
+                                                let newMode: '9' | '10' | '11' | '12' | '14' | '14M' | '15M' = '9';
                                                 if (mode === '9') newMode = '10';
                                                 else if (mode === '10') newMode = '11';
                                                 else if (mode === '11') newMode = '12';
                                                 else if (mode === '12') newMode = '14';
                                                 else if (mode === '14') newMode = '14M';
-                                                else if (mode === '14M') newMode = '9';
+                                                else if (mode === '14M') newMode = '15M';
+                                                else newMode = '9';
 
                                                 setMode(newMode);
                                                 if (newMode === '9') setSelectedScaleId('d_kurd_9');
@@ -1551,6 +1571,7 @@ export default function Digipan3DTestPage() {
                                                 else if (newMode === '12') setSelectedScaleId('d_kurd_12');
                                                 else if (newMode === '14') setSelectedScaleId('e_equinox_14');
                                                 else if (newMode === '14M') setSelectedScaleId('fs_low_pygmy_14_mutant');
+                                                else if (newMode === '15M') setSelectedScaleId('d_asha_15_mutant');
                                             }}
                                             className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 font-bold text-xs"
                                             title="Toggle Digipan Mode"
@@ -1565,8 +1586,10 @@ export default function Digipan3DTestPage() {
                                                 <span className="text-[10px] leading-none font-bold">12</span>
                                             ) : mode === '14' ? (
                                                 <span className="text-[10px] leading-none font-bold">14N</span>
-                                            ) : (
+                                            ) : mode === '14M' ? (
                                                 <span className="text-[10px] leading-none font-bold">14M</span>
+                                            ) : (
+                                                <span className="text-[10px] leading-none font-bold">15M</span>
                                             )}
                                         </button>
 
