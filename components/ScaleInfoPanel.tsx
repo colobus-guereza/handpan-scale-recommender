@@ -167,11 +167,21 @@ export default function ScaleInfoPanel({
                                                     <span className="text-slate-400">Ding:</span>
                                                     <span className="font-mono font-semibold">{scale.notes.ding}</span>
                                                 </div>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-slate-400">Notes:</span>
-                                                    <span className="font-mono text-[10px]">
-                                                        {[scale.notes.ding, ...scale.notes.top, ...scale.notes.bottom].join(' • ')}
-                                                    </span>
+                                                <div className="mt-1 space-y-1">
+                                                    <div className="flex items-start gap-2">
+                                                        <span className="text-slate-400 font-bold w-3 text-[10px]">T</span>
+                                                        <span className="font-mono text-[10px] flex-1 leading-snug">
+                                                            {scale.notes.top.join(' • ')}
+                                                        </span>
+                                                    </div>
+                                                    {scale.notes.bottom.length > 0 && (
+                                                        <div className="flex items-start gap-2">
+                                                            <span className="text-slate-400 font-bold w-3 text-[10px]">B</span>
+                                                            <span className="font-mono text-[10px] flex-1 leading-snug">
+                                                                {scale.notes.bottom.join(' • ')}
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
