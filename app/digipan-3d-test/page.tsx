@@ -8,6 +8,7 @@ import Digipan12 from '../../components/Digipan12';
 import Digipan14 from '../../components/Digipan14';
 import Digipan14M from '../../components/Digipan14M';
 import Digipan15M from '../../components/Digipan15M';
+import Digipan18M from '../../components/Digipan18M';
 import ScaleInfoPanel from '../../components/ScaleInfoPanel';
 import { SCALES } from '@/data/handpanScales';
 import { Grid, Monitor, Smartphone, Lock, Unlock, Camera, Check, PlayCircle, Eye, EyeOff, MinusCircle } from 'lucide-react';
@@ -16,12 +17,12 @@ import { useControls, button, Leva } from 'leva';
 import { getNoteFrequency } from '@/constants/noteFrequencies';
 
 export default function Digipan3DTestPage() {
-    // Mode State: '9', '10', '11', '12', '14', '14M'
-    const [mode, setMode] = useState<'9' | '10' | '11' | '12' | '14' | '14M' | '15M'>('15M');
+    // Mode State: '9', '10', '11', '12', '14', '14M', '15M', '18M'
+    const [mode, setMode] = useState<'9' | '10' | '11' | '12' | '14' | '14M' | '15M' | '18M'>('18M');
     const [isMobilePreview, setIsMobilePreview] = useState(false);
 
     // Dynamic Scale Selection State
-    const [selectedScaleId, setSelectedScaleId] = useState<string>('d_asha_15_mutant');
+    const [selectedScaleId, setSelectedScaleId] = useState<string>('fs_low_pygmy_18_mutant');
 
     // Derived Scale Object
     const scale = SCALES.find(s => s.id === selectedScaleId) || SCALES[0];
@@ -62,6 +63,7 @@ export default function Digipan3DTestPage() {
         else if (totalNotes === 11) setMode('11');
         else if (totalNotes === 12) setMode('12');
         else if (totalNotes === 15) setMode('15M');
+        else if (totalNotes === 18) setMode('18M');
         else if (totalNotes === 14) {
             // Check for Mutant tag or ID pattern to switch to 14M
             if (newScale.id.includes('mutant') || newScale.tags?.includes('Mutant') || newScale.name.includes('Mutant')) {
@@ -632,10 +634,216 @@ export default function Digipan3DTestPage() {
         ];
     }, []);
 
+    // 18M Initial Notes (Updated with new 18-note data)
+    const initialNotes18M = useMemo(() => {
+        return [
+            {
+                "id": 0,
+                "cx": 503,
+                "cy": 519,
+                "scale": 0,
+                "rotate": 89,
+                "position": "center",
+                "angle": 0,
+                "scaleX": 1.36,
+                "scaleY": 1.16
+            },
+            {
+                "id": 1,
+                "cx": 645,
+                "cy": 814,
+                "scale": 0,
+                "rotate": 66,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1,
+                "scaleY": 0.89
+            },
+            {
+                "id": 2,
+                "cx": 376,
+                "cy": 822,
+                "scale": 0,
+                "rotate": 108,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.98,
+                "scaleY": 0.9
+            },
+            {
+                "id": 3,
+                "cx": 836,
+                "cy": 638,
+                "scale": 0,
+                "rotate": 194,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1,
+                "scaleY": 0.93
+            },
+            {
+                "id": 4,
+                "cx": 182,
+                "cy": 658,
+                "scale": 0,
+                "rotate": 163,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.99,
+                "scaleY": 0.91
+            },
+            {
+                "id": 5,
+                "cx": 848,
+                "cy": 393,
+                "scale": 0,
+                "rotate": 158,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.94,
+                "scaleY": 0.82
+            },
+            {
+                "id": 6,
+                "cx": 717,
+                "cy": 182,
+                "scale": 0,
+                "rotate": 121,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.02,
+                "scaleY": 0.89
+            },
+            {
+                "id": 7,
+                "cx": 155,
+                "cy": 413,
+                "scale": 0,
+                "rotate": 28,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.97,
+                "scaleY": 0.85
+            },
+            {
+                "id": 8,
+                "cx": 264,
+                "cy": 204,
+                "scale": 0,
+                "rotate": 51,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.97,
+                "scaleY": 0.95
+            },
+            {
+                "id": 9,
+                "cx": 484,
+                "cy": 135,
+                "scale": 0,
+                "rotate": 93,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 1.07,
+                "scaleY": 0.92
+            },
+            {
+                "id": 10,
+                "cx": 380,
+                "cy": 316,
+                "scale": 0,
+                "rotate": 58,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.9,
+                "scaleY": 0.89
+            },
+            {
+                "id": 11,
+                "cx": 625,
+                "cy": 311,
+                "scale": 0,
+                "rotate": 117,
+                "position": "top",
+                "angle": 0,
+                "scaleX": 0.85,
+                "scaleY": 0.92
+            },
+            {
+                "id": 12,
+                "cx": 0,
+                "cy": 762,
+                "scale": 0,
+                "rotate": 158,
+                "position": "bottom",
+                "angle": 0,
+                "scaleX": 1.29,
+                "scaleY": 1.61
+            },
+            {
+                "id": 13,
+                "cx": 996,
+                "cy": 762,
+                "scale": 0,
+                "rotate": 25,
+                "position": "bottom",
+                "angle": 0,
+                "scaleX": 1.24,
+                "scaleY": 1.48
+            },
+            {
+                "id": 14,
+                "cx": 2,
+                "cy": 260,
+                "scale": 0,
+                "rotate": 24,
+                "position": "bottom",
+                "angle": 0,
+                "scaleX": 1.2999999999999998,
+                "scaleY": 1.5
+            },
+            {
+                "id": 15,
+                "cx": 998,
+                "cy": 260,
+                "scale": 0,
+                "rotate": 155,
+                "position": "bottom",
+                "angle": 0,
+                "scaleX": 1.25,
+                "scaleY": 1.3800000000000001
+            },
+            {
+                "id": 16,
+                "cx": 263,
+                "cy": 10,
+                "scale": 0,
+                "rotate": 64,
+                "position": "bottom",
+                "angle": 0,
+                "scaleX": 1.3,
+                "scaleY": 1.18
+            },
+            {
+                "id": 17,
+                "cx": 449,
+                "cy": -38,
+                "scale": 0,
+                "rotate": 77,
+                "position": "bottom",
+                "angle": 0,
+                "scaleX": 1.35,
+                "scaleY": 1.22
+            }
+        ];
+    }, []);
+
     const activeNotes14MRef = useRef<any[]>([]);
     const activeNotes15MRef = useRef<any[]>([]);
+    const activeNotes18MRef = useRef<any[]>([]);
     const [copySuccess14M, setCopySuccess14M] = useState(false);
     const [copySuccess15M, setCopySuccess15M] = useState(false);
+    const [copySuccess18M, setCopySuccess18M] = useState(false);
 
     const dynamicSchema14M = useMemo(() => {
         if (mode !== '14M') return {};
@@ -814,17 +1022,20 @@ export default function Digipan3DTestPage() {
             setSelectedScaleId('d_asha_15_mutant');
         } else if (mode === '14M') {
             setSelectedScaleId('fs_low_pygmy_14_mutant');
+        } else if (mode === '18M') {
+            setSelectedScaleId('fs_low_pygmy_18_mutant');
         }
     }, [mode]);
 
     const toggleCycle = () => {
-        let newMode: '9' | '10' | '11' | '12' | '14' | '14M' | '15M' = '9';
+        let newMode: '9' | '10' | '11' | '12' | '14' | '14M' | '15M' | '18M' = '9';
         if (mode === '9') newMode = '10';
         else if (mode === '10') newMode = '11';
         else if (mode === '11') newMode = '12';
         else if (mode === '12') newMode = '14';
         else if (mode === '14') newMode = '14M';
         else if (mode === '14M') newMode = '15M';
+        else if (mode === '15M') newMode = '18M';
         else newMode = '9'; // Cycle back to 9
 
         setMode(newMode);
@@ -835,6 +1046,7 @@ export default function Digipan3DTestPage() {
         else if (newMode === '14') setSelectedScaleId('e_equinox_14');
         else if (newMode === '14M') setSelectedScaleId('fs_low_pygmy_14_mutant');
         else if (newMode === '15M') setSelectedScaleId('d_asha_15_mutant');
+        else if (newMode === '18M') setSelectedScaleId('fs_low_pygmy_18_mutant');
     };
 
     const toggleControl = (
@@ -857,8 +1069,10 @@ export default function Digipan3DTestPage() {
                     <span className="text-[10px] leading-none font-bold">14N</span>
                 ) : mode === '14M' ? (
                     <span className="text-[10px] leading-none font-bold">14M</span>
-                ) : (
+                ) : mode === '15M' ? (
                     <span className="text-[10px] leading-none font-bold">15M</span>
+                ) : (
+                    <span className="text-[10px] leading-none font-bold">18M</span>
                 )}
             </button>
             {/* ... other buttons ... */}
@@ -1397,6 +1611,89 @@ export default function Digipan3DTestPage() {
     // -------------------------------------------------------------------------
 
 
+
+    // -------------------------------------------------------------------------
+    // Digipan 18M Logic (Editor Mode)
+    // -------------------------------------------------------------------------
+
+    const dynamicSchema18M = useMemo(() => {
+        if (mode !== '18M') return {};
+
+        const s: any = {};
+        initialNotes18M.forEach((note) => {
+            s[`N${note.id}_cx`] = { value: note.cx, min: -200, max: 1500, step: 1, label: `N${note.id} X` };
+            s[`N${note.id}_cy`] = { value: note.cy, min: -200, max: 1500, step: 1, label: `N${note.id} Y` };
+            s[`N${note.id}_rotate`] = { value: note.rotate, min: 0, max: 360, step: 1, label: `N${note.id} Rot` };
+            s[`N${note.id}_scaleX`] = { value: note.scaleX || 1, min: 0.1, max: 3, step: 0.01, label: `N${note.id} SX` };
+            s[`N${note.id}_scaleY`] = { value: note.scaleY || 1, min: 0.1, max: 3, step: 0.01, label: `N${note.id} SY` };
+        });
+
+        const buttonLabel = copySuccess18M ? '✅ Copied!' : 'Export JSON (18M)';
+        s[buttonLabel] = button(() => {
+            const currentNotes = activeNotes18MRef.current;
+            const exportData = currentNotes.map((n) => ({
+                id: n.id,
+                cx: Math.round(n.cx),
+                cy: Math.round(n.cy),
+                scale: 0,
+                rotate: Math.round(n.rotate),
+                position: n.position || 'top',
+                angle: n.angle || 0,
+                scaleX: n.scaleX,
+                scaleY: n.scaleY
+            }));
+            const jsonString = JSON.stringify(exportData, null, 4);
+            navigator.clipboard.writeText(jsonString).then(() => {
+                setCopySuccess18M(true);
+                setTimeout(() => setCopySuccess18M(false), 2000);
+            });
+        });
+        return s;
+    }, [initialNotes18M, mode, copySuccess18M]);
+
+    const controls18M = useControls('Digipan 18M Tuning Refined', dynamicSchema18M, [initialNotes18M, mode]);
+
+    const activeNotes18M = useMemo(() => {
+        if (mode !== '18M' || !scale) return [];
+        const c = controls18M as any;
+        const currentScaleNotes = [scale.notes.ding, ...scale.notes.top, ...(scale.notes.bottom || [])];
+        const TEMPLATE_NOTES = ["D3", "A3", "Bb3", "C4", "D4", "E4", "F4", "G4", "A4", "C5", "D5", "E5", "G5", "A5", "B5", "C6", "D6", "E6"];
+
+        const notes = initialNotes18M.map((n, i) => {
+            const noteName = currentScaleNotes[i] || '';
+            const frequency = getNoteFrequency(noteName);
+            const visualNoteName = TEMPLATE_NOTES[i] || "C5";
+            const visualFrequency = getNoteFrequency(visualNoteName);
+
+            return {
+                ...n,
+                label: noteName,
+                frequency: frequency || 440,
+                visualFrequency: visualFrequency || 440,
+                labelOffset: 25,
+                cx: (c[`N${n.id}_cx`] !== undefined) ? c[`N${n.id}_cx`] : n.cx,
+                cy: (c[`N${n.id}_cy`] !== undefined) ? c[`N${n.id}_cy`] : n.cy,
+                rotate: (c[`N${n.id}_rotate`] !== undefined) ? c[`N${n.id}_rotate`] : n.rotate,
+                scaleX: (c[`N${n.id}_scaleX`] !== undefined) ? c[`N${n.id}_scaleX`] : (n.scaleX || 1),
+                scaleY: (c[`N${n.id}_scaleY`] !== undefined) ? c[`N${n.id}_scaleY`] : (n.scaleY || 1),
+                angle: n.angle || 0,
+            };
+        });
+
+        const sortedByPitch = [...notes].sort((a, b) => a.frequency - b.frequency);
+
+        return notes.map(n => {
+            const rank = sortedByPitch.findIndex(x => x.id === n.id) + 1;
+            return { ...n, subLabel: rank.toString() };
+        });
+    }, [initialNotes18M, controls18M, mode, scale]);
+
+    useEffect(() => {
+        activeNotes18MRef.current = activeNotes18M;
+    }, [activeNotes18M]);
+
+    // -------------------------------------------------------------------------
+
     return (
         <div className="w-full h-screen flex flex-col bg-slate-900">
 
@@ -1489,6 +1786,15 @@ export default function Digipan3DTestPage() {
                                     >
                                         15M
                                     </button>
+                                    <button
+                                        onClick={() => {
+                                            setMode('18M');
+                                            setSelectedScaleId('fs_low_pygmy_18_mutant');
+                                        }}
+                                        className={`px-4 py-2 rounded ${mode === '18M' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+                                    >
+                                        18M
+                                    </button>
                                 </>
                             )}
                         </div>
@@ -1555,13 +1861,14 @@ export default function Digipan3DTestPage() {
                                         {/* Mode Switcher Buttons */}
                                         <button
                                             onClick={() => {
-                                                let newMode: '9' | '10' | '11' | '12' | '14' | '14M' | '15M' = '9';
+                                                let newMode: '9' | '10' | '11' | '12' | '14' | '14M' | '15M' | '18M' = '9';
                                                 if (mode === '9') newMode = '10';
                                                 else if (mode === '10') newMode = '11';
                                                 else if (mode === '11') newMode = '12';
                                                 else if (mode === '12') newMode = '14';
                                                 else if (mode === '14') newMode = '14M';
                                                 else if (mode === '14M') newMode = '15M';
+                                                else if (mode === '15M') newMode = '18M';
                                                 else newMode = '9';
 
                                                 setMode(newMode);
@@ -1572,6 +1879,7 @@ export default function Digipan3DTestPage() {
                                                 else if (newMode === '14') setSelectedScaleId('e_equinox_14');
                                                 else if (newMode === '14M') setSelectedScaleId('fs_low_pygmy_14_mutant');
                                                 else if (newMode === '15M') setSelectedScaleId('d_asha_15_mutant');
+                                                else if (newMode === '18M') setSelectedScaleId('fs_low_pygmy_18_mutant');
                                             }}
                                             className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 font-bold text-xs"
                                             title="Toggle Digipan Mode"
@@ -1588,8 +1896,10 @@ export default function Digipan3DTestPage() {
                                                 <span className="text-[10px] leading-none font-bold">14N</span>
                                             ) : mode === '14M' ? (
                                                 <span className="text-[10px] leading-none font-bold">14M</span>
-                                            ) : (
+                                            ) : mode === '15M' ? (
                                                 <span className="text-[10px] leading-none font-bold">15M</span>
+                                            ) : (
+                                                <span className="text-[10px] leading-none font-bold">18M</span>
                                             )}
                                         </button>
 
@@ -1763,6 +2073,24 @@ export default function Digipan3DTestPage() {
                                     ref={digipanRef}
                                     scale={scale}
                                     notes={activeNotes15M.length > 0 ? activeNotes15M : undefined}
+                                    isCameraLocked={isCameraLocked}
+                                    extraControls={isMobilePreview ? undefined : toggleControl}
+                                    showControls={true}
+                                    showInfoPanel={false}
+                                    initialViewMode={viewMode}
+                                    viewMode={viewMode}
+                                    onViewModeChange={setViewMode}
+                                    enableZoom={true}
+                                    enablePan={!isCameraLocked}
+                                    showLabelToggle={showLabels}
+                                    forceCompactView={isMobilePreview}
+                                    showAxes={showAxes}
+                                />
+                            ) : mode === '18M' ? (
+                                <Digipan18M
+                                    ref={digipanRef}
+                                    scale={scale}
+                                    notes={activeNotes18M.length > 0 ? activeNotes18M : undefined}
                                     isCameraLocked={isCameraLocked}
                                     extraControls={isMobilePreview ? undefined : toggleControl}
                                     showControls={true}

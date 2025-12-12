@@ -250,7 +250,6 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     }, [noteCountFilter, searchQuery]);
 
     const handleCapture = async () => {
-        resetIdleTimer(0);
         if (!containerRef.current) return;
 
         try {
@@ -367,7 +366,6 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
         handleCapture,
         handleDemoPlay,
         toggleViewMode: () => {
-            resetIdleTimer(0);
             setViewMode(prev => (prev + 1) % 5 as 0 | 1 | 2 | 3 | 4);
         }
     }));
@@ -387,7 +385,6 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                             <button
                                 onClick={() => {
                                     setIsCameraLocked(prev => !prev);
-                                    resetIdleTimer(0);
                                 }}
                                 className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
                                 title={isCameraLockedState ? "Unlock View (Free Rotation)" : "Lock View (Top Down)"}
@@ -406,7 +403,6 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                             <button
                                 onClick={() => {
                                     setViewMode(prev => (prev + 1) % 5 as 0 | 1 | 2 | 3 | 4);
-                                    resetIdleTimer(0);
                                 }}
                                 className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
                                 title={`Toggle Visibility (Current: Mode ${viewMode + 1})`}
@@ -441,7 +437,6 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                         <button
                             onClick={() => {
                                 setShowIdleBoat(prev => !prev);
-                                resetIdleTimer(0);
                             }}
                             className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
                             title={showIdleBoat ? "Hide Idle Boat" : "Show Idle Boat"}

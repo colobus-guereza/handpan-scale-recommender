@@ -51,14 +51,42 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
     const soundsRef = useRef<Record<string, HowlInstance>>({});
     const loadedCountRef = useRef(0);
     const howlerLoadedRef = useRef(false);
+    const howlerGlobalRef = useRef<any>(null); // Store global Howler instance for context control
 
     useEffect(() => {
         // Skip if running on server
         if (typeof window === 'undefined') return;
 
         // Dynamic import to avoid SSR issues
-        import('howler').then(({ Howl }) => {
+        import('howler').then(({ Howl, Howler }) => {
             howlerLoadedRef.current = true;
+            howlerGlobalRef.current = Howler;
+
+            // --- Fix: Audio Context Resumption Logic ---
+            const resumeAudioContext = () => {
+                if (Howler && Howler.ctx && Howler.ctx.state === 'suspended') {
+                    Howler.ctx.resume().then(() => {
+                        console.log('[useHandpanAudio] AudioContext resumed successfully');
+                    });
+                }
+            };
+
+            // Attach resumption to common interactions (Mobile Safari/Chrome require this)
+            const interactionEvents = ['touchstart', 'touchend', 'click', 'keydown'];
+            const handleInteraction = () => resumeAudioContext();
+
+            interactionEvents.forEach(event => {
+                document.addEventListener(event, handleInteraction, { passive: true });
+            });
+
+            // Handle Visibility Change (Tab Switching)
+            const handleVisibilityChange = () => {
+                if (!document.hidden) {
+                    resumeAudioContext();
+                }
+            };
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            // -------------------------------------------
             const totalSounds = ALL_NOTES.length;
             loadedCountRef.current = 0;
 
@@ -109,6 +137,11 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
     }, []);
 
     const playNote = useCallback((noteName: string, volume: number = 0.6) => {
+        // Attempt to resume context if suspended (Safety check)
+        if (howlerGlobalRef.current?.ctx?.state === 'suspended') {
+            howlerGlobalRef.current.ctx.resume();
+        }
+
         const sound = soundsRef.current[noteName];
 
         // Try Howler first if available and loaded
