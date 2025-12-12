@@ -93,7 +93,7 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
                     </div>
                 )}
             </div>
-            <p className="text-center font-black text-zinc-800 dark:text-zinc-100 mt-1 tracking-tight uppercase drop-shadow-lg whitespace-nowrap text-[clamp(28px,7vw,100px)] leading-tight">
+            <p className="text-center font-black text-zinc-800 dark:text-zinc-100 mt-1 tracking-tight uppercase whitespace-nowrap text-[clamp(28px,7vw,100px)] leading-tight">
                 {scale.name}
             </p>
         </div>
