@@ -17,8 +17,6 @@ import { useOctaveResonance, ResonanceSettings } from '../hooks/useOctaveResonan
 import { DEFAULT_HARMONIC_SETTINGS, DigipanHarmonicConfig } from '../constants/harmonicDefaults';
 import { useDigipanRecorder } from '../hooks/useDigipanRecorder';
 
-
-
 const CameraHandler = ({
     isLocked,
     enableZoom = true,
@@ -1078,10 +1076,65 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
         resetIdleTimer(5000);
     };
 
+    // Recording State Management
+    // Removed SaveModal state as we now rely on system dialogs
+    const [currentBlob, setCurrentBlob] = useState<Blob | null>(null);
+
+    // Save/Share Logic triggered Directly
+    const handleSaveRecording = async (filename: string, directBlob?: Blob) => {
+        const blobToUse = directBlob || currentBlob;
+        if (!blobToUse) return;
+
+        // Ensure extension matches mimeType
+        const ext = blobToUse.type.includes('mp4') ? 'mp4' : 'webm';
+        const fullFilename = `${filename}.${ext}`;
+        const file = new File([blobToUse], fullFilename, { type: blobToUse.type });
+
+        // Method A: Try Web Share API (Mobile Native Experience)
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    files: [file],
+                    title: 'Digipan Performance',
+                    text: 'Check out my handpan performance!',
+                });
+            } catch (err: any) {
+                if (err.name !== 'AbortError') {
+                    downloadFile(blobToUse, fullFilename);
+                }
+            }
+        } else {
+            // Method B: Desktop Download (System Dialog)
+            downloadFile(blobToUse, fullFilename);
+        }
+
+        setCurrentBlob(null);
+    };
+
+    const downloadFile = (blob: Blob, name: string) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+    };
+
     // Recording Handler
     const handleRecordToggle = async () => {
         if (isRecording) {
-            stopRecording();
+            try {
+                const blob = await stopRecording();
+                // Unified Logic: Always Direct Save (System Dialog)
+                handleSaveRecording(`digipan-video-${Date.now()}`, blob);
+            } catch (err) {
+                console.error("Failed to stop recording:", err);
+            }
         } else {
             startRecording();
         }
@@ -1204,7 +1257,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                 <div className="absolute bottom-1 left-1/2 -translate-x-1/2 z-50 transform w-full flex justify-center pointer-events-none">
                     <div className="relative flex items-center justify-center">
                         {/* 텍스트 - 가로 중앙 정렬 */}
-                        <span className="text-[1.8rem] md:text-[2.4rem] lg:text-[3rem] font-black tracking-tight text-slate-900 dark:text-white uppercase text-center opacity-60">
+                        <span className="text-[1.8rem] md:text-[2.4rem] lg:text-[3rem] font-black tracking-tight text-slate-900 dark:text-white uppercase text-center opacity-80">
                             {scale?.name || 'Play Demo'}
                         </span>
                     </div>
@@ -1276,6 +1329,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
 
             <Canvas
                 orthographic
+                dpr={isDevPage ? [1, 2.5] : [1, 1.5]}
                 gl={{ preserveDrawingBuffer: true }}
                 camera={{
                     zoom: 12, // Adjusted for 57cm object
@@ -1421,6 +1475,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     showAllScales={true} // Forcing Global List Logic
                 />
             )}
+
         </div>
     );
 });

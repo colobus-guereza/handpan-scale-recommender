@@ -8,9 +8,11 @@ export interface ResonanceSettings {
     masterGain: number;     // Volume of the harmonic
 }
 
+// Global Cache for AudioBuffers (Persists across component unmounts)
+const globalAudioBuffers = new Map<string, AudioBuffer>();
+
 export const useOctaveResonance = () => {
     const audioContextRef = useRef<AudioContext | null>(null);
-    const audioBuffers = useRef<Map<string, AudioBuffer>>(new Map());
 
     // Initialize AudioContext on mount (or first interaction)
     useEffect(() => {
@@ -20,30 +22,29 @@ export const useOctaveResonance = () => {
         }
         return () => {
             if (audioContextRef.current) {
-                audioContextRef.current.close();
+                audioContextRef.current.close().catch(e => console.warn("Failed to close AC", e));
             }
         };
     }, []);
 
-    // Load Audio Buffer (Memoized)
+    // Load Audio Buffer (Global Cache)
     const loadBuffer = useCallback(async (noteName: string) => {
-        if (!audioContextRef.current) return null;
-
-        // Return existing if already loaded
-        if (audioBuffers.current.has(noteName)) {
-            return audioBuffers.current.get(noteName);
+        // Return existing from Global Cache if available
+        if (globalAudioBuffers.has(noteName)) {
+            return globalAudioBuffers.get(noteName)!;
         }
 
+        if (!audioContextRef.current) return null;
+
         try {
-            // Note names in file system might need sanitization if they contain #
-            // But based on existing code, they seem to be stored as "A#3.mp3" etc.
-            // encodeURIComponent might be safer for URL
             const fileName = noteName.replace('#', '%23'); // Simple manual encode for #
             const response = await fetch(`/sounds/${fileName}.mp3`);
             const arrayBuffer = await response.arrayBuffer();
+
+            // decoding audio data requires a context
             const audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
 
-            audioBuffers.current.set(noteName, audioBuffer);
+            globalAudioBuffers.set(noteName, audioBuffer);
             return audioBuffer;
         } catch (error) {
             console.error(`Failed to load resonance audio: ${noteName}`, error);
@@ -76,24 +77,12 @@ export const useOctaveResonance = () => {
         const startTime = now + settings.delayTime;
 
         // 1. Attack Trim (Offset start position)
-        // We pass this offset to start()
 
         // 2. Fade In (Exponential Ramp)
         // Initial silence
         gainNode.gain.setValueAtTime(0, startTime);
 
-        // Ramp up
-        // Using setTargetAtTime for "pressed to the right" exponential feel, or exponentialRampToValueAtTime
-        // exponentialRampToValueAtTime requires start value > 0.
-        // Let's use linearRamp for simple tests, or custom curve.
-        // User asked for "pressed to the right" (~exponential).
-
         if (settings.fadeInCurve > 1) {
-            // approximating curve with setTargetAtTime
-            // value approaches target with exponential decay
-            // We want the opposite: slow start, fast end? No, fade in is usuall S-curve or Exp.
-            // "Pressed to the right" usually means Convex (slow rise then fast) -> High exponent power.
-
             // WebAudio implementation:
             gainNode.gain.linearRampToValueAtTime(0.01, startTime); // Prevent 0 error for exp
             gainNode.gain.exponentialRampToValueAtTime(settings.masterGain, startTime + settings.fadeInDuration);
@@ -112,7 +101,7 @@ export const useOctaveResonance = () => {
     // Smart Preloading Function
     const preloadNotes = useCallback(async (noteNames: string[]) => {
         if (!audioContextRef.current) {
-            // Initialize if not ready
+            // Initialize if not ready for preloading context
             const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
             if (AudioContextClass) {
                 audioContextRef.current = new AudioContext();
@@ -121,7 +110,10 @@ export const useOctaveResonance = () => {
 
         // Parallel loading without blocking
         noteNames.forEach(note => {
-            loadBuffer(note).catch(err => console.warn(`[Resonance] Preload failed for ${note}`, err));
+            // Only load if not already in global cache
+            if (!globalAudioBuffers.has(note)) {
+                loadBuffer(note).catch(err => console.warn(`[Resonance] Preload failed for ${note}`, err));
+            }
         });
     }, [loadBuffer]);
 

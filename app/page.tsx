@@ -17,6 +17,11 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
+import * as THREE from 'three';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
 // Mock Data
 const PRODUCTS = [
     {
@@ -426,6 +431,17 @@ export default function Home() {
     const [scaleIdFromUrl, setScaleIdFromUrl] = useState<string | null>(null);
     const [language, setLanguage] = useState<Language>('ko');
     const t = TRANSLATIONS[language];
+
+    // Font Preloading for Home Screen (Same as Developer Page)
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            THREE.Cache.enabled = true;
+            const loader = new FontLoader();
+            loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', () => {
+                console.log('TouchText Font preloaded (Home)');
+            });
+        }
+    }, []);
 
     // 클라이언트 측에서 URL 파라미터 읽기
     useEffect(() => {

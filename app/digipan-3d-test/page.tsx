@@ -16,6 +16,8 @@ import { ChevronDown, RefreshCw, Smartphone, Monitor, Grid, Lock, Unlock, Camera
 import { Digipan3DHandle } from '../../components/Digipan3D';
 import { useControls, button, Leva } from 'leva';
 import { getNoteFrequency } from '@/constants/noteFrequencies';
+import * as THREE from 'three';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 
 export default function Digipan3DTestPage() {
     // Mode State: '9', '10', '11', '12', '14', '14M', '15M', '18M', 'DM'
@@ -56,6 +58,17 @@ export default function Digipan3DTestPage() {
             digipanRef.current.handleDemoPlay();
         }
     };
+
+    // Preload Font and Assets
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            THREE.Cache.enabled = true;
+            const loader = new FontLoader();
+            loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', () => {
+                console.log('TouchText Font preloaded');
+            });
+        }
+    }, []);
 
     // Handle Scale Change
     const handleScaleSelect = React.useCallback((newScale: any) => {

@@ -90,44 +90,67 @@ export const useDigipanRecorder = ({ canvasRef, getAudioContext, getMasterGain }
 
                 // Compile the blob
                 const blob = new Blob(chunksRef.current, { type: actualMimeType });
-                const url = URL.createObjectURL(blob);
 
-                // Prompt for Filename
-                const defaultName = `digipan-performance-${Date.now()}`;
+                // Construct a default filename with timestamp
+                const fileName = `digipan-performance-${Date.now()}.${ext}`;
+                const file = new File([blob], fileName, { type: actualMimeType });
 
-                // Use a short timeout to ensure UI is responsive before blocking with prompt
-                setTimeout(() => {
-                    const userTitle = window.prompt("Enter a title for your recording:", defaultName);
+                // Method A: Try Web Share API (Mobile Native Experience)
+                // This invokes the native share sheet (Save to Files, AirDrop, etc.) which is the strict standard for iOS/Android.
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    navigator.share({
+                        files: [file],
+                        title: 'Digipan Performance',
+                        text: 'Check out my handpan performance!',
+                    })
+                        .then(() => {
+                            console.log('[Recorder] Shared successfully');
+                            cleanup();
+                        })
+                        .catch((err) => {
+                            console.warn('[Recorder] Share failed or cancelled, falling back to download:', err);
+                            // If user cancels share, we usually don't need to force download, 
+                            // but to be safe against errors, we can fallback.
+                            // However, 'AbortError' means user closed the sheet. We should probably respect that or just download.
+                            if (err.name !== 'AbortError') {
+                                triggerDownload(blob, fileName);
+                            } else {
+                                cleanup();
+                            }
+                        });
+                } else {
+                    // Method B: Desktop / Non-Share Fallback
+                    // Browsers like Chrome Desktop support this well.
+                    triggerDownload(blob, fileName);
+                }
 
-                    // If user cancels, we still save with default name (or could choose to discard)
-                    // Here we save with default if cancelled/empty to prevent data loss.
-                    const filename = (userTitle && userTitle.trim().length > 0) ? userTitle : defaultName;
-
-                    // Trigger Download
+                function triggerDownload(blob: Blob, fileName: string) {
+                    const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `${filename}.${ext}`;
+                    a.download = fileName;
                     document.body.appendChild(a);
                     a.click();
 
-                    // Cleanup
                     setTimeout(() => {
                         document.body.removeChild(a);
                         URL.revokeObjectURL(url);
+                        cleanup();
                     }, 100);
-                }, 10);
-
-                // Cleanup Audio Nodes
-                if (streamDestRef.current && masterGain) {
-                    try {
-                        masterGain.disconnect(streamDestRef.current); // Disconnect our recorder tap
-                    } catch (err) {
-                        console.warn('Failed to disconnect recorder node', err);
-                    }
                 }
 
-                setIsRecording(false);
-                console.log('[Recorder] Recording finished and downloaded.');
+                function cleanup() {
+                    // Cleanup Audio Nodes
+                    if (streamDestRef.current && masterGain) {
+                        try {
+                            masterGain.disconnect(streamDestRef.current);
+                        } catch (err) {
+                            console.warn('Failed to disconnect recorder node', err);
+                        }
+                    }
+                    setIsRecording(false);
+                    console.log('[Recorder] Finished and cleaned up.');
+                }
             };
 
             // Start
@@ -149,11 +172,39 @@ export const useDigipanRecorder = ({ canvasRef, getAudioContext, getMasterGain }
         }
     }, [canvasRef, getAudioContext, getMasterGain]);
 
-    const stopRecording = useCallback(() => {
-        if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-            mediaRecorderRef.current.stop();
-        }
-    }, []);
+    const stopRecording = useCallback((): Promise<Blob> => {
+        return new Promise((resolve, reject) => {
+            if (!mediaRecorderRef.current || mediaRecorderRef.current.state !== 'recording') {
+                reject(new Error('Recorder is not active'));
+                return;
+            }
+
+            const recorder = mediaRecorderRef.current;
+
+            // Override onstop for this specific stop call to handle the resolution
+            recorder.onstop = () => {
+                const actualMimeType = recorder.mimeType;
+                const blob = new Blob(chunksRef.current, { type: actualMimeType });
+
+                // Cleanup Audio Nodes
+                // Cleanup Audio Nodes
+                const masterGain = getMasterGain();
+                if (streamDestRef.current && masterGain) {
+                    try {
+                        masterGain.disconnect(streamDestRef.current);
+                    } catch (err) {
+                        console.warn('Failed to disconnect recorder node', err);
+                    }
+                }
+
+                setIsRecording(false);
+                console.log('[Recorder] Stopped. Blob created size:', blob.size);
+                resolve(blob);
+            };
+
+            recorder.stop();
+        });
+    }, [getMasterGain]);
 
     return {
         isRecording,
