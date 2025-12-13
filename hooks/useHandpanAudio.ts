@@ -73,6 +73,41 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
                 }
             };
 
+            // --- FEATURE: Audio Limiter (Compressor) for Peak Protection ---
+            // Existing issue: Polyphonic sounds sum up causing clipping on mobile speakers.
+            // Solution: Insert a DynamicsCompressorNode before the destination.
+            if (Howler && Howler.ctx && Howler.masterGain) {
+                try {
+                    // Check if we haven't already inserted a limiter (avoid double processing)
+                    // We can tag it or check the connection. For safety, we verify context exists.
+
+                    const ctx = Howler.ctx as AudioContext;
+                    const masterGain = Howler.masterGain as GainNode;
+
+                    // Create Limiter
+                    const limiter = ctx.createDynamicsCompressor();
+                    limiter.threshold.value = -2.0;  // Start compressing if we exceed -2dB
+                    limiter.knee.value = 0.0;        // Hard knee for limiter behavior
+                    limiter.ratio.value = 20.0;      // High ratio (effectively huge compression)
+                    limiter.attack.value = 0.001;    // Ultra-fast attack (1ms) to catch peaks instantly
+                    limiter.release.value = 0.1;     // Fast release (100ms) to recover volume quickly
+
+                    // Re-route: Howler.masterGain -> Limiter -> Destination
+                    // Default Howler connects masterGain -> ctx.destination
+
+                    // We disconnect masterGain from everything first
+                    masterGain.disconnect();
+
+                    // Reconnect chain
+                    masterGain.connect(limiter);
+                    limiter.connect(ctx.destination);
+
+                    console.log('[useHandpanAudio] Limiter/Compressor applied successfully');
+                } catch (err) {
+                    console.warn('[useHandpanAudio] Failed to apply limiter:', err);
+                }
+            }
+
             // Attach resumption to common interactions (Mobile Safari/Chrome require this)
             const interactionEvents = ['touchstart', 'touchend', 'click', 'keydown'];
             const handleInteraction = () => resumeAudioContext();

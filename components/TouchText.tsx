@@ -59,6 +59,10 @@ const ExplosionParticles = ({ active, position }: { active: boolean; position: T
 
     useFrame((state, delta) => {
         if (!isVisible || !groupRef.current) return;
+
+        // Safety: Ensure visible is true whenever we are processing frames
+        groupRef.current.visible = true;
+
         groupRef.current.children.forEach((child, i) => {
             const p = particles[i];
             if (p.life > 0) {
@@ -76,12 +80,13 @@ const ExplosionParticles = ({ active, position }: { active: boolean; position: T
         });
     });
 
-    if (!isVisible) return null;
-
+    // Always render, but control visibility. 
+    // This allows React to mount the meshes once, and Three.js to potentially pre-compile shaders/upload geometry.
+    // We start invisible if !isVisible.
     return (
-        <group ref={groupRef}>
+        <group ref={groupRef} visible={isVisible}>
             {particles.map((p, i) => (
-                <mesh key={i}>
+                <mesh key={i} visible={false}> {/* Start invisible until updated by frame loop */}
                     <icosahedronGeometry args={[0.6, 0]} /> {/* Adjusted size to 0.6 as requested */}
                     <meshBasicMaterial color={p.color} transparent opacity={0.9} />
                 </mesh>

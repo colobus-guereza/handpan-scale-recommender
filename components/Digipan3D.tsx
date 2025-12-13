@@ -1204,7 +1204,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                 <div className="absolute bottom-1 left-1/2 -translate-x-1/2 z-50 transform w-full flex justify-center pointer-events-none">
                     <div className="relative flex items-center justify-center">
                         {/* 텍스트 - 가로 중앙 정렬 */}
-                        <span className="text-[1.8rem] md:text-[2.4rem] lg:text-[3rem] font-black tracking-tight text-slate-900 dark:text-white uppercase text-center">
+                        <span className="text-[1.8rem] md:text-[2.4rem] lg:text-[3rem] font-black tracking-tight text-slate-900 dark:text-white uppercase text-center opacity-60">
                             {scale?.name || 'Play Demo'}
                         </span>
                     </div>
