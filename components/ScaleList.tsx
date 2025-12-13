@@ -408,57 +408,82 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
         togglePitch(pitch);
     };
 
-    // 필터링된 스케일 개수 계산
-    const filteredScaleCount = useMemo(() => {
-        return SCALES.filter(s => {
-            // Filter by category
-            if (selectedCategory && !matchesCategory(s, selectedCategory)) {
-                return false;
-            }
-
-            // Filter by note count
-            if (selectedNoteCount) {
-                const count = getNoteCount(s.name);
-                if (count !== selectedNoteCount) return false;
-            }
-
-            // Filter by type
-            if (selectedType) {
-                const isMutant = s.id.includes('mutant');
-                if (selectedType === 'mutant' && !isMutant) return false;
-                if (selectedType === 'normal' && isMutant) return false;
-            }
-
-            // Filter by selected pitches if any (딩 노트 기준)
-            if (selectedPitches.size > 0) {
-                const pitch = getPitchFromNote(s.notes.ding);
-                if (pitch === 'Db') {
-                    return selectedPitches.has('C#');
+    // 필터링된 스케일 목록 계산 (ScaleGrid에서 이동됨)
+    const filteredScales = useMemo(() => {
+        return [...SCALES]
+            .filter(s => {
+                // Filter by category
+                if (selectedCategory && !matchesCategory(s, selectedCategory)) {
+                    return false;
                 }
-                return selectedPitches.has(pitch);
-            }
 
-            // Filter by mood (조성)
-            if (selectedMood) {
-                if (selectedMood === 'minor' && s.vector.minorMajor >= 0) return false;
-                if (selectedMood === 'major' && s.vector.minorMajor < 0) return false;
-            }
+                // Filter by note count
+                if (selectedNoteCount) {
+                    const count = getNoteCount(s.name);
+                    if (count !== selectedNoteCount) return false;
+                }
 
-            // Filter by tone (음향질감)
-            if (selectedTone) {
-                if (selectedTone === 'pure' && s.vector.pureSpicy >= 0.5) return false;
-                if (selectedTone === 'spicy' && s.vector.pureSpicy < 0.5) return false;
-            }
+                // Filter by type
+                if (selectedType) {
+                    const isMutant = s.id.includes('mutant');
+                    if (selectedType === 'mutant' && !isMutant) return false;
+                    if (selectedType === 'normal' && isMutant) return false;
+                }
 
-            // Filter by popularity (대중성)
-            if (selectedPopularity) {
-                if (selectedPopularity === 'rare' && s.vector.rarePopular >= 0.5) return false;
-                if (selectedPopularity === 'popular' && s.vector.rarePopular < 0.5) return false;
-            }
+                // Filter by selected pitches if any (딩 노트 기준)
+                if (selectedPitches.size > 0) {
+                    const pitch = getPitchFromNote(s.notes.ding);
+                    // Db는 C#과 동일하게 처리 (Db 필터가 없으므로 C# 선택 시 Db도 표시)
+                    if (pitch === 'Db') {
+                        return selectedPitches.has('C#');
+                    }
+                    return selectedPitches.has(pitch);
+                }
 
-            return true;
-        }).length;
+                // Filter by mood (조성)
+                if (selectedMood) {
+                    if (selectedMood === 'minor' && s.vector.minorMajor >= 0) return false;
+                    if (selectedMood === 'major' && s.vector.minorMajor < 0) return false;
+                }
+
+                // Filter by tone (음향질감)
+                if (selectedTone) {
+                    if (selectedTone === 'pure' && s.vector.pureSpicy >= 0.5) return false;
+                    if (selectedTone === 'spicy' && s.vector.pureSpicy < 0.5) return false;
+                }
+
+                // Filter by popularity (대중성)
+                if (selectedPopularity) {
+                    if (selectedPopularity === 'rare' && s.vector.rarePopular >= 0.5) return false;
+                    if (selectedPopularity === 'popular' && s.vector.rarePopular < 0.5) return false;
+                }
+
+                return true;
+            })
+            .sort((a, b) => {
+                // 딩 노트의 알파벳 순서로 정렬 - CDEFGAB 순서
+                const pitchA = getPitchFromNote(a.notes.ding);
+                const pitchB = getPitchFromNote(b.notes.ding);
+                // 피치에서 첫 글자만 추출 (예: "C" -> "C", "C#" -> "C", "Bb" -> "B")
+                const letterA = pitchA.charAt(0).toUpperCase();
+                const letterB = pitchB.charAt(0).toUpperCase();
+
+                // CDEFGAB 순서 정의
+                const order = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+                const indexA = order.indexOf(letterA);
+                const indexB = order.indexOf(letterB);
+
+                // 순서에 없는 경우(예: 잘못된 노트)는 뒤로
+                if (indexA === -1 && indexB === -1) return 0;
+                if (indexA === -1) return 1;
+                if (indexB === -1) return -1;
+
+                return indexA - indexB;
+            });
     }, [selectedCategory, selectedNoteCount, selectedType, selectedPitches, selectedMood, selectedTone, selectedPopularity, matchesCategory, getNoteCount, getPitchFromNote]);
+
+    // 필터링된 스케일 개수 (filteredScales 길이라서 간단해짐)
+    const filteredScaleCount = filteredScales.length;
 
     const totalScaleCount = SCALES.length;
     const hasActiveFilters = selectedCategory || selectedNoteCount || selectedType || selectedPitches.size > 0 || selectedMood || selectedTone || selectedPopularity;
@@ -608,8 +633,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                         })()}
                                     </div>
 
-                                    {/* Mobile Navigation Indicators */}
-                                    {displayScales.length > 1 && (
+                                    {/* Mobile Navigation Indicators - Limit to 20 dots to prevent layout explosion */}
+                                    {displayScales.length > 1 && displayScales.length <= 20 && (
                                         <div className="flex space-x-1 md:hidden">
                                             {displayScales.map((_, idx) => (
                                                 <div
@@ -730,7 +755,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                         <div className="absolute top-1/2 -translate-y-1/2 -left-[10px] w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[10px] border-r-yellow-200/30 dark:border-r-yellow-100/20"></div>
                                         <div className="absolute top-1/2 -translate-y-1/2 -left-[9px] w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[10px] border-r-yellow-100 dark:border-r-[#FDFDEA]"></div>
 
-                                        <p className="text-slate-900 dark:text-slate-800 font-bold leading-relaxed text-base md:text-lg break-words" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                                        <p className="text-slate-900 dark:text-slate-800 font-bold leading-relaxed text-base md:text-lg break-words min-h-[80px] md:min-h-[100px] flex items-center" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
                                             {getLocalizedScale(currentScale, language).description}
                                         </p>
                                     </div>
@@ -877,9 +902,9 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                 </div>
             )}
 
-            {/* List Section */}
+            {/* List Section - Add overflow-anchor to prevent scroll jump */}
             {showAllScales && (
-                <div className="space-y-3 pt-4 border-t-2 border-slate-300 dark:border-slate-600">
+                <div className="space-y-3 pt-4 border-t-2 border-slate-300 dark:border-slate-600" style={{ overflowAnchor: 'none' }}>
                     <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-2">
                             <h3 className="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
@@ -1084,21 +1109,22 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                     )}
 
                     <ScaleGrid
-                        scales={SCALES}
-                        selectedCategory={selectedCategory}
-                        selectedNoteCount={selectedNoteCount}
-                        selectedType={selectedType}
-                        selectedPitches={selectedPitches}
-                        selectedMood={selectedMood}
-                        selectedTone={selectedTone}
-                        selectedPopularity={selectedPopularity}
+                        filteredScales={filteredScales}
                         currentScaleName={currentScale.name}
-                        matchesCategory={matchesCategory}
-                        getNoteCount={getNoteCount}
-                        getPitchFromNote={getPitchFromNote}
                         onScaleSelect={(scale) => {
-                            setDisplayScales([scale]);
-                            setCurrentIndex(0);
+                            // Find index in the current filtered list
+                            const index = filteredScales.findIndex(s => s.id === scale.id);
+
+                            if (index !== -1) {
+                                // Keep the full list structure (prevents layout shift due to button disappearance)
+                                setDisplayScales(filteredScales);
+                                setCurrentIndex(index);
+                            } else {
+                                // Fallback
+                                setDisplayScales([scale]);
+                                setCurrentIndex(0);
+                            }
+
                             // Only scroll to top on desktop (lg breakpoint: 1024px)
                             // Mobile/Tablet devices often behave erratically with smooth scroll + layout shift
                             if (window.innerWidth >= 1024) {
@@ -1115,116 +1141,29 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
 // Memoized Scale Grid Component to prevent unnecessary re-renders
 const ScaleGrid = React.memo(({
-    scales,
-    selectedCategory,
-    selectedNoteCount,
-    selectedType,
-    selectedPitches,
-    selectedMood,
-    selectedTone,
-    selectedPopularity,
+    filteredScales,
     currentScaleName,
-    matchesCategory,
-    getNoteCount,
-    getPitchFromNote,
     onScaleSelect,
     language
 }: {
-    scales: Scale[];
-    selectedCategory: string | null;
-    selectedNoteCount: number | null;
-    selectedType: 'normal' | 'mutant' | null;
-    selectedPitches: Set<string>;
-    selectedMood: 'minor' | 'major' | null;
-    selectedTone: 'pure' | 'spicy' | null;
-    selectedPopularity: 'rare' | 'popular' | null;
+    filteredScales: Scale[];
     currentScaleName: string;
-    matchesCategory: (scale: Scale, categoryId: string) => boolean;
-    getNoteCount: (name: string) => number | null;
-    getPitchFromNote: (note: string) => string;
     onScaleSelect: (scale: Scale) => void;
     language: Language;
 }) => {
     const t = TRANSLATIONS[language];
-    const filteredScales = useMemo(() => {
-        return [...scales]
-            .filter(s => {
-                // Filter by category
-                if (selectedCategory && !matchesCategory(s, selectedCategory)) {
-                    return false;
-                }
-
-                // Filter by note count
-                if (selectedNoteCount) {
-                    const count = getNoteCount(s.name);
-                    if (count !== selectedNoteCount) return false;
-                }
-
-                // Filter by type
-                if (selectedType) {
-                    const isMutant = s.id.includes('mutant');
-                    if (selectedType === 'mutant' && !isMutant) return false;
-                    if (selectedType === 'normal' && isMutant) return false;
-                }
-
-                // Filter by selected pitches if any (딩 노트 기준)
-                if (selectedPitches.size > 0) {
-                    const pitch = getPitchFromNote(s.notes.ding);
-                    // Db는 C#과 동일하게 처리 (Db 필터가 없으므로 C# 선택 시 Db도 표시)
-                    if (pitch === 'Db') {
-                        return selectedPitches.has('C#');
-                    }
-                    return selectedPitches.has(pitch);
-                }
-
-                // Filter by mood (조성)
-                if (selectedMood) {
-                    if (selectedMood === 'minor' && s.vector.minorMajor >= 0) return false;
-                    if (selectedMood === 'major' && s.vector.minorMajor < 0) return false;
-                }
-
-                // Filter by tone (음향질감)
-                if (selectedTone) {
-                    if (selectedTone === 'pure' && s.vector.pureSpicy >= 0.5) return false;
-                    if (selectedTone === 'spicy' && s.vector.pureSpicy < 0.5) return false;
-                }
-
-                // Filter by popularity (대중성)
-                if (selectedPopularity) {
-                    if (selectedPopularity === 'rare' && s.vector.rarePopular >= 0.5) return false;
-                    if (selectedPopularity === 'popular' && s.vector.rarePopular < 0.5) return false;
-                }
-
-                return true;
-            })
-            .sort((a, b) => {
-                // 딩 노트의 알파벳 순서로 정렬 - CDEFGAB 순서
-                const pitchA = getPitchFromNote(a.notes.ding);
-                const pitchB = getPitchFromNote(b.notes.ding);
-                // 피치에서 첫 글자만 추출 (예: "C" -> "C", "C#" -> "C", "Bb" -> "B")
-                const letterA = pitchA.charAt(0).toUpperCase();
-                const letterB = pitchB.charAt(0).toUpperCase();
-
-                // CDEFGAB 순서 정의
-                const order = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-                const indexA = order.indexOf(letterA);
-                const indexB = order.indexOf(letterB);
-
-                // 순서에 없는 경우(예: 잘못된 노트)는 뒤로
-                if (indexA === -1 && indexB === -1) return 0;
-                if (indexA === -1) return 1;
-                if (indexB === -1) return -1;
-
-                return indexA - indexB;
-            });
-    }, [scales, selectedCategory, selectedNoteCount, selectedType, selectedPitches, matchesCategory, getNoteCount, getPitchFromNote]);
+    // Internal filtering removed - receiving filtered list from parent
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {filteredScales.map((scale) => (
                 <button
+                    type="button"
                     key={scale.id}
-                    onClick={() => onScaleSelect(scale)}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        onScaleSelect(scale);
+                    }}
                     className={`scale-grid-button flex items-center justify-between p-4 border rounded-xl transition-all group text-left ${currentScaleName === scale.name
                         ? 'bg-indigo-50 dark:bg-cosmic/10 border-indigo-200 dark:border-cosmic/30 ring-1 ring-indigo-200 dark:ring-cosmic/20'
                         : 'bg-glass-light border-glass-border'
