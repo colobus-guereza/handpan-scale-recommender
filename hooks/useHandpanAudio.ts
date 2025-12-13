@@ -25,6 +25,8 @@ export interface UseHandpanAudioReturn {
     isLoaded: boolean;
     loadingProgress: number;
     playNote: (noteName: string, volume?: number) => void;
+    getAudioContext: () => any; // Returns AudioContext
+    getMasterGain: () => any; // Returns Head Master Gain
 }
 
 // Type for Howl instance (avoid importing at top level for SSR compatibility)
@@ -165,5 +167,13 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
         });
     }, []);
 
-    return { isLoaded, loadingProgress, playNote };
+    const getAudioContext = useCallback(() => {
+        return howlerGlobalRef.current?.ctx;
+    }, []);
+
+    const getMasterGain = useCallback(() => {
+        return howlerGlobalRef.current?.masterGain;
+    }, []);
+
+    return { isLoaded, loadingProgress, playNote, getAudioContext, getMasterGain };
 };

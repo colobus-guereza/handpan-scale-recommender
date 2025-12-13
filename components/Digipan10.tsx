@@ -25,6 +25,7 @@ interface Digipan10Props {
     forceCompactView?: boolean;
     notes?: any[]; // Allow passing notes for editor mode override
     showAxes?: boolean;
+    onIsRecordingChange?: (isRecording: boolean) => void;
 }
 
 const Digipan10 = React.forwardRef<Digipan3DHandle, Digipan10Props>(({
@@ -44,7 +45,8 @@ const Digipan10 = React.forwardRef<Digipan3DHandle, Digipan10Props>(({
 
     forceCompactView = false,
     notes: externalNotes,
-    showAxes = false
+    showAxes = false,
+    onIsRecordingChange
 }, ref) => {
 
     // 10-Note Specific Layout (Coordinates for 10notes.png)
@@ -251,6 +253,7 @@ const Digipan10 = React.forwardRef<Digipan3DHandle, Digipan10Props>(({
             showLabelToggle={showLabelToggle}
             forceCompactView={forceCompactView}
             showAxes={showAxes}
+            onIsRecordingChange={onIsRecordingChange}
             sceneSize={forceCompactView ? { width: 66, height: 50 } : { width: 64, height: 60 }}
         />
     );

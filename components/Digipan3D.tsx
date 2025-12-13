@@ -1,19 +1,24 @@
 'use client';
 
-import React, { useState, useRef, useMemo, Suspense, useEffect } from 'react';
+import React, { useState, useRef, useMemo, Suspense, useEffect, useCallback } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Text, OrbitControls, Center, Line, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { Scale } from '../data/handpanScales';
-import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Ship } from 'lucide-react';
+import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Play, Ship, Pointer, Disc, Square } from 'lucide-react';
 import { HANDPAN_CONFIG, getDomeHeight, TONEFIELD_CONFIG } from '../constants/handpanConfig';
 import html2canvas from 'html2canvas';
 import { useHandpanAudio } from '../hooks/useHandpanAudio';
 import { usePathname } from 'next/navigation';
 import ScaleInfoPanel from './ScaleInfoPanel';
+import TouchText from './TouchText';
 import CyberBoat from './CyberBoat';
+import { useOctaveResonance, ResonanceSettings } from '../hooks/useOctaveResonance';
+import { DEFAULT_HARMONIC_SETTINGS, DigipanHarmonicConfig } from '../constants/harmonicDefaults';
+import { useDigipanRecorder } from '../hooks/useDigipanRecorder';
 
-// Inner component to handle camera reset
+
+
 const CameraHandler = ({
     isLocked,
     enableZoom = true,
@@ -113,535 +118,19 @@ interface Digipan3DProps {
     sceneSize?: { width: number; height: number }; // New Prop for Auto-Fit
     cameraTargetY?: number;
     showAxes?: boolean; // Show/hide x, y, z axes and coordinates
+    harmonicSettings?: DigipanHarmonicConfig; // Optional override for harmonics
+    onIsRecordingChange?: (isRecording: boolean) => void;
 }
 
 export interface Digipan3DHandle {
     handleCapture: () => Promise<void>;
     handleDemoPlay: () => Promise<void>;
+    handleRecordToggle: () => Promise<void>;
     toggleViewMode: () => void;
+    toggleIdleBoat: () => void;
+    toggleTouchText: () => void;
 }
 
-const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
-    notes,
-    onNoteClick,
-    isCameraLocked = false,
-    scale,
-    centerX = 500,
-    centerY = 500,
-    onScaleSelect,
-    backgroundImage,
-    extraControls,
-    noteCountFilter = 10,
-    // Defaults for Dev Mode (Show All)
-    showControls = true,
-    showInfoPanel = true,
-    initialViewMode = 0,
-    viewMode: controlledViewMode, // New Prop for Controlled Mode
-    onViewModeChange,
-    enableZoom = true,
-    enablePan = true,
-    showLabelToggle = false,
-    forceCompactView = false,
-    backgroundContent,
-    tonefieldOffset = [0, 0, 0],
-    hideStaticLabels = false,
-    sceneSize = { width: 60, height: 60 }, // Default for Single Pan
-    cameraTargetY = 0, // Vertical Shift Target
-    showAxes = false // Default to false, will be controlled by parent
-}, ref) => {
-    const pathname = usePathname();
-    // ScaleInfoPanel은 /digipan-3d-test 경로에서만 표시
-    const isDevPage = pathname === '/digipan-3d-test';
-
-    const [isCameraLockedState, setIsCameraLocked] = useState(isCameraLocked);
-    const [copySuccess, setCopySuccess] = useState(false);
-    // Default expanded unless forced compact
-    const [isInfoExpanded, setIsInfoExpanded] = useState(!forceCompactView);
-    const [isSelectorOpen, setIsSelectorOpen] = useState(false);
-    const [demoNoteId, setDemoNoteId] = useState<number | null>(null);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-
-    // Idle State Logic
-    const [isIdle, setIsIdle] = useState(false);
-    const [showIdleBoat, setShowIdleBoat] = useState(true); // Control Toggle State
-    const lastInteractionTime = useRef(Date.now());
-    const IDLE_TIMEOUT = 5000; // 5 seconds
-    const idleCheckInterval = useRef<NodeJS.Timeout | null>(null);
-
-    const resetIdleTimer = (delayOverhead = 0) => {
-        // Reset timer to Current Time + Delay Overhead (e.g. Sound Duration)
-        // This effectively postpones the "5s check" until the sound finishes
-        lastInteractionTime.current = Date.now() + delayOverhead;
-        if (isIdle) {
-            setIsIdle(false);
-        }
-    };
-
-    useEffect(() => {
-        // Start Interval to check idle state
-        idleCheckInterval.current = setInterval(() => {
-            const now = Date.now();
-            if (now - lastInteractionTime.current > IDLE_TIMEOUT) {
-                setIsIdle(true);
-            }
-        }, 1000); // Check every second
-
-        return () => {
-            if (idleCheckInterval.current) clearInterval(idleCheckInterval.current);
-        };
-    }, [isIdle]);
-
-    // View Mode: 0 = Default (All), 1 = No Labels, 2 = No Mesh (Levels Only), 3 = Hidden (Interaction Only), 4 = Guide (Image + Dots)
-    // Initialize with controlled prop if available, else initialViewMode
-    const [internalViewMode, setInternalViewMode] = useState<0 | 1 | 2 | 3 | 4>(
-        controlledViewMode !== undefined ? controlledViewMode : initialViewMode
-    );
-
-    // Sync state with controlled prop if it changes
-    useEffect(() => {
-        if (controlledViewMode !== undefined) {
-            setInternalViewMode(controlledViewMode);
-        }
-    }, [controlledViewMode]);
-
-    const viewMode = controlledViewMode !== undefined ? controlledViewMode : internalViewMode;
-
-    const setViewMode = (modeOrFn: 0 | 1 | 2 | 3 | 4 | ((prev: 0 | 1 | 2 | 3 | 4) => 0 | 1 | 2 | 3 | 4)) => {
-        let newMode: 0 | 1 | 2 | 3 | 4;
-        if (typeof modeOrFn === 'function') {
-            newMode = modeOrFn(viewMode);
-        } else {
-            newMode = modeOrFn;
-        }
-
-        if (onViewModeChange) {
-            onViewModeChange(newMode);
-        } else {
-            setInternalViewMode(newMode);
-        }
-    };
-
-    // Audio Preloader Hook - Loads all sounds on mount for instant playback
-    const { isLoaded: isAudioLoaded, playNote } = useHandpanAudio();
-
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    // Auto-collapse panel when switching to compact view (Mobile Preview)
-    useEffect(() => {
-        if (forceCompactView) {
-            setIsInfoExpanded(false);
-        }
-    }, [forceCompactView]);
-
-    // Sync internal camera lock state with prop from parent
-    useEffect(() => {
-        setIsCameraLocked(isCameraLocked);
-    }, [isCameraLocked]);
-
-    // Dynamic Scale Filter based on noteCountFilter and Search Query
-    const filteredScales = useMemo(() => {
-        return SCALES.filter(s => {
-            const totalNotes = 1 + s.notes.top.length + s.notes.bottom.length;
-            const matchesCount = totalNotes === noteCountFilter;
-            const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase());
-            return matchesCount && matchesSearch;
-        }).sort((a, b) => a.name.localeCompare(b.name));
-    }, [noteCountFilter, searchQuery]);
-
-    const handleCapture = async () => {
-        if (!containerRef.current) return;
-
-        try {
-            const controls = containerRef.current.querySelector('.controls-container') as HTMLElement;
-            if (controls) controls.style.display = 'none';
-
-            const canvas = await html2canvas(containerRef.current, {
-                background: '#FFFFFF',
-                logging: false,
-                useCORS: true
-            });
-
-            if (controls) controls.style.display = 'flex';
-
-            canvas.toBlob(async (blob) => {
-                if (!blob) return;
-                try {
-                    await navigator.clipboard.write([
-                        new ClipboardItem({
-                            'image/png': blob
-                        })
-                    ]);
-                    setCopySuccess(true);
-                    setTimeout(() => setCopySuccess(false), 2000);
-                } catch (err) {
-                    console.error('Failed to copy to clipboard:', err);
-                }
-            });
-        } catch (err) {
-            console.error('Failed to capture canvas:', err);
-        }
-    };
-
-    const handleDemoPlay = async () => {
-        if (isPlaying) return;
-        setIsPlaying(true);
-
-        // Sort ALL notes by frequency (Low -> High)
-        // This handles both cases:
-        // - Type 1 (D Kurd 12): Ding is lowest, starts from Ding
-        // - Type 2 (E Equinox 12): Bottom notes are lower than Ding, starts from bottom
-        const sortedNotes = [...notes].sort((a, b) => a.frequency - b.frequency);
-
-        // The LOWEST frequency note gets the root emphasis (not necessarily Ding)
-        const lowestNoteId = sortedNotes.length > 0 ? sortedNotes[0].id : -1;
-
-        // Helper to trigger a single note
-        const playNote = async (id: number, duration: number) => {
-            setDemoNoteId(id);
-            // Add slight random variation (Rubato)
-            const rubato = Math.random() * 30;
-            await new Promise(resolve => setTimeout(resolve, duration + rubato));
-
-            setDemoNoteId(null);
-            // Minimal gap for clean pulse
-            await new Promise(resolve => setTimeout(resolve, 30));
-        };
-
-        // Reset Timer for the total duration of the Demo
-        // Rough estimate: ~12 notes * ~500ms avg = 6000ms
-        // We act conservatively: just reset on start, and maybe at end?
-        // Better: Reset with large overhead or keep resetting. 
-        // Simple approach: Reset at start with LONG overhead.
-        resetIdleTimer(10000); // Assume demo takes ~10s
-
-        // 1. Ascending (Low -> High)
-        for (let i = 0; i < sortedNotes.length; i++) {
-            const id = sortedNotes[i].id;
-            const isRoot = id === lowestNoteId; // Root = Lowest frequency note
-            const isTop = i === sortedNotes.length - 1;
-
-            // Timing Logic:
-            // - Root (Lowest): 500ms (Heavy start)
-            // - Top Note: 800ms (Fermata/Peak linger)
-            // - Others: 180ms (Fluid flow)
-            let baseTime = isRoot ? 500 : 180;
-            if (isTop) baseTime = 800; // Linger at the peak
-
-            await playNote(id, baseTime);
-
-            // Root Emphasis: Add breath after the first (lowest) note
-            if (isRoot) {
-                await new Promise(resolve => setTimeout(resolve, 600));
-            }
-        }
-
-        // Explicit Pause/Breath at the Top before descending
-        await new Promise(resolve => setTimeout(resolve, 400));
-
-        // 2. Descending (High -> Low)
-        for (let i = sortedNotes.length - 1; i >= 0; i--) {
-            const id = sortedNotes[i].id;
-            const isRoot = id === lowestNoteId;
-
-            // Ending Emphasis: Add breath before the final (lowest) note
-            if (isRoot) {
-                await new Promise(resolve => setTimeout(resolve, 600));
-            }
-
-            // Standard flow for descent, Root lasts longer at the end
-            const baseTime = isRoot ? 800 : 180;
-
-            await playNote(id, baseTime);
-        }
-
-        setIsPlaying(false);
-    };
-
-    // Determine if we're in mobile mode (either preview or embedded)
-    const isMobileButtonLayout = forceCompactView || showLabelToggle;
-
-    // Expose methods via ref
-    React.useImperativeHandle(ref, () => ({
-        handleCapture,
-        handleDemoPlay,
-        toggleViewMode: () => {
-            setViewMode(prev => (prev + 1) % 5 as 0 | 1 | 2 | 3 | 4);
-        }
-    }));
-
-    return (
-        <div
-            ref={containerRef}
-            className="w-full h-full relative"
-            style={{ background: '#FFFFFF', touchAction: 'pan-y' }}
-        > {/* White Background, Allow vertical scroll */}
-            {/* Top-Right Controls Container - Hidden in Mobile Layout */}
-            {!isMobileButtonLayout && (
-                <div className="controls-container absolute top-4 right-4 z-50 flex flex-col gap-2 items-center">
-                    {/* 1-3. Admin Controls (Camera, Capture, ViewMode) - Toggle via showControls */}
-                    {showControls && (
-                        <>
-                            <button
-                                onClick={() => {
-                                    setIsCameraLocked(prev => !prev);
-                                }}
-                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                                title={isCameraLockedState ? "Unlock View (Free Rotation)" : "Lock View (Top Down)"}
-                            >
-                                {isCameraLockedState ? <Lock size={20} /> : <Unlock size={20} />}
-                            </button>
-
-                            <button
-                                onClick={handleCapture}
-                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                                title="Copy Screenshot to Clipboard"
-                            >
-                                {copySuccess ? <Check size={20} className="text-green-600" /> : <Camera size={20} />}
-                            </button>
-
-                            <button
-                                onClick={() => {
-                                    setViewMode(prev => (prev + 1) % 5 as 0 | 1 | 2 | 3 | 4);
-                                }}
-                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                                title={`Toggle Visibility (Current: Mode ${viewMode + 1})`}
-                            >
-                                <div className="relative flex items-center justify-center w-full h-full">
-                                    {/* Background Icon (Faint) */}
-                                    {viewMode === 0 && <Eye size={20} className="opacity-30" />}
-                                    {viewMode === 1 && <MinusCircle size={20} className="opacity-30" />}
-                                    {viewMode === 2 && <EyeOff size={20} className="opacity-30" />}
-                                    {viewMode === 3 && <EyeOff size={20} className="opacity-30" />}
-                                    {viewMode === 4 && <Eye size={20} className="opacity-30 text-blue-500" />}
-
-                                    {/* Number Overlay */}
-                                    <span className="absolute text-sm font-bold text-slate-800">{viewMode + 1}</span>
-                                </div>
-                            </button>
-                        </>
-                    )}
-
-                    {/* 4. Demo Play - Always Visible in Desktop Mode */}
-                    <button
-                        onClick={handleDemoPlay}
-                        disabled={isPlaying}
-                        className={`w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 ${isPlaying ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        title="Play Scale Demo"
-                    >
-                        <PlayCircle size={24} className={isPlaying ? "animate-pulse text-green-600" : ""} />
-                    </button>
-
-                    {/* 5. Idle Boat Toggle */}
-                    {showControls && (
-                        <button
-                            onClick={() => {
-                                setShowIdleBoat(prev => !prev);
-                            }}
-                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                            title={showIdleBoat ? "Hide Idle Boat" : "Show Idle Boat"}
-                        >
-                            <Ship size={20} className={showIdleBoat ? "text-blue-500" : "opacity-30"} />
-                        </button>
-                    )}
-
-                    {/* 5. Extra Controls (Injected) - Toggle via showControls to hide external switchers */}
-                    {showControls && extraControls}
-                </div>
-            )}
-
-            {/* Mobile Layout: Bottom Corner Buttons */}
-            {isMobileButtonLayout && (
-                <>
-                    {/* Top-Right: Extra Controls (e.g., Mode Switcher) - Positioned below status bar */}
-                    {showControls && extraControls && (
-                        <div className="controls-container absolute top-12 right-4 z-50 flex flex-col gap-2 items-center">
-                            {extraControls}
-                        </div>
-                    )}
-
-                    {/* Top-Left: Label Toggle (정보 표시/숨김) */}
-                    <div className="absolute top-2 left-2 z-50">
-                        <button
-                            onClick={() => {
-                                setViewMode(prev => prev === 3 ? 2 : 3);
-                                // resetIdleTimer(0); // Removed to prevent dismissing CyberBoat
-                            }}
-                            className="w-[38.4px] h-[38.4px] flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                            title={viewMode === 3 ? "Show Labels" : "Hide Labels"}
-                        >
-                            {viewMode === 3 ? <EyeOff size={16} className="opacity-50" /> : <Eye size={16} />}
-                        </button>
-                    </div>
-
-                    {/* Top-Right: Auto-Play (자동재생) */}
-                    <div className="absolute top-2 right-2 z-50">
-                        <button
-                            onClick={handleDemoPlay}
-                            disabled={isPlaying}
-                            className={`w-[38.4px] h-[38.4px] flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 ${isPlaying ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            title="Play Scale Demo"
-                        >
-                            <PlayCircle size={19.2} className={isPlaying ? "animate-pulse text-green-600" : ""} />
-                        </button>
-                    </div>
-                </>
-            )}
-
-            <Canvas
-                orthographic
-                gl={{ preserveDrawingBuffer: true }}
-                camera={{
-                    zoom: 12, // Adjusted for 57cm object
-                    position: [0, 0, 100],
-                    near: 0.1,
-                    far: 2000
-                }}
-            >
-                {/* Lighting - Adjusted for Blueprint look */}
-                <ambientLight intensity={1.0} /> {/* Bright ambient for flat look */}
-                <pointLight position={[0, 0, 100]} intensity={0.2} color="#ffffff" />
-                <directionalLight position={[-50, 100, 100]} intensity={0.5} />
-
-                <CameraHandler
-                    isLocked={isCameraLockedState}
-                    enableZoom={enableZoom}
-                    enablePan={enablePan}
-                    sceneSize={sceneSize}
-                    cameraTargetY={cameraTargetY}
-                />
-
-                <group>
-                    {/* CyberBoat (Tech Sailboat) - always mounted, handles its own vis/anim */}
-                    {/* Pass combined idle state: Only true if system is idle AND user wants to show it */}
-                    <CyberBoat isIdle={isIdle && showIdleBoat} />
-                    {/* Body */}
-                    <Suspense fallback={null}>
-                        {backgroundContent ? backgroundContent : <HandpanImage backgroundImage={backgroundImage} centerX={centerX} centerY={centerY} />}
-                    </Suspense>
-
-                    {/* Center Point and Axes (only in dev page and when showAxes is true) */}
-                    {isDevPage && showAxes && (
-                        <>
-                            {/* Center Point */}
-                            <mesh position={[0, 0, 0]}>
-                                <sphereGeometry args={[0.5, 16, 16]} />
-                                <meshBasicMaterial color="#ff0000" />
-                            </mesh>
-
-                            {/* Center Coordinates Label */}
-                            <Text
-                                position={[0, -1.5, 0]}
-                                fontSize={1}
-                                color="#000000"
-                                anchorX="center"
-                                anchorY="middle"
-                            >
-                                (0, 0, 0)
-                            </Text>
-
-                            {/* X-axis (Blue - Right) */}
-                            <mesh position={[10, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
-                                <cylinderGeometry args={[0.1, 0.1, 20, 8]} />
-                                <meshBasicMaterial color="#0000ff" />
-                            </mesh>
-                            <mesh position={[20, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
-                                <coneGeometry args={[0.3, 1, 8]} />
-                                <meshBasicMaterial color="#0000ff" />
-                            </mesh>
-                            <Text
-                                position={[21, 0, 0]}
-                                fontSize={0.8}
-                                color="#0000ff"
-                                anchorX="left"
-                                anchorY="middle"
-                            >
-                                X
-                            </Text>
-
-                            {/* Y-axis (Red - Up) */}
-                            <mesh position={[0, 10, 0]}>
-                                <cylinderGeometry args={[0.1, 0.1, 20, 8]} />
-                                <meshBasicMaterial color="#ff0000" />
-                            </mesh>
-                            <mesh position={[0, 20, 0]}>
-                                <coneGeometry args={[0.3, 1, 8]} />
-                                <meshBasicMaterial color="#ff0000" />
-                            </mesh>
-                            <Text
-                                position={[0, 21, 0]}
-                                fontSize={0.8}
-                                color="#ff0000"
-                                anchorX="center"
-                                anchorY="bottom"
-                            >
-                                Y
-                            </Text>
-
-                            {/* Z-axis (Green - Depth) */}
-                            <mesh position={[0, 0, 10]} rotation={[Math.PI / 2, 0, 0]}>
-                                <cylinderGeometry args={[0.1, 0.1, 20, 8]} />
-                                <meshBasicMaterial color="#00ff00" />
-                            </mesh>
-                            <mesh position={[0, 0, 20]} rotation={[Math.PI / 2, 0, 0]}>
-                                <coneGeometry args={[0.3, 1, 8]} />
-                                <meshBasicMaterial color="#00ff00" />
-                            </mesh>
-                            <Text
-                                position={[0, 0, 21]}
-                                fontSize={0.8}
-                                color="#00ff00"
-                                anchorX="center"
-                                anchorY="middle"
-                            >
-                                Z
-                            </Text>
-                        </>
-                    )}
-
-                    {/* Tone Fields */}
-                    {notes.map((note) => (
-                        <ToneFieldMesh
-                            key={note.id}
-                            note={note}
-                            centerX={centerX}
-                            centerY={centerY}
-                            onClick={(id) => {
-                                // Reset Idle Timer with Sound Duration Overhead 
-                                // (Assume ~3-4 seconds sustain)
-                                resetIdleTimer(3500);
-                                if (onNoteClick) onNoteClick(id);
-                            }}
-                            viewMode={viewMode}
-                            demoActive={demoNoteId === note.id}
-                            playNote={playNote}
-                            offset={note.offset || tonefieldOffset} // Prefer note offset, fallback to global
-                        />
-                    ))}
-                </group>
-            </Canvas>
-
-
-
-            {/* Scale Info Panel - Bottom Right Overlay (only shown in /digipan-3d-test dev page) */}
-            {isDevPage && scale && !forceCompactView && showInfoPanel && (
-                <ScaleInfoPanel
-                    scale={scale}
-                    onScaleSelect={onScaleSelect}
-                    noteCountFilter={noteCountFilter} // Still passed, but overridden by showAllScales
-                    className="" // Managed by DraggablePanel
-                    isMobileButtonLayout={isMobileButtonLayout}
-                    defaultExpanded={true}
-                    showAllScales={true} // Forcing Global List Logic
-                />
-            )}
-        </div>
-    );
-});
-
-export default Digipan3D;
-
-// -----------------------------------------------------------------------------
 // Constants & Types
 // -----------------------------------------------------------------------------
 
@@ -746,7 +235,7 @@ const HandpanImageRenderer = ({ url, position }: { url: string; position: [numbe
     );
 };
 
-const ToneFieldMesh = ({
+const ToneFieldMesh = React.memo(({
     note,
     centerX = 500,
     centerY = 500,
@@ -1213,9 +702,728 @@ const ToneFieldMesh = ({
 
         </group >
     );
-};
+});
+
+const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
+    notes,
+    onNoteClick,
+    isCameraLocked = false,
+    scale,
+    centerX = 500,
+    centerY = 500,
+    onScaleSelect,
+    backgroundImage,
+    extraControls,
+    noteCountFilter = 10,
+    // Defaults for Dev Mode (Show All)
+    showControls = true,
+    showInfoPanel = true,
+    initialViewMode = 0,
+    viewMode: controlledViewMode, // New Prop for Controlled Mode
+    onViewModeChange,
+    enableZoom = true,
+    enablePan = true,
+    showLabelToggle = false,
+    forceCompactView = false,
+    backgroundContent,
+    tonefieldOffset = [0, 0, 0],
+    hideStaticLabels = false,
+    sceneSize = { width: 60, height: 60 }, // Default for Single Pan
+    cameraTargetY = 0, // Vertical Shift Target
+    showAxes = false, // Default to false, will be controlled by parent
+    harmonicSettings, // Optional Override
+    onIsRecordingChange
+}, ref) => {
+    const pathname = usePathname();
+    // ScaleInfoPanel은 /digipan-3d-test 경로에서만 표시
+    const isDevPage = pathname === '/digipan-3d-test';
+
+    const [isCameraLockedState, setIsCameraLocked] = useState(isCameraLocked);
+    const [copySuccess, setCopySuccess] = useState(false);
+    // Default expanded unless forced compact
+    const [isInfoExpanded, setIsInfoExpanded] = useState(!forceCompactView);
+    const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+    const [demoNoteId, setDemoNoteId] = useState<number | null>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    // Audio Hook
+    const { isLoaded: isAudioLoaded, loadingProgress, playNote, getAudioContext, getMasterGain } = useHandpanAudio();
+
+    // Recorder Hook
+    // Note: We need access to the CANVAS DOM element.
+    // R3F Canvas creates a canvas inside the div containerRef.
+    // We can try to query it or use gl.domElement if we had access here (we don't outer ref).
+    // Alternative: Use a ref on the Canvas? R3F forwards refs to the canvas element since v8?
+    // Let's rely on querying the canvas from the container for now as a robust fallback.
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    // Workaround: Capture the canvas reference once mounted
+    useEffect(() => {
+        if (containerRef.current) {
+            const canvasEl = containerRef.current.querySelector('canvas');
+            if (canvasEl) {
+                // We can't assign to current directly on a generic ref if type doesn't match?
+                // Actually we can cast.
+                (canvasRef as any).current = canvasEl;
+            }
+        }
+    }, []);
+
+    const { isRecording, startRecording, stopRecording } = useDigipanRecorder({
+        canvasRef,
+        getAudioContext,
+        getMasterGain
+    });
+
+    // Sync Recording State with Parent
+    useEffect(() => {
+        if (onIsRecordingChange) {
+            onIsRecordingChange(isRecording);
+        }
+    }, [isRecording, onIsRecordingChange]);
+
+    const [isIdle, setIsIdle] = useState(true); // Default to True
+    const [showIdleBoat, setShowIdleBoat] = useState(false); // Default to OFF for DigiBall
+    const [showTouchText, setShowTouchText] = useState(true); // New State for Touch Text
+    const lastInteractionTime = useRef(Date.now() - 6000); // Allow immediate idle
+    const IDLE_TIMEOUT = 5000; // 5 seconds
+    const idleCheckInterval = useRef<NodeJS.Timeout | null>(null);
+
+    const resetIdleTimer = useCallback((delayOverhead = 0) => {
+        // Reset timer to Current Time + Delay Overhead (e.g. Sound Duration)
+        // This effectively postpones the "5s check" until the sound finishes
+        lastInteractionTime.current = Date.now() + delayOverhead;
+        setIsIdle(prev => prev ? false : prev);
+    }, []);
+
+    useEffect(() => {
+        // Start Interval to check idle state
+        idleCheckInterval.current = setInterval(() => {
+            const now = Date.now();
+            if (now - lastInteractionTime.current > IDLE_TIMEOUT) {
+                setIsIdle(true);
+            }
+        }, 1000); // Check every second
+
+        return () => {
+            if (idleCheckInterval.current) clearInterval(idleCheckInterval.current);
+        };
+    }, [isIdle]);
+
+    // View Mode: 0 = Default (All), 1 = No Labels, 2 = No Mesh (Levels Only), 3 = Hidden (Interaction Only), 4 = Guide (Image + Dots)
+    // Initialize with controlled prop if available, else initialViewMode
+    const [internalViewMode, setInternalViewMode] = useState<0 | 1 | 2 | 3 | 4>(
+        controlledViewMode !== undefined ? controlledViewMode : initialViewMode
+    );
+
+    // Sync state with controlled prop if it changes
+    useEffect(() => {
+        if (controlledViewMode !== undefined) {
+            setInternalViewMode(controlledViewMode);
+        }
+    }, [controlledViewMode]);
+
+    const viewMode = controlledViewMode !== undefined ? controlledViewMode : internalViewMode;
+
+    const setViewMode = (modeOrFn: 0 | 1 | 2 | 3 | 4 | ((prev: 0 | 1 | 2 | 3 | 4) => 0 | 1 | 2 | 3 | 4)) => {
+        let newMode: 0 | 1 | 2 | 3 | 4;
+        if (typeof modeOrFn === 'function') {
+            newMode = modeOrFn(viewMode);
+        } else {
+            newMode = modeOrFn;
+        }
+
+        if (onViewModeChange) {
+            onViewModeChange(newMode);
+        } else {
+            setInternalViewMode(newMode);
+        }
+    };
+
+    // Audio Preloader Hook - Loaded above
+
+    // Digital Harmonics Engine (Global)
+    const { playResonantNote, preloadNotes } = useOctaveResonance();
+
+    // Merge provided settings with defaults, or use defaults if none provided
+    // NOTE: In JS, spread merges shallowly. We want to respect nested overrides if partial...
+    // But typically we pass the FULL config object from Leva.
+    // If harmonicSettings is passed (from DigipanDM), use it entirely. If not, use DEFAULT.
+    const activeHarmonicConfig = harmonicSettings || DEFAULT_HARMONIC_SETTINGS;
+
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    // Auto-collapse panel when switching to compact view (Mobile Preview)
+    useEffect(() => {
+        if (forceCompactView) {
+            setIsInfoExpanded(false);
+        }
+    }, [forceCompactView]);
+
+    // Sync internal camera lock state with prop from parent
+    useEffect(() => {
+        setIsCameraLocked(isCameraLocked);
+    }, [isCameraLocked]);
 
 
-// -----------------------------------------------------------------------------
-// Main Component
-// -----------------------------------------------------------------------------
+    // Pre-calculate Resonance Map (Optimization: Move logic out of click handler)
+    const resonanceMap = useMemo(() => {
+        const map: Record<number, { label: string; settings: ResonanceSettings }[]> = {};
+        notes.forEach(sourceNote => {
+            if (!sourceNote.frequency) return;
+            const targets: { label: string; settings: ResonanceSettings }[] = [];
+
+            notes.forEach(targetNote => {
+                if (targetNote.id === sourceNote.id) return;
+                if (!targetNote.frequency) return;
+
+                const ratio = targetNote.frequency / sourceNote.frequency;
+                const tolerance = 0.03;
+
+                // Octave (x2, x4)
+                if ((Math.abs(ratio - 2.0) < tolerance || Math.abs(ratio - 4.0) < tolerance) && activeHarmonicConfig.octave.active) {
+                    targets.push({
+                        label: targetNote.label,
+                        settings: {
+                            trimStart: activeHarmonicConfig.octave.trim,
+                            fadeInDuration: activeHarmonicConfig.octave.fade,
+                            fadeInCurve: activeHarmonicConfig.octave.curve,
+                            delayTime: activeHarmonicConfig.octave.latency,
+                            masterGain: activeHarmonicConfig.octave.gain
+                        }
+                    });
+                }
+
+                // Fifth (x3)
+                if (Math.abs(ratio - 3.0) < tolerance && activeHarmonicConfig.fifth.active) {
+                    targets.push({
+                        label: targetNote.label,
+                        settings: {
+                            trimStart: activeHarmonicConfig.fifth.trim,
+                            fadeInDuration: activeHarmonicConfig.fifth.fade,
+                            fadeInCurve: activeHarmonicConfig.fifth.curve,
+                            delayTime: activeHarmonicConfig.fifth.latency,
+                            masterGain: activeHarmonicConfig.fifth.gain
+                        }
+                    });
+                }
+            });
+            if (targets.length > 0) map[sourceNote.id] = targets;
+        });
+        return map;
+    }, [notes, activeHarmonicConfig]);
+
+    // Smart Preloading: When Scale (notes) changes, preload all sounds immediately
+    useEffect(() => {
+        if (!notes || notes.length === 0) return;
+
+        // 1. Get all unique note labels in the current scale
+        const uniqueNotes = new Set<string>();
+        notes.forEach(n => uniqueNotes.add(n.label));
+
+        // 2. Preload them all in parallel
+        preloadNotes(Array.from(uniqueNotes));
+    }, [notes, preloadNotes]);
+
+    // Optimized Click Handler (Stable Callback)
+    const handleToneFieldClick = useCallback((id: number) => {
+        // 1. Audio Priority: Play immediately
+        // Note: playNote is handled inside ToneFieldMesh for instant feedback? 
+        // No, ToneFieldMesh calls playNote via prop.
+        // Wait, ToneFieldMesh implementation calls playNote locally inside handlePointerDown if playNote is provided.
+        // So Main Note is already handled. We just need to handle Resonance here?
+
+        // Actually, if we want to synchronize, we might want to handle it here.
+        // But ToneFieldMesh implementation:
+        // handlePointerDown -> onClick(id) -> playNote(label)
+        // See lines 1127-1133 of Digipan3D.tsx (ToneFieldMesh)
+        // It calls onClick THEN playNote.
+        // So handleToneFieldClick runs BEFORE main note audio? No, inside onClick.
+        // Javascript is single threaded.
+        // To be safe, Resonance should be triggered asap.
+
+        // 2. Play Resonant Notes (Lookup Map - O(1))
+        const resonantTargets = resonanceMap[id];
+        if (resonantTargets) {
+            resonantTargets.forEach(target => {
+                playResonantNote(target.label, target.settings);
+            });
+        }
+
+        // 3. Logic & State Updates
+        resetIdleTimer(3500);
+        if (onNoteClick) onNoteClick(id);
+
+    }, [resonanceMap, playResonantNote, onNoteClick]); // removed resetIdleTimer dependency if it's ref-based, but it uses state setters? check impl.
+
+    // Dynamic Scale Filter based on noteCountFilter and Search Query
+    const filteredScales = useMemo(() => {
+        return SCALES.filter(s => {
+            const totalNotes = 1 + s.notes.top.length + s.notes.bottom.length;
+            const matchesCount = totalNotes === noteCountFilter;
+            const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase());
+            return matchesCount && matchesSearch;
+        }).sort((a, b) => a.name.localeCompare(b.name));
+    }, [noteCountFilter, searchQuery]);
+
+    const handleCapture = async () => {
+        if (!containerRef.current) return;
+
+        try {
+            const controls = containerRef.current.querySelector('.controls-container') as HTMLElement;
+            if (controls) controls.style.display = 'none';
+
+            const canvas = await html2canvas(containerRef.current, {
+                background: '#FFFFFF',
+                logging: false,
+                useCORS: true
+            });
+
+            if (controls) controls.style.display = 'flex';
+
+            canvas.toBlob(async (blob) => {
+                if (!blob) return;
+                try {
+                    await navigator.clipboard.write([
+                        new ClipboardItem({
+                            'image/png': blob
+                        })
+                    ]);
+                    setCopySuccess(true);
+                    setTimeout(() => setCopySuccess(false), 2000);
+                } catch (err) {
+                    console.error('Failed to copy to clipboard:', err);
+                }
+            });
+        } catch (err) {
+            console.error('Failed to capture canvas:', err);
+        }
+    };
+
+    const handleDemoPlay = async () => {
+        if (isPlaying) return;
+        setIsPlaying(true);
+
+        // Sort ALL notes by frequency (Low -> High)
+        // This handles both cases:
+        // - Type 1 (D Kurd 12): Ding is lowest, starts from Ding
+        // - Type 2 (E Equinox 12): Bottom notes are lower than Ding, starts from bottom
+        const sortedNotes = [...notes].sort((a, b) => a.frequency - b.frequency);
+
+        // The LOWEST frequency note gets the root emphasis (not necessarily Ding)
+        const lowestNoteId = sortedNotes.length > 0 ? sortedNotes[0].id : -1;
+
+        // Helper to trigger a single note
+        const playNote = async (id: number, duration: number) => {
+            setDemoNoteId(id);
+            // Add slight random variation (Rubato)
+            const rubato = Math.random() * 30;
+            await new Promise(resolve => setTimeout(resolve, duration + rubato));
+
+            setDemoNoteId(null);
+            // Minimal gap for clean pulse
+            await new Promise(resolve => setTimeout(resolve, 30));
+        };
+
+        // Reset Timer for the total duration of the Demo
+        // Rough estimate: ~12 notes * ~500ms avg = 6000ms
+        // We act conservatively: just reset on start, and maybe at end?
+        // Better: Reset with large overhead or keep resetting. 
+        // Simple approach: Reset at start with LONG overhead.
+        resetIdleTimer(10000); // Assume demo takes ~10s
+
+        // 1. Ascending (Low -> High)
+        for (let i = 0; i < sortedNotes.length; i++) {
+            const id = sortedNotes[i].id;
+            const isRoot = id === lowestNoteId; // Root = Lowest frequency note
+            const isTop = i === sortedNotes.length - 1;
+
+            // Timing Logic:
+            // - Root (Lowest): 500ms (Heavy start)
+            // - Top Note: 800ms (Fermata/Peak linger)
+            // - Others: 180ms (Fluid flow)
+            let baseTime = isRoot ? 500 : 180;
+            if (isTop) baseTime = 800; // Linger at the peak
+
+            await playNote(id, baseTime);
+
+            // Root Emphasis: Add breath after the first (lowest) note
+            if (isRoot) {
+                await new Promise(resolve => setTimeout(resolve, 600));
+            }
+        }
+
+        // Explicit Pause/Breath at the Top before descending
+        await new Promise(resolve => setTimeout(resolve, 400));
+
+        // 2. Descending (High -> Low)
+        for (let i = sortedNotes.length - 1; i >= 0; i--) {
+            const id = sortedNotes[i].id;
+            const isRoot = id === lowestNoteId;
+
+            // Ending Emphasis: Add breath before the final (lowest) note
+            if (isRoot) {
+                await new Promise(resolve => setTimeout(resolve, 600));
+            }
+
+            // Standard flow for descent, Root lasts longer at the end
+            const baseTime = isRoot ? 800 : 180;
+
+            await playNote(id, baseTime);
+        }
+
+        setIsPlaying(false);
+        // 재생이 끝나면 5초 후에 버튼이 다시 나타나도록 타이머 리셋
+        resetIdleTimer(5000);
+    };
+
+    // Recording Handler
+    const handleRecordToggle = async () => {
+        if (isRecording) {
+            stopRecording();
+        } else {
+            startRecording();
+        }
+    };
+
+    // Determine if we're in mobile mode (either preview or embedded)
+    const isMobileButtonLayout = forceCompactView || showLabelToggle;
+
+    // Expose methods via ref
+    React.useImperativeHandle(ref, () => ({
+        handleCapture,
+        handleDemoPlay,
+        handleRecordToggle,
+        toggleViewMode: () => {
+            setViewMode(prev => (prev + 1) % 5 as 0 | 1 | 2 | 3 | 4);
+        },
+        toggleIdleBoat: () => setShowIdleBoat(prev => !prev),
+        toggleTouchText: () => setShowTouchText(prev => !prev)
+    }));
+
+    return (
+        <div
+            ref={containerRef}
+            className="w-full h-full relative"
+            style={{ background: '#FFFFFF', touchAction: 'pan-y' }}
+        > {/* White Background, Allow vertical scroll */}
+            {/* Top-Right Controls Container - Hidden in Mobile Layout */}
+            {!isMobileButtonLayout && (
+                <div className="controls-container absolute top-4 right-4 z-50 flex flex-col gap-2 items-center">
+                    {/* 1-3. Admin Controls (Camera, Capture, ViewMode) - Toggle via showControls */}
+                    {showControls && (
+                        <>
+                            <button
+                                onClick={() => {
+                                    setIsCameraLocked(prev => !prev);
+                                }}
+                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                                title={isCameraLockedState ? "Unlock View (Free Rotation)" : "Lock View (Top Down)"}
+                            >
+                                {isCameraLockedState ? <Lock size={20} /> : <Unlock size={20} />}
+                            </button>
+
+                            <button
+                                onClick={handleCapture}
+                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                                title="Copy Screenshot to Clipboard"
+                            >
+                                {copySuccess ? <Check size={20} className="text-green-600" /> : <Camera size={20} />}
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    setViewMode(prev => (prev + 1) % 5 as 0 | 1 | 2 | 3 | 4);
+                                }}
+                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                                title={`Toggle Visibility (Current: Mode ${viewMode + 1})`}
+                            >
+                                <div className="relative flex items-center justify-center w-full h-full">
+                                    {/* Background Icon (Faint) */}
+                                    {viewMode === 0 && <Eye size={20} className="opacity-30" />}
+                                    {viewMode === 1 && <MinusCircle size={20} className="opacity-30" />}
+                                    {viewMode === 2 && <EyeOff size={20} className="opacity-30" />}
+                                    {viewMode === 3 && <EyeOff size={20} className="opacity-30" />}
+                                    {viewMode === 4 && <Eye size={20} className="opacity-30 text-blue-500" />}
+
+                                    {/* Number Overlay */}
+                                    <span className="absolute text-sm font-bold text-slate-800">{viewMode + 1}</span>
+                                </div>
+                            </button>
+                        </>
+                    )}
+
+                    {/* 4. Demo Play - Always Visible in Desktop Mode (ONLY ON DEV PAGE) */}
+                    {showControls && isDevPage && (
+                        <button
+                            onClick={handleDemoPlay}
+                            disabled={isPlaying}
+                            className={`w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 ${isPlaying ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            title="Play Scale Demo"
+                        >
+                            <PlayCircle size={24} className={isPlaying ? "animate-pulse text-green-600" : ""} />
+                        </button>
+                    )}
+
+
+
+                    {/* 5. Idle Boat Toggle */}
+                    {showControls && (
+                        <button
+                            onClick={() => {
+                                setShowIdleBoat(prev => !prev);
+                            }}
+                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                            title={showIdleBoat ? "Hide Idle Boat" : "Show Idle Boat"}
+                        >
+                            <Ship size={20} className={`transition-colors duration-200 ${showIdleBoat ? "text-blue-500" : "text-slate-400"}`} />
+                        </button>
+                    )}
+
+                    {/* 6. Touch Text Toggle */}
+                    {showControls && (
+                        <button
+                            onClick={() => {
+                                setShowTouchText(prev => !prev);
+                            }}
+                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                            title={showTouchText ? "Hide Touch Text" : "Show Touch Text"}
+                        >
+                            <Pointer size={20} className={`transition-colors duration-200 ${showTouchText ? "text-purple-500" : "text-slate-400"}`} />
+                        </button>
+                    )}
+
+                    {/* 5. Extra Controls (Injected) - Toggle via showControls to hide external switchers */}
+                    {showControls && extraControls}
+                </div>
+            )}
+
+            {/* Home Screen Only: Bottom-Center Auto Play Button (Scale Name + Icon) */}
+            {!isDevPage && (
+                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 z-50 transform w-full flex justify-center pointer-events-none">
+                    <div className="relative flex items-center justify-center">
+                        {/* 텍스트 - 가로 중앙 정렬 */}
+                        <span className="text-[1.8rem] md:text-[2.4rem] lg:text-[3rem] font-black tracking-tight text-slate-900 dark:text-white uppercase text-center">
+                            {scale?.name || 'Play Demo'}
+                        </span>
+                    </div>
+                </div>
+            )}
+
+
+
+            {/* Mobile Layout: Bottom Corner Buttons */}
+            {isMobileButtonLayout && (
+                <>
+                    {/* Top-Right: Extra Controls (e.g., Mode Switcher) - Positioned below status bar */}
+                    {showControls && extraControls && (
+                        <div className="controls-container absolute top-12 right-4 z-50 flex flex-col gap-2 items-center">
+                            {extraControls}
+                        </div>
+                    )}
+
+                    {/* Top-Left: Label Toggle (정보 표시/숨김) - DEV PAGE에서는 숨김 */}
+                    {!isDevPage && (
+                        <div className="absolute top-2 left-2 z-50">
+                            <button
+                                onClick={() => {
+                                    setViewMode(prev => prev === 3 ? 2 : 3);
+                                    // resetIdleTimer(0); // Removed to prevent dismissing CyberBoat
+                                }}
+                                className="w-[38.4px] h-[38.4px] flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                                title={viewMode === 3 ? "Show Labels" : "Hide Labels"}
+                            >
+                                {viewMode === 3 ? <EyeOff size={16} className="opacity-50" /> : <Eye size={16} />}
+                            </button>
+                        </div>
+                    )}
+
+
+                </>
+            )}
+
+            {/* Home Screen Only: Top-Right Record Button */}
+            {!isDevPage && (
+                <div className="absolute top-4 right-4 z-50 flex flex-col gap-2">
+                    <button
+                        onClick={handleRecordToggle}
+                        className={`w-[38.4px] h-[38.4px] flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-200 border border-slate-200 text-red-600 ${isRecording ? 'animate-pulse ring-2 ring-red-100 border-red-400' : ''}`}
+                        title={isRecording ? "Stop Recording" : "Start Recording"}
+                    >
+                        {isRecording ? (
+                            <Square size={16} fill="currentColor" />
+                        ) : (
+                            <Disc size={16} fill="currentColor" />
+                        )}
+                    </button>
+                    {/* 재생 버튼 - 녹음 버튼 아래 */}
+                    <button
+                        onClick={handleDemoPlay}
+                        disabled={isPlaying}
+                        className={`w-[38.4px] h-[38.4px] flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-200 border border-slate-200 ${isPlaying ? 'text-slate-400 cursor-not-allowed' : 'text-red-600'
+                            }`}
+                        title="Play Scale Demo"
+                    >
+                        <Play
+                            size={24}
+                            fill="currentColor"
+                            className="pl-1"
+                        />
+                    </button>
+                </div>
+            )}
+
+            <Canvas
+                orthographic
+                gl={{ preserveDrawingBuffer: true }}
+                camera={{
+                    zoom: 12, // Adjusted for 57cm object
+                    position: [0, 0, 100],
+                    near: 0.1,
+                    far: 2000
+                }}
+            >
+                {/* Fixed White Background for Recording */}
+                <color attach="background" args={['#ffffff']} />
+
+                {/* Lighting - Adjusted for Blueprint look */}
+                <ambientLight intensity={1.0} /> {/* Bright ambient for flat look */}
+                <pointLight position={[0, 0, 100]} intensity={0.2} color="#ffffff" />
+                <directionalLight position={[-50, 100, 100]} intensity={0.5} />
+
+                <CameraHandler
+                    isLocked={isCameraLockedState}
+                    enableZoom={enableZoom}
+                    enablePan={enablePan}
+                    sceneSize={sceneSize}
+                    cameraTargetY={cameraTargetY}
+                />
+
+                <group>
+                    {/* CyberBoat (Tech Sailboat) - always mounted, handles its own vis/anim */}
+                    {/* Pass combined idle state: Only true if system is idle AND user wants to show it */}
+                    <CyberBoat isIdle={isIdle && showIdleBoat} />
+                    {/* Touch Text - Hidden on Home Screen if ViewMode is 2 (Labels Visible) to avoid obscuring pitch info */}
+                    <TouchText isIdle={isIdle && showTouchText && (isDevPage || viewMode !== 2)} />
+                    {/* Body */}
+                    <Suspense fallback={null}>
+                        {backgroundContent ? backgroundContent : <HandpanImage backgroundImage={backgroundImage} centerX={centerX} centerY={centerY} />}
+                    </Suspense>
+
+                    {/* Center Point and Axes (only in dev page and when showAxes is true) */}
+                    {isDevPage && showAxes && (
+                        <>
+                            {/* Center Point */}
+                            <mesh position={[0, 0, 0]}>
+                                <sphereGeometry args={[0.5, 16, 16]} />
+                                <meshBasicMaterial color="#ff0000" />
+                            </mesh>
+
+                            {/* Center Coordinates Label */}
+                            <Text
+                                position={[0, -1.5, 0]}
+                                fontSize={1}
+                                color="#000000"
+                                anchorX="center"
+                                anchorY="middle"
+                            >
+                                (0, 0, 0)
+                            </Text>
+
+                            {/* X-axis (Blue - Right) */}
+                            <mesh position={[10, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
+                                <cylinderGeometry args={[0.1, 0.1, 20, 8]} />
+                                <meshBasicMaterial color="#0000ff" />
+                            </mesh>
+                            <mesh position={[20, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
+                                <coneGeometry args={[0.3, 1, 8]} />
+                                <meshBasicMaterial color="#0000ff" />
+                            </mesh>
+                            <Text
+                                position={[21, 0, 0]}
+                                fontSize={0.8}
+                                color="#0000ff"
+                                anchorX="left"
+                                anchorY="middle"
+                            >
+                                X
+                            </Text>
+
+                            {/* Y-axis (Red - Up) */}
+                            <mesh position={[0, 10, 0]}>
+                                <cylinderGeometry args={[0.1, 0.1, 20, 8]} />
+                                <meshBasicMaterial color="#ff0000" />
+                            </mesh>
+                            <mesh position={[0, 20, 0]}>
+                                <coneGeometry args={[0.3, 1, 8]} />
+                                <meshBasicMaterial color="#ff0000" />
+                            </mesh>
+                            <Text
+                                position={[0, 21, 0]}
+                                fontSize={0.8}
+                                color="#ff0000"
+                                anchorX="center"
+                                anchorY="bottom"
+                            >
+                                Y
+                            </Text>
+
+                            {/* Z-axis (Green - Depth) */}
+                            <mesh position={[0, 0, 10]} rotation={[Math.PI / 2, 0, 0]}>
+                                <cylinderGeometry args={[0.1, 0.1, 20, 8]} />
+                                <meshBasicMaterial color="#00ff00" />
+                            </mesh>
+                            <mesh position={[0, 0, 20]} rotation={[Math.PI / 2, 0, 0]}>
+                                <coneGeometry args={[0.3, 1, 8]} />
+                                <meshBasicMaterial color="#00ff00" />
+                            </mesh>
+                            <Text
+                                position={[0, 0, 21]}
+                                fontSize={0.8}
+                                color="#00ff00"
+                                anchorX="center"
+                                anchorY="middle"
+                            >
+                                Z
+                            </Text>
+                        </>
+                    )}
+
+                    {/* Tone Fields */}
+                    {notes.map((note) => (
+                        <ToneFieldMesh
+                            key={note.id}
+                            note={note}
+                            centerX={centerX}
+                            centerY={centerY}
+                            onClick={handleToneFieldClick}
+                            viewMode={viewMode}
+                            demoActive={demoNoteId === note.id}
+                            playNote={playNote}
+                            offset={note.offset || tonefieldOffset} // Prefer note offset, fallback to global
+                        />
+                    ))}
+                </group>
+            </Canvas>
+
+
+
+            {/* Scale Info Panel - Bottom Right Overlay (only shown in /digipan-3d-test dev page) */}
+            {isDevPage && scale && !forceCompactView && showInfoPanel && (
+                <ScaleInfoPanel
+                    scale={scale}
+                    onScaleSelect={onScaleSelect}
+                    noteCountFilter={noteCountFilter} // Still passed, but overridden by showAllScales
+                    className="" // Managed by DraggablePanel
+                    isMobileButtonLayout={isMobileButtonLayout}
+                    defaultExpanded={true}
+                    showAllScales={true} // Forcing Global List Logic
+                />
+            )}
+        </div>
+    );
+});
+
+export default Digipan3D;
+

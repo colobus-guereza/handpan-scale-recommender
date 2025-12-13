@@ -27,6 +27,7 @@ interface Digipan14MProps {
     forceCompactView?: boolean;
     notes?: any[]; // Allow passing notes for editor mode override
     showAxes?: boolean;
+    onIsRecordingChange?: (isRecording: boolean) => void;
 }
 
 // Composite Background Component for Digipan 14M (Mutant image + 4 visual tonefields)
@@ -104,7 +105,8 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
     showLabelToggle = false,
     forceCompactView = false,
     notes: externalNotes,
-    showAxes = false
+    showAxes = false,
+    onIsRecordingChange
 }, ref) => {
 
     // 10-Note Base Coordinates (from Digipan10.tsx) - Starting point for 14M as well
@@ -221,39 +223,37 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
         },
         {
             "id": 10,
-            "cx": -21,
+            "cx": 0,
             "cy": 762,
             "scale": 0,
             "rotate": 158,
             "position": "bottom",
             "angle": 0,
-            "scaleX": 1.29,
-            "scaleY": 1.61
+            "scaleX": 1.07,
+            "scaleY": 1.5
         },
         {
             "id": 11,
-            "cx": 1017,
+            "cx": 1003,
             "cy": 762,
             "scale": 0,
             "rotate": 24,
             "position": "bottom",
             "angle": 0,
-            "scaleX": 1.24,
-            "scaleY": 1.48
+            "scaleX": 1.13,
+            "scaleY": 1.44
         },
         {
             "id": 12,
-            "cx": 381,
+            "cx": 383,
             "cy": 316,
             "scale": 0,
             "rotate": 58,
             "position": "top",
-            "hideGuide": true,
-            "textColor": "#FFFFFF",
-            "outlineColor": "#000000",
             "angle": 0,
             "scaleX": 0.9,
-            "scaleY": 0.89
+            "scaleY": 0.89,
+            "hideGuide": true
         },
         {
             "id": 13,
@@ -262,12 +262,10 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
             "scale": 0,
             "rotate": 117,
             "position": "top",
-            "hideGuide": true,
-            "textColor": "#FFFFFF",
-            "outlineColor": "#000000",
             "angle": 0,
             "scaleX": 0.85,
-            "scaleY": 0.9199999999999999
+            "scaleY": 0.9199999999999999,
+            "hideGuide": true
         }
     ], []);
 
@@ -327,6 +325,7 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
     return (
         <Digipan3D
             ref={ref}
+            onIsRecordingChange={onIsRecordingChange}
             scale={scale}
             notes={notesToRender.length > 0 ? notesToRender : baseNotes10.map(n => ({ ...n, label: '', frequency: 440, visualFrequency: 440, offset: [0, 0, 0] as [number, number, number] }))}
             onNoteClick={onNoteClick}

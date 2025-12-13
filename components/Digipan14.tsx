@@ -27,6 +27,7 @@ interface Digipan14Props {
     forceCompactView?: boolean;
     notes?: any[]; // Allow passing notes for editor mode override
     showAxes?: boolean;
+    onIsRecordingChange?: (isRecording: boolean) => void;
 }
 
 // Composite Background Component for Digipan 14 (10 notes image + 4 visual tonefields)
@@ -104,7 +105,8 @@ const Digipan14 = React.forwardRef<Digipan3DHandle, Digipan14Props>(({
     showLabelToggle = false,
     forceCompactView = false,
     notes: externalNotes,
-    showAxes = false
+    showAxes = false,
+    onIsRecordingChange
 }, ref) => {
 
     // 10-Note Base Coordinates (from Digipan10.tsx)
@@ -327,6 +329,7 @@ const Digipan14 = React.forwardRef<Digipan3DHandle, Digipan14Props>(({
     return (
         <Digipan3D
             ref={ref}
+            onIsRecordingChange={onIsRecordingChange}
             scale={scale}
             notes={notesToRender.length > 0 ? notesToRender : baseNotes10.map(n => ({ ...n, label: '', frequency: 440, visualFrequency: 440, offset: [0, 0, 0] as [number, number, number] }))}
             onNoteClick={onNoteClick}

@@ -24,7 +24,7 @@ export default function ScaleInfoPanel({
     const [searchQuery, setSearchQuery] = useState('');
 
     // Filter States
-    const [activeNoteFilter, setActiveNoteFilter] = useState<number | 'ALL' | '14M' | '15M'>('ALL');
+    const [activeNoteFilter, setActiveNoteFilter] = useState<number | 'ALL' | '14M' | '15M' | '18M'>('ALL');
     const [sortBy, setSortBy] = useState<'NAME' | 'COUNT' | 'POPULARITY'>('NAME');
     const [sortDir, setSortDir] = useState<'ASC' | 'DESC'>('ASC');
 
@@ -42,6 +42,8 @@ export default function ScaleInfoPanel({
                 matchesCount = totalNotes === 14 && (s.id.includes('mutant') || s.tags?.includes('Mutant') || s.name.includes('Mutant'));
             } else if (activeNoteFilter === '15M') {
                 matchesCount = totalNotes === 15;
+            } else if (activeNoteFilter === '18M') {
+                matchesCount = totalNotes === 18;
             } else if (activeNoteFilter === 14) {
                 // 14N (Standard) - exclude mutants
                 matchesCount = totalNotes === 14 && !(s.id.includes('mutant') || s.tags?.includes('Mutant') || s.name.includes('Mutant'));
@@ -105,8 +107,8 @@ export default function ScaleInfoPanel({
                         />
                     </div>
 
-                    {/* Filters Row */}
-                    <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                    {/* Filters Row - Enabled Horizontal Scroll */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 min-h-[36px]">
                         <FilterButton label="All" active={activeNoteFilter === 'ALL'} onClick={() => setActiveNoteFilter('ALL')} />
                         <FilterButton label="9N" active={activeNoteFilter === 9} onClick={() => setActiveNoteFilter(9)} />
                         <FilterButton label="10N" active={activeNoteFilter === 10} onClick={() => setActiveNoteFilter(10)} />
@@ -115,6 +117,7 @@ export default function ScaleInfoPanel({
                         <FilterButton label="14N" active={activeNoteFilter === 14} onClick={() => setActiveNoteFilter(14)} />
                         <FilterButton label="14M" active={activeNoteFilter === '14M'} onClick={() => setActiveNoteFilter('14M')} />
                         <FilterButton label="15M" active={activeNoteFilter === '15M'} onClick={() => setActiveNoteFilter('15M')} />
+                        <FilterButton label="18M" active={activeNoteFilter === '18M'} onClick={() => setActiveNoteFilter('18M')} />
                     </div>
 
                     {/* Sort Row */}

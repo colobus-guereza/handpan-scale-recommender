@@ -27,6 +27,7 @@ interface Digipan15MProps {
     forceCompactView?: boolean;
     notes?: any[]; // Allow passing notes for editor mode override
     showAxes?: boolean;
+    onIsRecordingChange?: (isRecording: boolean) => void;
 }
 
 // Composite Background Component for Digipan 15M (Mutant image + 4 visual tonefields)
@@ -104,7 +105,8 @@ const Digipan15M = React.forwardRef<Digipan3DHandle, Digipan15MProps>(({
     showLabelToggle = false,
     forceCompactView = false,
     notes: externalNotes,
-    showAxes = false
+    showAxes = false,
+    onIsRecordingChange
 }, ref) => {
 
     // 15-Note Base Coordinates (Cloned from Digipan14M)
@@ -326,6 +328,7 @@ const Digipan15M = React.forwardRef<Digipan3DHandle, Digipan15MProps>(({
         <Digipan3D
             ref={ref}
             scale={scale}
+            onIsRecordingChange={onIsRecordingChange}
             notes={notesToRender.length > 0 ? notesToRender : baseNotes15.map(n => ({ ...n, label: '', frequency: 440, visualFrequency: 440, offset: [0, 0, 0] as [number, number, number] }))}
             onNoteClick={onNoteClick}
             isCameraLocked={isCameraLocked}

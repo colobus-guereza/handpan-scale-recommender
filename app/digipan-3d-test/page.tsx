@@ -9,20 +9,21 @@ import Digipan14 from '../../components/Digipan14';
 import Digipan14M from '../../components/Digipan14M';
 import Digipan15M from '../../components/Digipan15M';
 import Digipan18M from '../../components/Digipan18M';
+import DigipanDM from '../../components/DigipanDM';
 import ScaleInfoPanel from '../../components/ScaleInfoPanel';
 import { SCALES } from '@/data/handpanScales';
-import { Grid, Monitor, Smartphone, Lock, Unlock, Camera, Check, PlayCircle, Eye, EyeOff, MinusCircle } from 'lucide-react';
+import { ChevronDown, RefreshCw, Smartphone, Monitor, Grid, Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Ship, Pointer } from 'lucide-react';
 import { Digipan3DHandle } from '../../components/Digipan3D';
 import { useControls, button, Leva } from 'leva';
 import { getNoteFrequency } from '@/constants/noteFrequencies';
 
 export default function Digipan3DTestPage() {
-    // Mode State: '9', '10', '11', '12', '14', '14M', '15M', '18M'
-    const [mode, setMode] = useState<'9' | '10' | '11' | '12' | '14' | '14M' | '15M' | '18M'>('18M');
+    // Mode State: '9', '10', '11', '12', '14', '14M', '15M', '18M', 'DM'
+    const [mode, setMode] = useState<'9' | '10' | '11' | '12' | '14' | '14M' | '15M' | '18M' | 'DM'>('DM');
     const [isMobilePreview, setIsMobilePreview] = useState(false);
 
     // Dynamic Scale Selection State
-    const [selectedScaleId, setSelectedScaleId] = useState<string>('fs_low_pygmy_18_mutant');
+    const [selectedScaleId, setSelectedScaleId] = useState<string>('d_kurd_10');
 
     // Derived Scale Object
     const scale = SCALES.find(s => s.id === selectedScaleId) || SCALES[0];
@@ -32,10 +33,15 @@ export default function Digipan3DTestPage() {
     const [viewMode, setViewMode] = useState<0 | 1 | 2 | 3 | 4>(3);
     const [showLabels, setShowLabels] = useState(false);
     const [showAxes, setShowAxes] = useState(false); // Default to false - axes hidden on page load
+    const [isRecording, setIsRecording] = useState(false);
 
     // External Control Ref
     const digipanRef = useRef<Digipan3DHandle>(null);
     const [copySuccess, setCopySuccess] = useState(false);
+
+    // Developer Page Local State for External Buttons
+    const [showIdleBoat, setShowIdleBoat] = useState(false); // Default: Off
+    const [showTouchText, setShowTouchText] = useState(true); // Default: On
 
     const handleExternalCapture = async () => {
         if (digipanRef.current) {
@@ -563,39 +569,37 @@ export default function Digipan3DTestPage() {
             },
             {
                 "id": 10,
-                "cx": -21,
+                "cx": 0,
                 "cy": 762,
                 "scale": 0,
                 "rotate": 158,
                 "position": "bottom",
                 "angle": 0,
-                "scaleX": 1.29,
-                "scaleY": 1.61
+                "scaleX": 1.07,
+                "scaleY": 1.5
             },
             {
                 "id": 11,
-                "cx": 1017,
+                "cx": 1003,
                 "cy": 762,
                 "scale": 0,
                 "rotate": 24,
                 "position": "bottom",
                 "angle": 0,
-                "scaleX": 1.24,
-                "scaleY": 1.48
+                "scaleX": 1.13,
+                "scaleY": 1.44
             },
             {
                 "id": 12,
-                "cx": 381,
+                "cx": 383,
                 "cy": 316,
                 "scale": 0,
                 "rotate": 58,
                 "position": "top",
-                "hideGuide": true,
-                "textColor": "#FFFFFF",
-                "outlineColor": "#000000",
                 "angle": 0,
                 "scaleX": 0.9,
-                "scaleY": 0.89
+                "scaleY": 0.89,
+                "hideGuide": true
             },
             {
                 "id": 13,
@@ -604,12 +608,10 @@ export default function Digipan3DTestPage() {
                 "scale": 0,
                 "rotate": 117,
                 "position": "top",
-                "hideGuide": true,
-                "textColor": "#FFFFFF",
-                "outlineColor": "#000000",
                 "angle": 0,
                 "scaleX": 0.85,
-                "scaleY": 0.9199999999999999
+                "scaleY": 0.9199999999999999,
+                "hideGuide": true
             }
         ];
     }, []);
@@ -1106,7 +1108,6 @@ export default function Digipan3DTestPage() {
     // Feedback State for Export Button
     const [copySuccess9, setCopySuccess9] = useState(false);
 
-    // Leva Schema generation for Mode 9
     const dynamicSchema9 = useMemo(() => {
         if (mode !== '9') return {}; // Don't show controls in Mode 10
 
@@ -1721,89 +1722,112 @@ export default function Digipan3DTestPage() {
                     {/* Toolbar */}
                     <div className="h-16 border-b border-slate-700 px-6 flex items-center gap-4 bg-slate-800 shadow-lg z-20 transition-colors duration-500">
                         <div className="flex items-center gap-3">
-                            {!isMobilePreview && (
-                                <>
-                                    <button
-                                        onClick={() => {
-                                            setMode('9');
-                                            setSelectedScaleId('cs_amara_9');
-                                        }}
-                                        className={`px-4 py-2 rounded ${mode === '9' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
-                                    >
-                                        9
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setMode('10');
-                                            setSelectedScaleId('d_kurd_10');
-                                        }}
-                                        className={`px-4 py-2 rounded ${mode === '10' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
-                                    >
-                                        10
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setMode('11');
-                                            setSelectedScaleId('cs_pygmy_11');
-                                        }}
-                                        className={`px-4 py-2 rounded ${mode === '11' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
-                                    >
-                                        11
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setMode('12');
-                                            setSelectedScaleId('f_low_pygmy_12');
-                                        }}
-                                        className={`px-4 py-2 rounded ${mode === '12' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
-                                    >
-                                        12
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setMode('14');
-                                            setSelectedScaleId('e_equinox_14');
-                                        }}
-                                        className={`px-4 py-2 rounded ${mode === '14' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
-                                    >
-                                        14N
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setMode('14M');
-                                            setSelectedScaleId('fs_low_pygmy_14_mutant');
-                                        }}
-                                        className={`px-4 py-2 rounded ${mode === '14M' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
-                                    >
-                                        14M
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setMode('15M');
-                                            setSelectedScaleId('d_asha_15_mutant');
-                                        }}
-                                        className={`px-4 py-2 rounded ${mode === '15M' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
-                                    >
-                                        15M
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setMode('18M');
-                                            setSelectedScaleId('fs_low_pygmy_18_mutant');
-                                        }}
-                                        className={`px-4 py-2 rounded ${mode === '18M' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
-                                    >
-                                        18M
-                                    </button>
-                                </>
-                            )}
+                            <button
+                                onClick={() => {
+                                    setMode('9');
+                                    setSelectedScaleId('cs_amara_9');
+                                }}
+                                className={`px-4 py-2 rounded ${mode === '9' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+                            >
+                                9
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setMode('10');
+                                    setSelectedScaleId('d_kurd_10');
+                                }}
+                                className={`px-4 py-2 rounded ${mode === '10' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+                            >
+                                10
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setMode('11');
+                                    setSelectedScaleId('cs_pygmy_11');
+                                }}
+                                className={`px-4 py-2 rounded ${mode === '11' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+                            >
+                                11
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setMode('12');
+                                    setSelectedScaleId('f_low_pygmy_12');
+                                }}
+                                className={`px-4 py-2 rounded ${mode === '12' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+                            >
+                                12
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setMode('14');
+                                    setSelectedScaleId('e_equinox_14');
+                                }}
+                                className={`px-4 py-2 rounded ${mode === '14' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+                            >
+                                14N
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setMode('14M');
+                                    setSelectedScaleId('fs_low_pygmy_14_mutant');
+                                }}
+                                className={`px-4 py-2 rounded ${mode === '14M' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+                            >
+                                14M
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setMode('15M');
+                                    setSelectedScaleId('d_asha_15_mutant');
+                                }}
+                                className={`px-4 py-2 rounded ${mode === '15M' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+                            >
+                                15M
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setMode('18M');
+                                    setSelectedScaleId('fs_low_pygmy_18_mutant');
+                                }}
+                                className={`px-4 py-2 rounded ${mode === '18M' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+                            >
+                                18M
+                            </button>
+
+                            {/* Separator */}
+                            <div className="w-px h-6 bg-slate-600 mx-2"></div>
+
+                            {/* DM Button (D Kurd 9 shortcut) */}
+                            <button
+                                onClick={() => {
+                                    setMode('DM');
+                                    setSelectedScaleId('d_kurd_10');
+                                }}
+                                className={`px-4 py-2 rounded font-bold ${mode === 'DM' ? 'bg-purple-600 text-white ring-2 ring-purple-400' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+                            >
+                                DM
+                            </button>
                         </div>
                     </div>
 
                     {/* Canvas Container */}
-                    <div className="flex-1 bg-slate-900 relative overflow-hidden">
+                    <div className={`flex-1 bg-slate-900 relative overflow-hidden ${isMobilePreview ? 'flex items-center justify-center' : ''}`}>
 
                         {/* Floating Circular Buttons - Top Right */}
+
+                        {/* Recording Toggle - Outside the frame (Left of Axes) */}
+                        <button
+                            onClick={() => digipanRef.current?.handleRecordToggle()}
+                            className={`absolute top-4 right-52 z-[60] w-12 h-12 flex items-center justify-center backdrop-blur-sm rounded-full shadow-lg transition-all duration-200 border text-slate-700 font-bold text-xs ${isRecording
+                                ? 'bg-red-100 border-red-400 animate-pulse ring-2 ring-red-200'
+                                : 'bg-white/80 border-slate-200 hover:bg-white'
+                                }`}
+                            title={isRecording ? "Stop Recording" : "Start Recording"}
+                        >
+                            <div className={`rounded-full transition-all duration-300 ${isRecording ? 'w-4 h-4 bg-red-600 rounded-sm' : 'w-5 h-5 bg-red-600'}`}></div>
+                        </button>
+
                         {/* Axes Toggle - Outside the frame */}
                         <button
                             onClick={() => setShowAxes(!showAxes)}
@@ -1846,120 +1870,110 @@ export default function Digipan3DTestPage() {
                             <Smartphone size={20} />
                         </button>
 
+                        {/* External Controls - Sidebar Style (Always Visible) */}
+                        <div className="absolute top-20 right-4 z-[55] flex flex-col gap-3 items-center">
+                            {/* Mode Switcher */}
+                            <button
+                                onClick={toggleCycle}
+                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 font-bold text-xs"
+                                title="Toggle Digipan Mode"
+                            >
+                                {mode === '9' ? (
+                                    <span className="text-[10px] leading-none font-bold">9</span>
+                                ) : mode === '10' ? (
+                                    <span className="text-[10px] leading-none font-bold">10</span>
+                                ) : mode === '11' ? (
+                                    <span className="text-[10px] leading-none font-bold">11</span>
+                                ) : mode === '12' ? (
+                                    <span className="text-[10px] leading-none font-bold">12</span>
+                                ) : mode === '14' ? (
+                                    <span className="text-[10px] leading-none font-bold">14N</span>
+                                ) : mode === '14M' ? (
+                                    <span className="text-[10px] leading-none font-bold">14M</span>
+                                ) : mode === '15M' ? (
+                                    <span className="text-[10px] leading-none font-bold">15M</span>
+                                ) : (
+                                    <span className="text-[10px] leading-none font-bold">18M</span>
+                                )}
+                            </button>
+
+                            {/* Capture */}
+                            <button
+                                onClick={handleExternalCapture}
+                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200"
+                                title="Capture to Clipboard"
+                            >
+                                {copySuccess ? <Check size={20} className="text-green-600" /> : <Camera size={20} className="text-slate-700" />}
+                            </button>
+
+                            {/* View Mode */}
+                            <button
+                                onClick={() => {
+                                    let nextMode: 0 | 1 | 2 | 3 | 4;
+                                    if (viewMode === 0) nextMode = 1;
+                                    else if (viewMode === 1) nextMode = 2;
+                                    else if (viewMode === 2) nextMode = 3;
+                                    else if (viewMode === 3) nextMode = 4;
+                                    else nextMode = 0;
+                                    setViewMode(nextMode);
+                                }}
+                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200"
+                                title={`Toggle View Mode (Current: ${viewMode + 1})`}
+                            >
+                                <div className="relative flex items-center justify-center w-full h-full">
+                                    {viewMode === 0 && <Eye size={20} className="text-slate-700 opacity-50" />}
+                                    {viewMode === 1 && <MinusCircle size={20} className="text-slate-700 opacity-50" />}
+                                    {viewMode === 2 && <EyeOff size={20} className="text-slate-700 opacity-50" />}
+                                    {viewMode === 3 && <EyeOff size={20} className="text-slate-700 opacity-50" />}
+                                    {viewMode === 4 && <Eye size={20} className="text-blue-500 opacity-50" />}
+                                    <span className="absolute text-xs font-bold text-slate-900">{viewMode + 1}</span>
+                                </div>
+                            </button>
+
+                            {/* Demo Play */}
+                            <button
+                                onClick={handleExternalDemoPlay}
+                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200"
+                                title="Play Demo"
+                            >
+                                <PlayCircle size={20} className="text-slate-700" />
+                            </button>
+
+
+
+                            {/* Idle Boat Toggle */}
+                            <button
+                                onClick={() => {
+                                    setShowIdleBoat(prev => !prev);
+                                    digipanRef.current?.toggleIdleBoat();
+                                }}
+                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200"
+                                title={showIdleBoat ? "Hide Idle Boat" : "Show Idle Boat"}
+                            >
+                                <Ship size={20} className={`transition-colors duration-200 ${showIdleBoat ? "text-blue-500" : "text-slate-400"}`} />
+                            </button>
+
+                            {/* Touch Text Toggle */}
+                            <button
+                                onClick={() => {
+                                    setShowTouchText(prev => !prev);
+                                    digipanRef.current?.toggleTouchText();
+                                }}
+                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200"
+                                title={showTouchText ? "Hide Touch Text" : "Show Touch Text"}
+                            >
+                                <Pointer size={20} className={`transition-colors duration-200 ${showTouchText ? "text-purple-500" : "text-slate-400"}`} />
+                            </button>
+                        </div>
+
+
                         {/* Canvas Wrapper */}
                         <div className={`${isMobilePreview
-                            ? 'flex items-center justify-center h-full'
+                            ? 'relative w-[390px] h-[844px] bg-slate-900 rounded-[3rem] border-8 border-slate-800 shadow-2xl overflow-hidden ring-1 ring-slate-700/50'
                             : 'absolute inset-0 w-full h-full'
                             }`}>
 
-                            {/* Mobile Frame Overlay + External Controls */}
-                            {isMobilePreview && (
-                                <div className="absolute top-6 right-6 flex flex-col gap-2 z-50 pointer-events-none">
-                                    {/* All Controls Positioned Outside Mobile Frame */}
-                                    <div className="flex flex-col gap-2 pointer-events-auto">
-
-                                        {/* Mode Switcher Buttons */}
-                                        <button
-                                            onClick={() => {
-                                                let newMode: '9' | '10' | '11' | '12' | '14' | '14M' | '15M' | '18M' = '9';
-                                                if (mode === '9') newMode = '10';
-                                                else if (mode === '10') newMode = '11';
-                                                else if (mode === '11') newMode = '12';
-                                                else if (mode === '12') newMode = '14';
-                                                else if (mode === '14') newMode = '14M';
-                                                else if (mode === '14M') newMode = '15M';
-                                                else if (mode === '15M') newMode = '18M';
-                                                else newMode = '9';
-
-                                                setMode(newMode);
-                                                if (newMode === '9') setSelectedScaleId('d_kurd_9');
-                                                else if (newMode === '10') setSelectedScaleId('d_kurd_10');
-                                                else if (newMode === '11') setSelectedScaleId('cs_pygmy_11');
-                                                else if (newMode === '12') setSelectedScaleId('d_kurd_12');
-                                                else if (newMode === '14') setSelectedScaleId('e_equinox_14');
-                                                else if (newMode === '14M') setSelectedScaleId('fs_low_pygmy_14_mutant');
-                                                else if (newMode === '15M') setSelectedScaleId('d_asha_15_mutant');
-                                                else if (newMode === '18M') setSelectedScaleId('fs_low_pygmy_18_mutant');
-                                            }}
-                                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 font-bold text-xs"
-                                            title="Toggle Digipan Mode"
-                                        >
-                                            {mode === '9' ? (
-                                                <span className="text-[10px] leading-none font-bold">9</span>
-                                            ) : mode === '10' ? (
-                                                <span className="text-[10px] leading-none font-bold">10</span>
-                                            ) : mode === '11' ? (
-                                                <span className="text-[10px] leading-none font-bold">11</span>
-                                            ) : mode === '12' ? (
-                                                <span className="text-[10px] leading-none font-bold">12</span>
-                                            ) : mode === '14' ? (
-                                                <span className="text-[10px] leading-none font-bold">14N</span>
-                                            ) : mode === '14M' ? (
-                                                <span className="text-[10px] leading-none font-bold">14M</span>
-                                            ) : mode === '15M' ? (
-                                                <span className="text-[10px] leading-none font-bold">15M</span>
-                                            ) : (
-                                                <span className="text-[10px] leading-none font-bold">18M</span>
-                                            )}
-                                        </button>
-
-                                        {/* Capture to Clipboard */}
-                                        <button
-                                            onClick={handleExternalCapture}
-                                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200"
-                                            title="Capture to Clipboard"
-                                        >
-                                            {copySuccess ? <Check size={18} className="text-green-600" /> : <Camera size={18} className="text-slate-700" />}
-                                        </button>
-
-                                        {/* View Mode */}
-                                        <button
-                                            onClick={() => {
-                                                let nextMode: 0 | 1 | 2 | 3 | 4;
-                                                if (viewMode === 0) nextMode = 1;
-                                                else if (viewMode === 1) nextMode = 2;
-                                                else if (viewMode === 2) nextMode = 3;
-                                                else if (viewMode === 3) nextMode = 4;
-                                                else nextMode = 0;
-                                                setViewMode(nextMode);
-                                            }}
-                                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200"
-                                            title="Toggle View Mode"
-                                        >
-                                            {viewMode === 3 ? <EyeOff size={18} className="text-slate-700" /> : <Eye size={18} className="text-slate-700" />}
-                                        </button>
-
-                                        {/* Demo Play */}
-                                        <button
-                                            onClick={handleExternalDemoPlay}
-                                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200"
-                                            title="Demo Play"
-                                        >
-                                            <PlayCircle size={18} className="text-slate-700" />
-                                        </button>
-
-                                        {/* Camera Lock */}
-                                        <button
-                                            onClick={() => setIsCameraLocked(!isCameraLocked)}
-                                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200"
-                                            title={isCameraLocked ? "Unlock Camera" : "Lock Camera"}
-                                        >
-                                            {isCameraLocked ? <Lock size={18} className="text-red-600" /> : <Unlock size={18} className="text-slate-700" />}
-                                        </button>
-
-                                        {/* Show Labels */}
-                                        <button
-                                            onClick={() => setShowLabels(!showLabels)}
-                                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200"
-                                            title={showLabels ? "Hide Labels" : "Show Labels"}
-                                        >
-                                            <MinusCircle size={18} className={showLabels ? "text-blue-600" : "text-slate-700"} />
-                                        </button>
-
-                                    </div>
-                                </div>
-                            )}
-
+                            {/* Digipan Components - Disable internal controls to avoid duplication */}
                             {mode === '9' ? (
                                 <Digipan9
                                     ref={digipanRef}
@@ -1967,7 +1981,7 @@ export default function Digipan3DTestPage() {
                                     notes={activeNotes9.length > 0 ? activeNotes9 : undefined}
                                     isCameraLocked={isCameraLocked}
                                     extraControls={isMobilePreview ? undefined : toggleControl}
-                                    showControls={true}
+                                    showControls={false}
                                     showInfoPanel={false}
                                     initialViewMode={viewMode}
                                     viewMode={viewMode}
@@ -1977,6 +1991,7 @@ export default function Digipan3DTestPage() {
                                     showLabelToggle={showLabels}
                                     forceCompactView={isMobilePreview}
                                     showAxes={showAxes}
+                                    onIsRecordingChange={setIsRecording}
                                 />
                             ) : mode === '10' ? (
                                 <Digipan10
@@ -1985,7 +2000,7 @@ export default function Digipan3DTestPage() {
                                     notes={activeNotes10.length > 0 ? activeNotes10 : undefined}
                                     isCameraLocked={isCameraLocked}
                                     extraControls={isMobilePreview ? undefined : toggleControl}
-                                    showControls={true}
+                                    showControls={false}
                                     showInfoPanel={false}
                                     initialViewMode={viewMode}
                                     viewMode={viewMode}
@@ -1995,6 +2010,7 @@ export default function Digipan3DTestPage() {
                                     showLabelToggle={showLabels}
                                     forceCompactView={isMobilePreview}
                                     showAxes={showAxes}
+                                    onIsRecordingChange={setIsRecording}
                                 />
                             ) : mode === '11' ? (
                                 <Digipan11
@@ -2003,7 +2019,7 @@ export default function Digipan3DTestPage() {
                                     notes={activeNotes11.length > 0 ? activeNotes11 : undefined}
                                     isCameraLocked={isCameraLocked}
                                     extraControls={isMobilePreview ? undefined : toggleControl}
-                                    showControls={true}
+                                    showControls={false}
                                     showInfoPanel={false}
                                     initialViewMode={viewMode}
                                     viewMode={viewMode}
@@ -2013,6 +2029,7 @@ export default function Digipan3DTestPage() {
                                     showLabelToggle={showLabels}
                                     forceCompactView={isMobilePreview}
                                     showAxes={showAxes}
+                                    onIsRecordingChange={setIsRecording}
                                 />
                             ) : mode === '12' ? (
                                 <Digipan12
@@ -2021,7 +2038,7 @@ export default function Digipan3DTestPage() {
                                     notes={activeNotes12.length > 0 ? activeNotes12 : undefined}
                                     isCameraLocked={isCameraLocked}
                                     extraControls={isMobilePreview ? undefined : toggleControl}
-                                    showControls={true}
+                                    showControls={false}
                                     showInfoPanel={false}
                                     initialViewMode={viewMode}
                                     viewMode={viewMode}
@@ -2031,6 +2048,7 @@ export default function Digipan3DTestPage() {
                                     showLabelToggle={showLabels}
                                     forceCompactView={isMobilePreview}
                                     showAxes={showAxes}
+                                    onIsRecordingChange={setIsRecording}
                                 />
                             ) : mode === '14' ? (
                                 <Digipan14
@@ -2039,7 +2057,7 @@ export default function Digipan3DTestPage() {
                                     notes={activeNotes14.length > 0 ? activeNotes14 : undefined}
                                     isCameraLocked={isCameraLocked}
                                     extraControls={isMobilePreview ? undefined : toggleControl}
-                                    showControls={true}
+                                    showControls={false}
                                     showInfoPanel={false}
                                     initialViewMode={viewMode}
                                     viewMode={viewMode}
@@ -2049,6 +2067,7 @@ export default function Digipan3DTestPage() {
                                     showLabelToggle={showLabels}
                                     forceCompactView={isMobilePreview}
                                     showAxes={showAxes}
+                                    onIsRecordingChange={setIsRecording}
                                 />
                             ) : mode === '14M' ? (
                                 <Digipan14M
@@ -2057,7 +2076,7 @@ export default function Digipan3DTestPage() {
                                     notes={activeNotes14M.length > 0 ? activeNotes14M : undefined}
                                     isCameraLocked={isCameraLocked}
                                     extraControls={isMobilePreview ? undefined : toggleControl}
-                                    showControls={true}
+                                    showControls={false}
                                     showInfoPanel={false}
                                     initialViewMode={viewMode}
                                     viewMode={viewMode}
@@ -2067,6 +2086,7 @@ export default function Digipan3DTestPage() {
                                     showLabelToggle={showLabels}
                                     forceCompactView={isMobilePreview}
                                     showAxes={showAxes}
+                                    onIsRecordingChange={setIsRecording}
                                 />
                             ) : mode === '15M' ? (
                                 <Digipan15M
@@ -2075,7 +2095,7 @@ export default function Digipan3DTestPage() {
                                     notes={activeNotes15M.length > 0 ? activeNotes15M : undefined}
                                     isCameraLocked={isCameraLocked}
                                     extraControls={isMobilePreview ? undefined : toggleControl}
-                                    showControls={true}
+                                    showControls={false}
                                     showInfoPanel={false}
                                     initialViewMode={viewMode}
                                     viewMode={viewMode}
@@ -2085,6 +2105,7 @@ export default function Digipan3DTestPage() {
                                     showLabelToggle={showLabels}
                                     forceCompactView={isMobilePreview}
                                     showAxes={showAxes}
+                                    onIsRecordingChange={setIsRecording}
                                 />
                             ) : mode === '18M' ? (
                                 <Digipan18M
@@ -2093,7 +2114,7 @@ export default function Digipan3DTestPage() {
                                     notes={activeNotes18M.length > 0 ? activeNotes18M : undefined}
                                     isCameraLocked={isCameraLocked}
                                     extraControls={isMobilePreview ? undefined : toggleControl}
-                                    showControls={true}
+                                    showControls={false}
                                     showInfoPanel={false}
                                     initialViewMode={viewMode}
                                     viewMode={viewMode}
@@ -2103,6 +2124,26 @@ export default function Digipan3DTestPage() {
                                     showLabelToggle={showLabels}
                                     forceCompactView={isMobilePreview}
                                     showAxes={showAxes}
+                                    onIsRecordingChange={setIsRecording}
+                                />
+                            ) : mode === 'DM' ? (
+                                <DigipanDM
+                                    ref={digipanRef}
+                                    scale={scale}
+                                    // notes={undefined} // Use internal 10-note layout
+                                    isCameraLocked={isCameraLocked}
+                                    extraControls={isMobilePreview ? undefined : toggleControl}
+                                    showControls={false}
+                                    showInfoPanel={false}
+                                    initialViewMode={viewMode}
+                                    viewMode={viewMode}
+                                    onViewModeChange={setViewMode}
+                                    enableZoom={true}
+                                    enablePan={!isCameraLocked}
+                                    showLabelToggle={showLabels}
+                                    forceCompactView={isMobilePreview}
+                                    showAxes={showAxes}
+                                    onIsRecordingChange={setIsRecording}
                                 />
                             ) : null}
 

@@ -27,6 +27,7 @@ interface Digipan12Props {
     forceCompactView?: boolean;
     notes?: any[]; // Allow passing notes for editor mode override
     showAxes?: boolean;
+    onIsRecordingChange?: (isRecording: boolean) => void;
 }
 
 // Composite Background Component for Digipan 12 (10 notes image + 2 visual tonefields)
@@ -107,7 +108,8 @@ const Digipan12 = React.forwardRef<Digipan3DHandle, Digipan12Props>(({
     showLabelToggle = false,
     forceCompactView = false,
     notes: externalNotes,
-    showAxes = false
+    showAxes = false,
+    onIsRecordingChange
 }, ref) => {
 
     // 10-Note Base Coordinates (from Digipan10.tsx)
@@ -204,6 +206,9 @@ const Digipan12 = React.forwardRef<Digipan3DHandle, Digipan12Props>(({
     const visualNotes = useMemo(() => {
         return notesToRender.filter(n => n.id >= 10);
     }, [notesToRender]);
+
+    // Define sceneSize based on forceCompactView
+    const sceneSize = forceCompactView ? { width: 66, height: 50 } : { width: 64, height: 60 };
 
     return (
         <Digipan3D

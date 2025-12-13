@@ -86,6 +86,7 @@ interface Digipan11Props {
     showLabelToggle?: boolean;
     forceCompactView?: boolean;
     showAxes?: boolean;
+    onIsRecordingChange?: (isRecording: boolean) => void;
 }
 
 const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
@@ -104,7 +105,8 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
     enablePan = true,
     showLabelToggle = false,
     forceCompactView = false,
-    showAxes = false
+    showAxes = false,
+    onIsRecordingChange
 }, ref) => {
 
     // Internal Note Generation (C# Pygmy 11 Layout)
@@ -305,6 +307,7 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
             showAxes={showAxes}
             hideStaticLabels={true} // Hide RS/LS/H labels
             sceneSize={sceneSize} // Pass dynamic scene size
+            onIsRecordingChange={onIsRecordingChange}
         />
     );
 });
