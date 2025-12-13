@@ -17,7 +17,7 @@ import { Digipan3DHandle } from '../../components/Digipan3D';
 import { useControls, button, Leva } from 'leva';
 import { getNoteFrequency } from '@/constants/noteFrequencies';
 import * as THREE from 'three';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 
 export default function Digipan3DTestPage() {
     // Mode State: '9', '10', '11', '12', '14', '14M', '15M', '18M', 'DM'
