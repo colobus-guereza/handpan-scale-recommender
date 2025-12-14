@@ -178,3 +178,17 @@ html.light .glass-card:hover {
     color: rgba(72, 255, 0, 0.7) !important; /* cosmic/70 */
   }
 }
+
+/* 은은한 반짝임 효과 애니메이션 */
+@keyframes gentle-shimmer {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(0, 102, 255, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px rgba(0, 102, 255, 0.3);
+  }
+}
+
+.gentle-shimmer {
+  animation: gentle-shimmer 2s ease-in-out infinite;
+}

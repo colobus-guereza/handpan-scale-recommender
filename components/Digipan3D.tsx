@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useMemo, Suspense, useEffect, useCallback } from 'react';
+import * as Tone from 'tone';
 
 // Shared mobile button style for consistent size and appearance
 const btnMobile = "w-[38.4px] h-[38.4px] flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full border border-slate-200 hover:bg-white transition-all duration-200";
@@ -8,7 +9,7 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Text, OrbitControls, Center, Line, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { Scale } from '../data/handpanScales';
-import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Play, Ship, Pointer, Disc, Square, Drum } from 'lucide-react';
+import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Play, Ship, Pointer, Disc, Square, Drum, Music, Music2 } from 'lucide-react';
 import { HANDPAN_CONFIG, getDomeHeight, TONEFIELD_CONFIG } from '../constants/handpanConfig';
 import html2canvas from 'html2canvas';
 import { useHandpanAudio } from '../hooks/useHandpanAudio';
@@ -19,7 +20,8 @@ import CyberBoat from './CyberBoat';
 import { useOctaveResonance, ResonanceSettings } from '../hooks/useOctaveResonance';
 import { DEFAULT_HARMONIC_SETTINGS, DigipanHarmonicConfig } from '../constants/harmonicDefaults';
 import { useDigipanRecorder } from '../hooks/useDigipanRecorder';
-import { useDrumMachine } from '../hooks/useDrumMachine';
+import { useJamSession } from '@/hooks/useJamSession';
+import { calculateChordProgression, ChordSet } from '../utils/ChordCalculator';
 
 const CameraHandler = ({
     isLocked,
@@ -792,8 +794,58 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
         }
     }, [isRecording, onIsRecordingChange]);
 
-    // Drum Machine Hook
-    const { startBeat, stopBeat } = useDrumMachine();
+
+    // AudioContext is handled by Tone.js internally now.
+    // We don't need manual polling for Tone.js integration.
+
+    // === Unified Jam Session Hook ===
+    const dingNote = notes.find(n => n.id === 0)?.label || "D3";
+    const scaleNoteNames = useMemo(() => notes.map(n => n.label), [notes]);
+    const { togglePlay: toggleJam, isPlaying: isJamPlaying } = useJamSession({
+        bpm: 100,
+        rootNote: dingNote,
+        scaleNotes: scaleNoteNames
+    });
+
+    // Legacy timer for visual countdown (optional)
+    // Note: drumTimer state is declared at line 759
+    const totalDuration = 38.4; // 16 bars at 100 BPM
+
+    const toggleDrum = () => {
+        // Now using unified Jam Session (Drum + Chord)
+        toggleJam();
+
+        // Update visual timer
+        if (drumTimer !== null) {
+            setDrumTimer(null);
+        } else {
+            setDrumTimer(Math.ceil(totalDuration));
+        }
+    };
+    // Update Timer Effect to handle float duration smoothly if needed,
+    // but existing logic uses integer decrement.
+    // We probably want to sync the circle animation to exactly totalDuration.
+    // The previous logic:
+    /*
+        if (drumTimer === null || drumTimer <= 0) { ... }
+        interval sets timer - 1 every 1000ms.
+    */
+    // If we start at 39, it counts down 39, 38...
+    // The ring SVG uses `drumTimer / 30`. We should update that divisor.
+
+    // IN JSX (Around Line 1360):
+    /*
+        strokeDashoffset={drumTimer !== null
+            ? `${2 * Math.PI * 18 * (1 - drumTimer / totalDuration)}`  <-- Update 30 to totalDuration
+            : 0
+        }
+    */
+    // ==========================================
+
+    // View Mode Toggle Helper
+    const handleViewModeToggle = () => {
+        setViewMode(prev => prev === 0 ? 2 : 0);
+    };
 
     const [isIdle, setIsIdle] = useState(true); // Default to True
     const [showIdleBoat, setShowIdleBoat] = useState(false); // Default to OFF for DigiBall
@@ -828,7 +880,10 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
         if (drumTimer === null || drumTimer <= 0) {
             if (drumTimer === 0) {
                 setDrumTimer(null); // 0이 되면 드럼 아이콘으로 복귀
-                stopBeat(); // 타이머 종료 시 오디오 중단 (Safety)
+                // 타이머 종료 시 재생 중이면 중단 (Safety)
+                if (isJamPlaying) {
+                    toggleJam();
+                }
             }
             return;
         }
@@ -843,7 +898,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
         }, 1000); // 1초마다 감소
 
         return () => clearInterval(interval);
-    }, [drumTimer]);
+    }, [drumTimer, isJamPlaying, toggleJam]);
 
     // View Mode: 0 = Default (All), 1 = No Labels, 2 = No Mesh (Levels Only), 3 = Hidden (Interaction Only), 4 = Guide (Image + Dots)
     // Initialize with controlled prop if available, else initialViewMode
@@ -990,7 +1045,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
         resetIdleTimer(3500);
         if (onNoteClick) onNoteClick(id);
 
-    }, [resonanceMap, playResonantNote, onNoteClick]); // removed resetIdleTimer dependency if it's ref-based, but it uses state setters? check impl.
+    }, [resonanceMap, playResonantNote, onNoteClick, resetIdleTimer]); // removed resetIdleTimer dependency if it's ref-based, but it uses state setters? check impl.
 
     // Dynamic Scale Filter based on noteCountFilter and Search Query
     const filteredScales = useMemo(() => {
@@ -1198,99 +1253,6 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
             className="w-full h-full relative"
             style={{ background: '#FFFFFF', touchAction: 'pan-y' }}
         > {/* White Background, Allow vertical scroll */}
-            {/* Top-Right Controls Container - Hidden in Mobile Layout */}
-            {!isMobileButtonLayout && (
-                <div className="controls-container absolute top-4 right-4 z-50 flex flex-col gap-2 items-center">
-                    {/* 1-3. Admin Controls (Camera, Capture, ViewMode) - Toggle via showControls */}
-                    {showControls && (
-                        <>
-                            <button
-                                onClick={() => {
-                                    setIsCameraLocked(prev => !prev);
-                                }}
-                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                                title={isCameraLockedState ? "Unlock View (Free Rotation)" : "Lock View (Top Down)"}
-                            >
-                                {isCameraLockedState ? <Lock size={20} /> : <Unlock size={20} />}
-                            </button>
-
-                            <button
-                                onClick={handleCapture}
-                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                                title="Copy Screenshot to Clipboard"
-                            >
-                                {copySuccess ? <Check size={20} className="text-green-600" /> : <Camera size={20} />}
-                            </button>
-
-                            <button
-                                onClick={() => {
-                                    setViewMode(prev => (prev + 1) % 5 as 0 | 1 | 2 | 3 | 4);
-                                }}
-                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                                title={`Toggle Visibility (Current: Mode ${viewMode + 1})`}
-                            >
-                                <div className="relative flex items-center justify-center w-full h-full">
-                                    {/* Background Icon (Faint) */}
-                                    {viewMode === 0 && <Eye size={20} className="opacity-30" />}
-                                    {viewMode === 1 && <MinusCircle size={20} className="opacity-30" />}
-                                    {viewMode === 2 && <EyeOff size={20} className="opacity-30" />}
-                                    {viewMode === 3 && <EyeOff size={20} className="opacity-30" />}
-                                    {viewMode === 4 && <Eye size={20} className="opacity-30 text-blue-500" />}
-
-                                    {/* Number Overlay */}
-                                    <span className="absolute text-sm font-bold text-slate-800">{viewMode + 1}</span>
-                                </div>
-                            </button>
-                        </>
-                    )}
-
-                    {/* 4. Demo Play - Always Visible in Desktop Mode (ONLY ON DEV PAGE) */}
-                    {showControls && isDevPage && (
-                        <button
-                            onClick={handleDemoPlay}
-                            disabled={isPlaying}
-                            className={`w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700 ${isPlaying ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            title="Play Scale Demo"
-                        >
-                            <PlayCircle size={24} className={isPlaying ? "animate-pulse text-green-600" : ""} />
-                        </button>
-                    )}
-
-
-
-                    {/* 5. Idle Boat Toggle */}
-                    {showControls && (
-                        <button
-                            onClick={() => {
-                                setShowIdleBoat(prev => !prev);
-                            }}
-                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                            title={showIdleBoat ? "Hide Idle Boat" : "Show Idle Boat"}
-                        >
-                            <Ship size={20} className={`transition-colors duration-200 ${showIdleBoat ? "text-blue-500" : "text-slate-400"}`} />
-                        </button>
-                    )}
-
-                    {/* 6. Touch Text Toggle */}
-                    {showControls && (
-                        <button
-                            onClick={() => {
-                                setShowTouchText(prev => !prev);
-                            }}
-                            className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
-                            title={showTouchText ? "Hide Touch Text" : "Show Touch Text"}
-                        >
-                            <Pointer size={20} className={`transition-colors duration-200 ${showTouchText ? "text-purple-500" : "text-slate-400"}`} />
-                        </button>
-                    )}
-
-                    {/* 5. Extra Controls (Injected) - Toggle via showControls to hide external switchers */}
-                    {showControls && extraControls}
-                </div>
-            )}
-
-
-
 
             {/* Mobile Layout: Bottom Corner Buttons */}
             {isMobileButtonLayout && (
@@ -1302,10 +1264,23 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                         </div>
                     )}
 
-                    {/* Top-Left: Label Toggle (정보 표시/숨김) - DEV PAGE에서는 숨김 */}
-                    {/* Top-Left: Label Toggle (Aligned with Top-Right buttons) */}
+                    {/* Top-Left: 녹화 버튼, 정보표시 버튼 */}
                     {!isDevPage && (
                         <div className="absolute top-2 left-2 z-50 flex gap-2">
+                            {/* 1. 녹화 버튼 */}
+                            <button
+                                onClick={handleRecordToggle}
+                                className={`${btnMobile} text-red-600 ${isRecording ? 'animate-pulse ring-2 ring-red-100 border-red-400' : ''}`}
+                                title={isRecording ? "Stop Recording" : "Start Recording"}
+                            >
+                                {isRecording ? (
+                                    <Square size={16} fill="currentColor" />
+                                ) : (
+                                    <Disc size={16} fill="currentColor" />
+                                )}
+                            </button>
+
+                            {/* 2. View Mode Toggle (정보 표시/숨김) */}
                             <button
                                 onClick={() => {
                                     setViewMode(prev => prev === 3 ? 2 : 3);
@@ -1316,47 +1291,6 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                             >
                                 {viewMode === 3 ? <EyeOff size={16} className="opacity-50" /> : <Eye size={16} />}
                             </button>
-                            <button
-                                onClick={() => {
-                                    if (drumTimer === null) {
-                                        setDrumTimer(30); // 30초 타이머 시작
-                                        startBeat(); // 드럼 비트 시작
-                                    } else {
-                                        setDrumTimer(null); // 타이머 중단 및 드럼 아이콘으로 복귀
-                                        stopBeat(); // 드럼 비트 중단
-                                    }
-                                }}
-                                className={`${btnMobile} text-slate-700 relative`}
-                                title={drumTimer !== null ? `Pattern 1 (Running) - 클릭하여 중단` : "Drum"}
-                            >
-                                {drumTimer !== null ? (
-                                    <>
-                                        <span className="text-sm font-bold relative z-10">1</span>
-                                        {/* 시계방향으로 짧아지는 진행 링 */}
-                                        <svg
-                                            className="absolute inset-0 w-full h-full transform -rotate-90"
-                                            viewBox="0 0 40 40"
-                                        >
-                                            <circle
-                                                cx="20"
-                                                cy="20"
-                                                r="18"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                strokeDasharray={`${2 * Math.PI * 18}`}
-                                                strokeDashoffset={drumTimer !== null
-                                                    ? `${2 * Math.PI * 18 * (1 - drumTimer / 30)}`
-                                                    : 0
-                                                }
-                                                className="text-red-500 opacity-60 transition-all duration-1000"
-                                            />
-                                        </svg>
-                                    </>
-                                ) : (
-                                    <Drum size={16} className="opacity-50" />
-                                )}
-                            </button>
                         </div>
                     )}
 
@@ -1364,10 +1298,10 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                 </>
             )}
 
-            {/* Home Screen Only: Top-Right Record Button */}
+            {/* Home Screen Only: Top-Right - 자동재생, 캐슬링 */}
             {!isDevPage && (
                 <div className={`absolute ${isMobileButtonLayout ? 'top-2' : 'top-4'} right-4 z-50 flex flex-row gap-2`}>
-                    {/* 재생 버튼 - 녹음 버튼 왼쪽 */}
+                    {/* 1. 자동재생 버튼 */}
                     <button
                         onClick={handleDemoPlay}
                         disabled={isPlaying}
@@ -1381,16 +1315,14 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                             className="pl-1"
                         />
                     </button>
+                    {/* 2. 캐슬링 버튼 */}
                     <button
-                        onClick={handleRecordToggle}
-                        className={`${btnMobile} text-red-600 ${isRecording ? 'animate-pulse ring-2 ring-red-100 border-red-400' : ''}`}
-                        title={isRecording ? "Stop Recording" : "Start Recording"}
+                        onClick={toggleDrum}
+                        className={`${btnMobile} relative ${isJamPlaying ? 'gentle-shimmer' : ''}`}
+                        style={{ color: '#0066FF' }}
+                        title={isJamPlaying ? "Castling 중지" : "Castling 시작"}
                     >
-                        {isRecording ? (
-                            <Square size={16} fill="currentColor" />
-                        ) : (
-                            <Disc size={16} fill="currentColor" />
-                        )}
+                        <span className="text-3xl font-black leading-none relative z-10">C</span>
                     </button>
                 </div>
             )}

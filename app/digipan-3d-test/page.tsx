@@ -12,7 +12,7 @@ import Digipan18M from '../../components/Digipan18M';
 import DigipanDM from '../../components/DigipanDM';
 import ScaleInfoPanel from '../../components/ScaleInfoPanel';
 import { SCALES } from '@/data/handpanScales';
-import { ChevronDown, RefreshCw, Smartphone, Monitor, Grid, Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Ship, Pointer } from 'lucide-react';
+import { ChevronDown, RefreshCw, Smartphone, Monitor, Grid, Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Play, Ship, Pointer } from 'lucide-react';
 import { Digipan3DHandle } from '../../components/Digipan3D';
 import { useControls, button, Leva } from 'leva';
 import { getNoteFrequency } from '@/constants/noteFrequencies';
@@ -44,6 +44,7 @@ export default function Digipan3DTestPage() {
     // Developer Page Local State for External Buttons
     const [showIdleBoat, setShowIdleBoat] = useState(false); // Default: Off
     const [showTouchText, setShowTouchText] = useState(true); // Default: On
+    const [isDemoPlaying, setIsDemoPlaying] = useState(false); // Demo play state
 
     const handleExternalCapture = async () => {
         if (digipanRef.current) {
@@ -53,9 +54,11 @@ export default function Digipan3DTestPage() {
         }
     };
 
-    const handleExternalDemoPlay = () => {
-        if (digipanRef.current) {
-            digipanRef.current.handleDemoPlay();
+    const handleExternalDemoPlay = async () => {
+        if (digipanRef.current && !isDemoPlaying) {
+            setIsDemoPlaying(true);
+            await digipanRef.current.handleDemoPlay();
+            setIsDemoPlaying(false);
         }
     };
 
@@ -1946,10 +1949,11 @@ export default function Digipan3DTestPage() {
                             {/* Demo Play */}
                             <button
                                 onClick={handleExternalDemoPlay}
-                                className="w-12 h-12 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200"
+                                disabled={isDemoPlaying}
+                                className={`w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 border border-slate-200 ${isDemoPlaying ? 'text-slate-400 cursor-not-allowed' : 'text-red-600'}`}
                                 title="Play Demo"
                             >
-                                <PlayCircle size={20} className="text-slate-700" />
+                                <Play size={24} fill="currentColor" className="pl-1" />
                             </button>
 
 
