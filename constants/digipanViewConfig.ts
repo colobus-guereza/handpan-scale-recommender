@@ -16,9 +16,9 @@ export const DIGIPAN_VIEW_CONFIG: Record<string, DigipanViewSettings> = {
     '10': { zoom: 14, targetY: 3 },   // Adjusted to +3 (User Request)
     '11': { zoom: 12, targetY: 3 },   // Adjusted to +3 (User Request)
     '12': { zoom: 12, targetY: 3 },   // Adjusted to +3 (User Request)
-    '14': { zoom: 12, targetY: 3 },   // Adjusted to +3 (User Request)
-    '14M': { zoom: 12, targetY: 2 },  // Adjusted to +2 (User Request)
-    '15M': { zoom: 12, targetY: 1 },  // Adjusted to +1 (User Request)
-    '18M': { zoom: 12, targetY: 3 },  // Adjusted to +3 (User Request)
+    '14': { zoom: 12, targetY: 5 },   // Adjusted to +5 per user request
+    '14M': { zoom: 12, targetY: 5 },  // Adjusted to +5 per user request
+    '15M': { zoom: 12, targetY: 3 },  // Adjusted to +3 per user request
+    '18M': { zoom: 12, targetY: 5 },  // Adjusted to +5 per user request
     'DM': { zoom: 12, targetY: 0 },
 };
