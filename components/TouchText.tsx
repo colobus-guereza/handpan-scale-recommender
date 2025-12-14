@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import React, { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text3D, Center } from '@react-three/drei';
 import * as THREE from 'three';
@@ -6,6 +6,8 @@ import * as THREE from 'three';
 interface TouchTextProps {
     isIdle: boolean;
     suppressExplosion?: boolean; // viewMode 토글 등 UI 버튼 클릭 시 폭발 효과 억제
+    overrideText?: string | null; // For Castling Countdown
+    interactionTrigger?: number; // New: Explicit trigger signal
 }
 
 const SEQUENCE = [
@@ -18,7 +20,8 @@ const SEQUENCE = [
 const THEMES: Record<string, { color: string; emissive: string }> = {
     'Ready': { color: '#2ecc71', emissive: '#006400' }, // Green (Emerald)
     'Set': { color: '#FFFF00', emissive: '#FFD700' },   // 채도 높은 노란색 (Yellow)
-    'Touch!': { color: '#FF0000', emissive: '#CC0000' } // 채도 높은 빨강색 (Red)
+    'Touch!': { color: '#FF0000', emissive: '#CC0000' }, // 채도 높은 빨강색 (Red)
+    'Miss': { color: '#888888', emissive: '#444444' } // Gray
 };
 
 // [Effect] Explosion Particles (Reused from CyberBoat)
@@ -118,7 +121,7 @@ const ExplosionParticles = ({ active, position }: { active: boolean; position: T
     );
 };
 
-const TouchText = ({ isIdle, suppressExplosion = false }: TouchTextProps) => {
+const TouchText = ({ isIdle, suppressExplosion = false, overrideText, interactionTrigger = 0 }: TouchTextProps) => {
     const groupRef = useRef<THREE.Group>(null);
     const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);
 
@@ -128,52 +131,110 @@ const TouchText = ({ isIdle, suppressExplosion = false }: TouchTextProps) => {
 
     // Sequential Text Cycling
     const [stepIndex, setStepIndex] = useState(0);
-    const currentText = SEQUENCE[stepIndex].text;
+
+    // Logic: Use overrideText if provided, otherwise follow Sequence
+    const currentText = overrideText || SEQUENCE[stepIndex].text;
+
+    // Ref to track current text for effects without triggering re-runs
+    const currentTextRef = useRef(currentText);
+    useEffect(() => {
+        currentTextRef.current = currentText;
+    }, [currentText]);
+
     const wasIdle = useRef(isIdle);
 
     useEffect(() => {
+        // Only run sequence timer if NOT overriding
+        if (overrideText) return;
+
         const step = SEQUENCE[stepIndex];
         const timeoutId = setTimeout(() => {
             setStepIndex((prev) => (prev + 1) % SEQUENCE.length);
         }, step.duration);
 
         return () => clearTimeout(timeoutId);
-    }, [stepIndex]);
+    }, [stepIndex, overrideText]);
+
+    // Added: Reset to "Ready" (0) immediately when override ends
+    useEffect(() => {
+        if (!overrideText) {
+            setStepIndex(0);
+        }
+    }, [overrideText]);
 
     // Initial Position (Center, Floating above)
     // DigiBall Fly Height Min is 25. Let's put Text around 30.
     const initialPos = new THREE.Vector3(0, 0, 30);
 
-    // Handle System Idle Changes
+    // Internal Explosion Logic (Safe to call from effects)
+    const triggerExplosion = useCallback(() => {
+        const text = currentTextRef.current;
+        // Exception: Don't explode if showing Countdown Numbers
+        if (['4', '3', '2', '1'].includes(text)) {
+            return;
+        }
+        if (!suppressExplosion) {
+            if (groupRef.current) {
+                setLastPos(groupRef.current.position.clone());
+            }
+            setExploding(true);
+            setTimeout(() => setExploding(false), 1000);
+        }
+    }, [suppressExplosion]);
+
+    // Effect 1: Handle System Idle Changes (Start of Interaction)
+    // Removed triggerExplosion from dependency to avoid re-run on text change
+    // Using wasIdle ref to detect edge
     useEffect(() => {
         if (wasIdle.current && !isIdle) {
-            // User Became Active -> Explode & Hide (단, suppressExplosion이 아닐 때만)
-            if (!suppressExplosion) {
-                if (groupRef.current) {
-                    setLastPos(groupRef.current.position.clone());
-                }
-                setExploding(true);
-                setTimeout(() => setExploding(false), 1000);
-            }
+            triggerExplosion();
         } else if (!wasIdle.current && isIdle) {
             // User Became Idle (Text Reappears) -> Reset to Start
             setStepIndex(0);
         }
         wasIdle.current = isIdle;
-    }, [isIdle, suppressExplosion]);
+    }, [isIdle, triggerExplosion]); // triggerExplosion deps on suppressExplosion. OK.
 
-    const theme = THEMES[currentText] || THEMES['Touch!'];
+    // Effect 2: Handle Explicit Interaction Triggers (Continuous Interaction)
+    useEffect(() => {
+        if (interactionTrigger && interactionTrigger > 0) {
+            triggerExplosion();
+        }
+    }, [interactionTrigger, triggerExplosion]);
+
+    // Theme Resolution:
+    // If overrideText is present:
+    // - "4","3","2","1" -> Yellow (Same as 'Set')
+    // - "Touch!" -> Red
+    // Else -> Standard Mapping
+    let theme = THEMES[currentText];
+    if (!theme) {
+        if (['4', '3', '2', '1'].includes(currentText)) {
+            theme = THEMES['Set']; // Yellow
+        } else {
+            theme = THEMES['Touch!']; // Fallback / Red
+        }
+    }
 
     useFrame((state, delta) => {
         if (!groupRef.current) return;
 
+        // Optimize Disappearance: Instant Hide on Explosion
+        if (exploding) {
+            groupRef.current.scale.setScalar(0);
+            groupRef.current.visible = false;
+            return;
+        }
+
         // Visibility Logic
-        const targetGlobalScale = isIdle ? 1 : 0;
+        // Visibility Logic: Force visible if overrideText is present (Castling Mode)
+        const targetGlobalScale = (isIdle || !!overrideText) ? 1 : 0;
         const currentGlobalScale = groupRef.current.scale.x;
         const lerpRate = isIdle ? 0.08 : 0.1; // 나타날 때 0.08, 사라질 때 0.1
         const nextGlobalScale = THREE.MathUtils.lerp(currentGlobalScale, targetGlobalScale, lerpRate);
 
-        if (isIdle) {
+        if (isIdle || overrideText) {
+            // Always show if idle OR if overriding (even if active)
             if (nextGlobalScale > 0.01) groupRef.current.visible = true;
         } else {
             if (nextGlobalScale < 0.01) groupRef.current.visible = false;
@@ -220,7 +281,7 @@ const TouchText = ({ isIdle, suppressExplosion = false }: TouchTextProps) => {
                 <Center key={currentText}>
                     <Text3D
                         font="https://threejs.org/examples/fonts/helvetiker_bold.typeface.json"
-                        size={12}
+                        size={['4', '3', '2', '1'].includes(currentText) ? 14.4 : 12}
                         height={2}
                         curveSegments={12}
                         bevelEnabled

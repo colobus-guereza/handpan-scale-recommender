@@ -32,7 +32,7 @@ export const useJamSession = ({
     const delayRef = useRef<Tone.PingPongDelay | null>(null);
 
     // === Dynamic Refs ===
-    const currentStepRef = useRef(0);
+    const currentStepRef = useRef(-32);
     const kickPitchRef = useRef(40);
     const chordSetsRef = useRef<ChordSet[]>([]);
 
@@ -163,7 +163,7 @@ export const useJamSession = ({
             Tone.Transport.stop();
             Tone.Transport.position = 0;
             padSynthRef.current?.releaseAll();
-            currentStepRef.current = 0;
+            currentStepRef.current = -32;
             if (drumLoopIdRef.current !== null) {
                 Tone.Transport.clear(drumLoopIdRef.current);
                 drumLoopIdRef.current = null;
@@ -188,6 +188,14 @@ export const useJamSession = ({
     }, [rootNote, scaleNotes]); // ← isPlaying 제거! 무한 루프 방지
 
 
+    const [introCountdown, setIntroCountdown] = useState<string | null>(null);
+
+    const hasInteractedRef = useRef(false);
+
+    const onInteraction = useCallback(() => {
+        hasInteractedRef.current = true;
+    }, []);
+
     // === [3] 시퀀스 스케줄링 ===
     const scheduleSession = useCallback(() => {
         const chordSets = chordSetsRef.current;
@@ -196,6 +204,7 @@ export const useJamSession = ({
         Tone.Transport.bpm.value = bpm;
 
         // --- CHORD PART ---
+        // 인트로 2마디(총 8박자/32 steps) 고려하여 2마디 뒤로 밀어서 스케줄링
         if (chordPartRef.current) {
             chordPartRef.current.dispose();
         }
@@ -205,19 +214,27 @@ export const useJamSession = ({
             padSynthRef.current?.triggerAttackRelease(chord.notes, "4m", time);
             console.log(`[Chord] Bar ${chord.barStart}: ${chord.role} [${chord.chordType}]`, chord.notes);
         }, [
-            ["0:0:0", chordSets[0]],   // Bar 1
-            ["4:0:0", chordSets[1]],   // Bar 5
-            ["8:0:0", chordSets[2]],   // Bar 9
-            ["12:0:0", chordSets[3]]   // Bar 13
+            ["2:0:0", chordSets[0]],   // Bar 1 starts at 2:0:0 due to 2-bar intro
+            ["6:0:0", chordSets[1]],   // Bar 5 -> 6:0:0
+            ["10:0:0", chordSets[2]],  // Bar 9 -> 10:0:0
+            ["14:0:0", chordSets[3]]   // Bar 13 -> 14:0:0
         ]);
         chordPartRef.current.start(0);
         chordPartRef.current.loop = false; // 한 번만 재생
 
-        // --- DRUM LOOP (16n Grid, 16 Bars = 256 steps) ---
+        // --- DRUM LOOP (16n Grid) ---
+        // Intro 2 bars + Main 16 bars = Total 18 bars logic roughly, 
+        // but we handle it by starting step count from negative.
         if (drumLoopIdRef.current !== null) {
             Tone.Transport.clear(drumLoopIdRef.current);
         }
-        currentStepRef.current = 0;
+
+        // Start from -32 (2 bars before 0)
+        // Bar -2: Intro 1 (Minimal)
+        // Bar -1: Intro 2 (Fill-in)
+        // Bar 0+: Main Loop
+        currentStepRef.current = -32;
+        setIntroCountdown(null); // Reset countdown on start schedule
 
         // Patterns (from useToneDrum)
         const stdKick = [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0];
@@ -230,26 +247,100 @@ export const useJamSession = ({
         const fillEndKick = [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0];
 
         drumLoopIdRef.current = Tone.Transport.scheduleRepeat((time) => {
-            const step = currentStepRef.current % 256;
-            const barIndex = Math.floor(step / 16);
-            const stepInBar = step % 16;
-            const patternIndex32 = step % 32;
+            const currentStep = currentStepRef.current;
 
             let kVal = 0, sVal = 0, hVal = 0;
 
-            // Pattern selection based on bar
-            if (barIndex === 15) {
-                kVal = fillEndKick[stepInBar];
-            } else if (barIndex === 7) {
-                kVal = fillHalfKick[stepInBar];
-                sVal = fillHalfSnare[stepInBar];
-            } else if (barIndex === 3 || barIndex === 11) {
-                kVal = fillSimpleKick[stepInBar];
-                sVal = fillSimpleSnare[stepInBar];
+            // === VISUAL COUNTDOWN LOGIC ===
+            let countdownText: string | null = null;
+
+            // Reset Interaction Flag at start of Touch window (approx Step -3)
+            if (currentStep === -3) {
+                hasInteractedRef.current = false;
+            }
+
+            if (currentStep >= -32 && currentStep < -24) countdownText = "4";
+            else if (currentStep >= -24 && currentStep < -16) countdownText = "3";
+            else if (currentStep >= -16 && currentStep < -8) countdownText = "2";
+            else if (currentStep >= -8 && currentStep < -3) countdownText = "1";
+            else if (currentStep >= -3 && currentStep < 4) countdownText = "Touch!";
+            else {
+                // Check Miss Logic at Step 4 (End of Touch window)
+                // Or keep displaying Miss if we are in Miss State
+                if (currentStep === 4) {
+                    if (!hasInteractedRef.current) {
+                        // User missed!
+                        countdownText = "Miss";
+                    } else {
+                        // Success -> Clear
+                        countdownText = null;
+                    }
+                } else if (currentStep > 4 && currentStep < 24) {
+                    // Hold Miss Message for ~3s (20 steps = 3s at 100bpm approx?)
+                    // 100 BPM = 1.666 BPS. 16 steps = 1 bar = 2.4s.
+                    // 16 steps = 2400ms. 20 steps = 3000ms. Correct.
+                    // If NOT interacted, keep showing Miss.
+                    if (!hasInteractedRef.current) {
+                        countdownText = "Miss";
+                    } else {
+                        countdownText = null;
+                    }
+                } else {
+                    countdownText = null;
+                }
+            }
+
+            // Schedule UI update on Animation Frame
+            Tone.Draw.schedule(() => {
+                if (Tone.Transport.state === 'started') {
+                    setIntroCountdown(countdownText);
+                }
+            }, time);
+
+
+            if (currentStep < 0) {
+                // === INTRO PHASE ===
+                // Bar -2 (steps -32 to -17) or Bar -1 (steps -16 to -1)
+
+                // Map negative step to 0-31 index
+                // -32 -> 0, -1 -> 31
+                const introIndex = currentStep + 32;
+                const introBarIndex = Math.floor(introIndex / 16); // 0 or 1
+                const stepInBar = introIndex % 16;
+                const patternIndex32 = introIndex % 32;
+
+                if (introBarIndex === 1) {
+                    // Intro Bar 2: Use Fill End Kick only (Kung KungKung) - Same as 16th Bar Fill
+                    kVal = fillEndKick[stepInBar];
+                    sVal = 0;
+                    hVal = 0;
+                } else {
+                    // Intro Bar 1: Simple Minimal
+                    kVal = stdKick[patternIndex32];
+                    sVal = stdSnare[patternIndex32];
+                    hVal = stdHat[patternIndex32];
+                }
+
             } else {
-                kVal = stdKick[patternIndex32];
-                sVal = stdSnare[patternIndex32];
-                hVal = stdHat[patternIndex32];
+                // === MAIN LOOP PHASE (Existing Logic) ===
+                const step = currentStep % 256;
+                const barIndex = Math.floor(step / 16);
+                const stepInBar = step % 16;
+                const patternIndex32 = step % 32;
+
+                if (barIndex === 15) {
+                    kVal = fillEndKick[stepInBar];
+                } else if (barIndex === 7) {
+                    kVal = fillHalfKick[stepInBar];
+                    sVal = fillHalfSnare[stepInBar];
+                } else if (barIndex === 3 || barIndex === 11) {
+                    kVal = fillSimpleKick[stepInBar];
+                    sVal = fillSimpleSnare[stepInBar];
+                } else {
+                    kVal = stdKick[patternIndex32];
+                    sVal = stdSnare[patternIndex32];
+                    hVal = stdHat[patternIndex32];
+                }
             }
 
             // Play drums
@@ -268,12 +359,14 @@ export const useJamSession = ({
 
             currentStepRef.current++;
 
-            // Auto-stop after 16 bars
+            // Auto-stop after 16 bars (Main loop done)
+            // Main loop is 256 steps. So stop at 256.
             if (currentStepRef.current >= 256) {
                 Tone.Transport.stop();
                 padSynthRef.current?.releaseAll();
                 setIsPlaying(false);
-                currentStepRef.current = 0;
+                currentStepRef.current = -32; // Reset to intro start for next play
+                setIntroCountdown(null); // Reset text on auto-stop
             }
         }, "16n");
 
@@ -312,7 +405,7 @@ export const useJamSession = ({
             }
 
             padSynthRef.current?.releaseAll();
-            currentStepRef.current = 0;
+            currentStepRef.current = -32;
             if (drumLoopIdRef.current !== null) {
                 Tone.Transport.clear(drumLoopIdRef.current);
                 drumLoopIdRef.current = null;
@@ -322,6 +415,7 @@ export const useJamSession = ({
                 chordPartRef.current = null;
             }
             setIsPlaying(false);
+            setIntroCountdown(null); // Fix: Reset countdown on manual stop
         } else {
             // START - 게인/이펙트 값 복구 후 재생
             if (masterGainRef.current) masterGainRef.current.gain.value = 0.225;
@@ -330,12 +424,12 @@ export const useJamSession = ({
 
             Tone.Transport.cancel();
             Tone.Transport.position = 0;
-            currentStepRef.current = 0;
+            currentStepRef.current = -32;
             scheduleSession();
             Tone.Transport.start();
             setIsPlaying(true);
         }
     }, [scheduleSession]); // isPlaying 의존성 제거 (Transport.state 사용)
 
-    return { togglePlay, isPlaying };
+    return { togglePlay, isPlaying, introCountdown, onInteraction };
 };

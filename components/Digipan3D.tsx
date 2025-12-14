@@ -801,7 +801,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     // === Unified Jam Session Hook ===
     const dingNote = notes.find(n => n.id === 0)?.label || "D3";
     const scaleNoteNames = useMemo(() => notes.map(n => n.label), [notes]);
-    const { togglePlay: toggleJam, isPlaying: isJamPlaying } = useJamSession({
+    const { togglePlay: toggleJam, isPlaying: isJamPlaying, introCountdown, onInteraction } = useJamSession({
         bpm: 100,
         rootNote: dingNote,
         scaleNotes: scaleNoteNames
@@ -1016,16 +1016,15 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
         preloadNotes(Array.from(uniqueNotes));
     }, [notes, preloadNotes]);
 
+    // Interaction Trigger for Visual Effects
+    const [interactionCount, setInteractionCount] = useState(0);
+
     // Optimized Click Handler (Stable Callback)
     const handleToneFieldClick = useCallback((id: number) => {
         // 1. Audio Priority: Play immediately
         // Note: playNote is handled inside ToneFieldMesh for instant feedback? 
         // No, ToneFieldMesh calls playNote via prop.
-        // Wait, ToneFieldMesh implementation calls playNote locally inside handlePointerDown if playNote is provided.
-        // So Main Note is already handled. We just need to handle Resonance here?
-
-        // Actually, if we want to synchronize, we might want to handle it here.
-        // But ToneFieldMesh implementation:
+        // Wait, ToneFieldMesh implementation:
         // handlePointerDown -> onClick(id) -> playNote(label)
         // See lines 1127-1133 of Digipan3D.tsx (ToneFieldMesh)
         // It calls onClick THEN playNote.
@@ -1043,9 +1042,16 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
 
         // 3. Logic & State Updates
         resetIdleTimer(3500);
+        setInteractionCount(prev => prev + 1); // Trigger visual feedback
+
         if (onNoteClick) onNoteClick(id);
 
-    }, [resonanceMap, playResonantNote, onNoteClick, resetIdleTimer]); // removed resetIdleTimer dependency if it's ref-based, but it uses state setters? check impl.
+        // Notify Castling Session (if active)
+        if (isJamPlaying) {
+            onInteraction();
+        }
+
+    }, [resonanceMap, playResonantNote, onNoteClick, resetIdleTimer, isJamPlaying, onInteraction]);
 
     // Dynamic Scale Filter based on noteCountFilter and Search Query
     const filteredScales = useMemo(() => {
@@ -1318,7 +1324,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     {/* 2. 캐슬링 버튼 */}
                     <button
                         onClick={toggleDrum}
-                        className={`${btnMobile} relative ${isJamPlaying ? 'gentle-shimmer' : ''}`}
+                        className={`${btnMobile} relative ${isJamPlaying ? 'animate-heartbeat' : ''}`}
                         style={{ color: '#0066FF' }}
                         title={isJamPlaying ? "Castling 중지" : "Castling 시작"}
                     >
@@ -1361,10 +1367,11 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     <CyberBoat isIdle={isIdle && showIdleBoat} />
                     {/* Touch Text - Hidden on Home Screen if ViewMode is 2 (Labels Visible) to avoid obscuring pitch info */}
                     <TouchText
-                        isIdle={isIdle && showTouchText && (isDevPage || viewMode !== 2)}
+                        isIdle={isIdle && !isJamPlaying && showTouchText && (isDevPage || viewMode !== 2)}
                         suppressExplosion={!isDevPage && viewMode === 2}
+                        overrideText={introCountdown}
+                        interactionTrigger={interactionCount}
                     />
-                    {/* Body */}
                     <Suspense fallback={null}>
                         {backgroundContent ? backgroundContent : <HandpanImage backgroundImage={backgroundImage} centerX={centerX} centerY={centerY} />}
                     </Suspense>
