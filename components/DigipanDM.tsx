@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import Digipan3D from './Digipan3D';
 import { Scale } from '../data/handpanScales';
 import { getNoteFrequency } from '../constants/noteFrequencies';
-import { DIGIPAN_ZOOM_CONFIG } from '../constants/digipanZoomConfig';
+import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
 
 import { Digipan3DHandle } from './Digipan3D';
 import { useControls, folder } from 'leva';
@@ -191,7 +191,8 @@ const DigipanDM = React.forwardRef<Digipan3DHandle, DigipanDMProps>(({
             showAxes={showAxes}
             onIsRecordingChange={onIsRecordingChange}
             sceneSize={forceCompactView ? { width: 66, height: 50 } : { width: 64, height: 60 }}
-            cameraZoom={DIGIPAN_ZOOM_CONFIG['DM']}
+            cameraZoom={DIGIPAN_VIEW_CONFIG['DM'].zoom}
+            cameraTargetY={DIGIPAN_VIEW_CONFIG['DM'].targetY}
         />
     );
 });

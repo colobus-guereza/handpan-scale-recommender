@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import Digipan3D from './Digipan3D';
 import { Scale } from '../data/handpanScales';
 import { getNoteFrequency } from '../constants/noteFrequencies';
-import { DIGIPAN_ZOOM_CONFIG } from '../constants/digipanZoomConfig';
+import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
 
 import { Digipan3DHandle } from './Digipan3D';
 
@@ -256,7 +256,8 @@ const Digipan10 = React.forwardRef<Digipan3DHandle, Digipan10Props>(({
             showAxes={showAxes}
             onIsRecordingChange={onIsRecordingChange}
             sceneSize={forceCompactView ? { width: 66, height: 50 } : { width: 64, height: 60 }}
-            cameraZoom={DIGIPAN_ZOOM_CONFIG['10']} // Loaded from central config
+            cameraZoom={DIGIPAN_VIEW_CONFIG['10'].zoom}
+            cameraTargetY={DIGIPAN_VIEW_CONFIG['10'].targetY}
         />
     );
 });
