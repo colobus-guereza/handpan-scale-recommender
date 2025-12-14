@@ -8,7 +8,7 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Text, OrbitControls, Center, Line, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { Scale } from '../data/handpanScales';
-import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Play, Ship, Pointer, Disc, Square } from 'lucide-react';
+import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Play, Ship, Pointer, Disc, Square, Drum } from 'lucide-react';
 import { HANDPAN_CONFIG, getDomeHeight, TONEFIELD_CONFIG } from '../constants/handpanConfig';
 import html2canvas from 'html2canvas';
 import { useHandpanAudio } from '../hooks/useHandpanAudio';
@@ -1278,7 +1278,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     {/* Top-Left: Label Toggle (정보 표시/숨김) - DEV PAGE에서는 숨김 */}
                     {/* Top-Left: Label Toggle (Aligned with Top-Right buttons) */}
                     {!isDevPage && (
-                        <div className="absolute top-2 left-2 z-50">
+                        <div className="absolute top-2 left-2 z-50 flex gap-2">
                             <button
                                 onClick={() => {
                                     setViewMode(prev => prev === 3 ? 2 : 3);
@@ -1288,6 +1288,12 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                                 title={viewMode === 3 ? "Show Labels" : "Hide Labels"}
                             >
                                 {viewMode === 3 ? <EyeOff size={16} className="opacity-50" /> : <Eye size={16} />}
+                            </button>
+                            <button
+                                className={`${btnMobile} text-slate-700`}
+                                title="Drum"
+                            >
+                                <Drum size={16} className="opacity-50" />
                             </button>
                         </div>
                     )}
@@ -1329,7 +1335,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
 
             <Canvas
                 orthographic
-                dpr={isDevPage ? [1, 2.5] : [1, 1.5]}
+                dpr={isDevPage ? [1, 2.5] : [1, 2.0]}
                 gl={{ preserveDrawingBuffer: true }}
                 camera={{
                     zoom: cameraZoom || 12, // Adjusted default or override

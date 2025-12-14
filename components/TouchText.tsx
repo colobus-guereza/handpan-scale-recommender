@@ -21,77 +21,99 @@ const THEMES: Record<string, { color: string; emissive: string }> = {
 };
 
 // [Effect] Explosion Particles (Reused from CyberBoat)
+// [Effect] Explosion Particles (Optimized with InstancedMesh)
 const ExplosionParticles = ({ active, position }: { active: boolean; position: THREE.Vector3 }) => {
-    const groupRef = useRef<THREE.Group>(null);
+    const meshRef = useRef<THREE.InstancedMesh>(null);
     const PARTICLE_COUNT = 150;
+    const dummy = useMemo(() => new THREE.Object3D(), []);
+
+    // Particle State
     const particles = useMemo(() => {
         return new Array(PARTICLE_COUNT).fill(0).map(() => ({
             pos: new THREE.Vector3(0, 0, 0),
             vel: new THREE.Vector3(
-                (Math.random() - 0.5) * 3, // Faster expansion (1.5 -> 3)
+                (Math.random() - 0.5) * 3,
                 (Math.random() - 0.5) * 3,
                 (Math.random() - 0.5) * 3
             ),
-            color: Math.random() > 0.5 ? '#FFD700' : '#FFFFFF', // Gold & White
-            scale: Math.random() * 1.5 + 0.5, // Bigger particles (0.5~2.0)
-            life: 1.0
+            scale: Math.random() * 1.5 + 0.5,
+            life: 1.0,
+            color: new THREE.Color(Math.random() > 0.5 ? '#FFD700' : '#FFFFFF')
         }));
     }, []);
 
-    const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible] = useState(true); // Start true for Warm-up
+    const isWarmedUp = useRef(false);
 
+    // Warm-up & Trigger Logic
     useEffect(() => {
+        if (!isWarmedUp.current) {
+            // Frame 0: Mount -> Render (Scale 0) -> Compile Shader
+            // Frame 1: Timer runs -> Hide
+            const timer = setTimeout(() => {
+                isWarmedUp.current = true;
+                setIsVisible(false); // Hide after warm-up
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+
         if (active) {
             setIsVisible(true);
             particles.forEach(p => {
                 p.pos.copy(position);
                 p.vel.set(
-                    (Math.random() - 0.5) * 4, // More explosive spread
+                    (Math.random() - 0.5) * 4,
                     (Math.random() - 0.5) * 4,
                     (Math.random() - 0.5) * 4
                 );
-                p.life = 1.0 + Math.random() * 0.5; // Random life duration
+                p.life = 1.0 + Math.random() * 0.5;
             });
-            const timer = setTimeout(() => setIsVisible(false), 1500); // Longer visibility
+            const timer = setTimeout(() => setIsVisible(false), 1500);
             return () => clearTimeout(timer);
         }
     }, [active, position, particles]);
 
     useFrame((state, delta) => {
-        if (!isVisible || !groupRef.current) return;
+        if (!meshRef.current || !isVisible) return;
 
-        // Safety: Ensure visible is true whenever we are processing frames
-        groupRef.current.visible = true;
+        // If warming up (active=false but visible=true), keep scale 0
+        const isWarming = !isWarmedUp.current;
 
-        groupRef.current.children.forEach((child, i) => {
-            const p = particles[i];
-            if (p.life > 0) {
+        particles.forEach((p, i) => {
+            if (active && p.life > 0) {
                 p.pos.add(p.vel.clone().multiplyScalar(delta * 10));
                 p.life -= delta * 1.5;
-                child.position.copy(p.pos);
-                child.scale.setScalar(p.scale * p.life);
-                (child as THREE.Mesh).visible = true;
-                // Add rotation for dynamic feel
-                child.rotation.x += delta * 2;
-                child.rotation.y += delta * 2;
+                dummy.position.copy(p.pos);
+                dummy.scale.setScalar(p.scale * p.life);
+                dummy.rotation.x += delta * 2;
+                dummy.rotation.y += delta * 2;
+            } else if (isWarming) {
+                // Warm-up: Render at 0,0,0 with scale 0 (Forces GPU Buffer Upload)
+                dummy.position.set(0, 0, 0);
+                dummy.scale.setScalar(0.0001); // Non-zero to ensure draw call happens
             } else {
-                (child as THREE.Mesh).visible = false;
+                // Dead/Hidden
+                dummy.scale.setScalar(0);
             }
+
+            dummy.updateMatrix();
+            meshRef.current!.setMatrixAt(i, dummy.matrix);
+            // Color updates require instanceColor buffer or just grouping by material. 
+            // For simplicity in InstancedMesh basic usage without color buffer attrs, we assume single color or uniform.
+            // But we want Gold/White.
+            // Option: Use meshRef.current.setColorAt(i, p.color)
+            meshRef.current!.setColorAt(i, p.color);
         });
+
+        meshRef.current.instanceMatrix.needsUpdate = true;
+        if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
     });
 
-    // Always render, but control visibility. 
-    // This allows React to mount the meshes once, and Three.js to potentially pre-compile shaders/upload geometry.
-    // We start invisible if !isVisible.
     return (
-        <group ref={groupRef} visible={isVisible}>
-            {particles.map((p, i) => (
-                <mesh key={i} visible={false}> {/* Start invisible until updated by frame loop */}
-                    <icosahedronGeometry args={[0.6, 0]} /> {/* Adjusted size to 0.6 as requested */}
-                    <meshBasicMaterial color={p.color} transparent opacity={0.9} />
-                </mesh>
-            ))}
-        </group>
+        <instancedMesh ref={meshRef} args={[undefined, undefined, PARTICLE_COUNT]} visible={isVisible}>
+            <icosahedronGeometry args={[0.6, 0]} />
+            <meshBasicMaterial transparent opacity={0.9} toneMapped={false} />
+        </instancedMesh>
     );
 };
 

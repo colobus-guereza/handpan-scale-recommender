@@ -6,6 +6,7 @@ import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, Chevr
 import { TRANSLATIONS, Language } from '@/constants/translations';
 import { getLocalizedScale } from '../utils/i18n';
 import MiniDigiPan from './MiniDigiPan';
+import { useHandpanAudio } from '../hooks/useHandpanAudio';
 
 interface Props {
     selectedVibe: Vibe;
@@ -56,6 +57,10 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
     const t = TRANSLATIONS[language];
     const [displayScales, setDisplayScales] = useState<Scale[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+
+    // ✅ Preload Handpan Audio Global Cache (Singleton)
+    // Even if MiniDigiPan is lazy-loaded, we start downloading sounds immediately here.
+    useHandpanAudio();
 
 
 
