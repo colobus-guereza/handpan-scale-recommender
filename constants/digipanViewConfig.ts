@@ -12,13 +12,13 @@ export interface DigipanViewSettings {
 }
 
 export const DIGIPAN_VIEW_CONFIG: Record<string, DigipanViewSettings> = {
-    '9': { zoom: 14, targetY: 2 },    // Adjusted to +2 per user request (Moves object DOWN)
-    '10': { zoom: 14, targetY: 2 },   // Adjusted to +2 per user request
-    '11': { zoom: 12, targetY: 2 },   // Adjusted to +2 consistent with direction fix
-    '12': { zoom: 12, targetY: 2 },   // Adjusted to +2 consistent with direction fix
-    '14': { zoom: 12, targetY: 0 },
-    '14M': { zoom: 12, targetY: 0 },
-    '15M': { zoom: 12, targetY: 3 },  // Kept existing offset (lowering object)
-    '18M': { zoom: 12, targetY: 3 },  // Kept existing offset (lowering object)
+    '9': { zoom: 14, targetY: 3 },    // Adjusted to +3 (User Request)
+    '10': { zoom: 14, targetY: 3 },   // Adjusted to +3 (User Request)
+    '11': { zoom: 12, targetY: 3 },   // Adjusted to +3 (User Request)
+    '12': { zoom: 12, targetY: 3 },   // Adjusted to +3 (User Request)
+    '14': { zoom: 12, targetY: 3 },   // Adjusted to +3 (User Request)
+    '14M': { zoom: 12, targetY: 2 },  // Adjusted to +2 (User Request)
+    '15M': { zoom: 12, targetY: 1 },  // Adjusted to +1 (User Request)
+    '18M': { zoom: 12, targetY: 3 },  // Adjusted to +3 (User Request)
     'DM': { zoom: 12, targetY: 0 },
 };
