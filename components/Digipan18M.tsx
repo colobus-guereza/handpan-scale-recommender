@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import Digipan3D, { svgTo3D, getTonefieldDimensions, Digipan3DHandle } from './Digipan3D';
 import { Scale } from '../data/handpanScales';
 import { getNoteFrequency } from '../constants/noteFrequencies';
+import { DIGIPAN_ZOOM_CONFIG } from '../constants/digipanZoomConfig';
 import * as THREE from 'three';
 import { VisualTonefield } from './VisualTonefield';
 import { useTexture } from '@react-three/drei';
@@ -384,6 +385,7 @@ const Digipan18M = React.forwardRef<Digipan3DHandle, Digipan18MProps>(({
             hideStaticLabels={true}
             cameraTargetY={3}
             sceneSize={forceCompactView ? { width: 66, height: 66 } : { width: 64, height: 66 }}
+            cameraZoom={DIGIPAN_ZOOM_CONFIG['18M']}
             showAxes={showAxes}
         />
     );

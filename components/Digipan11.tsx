@@ -5,6 +5,7 @@ import { useTexture } from '@react-three/drei';
 import { HANDPAN_CONFIG } from '../constants/handpanConfig';
 import { Scale } from '../data/handpanScales';
 import { getNoteFrequency } from '../constants/noteFrequencies';
+import { DIGIPAN_ZOOM_CONFIG } from '../constants/digipanZoomConfig';
 import * as THREE from 'three';
 import { VisualTonefield } from './VisualTonefield';
 
@@ -307,6 +308,7 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
             showAxes={showAxes}
             hideStaticLabels={true} // Hide RS/LS/H labels
             sceneSize={sceneSize} // Pass dynamic scene size
+            cameraZoom={DIGIPAN_ZOOM_CONFIG['11']}
             onIsRecordingChange={onIsRecordingChange}
         />
     );

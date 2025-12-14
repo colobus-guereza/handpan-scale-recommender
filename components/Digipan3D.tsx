@@ -22,13 +22,15 @@ const CameraHandler = ({
     enableZoom = true,
     enablePan = true,
     sceneSize = { width: 60, height: 60 },
-    cameraTargetY = 0
+    cameraTargetY = 0,
+    cameraZoom = 12 // Default base zoom
 }: {
     isLocked: boolean;
     enableZoom?: boolean;
     enablePan?: boolean;
     sceneSize?: { width: number; height: number; };
     cameraTargetY?: number;
+    cameraZoom?: number;
 }) => {
     const { camera, gl, size } = useThree();
     const controlsRef = useRef<any>(null);
@@ -54,7 +56,9 @@ const CameraHandler = ({
 
                 // Use the smaller zoom to ensure BOTH dimensions fit (contain)
                 // Multiply by 0.9 for safety margin (padding)
-                const targetZoom = Math.min(zoomX, zoomY) * 0.9;
+                // Apply User Requested Zoom Factor (Relative to Base 12)
+                const zoomFactor = cameraZoom / 12;
+                const targetZoom = Math.min(zoomX, zoomY) * 0.9 * zoomFactor;
 
                 // Apply
                 camera.position.set(0, cameraTargetY, 100);
@@ -71,7 +75,7 @@ const CameraHandler = ({
 
         // Update on params change or resize
         updateZoom();
-    }, [isLocked, camera, size.width, size.height, sceneSize.width, sceneSize.height]);
+    }, [isLocked, camera, size.width, size.height, sceneSize.width, sceneSize.height, cameraZoom]);
 
     return (
         <OrbitControls
@@ -118,6 +122,7 @@ interface Digipan3DProps {
     showAxes?: boolean; // Show/hide x, y, z axes and coordinates
     harmonicSettings?: DigipanHarmonicConfig; // Optional override for harmonics
     onIsRecordingChange?: (isRecording: boolean) => void;
+    cameraZoom?: number; // Optional override for initial camera zoom
 }
 
 export interface Digipan3DHandle {
@@ -730,7 +735,8 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     cameraTargetY = 0, // Vertical Shift Target
     showAxes = false, // Default to false, will be controlled by parent
     harmonicSettings, // Optional Override
-    onIsRecordingChange
+    onIsRecordingChange,
+    cameraZoom // Destructure new prop
 }, ref) => {
     const pathname = usePathname();
     // ScaleInfoPanel은 /digipan-3d-test 경로에서만 표시
@@ -1252,17 +1258,6 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                 </div>
             )}
 
-            {/* Home Screen Only: Bottom-Center Auto Play Button (Scale Name + Icon) */}
-            {!isDevPage && (
-                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 z-50 transform w-full flex justify-center pointer-events-none">
-                    <div className="relative flex items-center justify-center">
-                        {/* 텍스트 - 가로 중앙 정렬 */}
-                        <span className="text-[1.8rem] md:text-[2.4rem] lg:text-[3rem] font-black tracking-tight text-slate-900 dark:text-white uppercase text-center opacity-80">
-                            {scale?.name || 'Play Demo'}
-                        </span>
-                    </div>
-                </div>
-            )}
 
 
 
@@ -1332,7 +1327,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                 dpr={isDevPage ? [1, 2.5] : [1, 1.5]}
                 gl={{ preserveDrawingBuffer: true }}
                 camera={{
-                    zoom: 12, // Adjusted for 57cm object
+                    zoom: cameraZoom || 12, // Adjusted default or override
                     position: [0, 0, 100],
                     near: 0.1,
                     far: 2000
@@ -1352,6 +1347,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     enablePan={enablePan}
                     sceneSize={sceneSize}
                     cameraTargetY={cameraTargetY}
+                    cameraZoom={cameraZoom} // Pass the prop down
                 />
 
                 <group>
