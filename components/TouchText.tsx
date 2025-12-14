@@ -20,8 +20,7 @@ const SEQUENCE = [
 const THEMES: Record<string, { color: string; emissive: string }> = {
     'Ready': { color: '#2ecc71', emissive: '#006400' }, // Green (Emerald)
     'Set': { color: '#FFFF00', emissive: '#FFD700' },   // 채도 높은 노란색 (Yellow)
-    'Touch!': { color: '#FF0000', emissive: '#CC0000' }, // 채도 높은 빨강색 (Red)
-    'Miss': { color: '#888888', emissive: '#444444' } // Gray
+    'Touch!': { color: '#FF0000', emissive: '#CC0000' } // 채도 높은 빨강색 (Red)
 };
 
 // [Effect] Explosion Particles (Reused from CyberBoat)
@@ -131,21 +130,30 @@ const TouchText = ({ isIdle, suppressExplosion = false, overrideText, interactio
 
     // Sequential Text Cycling
     const [stepIndex, setStepIndex] = useState(0);
+    const [displayedText, setDisplayedText] = useState('Ready');
 
-    // Logic: Use overrideText if provided, otherwise follow Sequence
-    const currentText = overrideText || SEQUENCE[stepIndex].text;
+    // Logic: Sync displayedText based on state
+    // If not Idle and not Overriding, we PRESERVE the last text to allow fading out smoothly.
+    useEffect(() => {
+        if (overrideText) {
+            setDisplayedText(overrideText);
+        } else if (isIdle) {
+            setDisplayedText(SEQUENCE[stepIndex].text);
+        }
+    }, [overrideText, isIdle, stepIndex]);
+
+    const currentText = displayedText;
 
     // Ref to track current text for effects without triggering re-runs
     const currentTextRef = useRef(currentText);
-    useEffect(() => {
-        currentTextRef.current = currentText;
-    }, [currentText]);
+    currentTextRef.current = currentText; // Update synchronously
+
 
     const wasIdle = useRef(isIdle);
 
     useEffect(() => {
-        // Only run sequence timer if NOT overriding
-        if (overrideText) return;
+        // Only run sequence timer if NOT overriding AND IS IDLE
+        if (overrideText || !isIdle) return;
 
         const step = SEQUENCE[stepIndex];
         const timeoutId = setTimeout(() => {
@@ -153,14 +161,14 @@ const TouchText = ({ isIdle, suppressExplosion = false, overrideText, interactio
         }, step.duration);
 
         return () => clearTimeout(timeoutId);
-    }, [stepIndex, overrideText]);
+    }, [stepIndex, overrideText, isIdle]);
 
-    // Added: Reset to "Ready" (0) immediately when override ends
+    // Added: Reset to "Ready" (0) immediately when override ends (IF RETURNING TO IDLE)
     useEffect(() => {
-        if (!overrideText) {
+        if (!overrideText && isIdle) {
             setStepIndex(0);
         }
-    }, [overrideText]);
+    }, [overrideText, isIdle]);
 
     // Initial Position (Center, Floating above)
     // DigiBall Fly Height Min is 25. Let's put Text around 30.
@@ -173,10 +181,15 @@ const TouchText = ({ isIdle, suppressExplosion = false, overrideText, interactio
         if (['4', '3', '2', '1'].includes(text)) {
             return;
         }
+
+        // Fix: Only explode if there is something visible to explode!
+        // Prevents continuous explosions on every touch after text is gone.
+        if (!groupRef.current || !groupRef.current.visible || groupRef.current.scale.x < 0.1) {
+            return;
+        }
+
         if (!suppressExplosion) {
-            if (groupRef.current) {
-                setLastPos(groupRef.current.position.clone());
-            }
+            setLastPos(groupRef.current.position.clone());
             setExploding(true);
             setTimeout(() => setExploding(false), 1000);
         }
@@ -187,19 +200,22 @@ const TouchText = ({ isIdle, suppressExplosion = false, overrideText, interactio
     // Using wasIdle ref to detect edge
     useEffect(() => {
         if (wasIdle.current && !isIdle) {
-            triggerExplosion();
+            // User Became Active -> Do nothing specific visually (Just let visibility logic handle it)
+            // Previously triggered explosion here, which caused issues with GUI button clicks.
         } else if (!wasIdle.current && isIdle) {
             // User Became Idle (Text Reappears) -> Reset to Start
             setStepIndex(0);
         }
         wasIdle.current = isIdle;
-    }, [isIdle, triggerExplosion]); // triggerExplosion deps on suppressExplosion. OK.
+    }, [isIdle]);
 
     // Effect 2: Handle Explicit Interaction Triggers (Continuous Interaction)
+    const prevInteractionTrigger = useRef(interactionTrigger);
     useEffect(() => {
-        if (interactionTrigger && interactionTrigger > 0) {
+        if (interactionTrigger && interactionTrigger > (prevInteractionTrigger.current || 0)) {
             triggerExplosion();
         }
+        prevInteractionTrigger.current = interactionTrigger;
     }, [interactionTrigger, triggerExplosion]);
 
     // Theme Resolution:
@@ -227,10 +243,17 @@ const TouchText = ({ isIdle, suppressExplosion = false, overrideText, interactio
         }
 
         // Visibility Logic
-        // Visibility Logic: Force visible if overrideText is present (Castling Mode)
-        const targetGlobalScale = (isIdle || !!overrideText) ? 1 : 0;
+        // Force visible if overrideText is present, or if Idle (and currentText exists)
+        const hasText = !!currentText;
+        const targetGlobalScale = (hasText && (isIdle || !!overrideText)) ? 1 : 0;
         const currentGlobalScale = groupRef.current.scale.x;
-        const lerpRate = isIdle ? 0.08 : 0.1; // 나타날 때 0.08, 사라질 때 0.1
+
+        let lerpRate = isIdle ? 0.08 : 0.1; // Standard rates
+        // [Effect] Fast Fade Out for "Touch!" (Castling Intro)
+        if (targetGlobalScale === 0 && currentText === 'Touch!') {
+            lerpRate = 0.25; // Much faster fade out
+        }
+
         const nextGlobalScale = THREE.MathUtils.lerp(currentGlobalScale, targetGlobalScale, lerpRate);
 
         if (isIdle || overrideText) {
@@ -278,30 +301,32 @@ const TouchText = ({ isIdle, suppressExplosion = false, overrideText, interactio
     return (
         <>
             <group ref={groupRef} position={[initialPos.x, initialPos.y, initialPos.z]}>
-                <Center key={currentText}>
-                    <Text3D
-                        font="https://threejs.org/examples/fonts/helvetiker_bold.typeface.json"
-                        size={['4', '3', '2', '1'].includes(currentText) ? 14.4 : 12}
-                        height={2}
-                        curveSegments={12}
-                        bevelEnabled
-                        bevelThickness={0.5}
-                        bevelSize={0.3}
-                        bevelOffset={0}
-                        bevelSegments={5}
-                    >
-                        {currentText}
-                        <meshPhysicalMaterial
-                            ref={materialRef}
-                            roughness={0.2}
-                            metalness={0.1}
-                            transmission={0.0} // Removed transmission for more solid color pop
-                            thickness={1}
-                            clearcoat={0.5}
-                            clearcoatRoughness={0.1}
-                        />
-                    </Text3D>
-                </Center>
+                {currentText && (
+                    <Center key={currentText}>
+                        <Text3D
+                            font="https://threejs.org/examples/fonts/helvetiker_bold.typeface.json"
+                            size={['4', '3', '2', '1'].includes(currentText) ? 14.4 : 12}
+                            height={2}
+                            curveSegments={12}
+                            bevelEnabled
+                            bevelThickness={0.5}
+                            bevelSize={0.3}
+                            bevelOffset={0}
+                            bevelSegments={5}
+                        >
+                            {currentText}
+                            <meshPhysicalMaterial
+                                ref={materialRef}
+                                roughness={0.2}
+                                metalness={0.1}
+                                transmission={0.0}
+                                thickness={1}
+                                clearcoat={0.5}
+                                clearcoatRoughness={0.1}
+                            />
+                        </Text3D>
+                    </Center>
+                )}
             </group>
 
             {/* Explosion Effect */}

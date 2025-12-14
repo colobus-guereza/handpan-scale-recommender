@@ -265,29 +265,7 @@ export const useJamSession = ({
             else if (currentStep >= -8 && currentStep < -3) countdownText = "1";
             else if (currentStep >= -3 && currentStep < 4) countdownText = "Touch!";
             else {
-                // Check Miss Logic at Step 4 (End of Touch window)
-                // Or keep displaying Miss if we are in Miss State
-                if (currentStep === 4) {
-                    if (!hasInteractedRef.current) {
-                        // User missed!
-                        countdownText = "Miss";
-                    } else {
-                        // Success -> Clear
-                        countdownText = null;
-                    }
-                } else if (currentStep > 4 && currentStep < 24) {
-                    // Hold Miss Message for ~3s (20 steps = 3s at 100bpm approx?)
-                    // 100 BPM = 1.666 BPS. 16 steps = 1 bar = 2.4s.
-                    // 16 steps = 2400ms. 20 steps = 3000ms. Correct.
-                    // If NOT interacted, keep showing Miss.
-                    if (!hasInteractedRef.current) {
-                        countdownText = "Miss";
-                    } else {
-                        countdownText = null;
-                    }
-                } else {
-                    countdownText = null;
-                }
+                countdownText = null;
             }
 
             // Schedule UI update on Animation Frame
