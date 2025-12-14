@@ -851,7 +851,8 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     // Audio Preloader Hook - Loaded above
 
     // Digital Harmonics Engine (Global)
-    const { playResonantNote, preloadNotes } = useOctaveResonance();
+    // Pass shared AudioContext and MasterGain (Limiter) to single unification source
+    const { playResonantNote, preloadNotes } = useOctaveResonance({ getAudioContext, getMasterGain });
 
     // Merge provided settings with defaults, or use defaults if none provided
     // NOTE: In JS, spread merges shallowly. We want to respect nested overrides if partial...
@@ -1297,19 +1298,8 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
 
             {/* Home Screen Only: Top-Right Record Button */}
             {!isDevPage && (
-                <div className={`absolute ${isMobileButtonLayout ? 'top-2' : 'top-4'} right-4 z-50 flex flex-col gap-2`}>
-                    <button
-                        onClick={handleRecordToggle}
-                        className={`${btnMobile} text-red-600 ${isRecording ? 'animate-pulse ring-2 ring-red-100 border-red-400' : ''}`}
-                        title={isRecording ? "Stop Recording" : "Start Recording"}
-                    >
-                        {isRecording ? (
-                            <Square size={16} fill="currentColor" />
-                        ) : (
-                            <Disc size={16} fill="currentColor" />
-                        )}
-                    </button>
-                    {/* 재생 버튼 - 녹음 버튼 아래 */}
+                <div className={`absolute ${isMobileButtonLayout ? 'top-2' : 'top-4'} right-4 z-50 flex flex-row gap-2`}>
+                    {/* 재생 버튼 - 녹음 버튼 왼쪽 */}
                     <button
                         onClick={handleDemoPlay}
                         disabled={isPlaying}
@@ -1322,6 +1312,17 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                             fill="currentColor"
                             className="pl-1"
                         />
+                    </button>
+                    <button
+                        onClick={handleRecordToggle}
+                        className={`${btnMobile} text-red-600 ${isRecording ? 'animate-pulse ring-2 ring-red-100 border-red-400' : ''}`}
+                        title={isRecording ? "Stop Recording" : "Start Recording"}
+                    >
+                        {isRecording ? (
+                            <Square size={16} fill="currentColor" />
+                        ) : (
+                            <Disc size={16} fill="currentColor" />
+                        )}
                     </button>
                 </div>
             )}

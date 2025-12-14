@@ -11,21 +11,40 @@ export interface ResonanceSettings {
 // Global Cache for AudioBuffers (Persists across component unmounts)
 const globalAudioBuffers = new Map<string, AudioBuffer>();
 
-export const useOctaveResonance = () => {
-    const audioContextRef = useRef<AudioContext | null>(null);
+interface UseOctaveResonanceProps {
+    getAudioContext?: () => AudioContext | null;
+    getMasterGain?: () => GainNode | null;
+}
 
-    // Initialize AudioContext on mount (or first interaction)
+export const useOctaveResonance = ({ getAudioContext, getMasterGain }: UseOctaveResonanceProps = {}) => {
+    // We no longer strictly need a local ref if we use the getter, 
+    // but for fallback we might still want one? 
+    // Actually, to fix the mobile issue, we should AVOID creating a local context if one is supplied.
+    const localAudioContextRef = useRef<AudioContext | null>(null);
+
+    // Helper to get the active context (Shared or Local)
+    const getContext = useCallback(() => {
+        if (getAudioContext) {
+            const ctx = getAudioContext();
+            if (ctx) return ctx;
+        }
+        return localAudioContextRef.current;
+    }, [getAudioContext]);
+
+    // Initialize Local AudioContext ONLY if no shared getter is provided (Legacy fallback)
     useEffect(() => {
-        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-        if (AudioContextClass) {
-            audioContextRef.current = new AudioContext();
+        if (!getAudioContext) {
+            const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+            if (AudioContextClass) {
+                localAudioContextRef.current = new AudioContext();
+            }
         }
         return () => {
-            if (audioContextRef.current) {
-                audioContextRef.current.close().catch(e => console.warn("Failed to close AC", e));
+            if (localAudioContextRef.current) {
+                localAudioContextRef.current.close().catch(e => console.warn("Failed to close AC", e));
             }
         };
-    }, []);
+    }, [getAudioContext]);
 
     // Load Audio Buffer (Global Cache)
     const loadBuffer = useCallback(async (noteName: string) => {
@@ -34,7 +53,8 @@ export const useOctaveResonance = () => {
             return globalAudioBuffers.get(noteName)!;
         }
 
-        if (!audioContextRef.current) return null;
+        const ctx = getContext();
+        if (!ctx) return null;
 
         try {
             const fileName = noteName.replace('#', '%23'); // Simple manual encode for #
@@ -42,7 +62,7 @@ export const useOctaveResonance = () => {
             const arrayBuffer = await response.arrayBuffer();
 
             // decoding audio data requires a context
-            const audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
+            const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
 
             globalAudioBuffers.set(noteName, audioBuffer);
             return audioBuffer;
@@ -50,27 +70,36 @@ export const useOctaveResonance = () => {
             console.error(`Failed to load resonance audio: ${noteName}`, error);
             return null;
         }
-    }, []);
+    }, [getContext]);
 
     const playResonantNote = useCallback(async (noteName: string, settings: ResonanceSettings) => {
-        if (!audioContextRef.current) return;
+        const ctx = getContext();
+        if (!ctx) return;
 
         // Resume context if suspended (browser autoplay policy)
-        if (audioContextRef.current.state === 'suspended') {
-            await audioContextRef.current.resume();
+        if (ctx.state === 'suspended') {
+            await ctx.resume();
         }
 
         const buffer = await loadBuffer(noteName);
         if (!buffer) return;
 
-        const ctx = audioContextRef.current;
         const source = ctx.createBufferSource();
         source.buffer = buffer;
 
         // Create Gain Node for Envelope Control
         const gainNode = ctx.createGain();
         source.connect(gainNode);
-        gainNode.connect(ctx.destination);
+
+        // --- CRITICAL FIX: Route to Shared Master Gain (Limiter) ---
+        // If masterGainGetter is provided, connect to it. Otherwise connect to destination.
+        // This ensures harmonics go through the same Limiter as main notes.
+        const masterGain = getMasterGain ? getMasterGain() : null;
+        if (masterGain) {
+            gainNode.connect(masterGain);
+        } else {
+            gainNode.connect(ctx.destination);
+        }
 
         // Schedule Timing
         const now = ctx.currentTime;
@@ -96,15 +125,15 @@ export const useOctaveResonance = () => {
         source.start(startTime, settings.trimStart);
 
         // Stop after buffer duration (optional, garbage collection handles it)
-    }, [loadBuffer]);
+    }, [getContext, loadBuffer, getMasterGain]);
 
     // Smart Preloading Function
     const preloadNotes = useCallback(async (noteNames: string[]) => {
-        if (!audioContextRef.current) {
-            // Initialize if not ready for preloading context
+        // Initialize local if needed and no shared
+        if (!getAudioContext && !localAudioContextRef.current) {
             const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
             if (AudioContextClass) {
-                audioContextRef.current = new AudioContext();
+                localAudioContextRef.current = new AudioContext();
             }
         }
 
@@ -115,7 +144,7 @@ export const useOctaveResonance = () => {
                 loadBuffer(note).catch(err => console.warn(`[Resonance] Preload failed for ${note}`, err));
             }
         });
-    }, [loadBuffer]);
+    }, [loadBuffer, getAudioContext]);
 
     return {
         playResonantNote,
