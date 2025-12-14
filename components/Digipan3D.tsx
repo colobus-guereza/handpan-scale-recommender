@@ -1360,7 +1360,10 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     {/* Pass combined idle state: Only true if system is idle AND user wants to show it */}
                     <CyberBoat isIdle={isIdle && showIdleBoat} />
                     {/* Touch Text - Hidden on Home Screen if ViewMode is 2 (Labels Visible) to avoid obscuring pitch info */}
-                    <TouchText isIdle={isIdle && showTouchText && (isDevPage || viewMode !== 2)} />
+                    <TouchText
+                        isIdle={isIdle && showTouchText && (isDevPage || viewMode !== 2)}
+                        suppressExplosion={!isDevPage && viewMode === 2}
+                    />
                     {/* Body */}
                     <Suspense fallback={null}>
                         {backgroundContent ? backgroundContent : <HandpanImage backgroundImage={backgroundImage} centerX={centerX} centerY={centerY} />}

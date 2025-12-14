@@ -5,6 +5,7 @@ import * as THREE from 'three';
 
 interface TouchTextProps {
     isIdle: boolean;
+    suppressExplosion?: boolean; // viewMode 토글 등 UI 버튼 클릭 시 폭발 효과 억제
 }
 
 const SEQUENCE = [
@@ -117,7 +118,7 @@ const ExplosionParticles = ({ active, position }: { active: boolean; position: T
     );
 };
 
-const TouchText = ({ isIdle }: TouchTextProps) => {
+const TouchText = ({ isIdle, suppressExplosion = false }: TouchTextProps) => {
     const groupRef = useRef<THREE.Group>(null);
     const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);
 
@@ -146,18 +147,20 @@ const TouchText = ({ isIdle }: TouchTextProps) => {
     // Handle System Idle Changes
     useEffect(() => {
         if (wasIdle.current && !isIdle) {
-            // User Became Active -> Explode & Hide
-            if (groupRef.current) {
-                setLastPos(groupRef.current.position.clone());
+            // User Became Active -> Explode & Hide (단, suppressExplosion이 아닐 때만)
+            if (!suppressExplosion) {
+                if (groupRef.current) {
+                    setLastPos(groupRef.current.position.clone());
+                }
+                setExploding(true);
+                setTimeout(() => setExploding(false), 1000);
             }
-            setExploding(true);
-            setTimeout(() => setExploding(false), 1000);
         } else if (!wasIdle.current && isIdle) {
             // User Became Idle (Text Reappears) -> Reset to Start
             setStepIndex(0);
         }
         wasIdle.current = isIdle;
-    }, [isIdle]);
+    }, [isIdle, suppressExplosion]);
 
     const theme = THEMES[currentText] || THEMES['Touch!'];
 
@@ -167,7 +170,7 @@ const TouchText = ({ isIdle }: TouchTextProps) => {
         // Visibility Logic
         const targetGlobalScale = isIdle ? 1 : 0;
         const currentGlobalScale = groupRef.current.scale.x;
-        const lerpRate = isIdle ? 0.05 : 0.3;
+        const lerpRate = isIdle ? 0.08 : 0.1; // 나타날 때 0.08, 사라질 때 0.1
         const nextGlobalScale = THREE.MathUtils.lerp(currentGlobalScale, targetGlobalScale, lerpRate);
 
         if (isIdle) {
