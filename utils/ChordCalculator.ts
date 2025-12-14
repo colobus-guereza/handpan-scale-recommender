@@ -15,13 +15,14 @@ export const calculateChordProgression = (scaleNotes: string[]): ChordSet[] => {
     if (len < 5) return [];
 
     // 1. 진행 패턴 정의 (스케일 내 인덱스 기준)
-    // 스토리: 기(Root) -> 승(High) -> 전(Mid) -> 결(Tension)
-    // D Kurd 예시: 0(D) -> 5(F) -> 2(Bb) -> 3(C)
+    // ★ Standard Pop Progression (1 - 6 - 4 - 5)
+    // 0-Index 기준: 0 - 5 - 3 - 4
+    // 스토리: 기(Root) -> 승(Hope) -> 전(Groove) -> 결(Climax)
     const progressionIndices = [
-        { idx: 0, bar: 1, role: "The Root (Start)" },
-        { idx: 5 % len, bar: 5, role: "The Hope (Lift)" },    // 6번째 음
-        { idx: 2 % len, bar: 9, role: "The Deep (Emotion)" }, // 3번째 음
-        { idx: 3 % len, bar: 13, role: "The Tension (Return)" } // 4번째 음
+        { idx: 0, bar: 1, role: "The Root (I) - Start" },
+        { idx: 5 % len, bar: 5, role: "The Hope (VI) - Lift" },
+        { idx: 3 % len, bar: 9, role: "The Deep (IV) - Groove" },
+        { idx: 4 % len, bar: 13, role: "The Climax (V) - Tension" }
     ];
 
     const chords: ChordSet[] = progressionIndices.map((prog) => {

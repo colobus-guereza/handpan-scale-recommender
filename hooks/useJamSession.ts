@@ -27,6 +27,9 @@ export const useJamSession = ({
 
     // === Effect Chain Refs (for cleanup) ===
     const effectsRef = useRef<Tone.ToneAudioNode[]>([]);
+    const masterGainRef = useRef<Tone.Gain | null>(null);
+    const reverbRef = useRef<Tone.Reverb | null>(null);
+    const delayRef = useRef<Tone.PingPongDelay | null>(null);
 
     // === Dynamic Refs ===
     const currentStepRef = useRef(0);
@@ -126,6 +129,9 @@ export const useJamSession = ({
 
         // Store effects for cleanup
         effectsRef.current = [limiter, masterGain, reverb, delay, chorus, autoFilter, hatFilter];
+        masterGainRef.current = masterGain;
+        reverbRef.current = reverb;
+        delayRef.current = delay;
 
         return () => {
             padSynthRef.current?.dispose();
@@ -277,10 +283,33 @@ export const useJamSession = ({
     const togglePlay = useCallback(async () => {
         await Tone.start();
 
-        if (isPlaying) {
-            // STOP
+        // React 상태 대신 Tone.Transport 실제 상태로 확인 (더 신뢰성 있음)
+        const isCurrentlyPlaying = Tone.Transport.state === "started";
+
+        if (isCurrentlyPlaying) {
+            // STOP - 완전 초기화
             Tone.Transport.stop();
+            Tone.Transport.cancel();  // 모든 스케줄된 이벤트 완전 취소
             Tone.Transport.position = 0;
+
+            // 부드러운 컷오프 (500ms) - 틱 소리 방지 + 이펙트 wet 0 (복구는 START에서)
+            const now = Tone.now();
+            if (masterGainRef.current) {
+                masterGainRef.current.gain.cancelScheduledValues(now);
+                masterGainRef.current.gain.setValueAtTime(masterGainRef.current.gain.value, now);
+                masterGainRef.current.gain.linearRampToValueAtTime(0, now + 0.5);
+            }
+            if (reverbRef.current) {
+                reverbRef.current.wet.cancelScheduledValues(now);
+                reverbRef.current.wet.setValueAtTime(reverbRef.current.wet.value, now);
+                reverbRef.current.wet.linearRampToValueAtTime(0, now + 0.5);
+            }
+            if (delayRef.current) {
+                delayRef.current.wet.cancelScheduledValues(now);
+                delayRef.current.wet.setValueAtTime(delayRef.current.wet.value, now);
+                delayRef.current.wet.linearRampToValueAtTime(0, now + 0.5);
+            }
+
             padSynthRef.current?.releaseAll();
             currentStepRef.current = 0;
             if (drumLoopIdRef.current !== null) {
@@ -293,12 +322,19 @@ export const useJamSession = ({
             }
             setIsPlaying(false);
         } else {
-            // START
+            // START - 게인/이펙트 값 복구 후 재생
+            if (masterGainRef.current) masterGainRef.current.gain.value = 0.225;
+            if (reverbRef.current) reverbRef.current.wet.value = 0.5;
+            if (delayRef.current) delayRef.current.wet.value = 0.25;
+
+            Tone.Transport.cancel();
+            Tone.Transport.position = 0;
+            currentStepRef.current = 0;
             scheduleSession();
             Tone.Transport.start();
             setIsPlaying(true);
         }
-    }, [isPlaying, scheduleSession]);
+    }, [scheduleSession]); // isPlaying 의존성 제거 (Transport.state 사용)
 
     return { togglePlay, isPlaying };
 };
