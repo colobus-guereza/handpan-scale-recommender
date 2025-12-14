@@ -19,6 +19,7 @@ import CyberBoat from './CyberBoat';
 import { useOctaveResonance, ResonanceSettings } from '../hooks/useOctaveResonance';
 import { DEFAULT_HARMONIC_SETTINGS, DigipanHarmonicConfig } from '../constants/harmonicDefaults';
 import { useDigipanRecorder } from '../hooks/useDigipanRecorder';
+import { useDrumMachine } from '../hooks/useDrumMachine';
 
 const CameraHandler = ({
     isLocked,
@@ -753,6 +754,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     const [demoNoteId, setDemoNoteId] = useState<number | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [drumTimer, setDrumTimer] = useState<number | null>(null);
 
     // Audio Hook
     const { isLoaded: isAudioLoaded, loadingProgress, playNote, getAudioContext, getMasterGain } = useHandpanAudio();
@@ -790,6 +792,9 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
         }
     }, [isRecording, onIsRecordingChange]);
 
+    // Drum Machine Hook
+    const { startBeat, stopBeat } = useDrumMachine();
+
     const [isIdle, setIsIdle] = useState(true); // Default to True
     const [showIdleBoat, setShowIdleBoat] = useState(false); // Default to OFF for DigiBall
     const [showTouchText, setShowTouchText] = useState(true); // New State for Touch Text
@@ -817,6 +822,28 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
             if (idleCheckInterval.current) clearInterval(idleCheckInterval.current);
         };
     }, [isIdle]);
+
+    // 드럼 타이머 로직
+    useEffect(() => {
+        if (drumTimer === null || drumTimer <= 0) {
+            if (drumTimer === 0) {
+                setDrumTimer(null); // 0이 되면 드럼 아이콘으로 복귀
+                stopBeat(); // 타이머 종료 시 오디오 중단 (Safety)
+            }
+            return;
+        }
+
+        const interval = setInterval(() => {
+            setDrumTimer(prev => {
+                if (prev === null || prev <= 1) {
+                    return null;
+                }
+                return prev - 1;
+            });
+        }, 1000); // 1초마다 감소
+
+        return () => clearInterval(interval);
+    }, [drumTimer]);
 
     // View Mode: 0 = Default (All), 1 = No Labels, 2 = No Mesh (Levels Only), 3 = Hidden (Interaction Only), 4 = Guide (Image + Dots)
     // Initialize with controlled prop if available, else initialViewMode
@@ -1290,10 +1317,45 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                                 {viewMode === 3 ? <EyeOff size={16} className="opacity-50" /> : <Eye size={16} />}
                             </button>
                             <button
-                                className={`${btnMobile} text-slate-700`}
-                                title="Drum"
+                                onClick={() => {
+                                    if (drumTimer === null) {
+                                        setDrumTimer(30); // 30초 타이머 시작
+                                        startBeat(); // 드럼 비트 시작
+                                    } else {
+                                        setDrumTimer(null); // 타이머 중단 및 드럼 아이콘으로 복귀
+                                        stopBeat(); // 드럼 비트 중단
+                                    }
+                                }}
+                                className={`${btnMobile} text-slate-700 relative`}
+                                title={drumTimer !== null ? `Pattern 1 (Running) - 클릭하여 중단` : "Drum"}
                             >
-                                <Drum size={16} className="opacity-50" />
+                                {drumTimer !== null ? (
+                                    <>
+                                        <span className="text-sm font-bold relative z-10">1</span>
+                                        {/* 시계방향으로 짧아지는 진행 링 */}
+                                        <svg
+                                            className="absolute inset-0 w-full h-full transform -rotate-90"
+                                            viewBox="0 0 40 40"
+                                        >
+                                            <circle
+                                                cx="20"
+                                                cy="20"
+                                                r="18"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                strokeDasharray={`${2 * Math.PI * 18}`}
+                                                strokeDashoffset={drumTimer !== null
+                                                    ? `${2 * Math.PI * 18 * (1 - drumTimer / 30)}`
+                                                    : 0
+                                                }
+                                                className="text-red-500 opacity-60 transition-all duration-1000"
+                                            />
+                                        </svg>
+                                    </>
+                                ) : (
+                                    <Drum size={16} className="opacity-50" />
+                                )}
                             </button>
                         </div>
                     )}
