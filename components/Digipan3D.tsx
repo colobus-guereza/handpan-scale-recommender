@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState, useRef, useMemo, Suspense, useEffect, useCallback } from 'react';
+
+// Shared mobile button style for consistent size and appearance
+const btnMobile = "w-[38.4px] h-[38.4px] flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full border border-slate-200 hover:bg-white transition-all duration-200";
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Text, OrbitControls, Center, Line, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
@@ -1272,14 +1275,15 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     )}
 
                     {/* Top-Left: Label Toggle (정보 표시/숨김) - DEV PAGE에서는 숨김 */}
+                    {/* Top-Left: Label Toggle (Aligned with Top-Right buttons) */}
                     {!isDevPage && (
                         <div className="absolute top-2 left-2 z-50">
                             <button
                                 onClick={() => {
                                     setViewMode(prev => prev === 3 ? 2 : 3);
-                                    // resetIdleTimer(0); // Removed to prevent dismissing CyberBoat
+                                    // resetIdleTimer(0);
                                 }}
-                                className="w-[38.4px] h-[38.4px] flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-200 border border-slate-200 text-slate-700"
+                                className={`${btnMobile} text-slate-700`}
                                 title={viewMode === 3 ? "Show Labels" : "Hide Labels"}
                             >
                                 {viewMode === 3 ? <EyeOff size={16} className="opacity-50" /> : <Eye size={16} />}
@@ -1293,10 +1297,10 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
 
             {/* Home Screen Only: Top-Right Record Button */}
             {!isDevPage && (
-                <div className="absolute top-4 right-4 z-50 flex flex-col gap-2">
+                <div className={`absolute ${isMobileButtonLayout ? 'top-2' : 'top-4'} right-4 z-50 flex flex-col gap-2`}>
                     <button
                         onClick={handleRecordToggle}
-                        className={`w-[38.4px] h-[38.4px] flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-200 border border-slate-200 text-red-600 ${isRecording ? 'animate-pulse ring-2 ring-red-100 border-red-400' : ''}`}
+                        className={`${btnMobile} text-red-600 ${isRecording ? 'animate-pulse ring-2 ring-red-100 border-red-400' : ''}`}
                         title={isRecording ? "Stop Recording" : "Start Recording"}
                     >
                         {isRecording ? (
@@ -1309,7 +1313,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     <button
                         onClick={handleDemoPlay}
                         disabled={isPlaying}
-                        className={`w-[38.4px] h-[38.4px] flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-200 border border-slate-200 ${isPlaying ? 'text-slate-400 cursor-not-allowed' : 'text-red-600'
+                        className={`${btnMobile} ${isPlaying ? 'text-slate-400 cursor-not-allowed' : 'text-red-600'
                             }`}
                         title="Play Scale Demo"
                     >
