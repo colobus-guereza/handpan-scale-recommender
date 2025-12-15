@@ -1273,10 +1273,20 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                 </>
             )}
 
+            {/* Home Screen Only: Top-Center - Listen the Sound (Overlay - 독립적인 Y 좌표 조정 가능) */}
+            {!isDevPage && (
+                <div className="absolute top-[80px] left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+                    <span className="text-[30px] text-black" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>Listen the Sound</span>
+                </div>
+            )}
+
             {/* Home Screen Only: Top-Right - 자동재생, 캐슬링(세로: 녹화) */}
             {!isDevPage && (
                 <div className={`absolute ${isMobileButtonLayout ? 'top-2' : 'top-4'} right-4 z-50 flex flex-row items-start gap-2`}>
-                    {/* 1. 자동재생 버튼 */}
+                    {/* 1. View Mode Toggle (피치/순서 표시/숨김) - 숨김 처리, 초기 상태: on (viewMode=2) */}
+                    {/* 버튼은 숨겨지지만 초기 상태는 on (라벨 표시)로 설정됨 - initialViewMode=2 */}
+
+                    {/* 2. 자동재생 버튼 */}
                     <button
                         onClick={handleDemoPlay}
                         disabled={isPlaying}
