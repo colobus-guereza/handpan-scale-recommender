@@ -647,7 +647,15 @@ const ToneFieldMesh = React.memo(({
                         return p1.y < p2.y ? p1 : p2;
                     };
 
-                    const bottomPos = calculateBottomOffset(finalRadiusX, finalRadiusY, rotationZ);
+                    // Calculate position for Number Label (Visual Bottom)
+                    // We use a reduced radius (e.g. 20%) to bring the text closer to the center (Pitch Label)
+                    // instead of placing it at the absolute edge.
+                    const LABEL_POS_FACTOR = 0.20;
+                    const bottomPos = calculateBottomOffset(
+                        finalRadiusX * LABEL_POS_FACTOR,
+                        finalRadiusY * LABEL_POS_FACTOR,
+                        rotationZ
+                    );
 
                     // Show labels only if viewMode is 0 (All Visible) or 2 (Labels Only/No Mesh)
                     // Mode 1 = Mesh Only (No Labels) and Mode 3 = Interaction Only (No Labels, No Mesh)
@@ -688,7 +696,7 @@ const ToneFieldMesh = React.memo(({
                                 return (
                                     <Text
                                         visible={areLabelsVisible}
-                                        position={[bottomPos.x, bottomPos.y - 0.2, 0]}
+                                        position={[bottomPos.x, bottomPos.y - 0.05, 0]}
                                         fontSize={2.0}
                                         color={labelColor}
                                         anchorX="center"
@@ -758,6 +766,9 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     const [searchQuery, setSearchQuery] = useState('');
     const [drumTimer, setDrumTimer] = useState<number | null>(null);
 
+    // Recording State Management
+    const [currentBlob, setCurrentBlob] = useState<Blob | null>(null);
+
     // Audio Hook
     const { isLoaded: isAudioLoaded, loadingProgress, playNote, getAudioContext, getMasterGain } = useHandpanAudio();
 
@@ -781,13 +792,85 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
         }
     }, []);
 
+    // Determine if we're in mobile mode (either preview or embedded)
+    // Also consider User Agent for logic branching (Behavioral)
+    const isMobileButtonLayout = forceCompactView || showLabelToggle;
+
+    // Save/Share Logic Helpers (Moved up for Hook usage)
+    const downloadFile = (blob: Blob, name: string) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+    };
+
+    const handleSaveRecording = async (filename: string, directBlob?: Blob) => {
+        const blobToUse = directBlob || currentBlob;
+        if (!blobToUse) return;
+
+        // Ensure extension matches mimeType
+        const ext = blobToUse.type.includes('mp4') ? 'mp4' : 'webm';
+        const fullFilename = `${filename}.${ext}`;
+        const file = new File([blobToUse], fullFilename, { type: blobToUse.type });
+
+        // Method A: Try Web Share API (Mobile Native Experience)
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    files: [file],
+                    title: 'Digipan Performance',
+                    text: 'Check out my handpan performance!',
+                });
+            } catch (err: any) {
+                if (err.name !== 'AbortError') {
+                    downloadFile(blobToUse, fullFilename);
+                }
+            }
+        } else {
+            // Method B: Desktop Download (System Dialog)
+            downloadFile(blobToUse, fullFilename);
+        }
+
+        // Only clear if we were using the state blob
+        if (!directBlob) {
+            setCurrentBlob(null);
+        }
+    };
+
+    const handleRecordingComplete = useCallback((blob: Blob) => {
+        // Detect Mobile Environment:
+        // Strictly rely on User Agent to distinct PC vs Mobile Behavior.
+        // We do NOT use isMobileButtonLayout here because we want PC users (even with small windows) to get direct download.
+        const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isMobileContext = isMobileUA;
+
+        if (isMobileContext) {
+            // Mobile: Show Popup (Set State)
+            setCurrentBlob(blob);
+        } else {
+            // Web: Immediate Save (Restore Legacy Behavior)
+            try {
+                handleSaveRecording(`digipan-performance-${Date.now()}`, blob);
+            } catch (err) {
+                console.error("Auto-save failed:", err);
+                // Fallback to popup if auto-save fails? 
+                setCurrentBlob(blob);
+            }
+        }
+    }, []);
+
     const { isRecording, startRecording, stopRecording } = useDigipanRecorder({
         canvasRef,
         getAudioContext,
         getMasterGain,
-        onRecordingComplete: (blob) => {
-            setCurrentBlob(blob);
-        }
+        onRecordingComplete: handleRecordingComplete
     });
 
     // Sync Recording State with Parent
@@ -1177,75 +1260,38 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
         resetIdleTimer(5000);
     };
 
-    // Recording State Management
-    // Removed SaveModal state as we now rely on system dialogs
-    const [currentBlob, setCurrentBlob] = useState<Blob | null>(null);
+    // Mobile determination moved to top of component
 
-    // Save/Share Logic triggered Directly from UI
+    // Save/Share Logic triggered Directly from UI (Mobile)
     const handleSaveAction = async () => {
         if (!currentBlob) return;
-        const filename = `digipan-video-${Date.now()}`;
+        const filename = `digipan-performance-${Date.now()}`;
+        await handleSaveRecording(filename, currentBlob);
 
-        // Ensure extension matches mimeType
-        const ext = currentBlob.type.includes('mp4') ? 'mp4' : 'webm';
-        const fullFilename = `${filename}.${ext}`;
-        const file = new File([currentBlob], fullFilename, { type: currentBlob.type });
-
-        // Method A: Try Web Share API (Mobile Native Experience)
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-                await navigator.share({
-                    files: [file],
-                    title: 'Digipan Performance',
-                    text: 'Check out my handpan performance!',
-                });
-                // Optional: Clear blob after successful share? 
-                // Let's keep it to allow retry, or clear it. 
-                // Usually better to let user manually close or Close implicitly.
-                // But for "one-shot" feel, maybe we close.
-                // Let's NOT close automatically to avoid "It disappeared!" confusion if share fails silently.
-            } catch (err: any) {
-                if (err.name !== 'AbortError') {
-                    downloadFile(currentBlob, fullFilename);
-                }
-            }
-        } else {
-            // Method B: Desktop Download (System Dialog)
-            downloadFile(currentBlob, fullFilename);
-        }
+        // Mobile UX: After tapping "Save to Album", we retain or clear?
+        // User asked: "녹화취소 버튼 누르면 녹화로직 초기화" (Cancel -> Reset).
+        // "앨범에 저장 누르면... 저장" (Save -> Save).
+        // Usually, after saving, we should probably close the popup to let them record again or view it?
+        // Let's close it to imply "Done".
+        // If share fails, they can try again?
+        // handleSaveRecording does NOT throw usually (catches internally).
+        setCurrentBlob(null);
     };
 
     const handleDiscardAction = () => {
         setCurrentBlob(null);
     };
 
-    const downloadFile = (blob: Blob, name: string) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = name;
-        document.body.appendChild(a);
-        a.click();
-
-        setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }, 100);
-    };
-
     // Recording Handler
     const handleRecordToggle = async () => {
         if (isRecording) {
             stopRecording();
-            // Do NOT save automatically here. 
+            // Do NOT save automatically here.
             // The hook will trigger onRecordingComplete -> sets currentBlob -> shows UI
         } else {
             startRecording();
         }
     };
-
-    // Determine if we're in mobile mode (either preview or embedded)
-    const isMobileButtonLayout = forceCompactView || showLabelToggle;
 
     // Expose methods via ref
     React.useImperativeHandle(ref, () => ({
@@ -1277,13 +1323,6 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     )}
 
                 </>
-            )}
-
-            {/* Home Screen Only: Top-Center - Listen the Sound (Overlay - 독립적인 Y 좌표 조정 가능) */}
-            {!isDevPage && (
-                <div className={`absolute ${isMobileButtonLayout ? 'top-[50px]' : 'top-[77px]'} left-1/2 -translate-x-1/2 z-50 pointer-events-none`}>
-                    <span className="text-[30px] text-black" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>Listen the Sound</span>
-                </div>
             )}
 
             {/* Home Screen Only: Top-Right - 자동재생, 캐슬링(세로: 녹화) */}
@@ -1503,17 +1542,17 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                         <div className="flex flex-row gap-3 w-full">
                             <button
                                 onClick={handleDiscardAction}
-                                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-colors"
+                                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-red-100 text-red-600 font-semibold hover:bg-red-200 transition-colors whitespace-nowrap"
                             >
                                 <Trash2 size={18} />
-                                Discard
+                                Remove
                             </button>
                             <button
                                 onClick={handleSaveAction}
-                                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200"
+                                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 whitespace-nowrap"
                             >
                                 <Download size={18} />
-                                Save
+                                Save in Album
                             </button>
                         </div>
                     </div>
