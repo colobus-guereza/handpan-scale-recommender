@@ -1351,7 +1351,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                         {/* 캐슬링 버튼 */}
                         <button
                             onClick={toggleDrum}
-                            className={`${btnMobile} relative ${isJamPlaying ? 'gentle-shimmer' : ''}`}
+                            className={`${btnMobile} relative ${isJamPlaying ? 'animate-breathing' : ''}`}
                             style={{ color: '#0066FF' }}
                             title={isJamPlaying ? "Castling 중지" : "Castling 시작"}
                         >

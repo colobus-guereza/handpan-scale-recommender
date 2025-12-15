@@ -354,6 +354,36 @@ const SOFT_CASE_PRODUCTS = [
             }
         }
     },
+    {
+        id: 5,
+        name: 'Avaja Premium (M, Khaki)',
+        nameEn: 'Avaja Premium (M, Khaki)',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/avaja_khaki.png',
+        soldOut: true,
+        i18n: {
+            fr: {
+                name: 'Avaja Premium (M, Kaki)'
+            }
+        }
+    },
+    {
+        id: 6,
+        name: 'Avaja Premium (M, Red)',
+        nameEn: 'Avaja Premium (M, Red)',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/avaja_red.png',
+        soldOut: true,
+        i18n: {
+            fr: {
+                name: 'Avaja Premium (M, Rouge)'
+            }
+        }
+    },
 ];
 
 // Stand 카테고리용 제품 목록
