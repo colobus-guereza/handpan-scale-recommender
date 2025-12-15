@@ -677,7 +677,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                                 <a
                                                     key={`purchase-${currentScale.id}-${currentIndex}`}
                                                     href={purchaseUrl}
-                                                    className="px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-1.5 bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 text-white hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap"
+                                                    className="px-6 py-3 rounded-lg text-base font-bold shadow-md transition-all flex items-center gap-1.5 bg-indigo-600 dark:bg-cosmic/50 hover:bg-indigo-700 dark:hover:bg-[#48FF00]/60 text-white hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap"
                                                     title={`${language === 'en' ? (currentScale.nameEn || currentScale.name) : currentScale.name} - ${t.scaleList.purchase}`}
                                                 >
                                                     <span>{t.scaleList.purchase}</span>
