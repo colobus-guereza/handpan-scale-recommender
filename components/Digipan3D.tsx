@@ -1352,8 +1352,8 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     <CyberBoat isIdle={isIdle && showIdleBoat} />
                     {/* Touch Text - Hidden on Home Screen if ViewMode is 2 (Labels Visible) to avoid obscuring pitch info */}
                     <TouchText
-                        isIdle={isIdle && !isJamPlaying && showTouchText && (isDevPage || viewMode !== 2)}
-                        suppressExplosion={!isDevPage && viewMode === 2}
+                        isIdle={isIdle && !isJamPlaying && showTouchText}
+                        suppressExplosion={false}
                         overrideText={introCountdown}
                         interactionTrigger={interactionCount}
                     />
