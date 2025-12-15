@@ -11,6 +11,7 @@ import * as THREE from 'three';
 import { Scale } from '../data/handpanScales';
 import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Play, Ship, Pointer, Disc, Square, Drum, Music, Music2, Download, Trash2 } from 'lucide-react';
 import { HANDPAN_CONFIG, getDomeHeight, TONEFIELD_CONFIG } from '../constants/handpanConfig';
+import { DIGIPAN_VIEW_CONFIG, DIGIPAN_LABEL_POS_FACTOR } from '../constants/digipanViewConfig';
 import html2canvas from 'html2canvas';
 import { useHandpanAudio } from '../hooks/useHandpanAudio';
 import { usePathname } from 'next/navigation';
@@ -650,7 +651,7 @@ const ToneFieldMesh = React.memo(({
                     // Calculate position for Number Label (Visual Bottom)
                     // We use a reduced radius (e.g. 20%) to bring the text closer to the center (Pitch Label)
                     // instead of placing it at the absolute edge.
-                    const LABEL_POS_FACTOR = 0.20;
+                    const LABEL_POS_FACTOR = DIGIPAN_LABEL_POS_FACTOR;
                     const bottomPos = calculateBottomOffset(
                         finalRadiusX * LABEL_POS_FACTOR,
                         finalRadiusY * LABEL_POS_FACTOR,

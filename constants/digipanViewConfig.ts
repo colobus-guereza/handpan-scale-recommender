@@ -22,3 +22,5 @@ export const DIGIPAN_VIEW_CONFIG: Record<string, DigipanViewSettings> = {
     '18M': { zoom: 12, targetY: 5 },  // Adjusted to +5 per user request
     'DM': { zoom: 12, targetY: 0 },
 };
+
+export const DIGIPAN_LABEL_POS_FACTOR = 0.20;
