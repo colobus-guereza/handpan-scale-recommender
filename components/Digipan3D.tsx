@@ -1281,7 +1281,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
 
             {/* Home Screen Only: Top-Center - Listen the Sound (Overlay - 독립적인 Y 좌표 조정 가능) */}
             {!isDevPage && (
-                <div className="absolute top-[80px] left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+                <div className={`absolute ${isMobileButtonLayout ? 'top-[50px]' : 'top-[77px]'} left-1/2 -translate-x-1/2 z-50 pointer-events-none`}>
                     <span className="text-[30px] text-black" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>Listen the Sound</span>
                 </div>
             )}
