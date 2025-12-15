@@ -212,7 +212,7 @@ export const useJamSession = ({
         chordPartRef.current = new Tone.Part((time, value) => {
             const chord = value as ChordSet;
             padSynthRef.current?.triggerAttackRelease(chord.notes, "4m", time);
-            console.log(`[Chord] Bar ${chord.barStart}: ${chord.role} [${chord.chordType}]`, chord.notes);
+            console.log(`[Chord] Bar ${chord.barStart}: ${chord.role}`, chord.notes);
         }, [
             ["2:0:0", chordSets[0]],   // Bar 1 starts at 2:0:0 due to 2-bar intro
             ["6:0:0", chordSets[1]],   // Bar 5 -> 6:0:0
