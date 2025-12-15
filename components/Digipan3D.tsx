@@ -1270,43 +1270,12 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                         </div>
                     )}
 
-                    {/* Top-Left: 녹화 버튼, 정보표시 버튼 */}
-                    {!isDevPage && (
-                        <div className="absolute top-2 left-2 z-50 flex gap-2">
-                            {/* 1. 녹화 버튼 */}
-                            <button
-                                onClick={handleRecordToggle}
-                                className={`${btnMobile} text-red-600 ${isRecording ? 'animate-pulse ring-2 ring-red-100 border-red-400' : ''}`}
-                                title={isRecording ? "Stop Recording" : "Start Recording"}
-                            >
-                                {isRecording ? (
-                                    <Square size={16} fill="currentColor" />
-                                ) : (
-                                    <Disc size={16} fill="currentColor" />
-                                )}
-                            </button>
-
-                            {/* 2. View Mode Toggle (정보 표시/숨김) */}
-                            <button
-                                onClick={() => {
-                                    setViewMode(prev => prev === 3 ? 2 : 3);
-                                    // resetIdleTimer(0);
-                                }}
-                                className={`${btnMobile} text-slate-700`}
-                                title={viewMode === 3 ? "Show Labels" : "Hide Labels"}
-                            >
-                                {viewMode === 3 ? <EyeOff size={16} className="opacity-50" /> : <Eye size={16} />}
-                            </button>
-                        </div>
-                    )}
-
-
                 </>
             )}
 
-            {/* Home Screen Only: Top-Right - 자동재생, 캐슬링 */}
+            {/* Home Screen Only: Top-Right - 자동재생, 캐슬링(세로: 녹화) */}
             {!isDevPage && (
-                <div className={`absolute ${isMobileButtonLayout ? 'top-2' : 'top-4'} right-4 z-50 flex flex-row gap-2`}>
+                <div className={`absolute ${isMobileButtonLayout ? 'top-2' : 'top-4'} right-4 z-50 flex flex-row items-start gap-2`}>
                     {/* 1. 자동재생 버튼 */}
                     <button
                         onClick={handleDemoPlay}
@@ -1321,15 +1290,31 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                             className="pl-1"
                         />
                     </button>
-                    {/* 2. 캐슬링 버튼 */}
-                    <button
-                        onClick={toggleDrum}
-                        className={`${btnMobile} relative ${isJamPlaying ? 'animate-heartbeat' : ''}`}
-                        style={{ color: '#0066FF' }}
-                        title={isJamPlaying ? "Castling 중지" : "Castling 시작"}
-                    >
-                        <span className="text-3xl font-black leading-none relative z-10">C</span>
-                    </button>
+
+                    {/* 3. 캐슬링 버튼과 녹화 버튼 (세로 배열) */}
+                    <div className="flex flex-col gap-2">
+                        {/* 캐슬링 버튼 */}
+                        <button
+                            onClick={toggleDrum}
+                            className={`${btnMobile} relative ${isJamPlaying ? 'gentle-shimmer' : ''}`}
+                            style={{ color: '#0066FF' }}
+                            title={isJamPlaying ? "Castling 중지" : "Castling 시작"}
+                        >
+                            <span className="text-3xl font-black leading-none relative z-10">C</span>
+                        </button>
+                        {/* 녹화 버튼 */}
+                        <button
+                            onClick={handleRecordToggle}
+                            className={`${btnMobile} text-red-600 ${isRecording ? 'animate-pulse ring-2 ring-red-100 border-red-400' : ''}`}
+                            title={isRecording ? "Stop Recording" : "Start Recording"}
+                        >
+                            {isRecording ? (
+                                <Square size={16} fill="currentColor" />
+                            ) : (
+                                <Disc size={16} fill="currentColor" />
+                            )}
+                        </button>
+                    </div>
                 </div>
             )}
 

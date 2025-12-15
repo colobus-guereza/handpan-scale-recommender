@@ -99,7 +99,7 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
     notes: externalNotes,
     showControls = true,
     showInfoPanel = true,
-    initialViewMode = 3,
+    initialViewMode = 2,
     viewMode,
     onViewModeChange,
     enableZoom = true,

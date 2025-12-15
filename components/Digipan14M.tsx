@@ -98,7 +98,7 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
     extraControls,
     showControls = true,
     showInfoPanel = true,
-    initialViewMode = 3,
+    initialViewMode = 2,
     viewMode,
     onViewModeChange,
     enableZoom = true,

@@ -60,7 +60,7 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
         isCameraLocked: true as const,
         showControls: false as const,
         showInfoPanel: false as const,
-        initialViewMode: 3 as const,
+        initialViewMode: 2 as const,
         enableZoom: false as const,
         enablePan: false as const,
         showLabelToggle: true as const,

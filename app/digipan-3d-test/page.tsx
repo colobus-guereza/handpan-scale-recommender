@@ -25,7 +25,7 @@ export default function Digipan3DTestPage() {
     const [isMobilePreview, setIsMobilePreview] = useState(false);
 
     // Dynamic Scale Selection State
-    const [selectedScaleId, setSelectedScaleId] = useState<string>('d_kurd_10');
+    const [selectedScaleId, setSelectedScaleId] = useState<string>('c_rasavali_10');
 
     // Derived Scale Object
     const scale = SCALES.find(s => s.id === selectedScaleId) || SCALES[0];

@@ -38,7 +38,7 @@ const DigipanDM = React.forwardRef<Digipan3DHandle, DigipanDMProps>(({
     notes: externalNotes,
     showControls = true,
     showInfoPanel = true,
-    initialViewMode = 3,
+    initialViewMode = 2,
     viewMode,
     onViewModeChange,
     enableZoom = true,
