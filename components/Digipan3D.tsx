@@ -9,7 +9,7 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Text, OrbitControls, Center, Line, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { Scale } from '../data/handpanScales';
-import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Play, Ship, Pointer, Disc, Square, Drum, Music, Music2 } from 'lucide-react';
+import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Play, Ship, Pointer, Disc, Square, Drum, Music, Music2, Download, Trash2 } from 'lucide-react';
 import { HANDPAN_CONFIG, getDomeHeight, TONEFIELD_CONFIG } from '../constants/handpanConfig';
 import html2canvas from 'html2canvas';
 import { useHandpanAudio } from '../hooks/useHandpanAudio';
@@ -784,7 +784,10 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     const { isRecording, startRecording, stopRecording } = useDigipanRecorder({
         canvasRef,
         getAudioContext,
-        getMasterGain
+        getMasterGain,
+        onRecordingComplete: (blob) => {
+            setCurrentBlob(blob);
+        }
     });
 
     // Sync Recording State with Parent
@@ -1178,15 +1181,15 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     // Removed SaveModal state as we now rely on system dialogs
     const [currentBlob, setCurrentBlob] = useState<Blob | null>(null);
 
-    // Save/Share Logic triggered Directly
-    const handleSaveRecording = async (filename: string, directBlob?: Blob) => {
-        const blobToUse = directBlob || currentBlob;
-        if (!blobToUse) return;
+    // Save/Share Logic triggered Directly from UI
+    const handleSaveAction = async () => {
+        if (!currentBlob) return;
+        const filename = `digipan-video-${Date.now()}`;
 
         // Ensure extension matches mimeType
-        const ext = blobToUse.type.includes('mp4') ? 'mp4' : 'webm';
+        const ext = currentBlob.type.includes('mp4') ? 'mp4' : 'webm';
         const fullFilename = `${filename}.${ext}`;
-        const file = new File([blobToUse], fullFilename, { type: blobToUse.type });
+        const file = new File([currentBlob], fullFilename, { type: currentBlob.type });
 
         // Method A: Try Web Share API (Mobile Native Experience)
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -1196,16 +1199,23 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     title: 'Digipan Performance',
                     text: 'Check out my handpan performance!',
                 });
+                // Optional: Clear blob after successful share? 
+                // Let's keep it to allow retry, or clear it. 
+                // Usually better to let user manually close or Close implicitly.
+                // But for "one-shot" feel, maybe we close.
+                // Let's NOT close automatically to avoid "It disappeared!" confusion if share fails silently.
             } catch (err: any) {
                 if (err.name !== 'AbortError') {
-                    downloadFile(blobToUse, fullFilename);
+                    downloadFile(currentBlob, fullFilename);
                 }
             }
         } else {
             // Method B: Desktop Download (System Dialog)
-            downloadFile(blobToUse, fullFilename);
+            downloadFile(currentBlob, fullFilename);
         }
+    };
 
+    const handleDiscardAction = () => {
         setCurrentBlob(null);
     };
 
@@ -1226,13 +1236,9 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     // Recording Handler
     const handleRecordToggle = async () => {
         if (isRecording) {
-            try {
-                const blob = await stopRecording();
-                // Unified Logic: Always Direct Save (System Dialog)
-                handleSaveRecording(`digipan-video-${Date.now()}`, blob);
-            } catch (err) {
-                console.error("Failed to stop recording:", err);
-            }
+            stopRecording();
+            // Do NOT save automatically here. 
+            // The hook will trigger onRecordingComplete -> sets currentBlob -> shows UI
         } else {
             startRecording();
         }
@@ -1480,6 +1486,38 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     defaultExpanded={true}
                     showAllScales={true} // Forcing Global List Logic
                 />
+            )}
+
+            {/* Recording Finished Overlay */}
+            {currentBlob && (
+                <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-2xl p-6 shadow-2xl flex flex-col items-center gap-4 max-w-[90%] w-[320px]">
+                        <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-2">
+                            <Check size={24} />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900">Recording Finished</h3>
+                        <p className="text-gray-500 text-center text-sm mb-4">
+                            Your performance is ready. <br />Save it to your device or share it.
+                        </p>
+
+                        <div className="flex flex-row gap-3 w-full">
+                            <button
+                                onClick={handleDiscardAction}
+                                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-colors"
+                            >
+                                <Trash2 size={18} />
+                                Discard
+                            </button>
+                            <button
+                                onClick={handleSaveAction}
+                                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200"
+                            >
+                                <Download size={18} />
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
 
         </div>
