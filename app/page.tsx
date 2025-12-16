@@ -1072,19 +1072,17 @@ export default function Home() {
                                                     height: '100%',
                                                     display: 'block',
                                                     objectFit: 'contain',
-                                                    opacity: isSoldOut ? 0.7 : 1
+                                                    opacity: 1
                                                 }}
                                             />
-                                            {isSoldOut && (
-                                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                    <span className="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg">
-                                                        {t.soldOut}
-                                                    </span>
-                                                </div>
-                                            )}
                                         </div>
-                                        <div>
-                                            <h3 className={`text-sm font-medium line-clamp-1 mb-0 ${isSoldOut ? 'text-gray-400' : 'text-gray-900'}`}>
+                                        <div className="relative">
+                                            {isSoldOut && (
+                                                <span className="absolute -top-2 left-0 bg-gray-800 text-white px-3 py-1 rounded-lg font-bold text-xs shadow-lg">
+                                                    {t.soldOut}
+                                                </span>
+                                            )}
+                                            <h3 className={`text-sm font-medium line-clamp-1 mb-0 ${isSoldOut ? 'text-gray-400' : 'text-gray-900'} ${isSoldOut ? 'mt-6' : ''}`}>
                                                 {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
@@ -1160,19 +1158,17 @@ export default function Home() {
                                                     height: '100%',
                                                     display: 'block',
                                                     objectFit: 'cover',
-                                                    opacity: isSoldOut ? 0.7 : 1
+                                                    opacity: 1
                                                 }}
                                             />
-                                            {isSoldOut && (
-                                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                    <span className="bg-gray-800 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg">
-                                                        {t.soldOut}
-                                                    </span>
-                                                </div>
-                                            )}
                                         </div>
-                                        <div>
-                                            <h3 className={`text-sm font-medium line-clamp-1 mb-0 ${isSoldOut ? 'text-gray-400' : 'text-gray-900'}`}>
+                                        <div className="relative">
+                                            {isSoldOut && (
+                                                <span className="absolute -top-2 left-0 bg-gray-800 text-white px-3 py-1 rounded-lg font-bold text-xs shadow-lg">
+                                                    {t.soldOut}
+                                                </span>
+                                            )}
+                                            <h3 className={`text-sm font-medium line-clamp-1 mb-0 ${isSoldOut ? 'text-gray-400' : 'text-gray-900'} ${isSoldOut ? 'mt-6' : ''}`}>
                                                 {getLocalizedProduct(product as any, language).name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
