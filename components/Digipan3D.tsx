@@ -1333,11 +1333,20 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                 </>
             )}
 
-            {/* Home Screen Only: Top-Right - 자동재생, 캐슬링(세로: 녹화) */}
+            {/* Home Screen Only: Top-Right - 피치/번호, 자동재생, 캐슬링(세로: 녹화) */}
             {!isDevPage && (
                 <div className={`absolute ${isMobileButtonLayout ? 'top-2' : 'top-4'} right-4 z-50 flex flex-row items-start gap-2`}>
-                    {/* 1. View Mode Toggle (피치/순서 표시/숨김) - 숨김 처리, 초기 상태: on (viewMode=2) */}
-                    {/* 버튼은 숨겨지지만 초기 상태는 on (라벨 표시)로 설정됨 - initialViewMode=2 */}
+                    {/* 1. View Mode Toggle (피치/순서 표시/숨김) */}
+                    <button
+                        onClick={() => {
+                            setViewMode(prev => prev === 3 ? 2 : 3);
+                            // resetIdleTimer(0);
+                        }}
+                        className={`${btnMobile} text-slate-700`}
+                        title={viewMode === 3 ? "Show Labels" : "Hide Labels"}
+                    >
+                        {viewMode === 3 ? <EyeOff size={16} className="opacity-50" /> : <Eye size={16} />}
+                    </button>
 
                     {/* 2. 자동재생 버튼 */}
                     <button
