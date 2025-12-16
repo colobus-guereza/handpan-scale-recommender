@@ -1279,6 +1279,13 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
         setCurrentBlob(null);
     };
 
+    // Auto-save Effect for Mobile
+    useEffect(() => {
+        if (currentBlob && isMobileButtonLayout) {
+            handleSaveAction();
+        }
+    }, [currentBlob, isMobileButtonLayout, handleSaveAction]);
+
     const handleDiscardAction = () => {
         setCurrentBlob(null);
     };
@@ -1528,8 +1535,8 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                 />
             )}
 
-            {/* Recording Finished Overlay */}
-            {currentBlob && (
+            {/* Recording Finished Overlay - Only show if NOT mobile (Mobile auto-saves) */}
+            {currentBlob && !isMobileButtonLayout && (
                 <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
                     <div className="bg-white rounded-2xl p-6 shadow-2xl flex flex-col items-center gap-4 max-w-[90%] w-[320px]">
                         <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-2">
