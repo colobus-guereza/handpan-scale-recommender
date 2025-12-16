@@ -7,11 +7,18 @@ interface UseDigipanRecorderProps {
     onRecordingComplete?: (blob: Blob) => void;
 }
 
+// ... imports ...
+import * as Tone from 'tone';
+
 export const useDigipanRecorder = ({ canvasRef, getAudioContext, getMasterGain, onRecordingComplete }: UseDigipanRecorderProps) => {
     const [isRecording, setIsRecording] = useState(false);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
     const streamDestRef = useRef<MediaStreamAudioDestinationNode | null>(null);
+
+    // Refs for Tone.js Bridge
+    const toneDestRef = useRef<MediaStreamAudioDestinationNode | null>(null);
+    const toneSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
 
     const startRecording = useCallback(() => {
         const canvas = canvasRef.current;
@@ -36,13 +43,42 @@ export const useDigipanRecorder = ({ canvasRef, getAudioContext, getMasterGain, 
             // Connect Master Gain to this destination
             masterGain.connect(dest);
 
-            // 3. Combine Tracks
+            // 3. Bridge Tone.js Audio (Castling/Accompaniment)
+            // We create a stream from Tone's context and pipe it into the recording context
+            try {
+                if (Tone.context && Tone.Destination) {
+                    console.log('[Recorder] Bridging Tone.js audio...');
+
+                    // A. Create a MediaStreamDestination in Tone's context
+                    // Access rawContext to ensure we get the native method
+                    const toneRawCtx = Tone.context.rawContext as AudioContext;
+                    const toneDest = toneRawCtx.createMediaStreamDestination();
+                    toneDestRef.current = toneDest;
+
+                    // B. Connect Tone.Master to this destination
+                    Tone.Destination.connect(toneDest);
+
+                    // C. Create a Source in the Recording Context (audioCtx) from the stream
+                    const toneStream = toneDest.stream;
+                    const toneSource = audioCtx.createMediaStreamSource(toneStream);
+                    toneSourceRef.current = toneSource;
+
+                    // D. Connect the bridged source to the final recording destination
+                    toneSource.connect(dest);
+                    console.log('[Recorder] Tone.js bridge established.');
+                }
+            } catch (err) {
+                // Non-critical error: Recording can proceed without accompaniment
+                console.warn('[Recorder] Failed to bridge Tone.js audio:', err);
+            }
+
+            // 4. Combine Tracks
             const combinedStream = new MediaStream([
                 ...canvasStream.getVideoTracks(),
                 ...dest.stream.getAudioTracks()
             ]);
 
-            // 4. Setup MediaRecorder
+            // 5. Setup MediaRecorder
             const mimeTypes = [
                 'video/mp4;codecs=h264,aac', // iOS/Android Standard (Best Compatibility)
                 'video/mp4;codecs=avc1,mp4a.40.2', // Alternative H.264 + AAC
@@ -83,7 +119,7 @@ export const useDigipanRecorder = ({ canvasRef, getAudioContext, getMasterGain, 
 
             // Helper for cleanup
             const cleanup = () => {
-                // Cleanup Audio Nodes
+                // Cleanup Howler Audio Nodes
                 if (streamDestRef.current && masterGain) {
                     try {
                         masterGain.disconnect(streamDestRef.current);
@@ -91,6 +127,26 @@ export const useDigipanRecorder = ({ canvasRef, getAudioContext, getMasterGain, 
                         console.warn('Failed to disconnect recorder node', err);
                     }
                 }
+
+                // Cleanup Tone.js Bridge
+                if (toneSourceRef.current && streamDestRef.current) {
+                    try {
+                        toneSourceRef.current.disconnect(streamDestRef.current);
+                        toneSourceRef.current.disconnect(); // Disconnect from everything
+                    } catch (e) {
+                        console.warn('Failed to disconnect tone source', e);
+                    }
+                }
+                if (toneDestRef.current) {
+                    try {
+                        Tone.Destination.disconnect(toneDestRef.current);
+                    } catch (e) {
+                        console.warn('Failed to disconnect Tone.Destination', e);
+                    }
+                }
+                toneSourceRef.current = null;
+                toneDestRef.current = null;
+
                 setIsRecording(false);
                 console.log('[Recorder] Finished and cleaned up.');
             };
