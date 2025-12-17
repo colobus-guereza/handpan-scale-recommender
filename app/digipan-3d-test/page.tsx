@@ -62,6 +62,8 @@ export default function Digipan3DTestPage() {
         }
     };
 
+
+
     // Preload Font and Assets
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -1921,6 +1923,8 @@ export default function Digipan3DTestPage() {
                             >
                                 {copySuccess ? <Check size={20} className="text-green-600" /> : <Camera size={20} className="text-slate-700" />}
                             </button>
+
+
 
                             {/* View Mode */}
                             <button
