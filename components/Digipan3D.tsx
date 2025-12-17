@@ -1333,9 +1333,9 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                 </>
             )}
 
-            {/* Home Screen Only: Top-Right - 피치/번호, 자동재생, 캐슬링(세로: 녹화) */}
+            {/* Home Screen Only: Top-Right - 피치/번호, 자동재생, 녹화, 캐슬링 (가로 한줄) */}
             {!isDevPage && (
-                <div className={`absolute ${isMobileButtonLayout ? 'top-2' : 'top-4'} right-4 z-50 flex flex-row items-start gap-2`}>
+                <div className={`absolute ${isMobileButtonLayout ? 'top-2' : 'top-4'} right-4 z-50 flex flex-row items-center gap-2`}>
                     {/* 1. View Mode Toggle (피치/순서 표시/숨김) */}
                     <button
                         onClick={() => {
@@ -1363,30 +1363,28 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                         />
                     </button>
 
-                    {/* 3. 캐슬링 버튼과 녹화 버튼 (세로 배열) */}
-                    <div className="flex flex-col gap-2">
-                        {/* 캐슬링 버튼 */}
-                        <button
-                            onClick={toggleDrum}
-                            className={`${btnMobile} relative ${isJamPlaying ? 'animate-heartbeat' : ''}`}
-                            style={{ color: '#0066FF' }}
-                            title={isJamPlaying ? "Castling 중지" : "Castling 시작"}
-                        >
-                            <span className="text-3xl font-black leading-none relative z-10">C</span>
-                        </button>
-                        {/* 녹화 버튼 */}
-                        <button
-                            onClick={handleRecordToggle}
-                            className={`${btnMobile} text-red-600 ${isRecording ? 'animate-pulse ring-2 ring-red-100 border-red-400' : ''}`}
-                            title={isRecording ? "Stop Recording" : "Start Recording"}
-                        >
-                            {isRecording ? (
-                                <Square size={16} fill="currentColor" />
-                            ) : (
-                                <Disc size={16} fill="currentColor" />
-                            )}
-                        </button>
-                    </div>
+                    {/* 3. 녹화 버튼 */}
+                    <button
+                        onClick={handleRecordToggle}
+                        className={`${btnMobile} text-red-600 ${isRecording ? 'animate-pulse ring-2 ring-red-100 border-red-400' : ''}`}
+                        title={isRecording ? "Stop Recording" : "Start Recording"}
+                    >
+                        {isRecording ? (
+                            <Square size={16} fill="currentColor" />
+                        ) : (
+                            <Disc size={16} fill="currentColor" />
+                        )}
+                    </button>
+
+                    {/* 4. 캐슬링 버튼 */}
+                    <button
+                        onClick={toggleDrum}
+                        className={`${btnMobile} relative ${isJamPlaying ? 'animate-heartbeat' : ''}`}
+                        style={{ color: '#0066FF' }}
+                        title={isJamPlaying ? "Castling 중지" : "Castling 시작"}
+                    >
+                        <span className="text-3xl font-black leading-none relative z-10">C</span>
+                    </button>
                 </div>
             )}
 
