@@ -127,9 +127,9 @@ export default function Digipan3DTestPage() {
             { "id": 7, "cx": 703, "cy": 215, "scale": 0, "rotate": 142, "position": "top", "angle": 0, "scaleX": 1.02, "scaleY": 0.8 },
             { "id": 8, "cx": 314, "cy": 200, "scale": 0, "rotate": 57, "position": "top", "angle": 0, "scaleX": 0.98, "scaleY": 0.83 },
             { "id": 9, "cx": 508, "cy": 143, "scale": 0, "rotate": 138, "position": "top", "angle": 0, "scaleX": 1.07, "scaleY": 0.79 },
-            // Appended Bottom Tonefields (Matches Digipan 11's N9, N10 positions)
-            { "id": 10, "cx": 1000, "cy": 762, "scale": 0, "rotate": 21, "position": "bottom", "angle": 0, "scaleX": 1.24, "scaleY": 1.48 },
-            { "id": 11, "cx": 4, "cy": 762, "scale": 0, "rotate": 158, "position": "bottom", "angle": 0, "scaleX": 1.29, "scaleY": 1.61 }
+            // Appended Bottom Tonefields (Updated Manual Layout: ID 10 Left, ID 11 Right)
+            { "id": 10, "cx": 0, "cy": 762, "scale": 0, "rotate": 159, "position": "bottom", "angle": 0, "scaleX": 1.24, "scaleY": 1.48 },
+            { "id": 11, "cx": 1000, "cy": 762, "scale": 0, "rotate": 205, "position": "bottom", "angle": 0, "scaleX": 1.28, "scaleY": 1.61 }
         ];
     }, []);
 
@@ -909,10 +909,21 @@ export default function Digipan3DTestPage() {
         const currentScaleNotes = [scale.notes.ding, ...scale.notes.top, ...(scale.notes.bottom || [])];
         const TEMPLATE_NOTES = ["D3", "A3", "Bb3", "C4", "D4", "E4", "F4", "G4", "A4", "C5", "D5", "E5", "G5", "A5"];
 
-        const notes = initialNotes14M.map((n, i) => {
-            const noteName = currentScaleNotes[i] || '';
+        const generatedNotes = initialNotes14M.map((n, i) => {
+            // Default mapping: index i maps to note i
+            let mappedIndex = i;
+
+            // Remapping logic for F# Low Pygmy 14 Mutant to swap Bass and High positions
+            if (scale.id === 'fs_low_pygmy_14_mutant') {
+                if (i === 10) mappedIndex = 12; // Mesh 10 (Bottom) gets Note 12 (Bass D3)
+                else if (i === 11) mappedIndex = 13; // Mesh 11 (Bottom) gets Note 13 (Bass E3)
+                else if (i === 12) mappedIndex = 10; // Mesh 12 (Top) gets Note 10 (High E5)
+                else if (i === 13) mappedIndex = 11; // Mesh 13 (Top) gets Note 11 (High F#5)
+            }
+
+            const noteName = currentScaleNotes[mappedIndex] || '';
             const frequency = getNoteFrequency(noteName);
-            const visualNoteName = TEMPLATE_NOTES[i] || "C5";
+            const visualNoteName = TEMPLATE_NOTES[mappedIndex] || "C5";
             const visualFrequency = getNoteFrequency(visualNoteName);
 
             let freqForVisual = visualFrequency;
@@ -935,9 +946,9 @@ export default function Digipan3DTestPage() {
             };
         });
 
-        const sortedByPitch = [...notes].sort((a, b) => a.frequency - b.frequency);
+        const sortedByPitch = [...generatedNotes].sort((a, b) => a.frequency - b.frequency);
 
-        return notes.map(n => {
+        return generatedNotes.map(n => {
             const rank = sortedByPitch.findIndex(x => x.id === n.id) + 1;
             return { ...n, subLabel: rank.toString() };
         });
@@ -1616,7 +1627,7 @@ export default function Digipan3DTestPage() {
             // Rank 1 is usually Ding in frequency sort (C#3 < D3).
             // Assign 'D' if ID=0, otherwise Rank.
             let subLabel = n.id === 0 ? 'D' : rank.toString();
-            
+
             // C# Pygmy 11 특별 처리
             if (scale?.id === 'cs_pygmy_11') {
                 // C#3 노트의 subLabel을 '1'로 설정
@@ -1628,7 +1639,7 @@ export default function Digipan3DTestPage() {
                     subLabel = '2';
                 }
             }
-            
+
             return { ...n, subLabel };
         });
 

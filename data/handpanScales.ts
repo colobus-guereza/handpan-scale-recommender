@@ -266,8 +266,8 @@ export const SCALES: Scale[] = [
         nameEn: "F# Low Pygmy 14",
         notes: {
             ding: "F#3",
-            top: ["G#3", "A3", "C#4", "E4", "F#4", "G#4", "A4", "B4", "C#5", "D3", "E3"], // F#5 -> E3
-            bottom: ["E5", "F#5"] // E3 -> F#5
+            top: ["G#3", "A3", "C#4", "E4", "F#4", "G#4", "A4", "B4", "C#5", "E5", "F#5"],
+            bottom: ["D3", "E3"]
         },
         vector: { minorMajor: -0.6, pureSpicy: 0.25, rarePopular: 0.95 },
         tags: ["Malte Marten Style", "Bestseller", "Deep", "Storytelling"],
@@ -771,7 +771,7 @@ export const SCALES: Scale[] = [
         notes: {
             ding: "E3",
             top: ["G3", "B3", "C4", "D4", "E4", "F#4", "G4", "B4", "C5"],
-            bottom: ["D3", "C3"]
+            bottom: ["C3", "D3"]
         },
         vector: { minorMajor: -0.3, pureSpicy: 0.3, rarePopular: 0.6 },
         tags: ["하이브리드", "저음보강", "감성적", "밸런스"],
@@ -1023,7 +1023,7 @@ export const SCALES: Scale[] = [
         notes: {
             ding: "F3",
             top: ["G3", "Ab3", "C4", "Eb4", "F4", "G4", "Ab4", "C5", "Eb5"],
-            bottom: ["Eb3", "Db3"]
+            bottom: ["Db3", "Eb3"]
         },
         vector: { minorMajor: -0.6, pureSpicy: 0.1, rarePopular: 0.75 },
         tags: ["피그미", "저음보강", "따뜻함", "몽환적"],

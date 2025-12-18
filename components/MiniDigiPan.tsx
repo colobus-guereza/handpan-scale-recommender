@@ -11,7 +11,10 @@ import Digipan14 from './Digipan14';
 import Digipan14M from './Digipan14M';
 import Digipan15M from './Digipan15M';
 import Digipan18M from './Digipan18M';
+import Digipan14_FsharpLowPygmy from './Digipan14_FsharpLowPygmy';
 import Digipan12_FsharpLowPygmy from './Digipan12_FsharpLowPygmy';
+import Digipan12_FLowPygmy from './Digipan12_FLowPygmy';
+import Digipan12_EEquinox from './Digipan12_EEquinox';
 import Digipan18_EAmara from './Digipan18_EAmara';
 
 interface MiniDigiPanProps {
@@ -56,6 +59,14 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
     const is11Notes = totalNotes === 11;
     const is10Notes = totalNotes === 10;
     const is9Notes = totalNotes === 9;
+
+    // DEBUG LOGGING
+    useEffect(() => {
+        if (scale.id.includes('pygmy') || totalNotes === 12) {
+            console.log(`[MiniDigiPan] Rendering Scale: ${scale.id}, Total Notes: ${totalNotes}`);
+            console.log(`[MiniDigiPan] is12Notes: ${is12Notes}`);
+        }
+    }, [scale.id, totalNotes, is12Notes]);
 
     const commonProps = {
         scale: scale,
@@ -105,13 +116,17 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
                         <Digipan15M {...commonProps} />
                     ) : is14Notes ? (
                         scale.id === 'fs_low_pygmy_14_mutant' ? (
-                            <Digipan14M {...commonProps} />
+                            <Digipan14_FsharpLowPygmy {...commonProps} />
                         ) : (
-                            <Digipan14 {...commonProps} />
+                            <Digipan14M {...commonProps} />
                         )
                     ) : is12Notes ? (
                         scale.id === 'fs_low_pygmy_12' ? (
                             <Digipan12_FsharpLowPygmy {...commonProps} />
+                        ) : scale.id === 'f_low_pygmy_12' ? (
+                            <Digipan12_FLowPygmy {...commonProps} />
+                        ) : scale.id === 'e_equinox_12' ? (
+                            <Digipan12_EEquinox {...commonProps} />
                         ) : (
                             <Digipan12 {...commonProps} />
                         )
