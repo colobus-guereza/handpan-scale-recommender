@@ -126,8 +126,8 @@ const Digipan12_FsharpLowPygmy = React.forwardRef<Digipan3DHandle, Digipan12_Fsh
         { "id": 8, "cx": 314, "cy": 200, "scale": 0, "rotate": 57, "position": "top", "angle": 0, "scaleX": 0.98, "scaleY": 0.83 },
         { "id": 9, "cx": 508, "cy": 143, "scale": 0, "rotate": 138, "position": "top", "angle": 0, "scaleX": 1.07, "scaleY": 0.79 },
         // Appended Bottom Tonefields (from Digipan 11 N9, N10 -> here N10, N11)
-        { "id": 10, "cx": 1000, "cy": 762, "scale": 0, "rotate": 21, "position": "bottom", "angle": 0, "scaleX": 1.0, "scaleY": 1.2 },
-        { "id": 11, "cx": 4, "cy": 762, "scale": 0, "rotate": 158, "position": "bottom", "angle": 0, "scaleX": 1.0, "scaleY": 1.3 }
+        { "id": 10, "cx": 4, "cy": 762, "scale": 0, "rotate": 158, "position": "bottom", "angle": 0, "scaleX": 1.0, "scaleY": 1.3 },
+        { "id": 11, "cx": 1000, "cy": 762, "scale": 0, "rotate": 21, "position": "bottom", "angle": 0, "scaleX": 1.0, "scaleY": 1.2 }
     ], []);
 
     const internalNotes = useMemo(() => {
