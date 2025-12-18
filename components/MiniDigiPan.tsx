@@ -15,7 +15,7 @@ import Digipan14_FsharpLowPygmy from './Digipan14_FsharpLowPygmy';
 import Digipan12_FsharpLowPygmy from './Digipan12_FsharpLowPygmy';
 import Digipan12_FLowPygmy from './Digipan12_FLowPygmy';
 import Digipan12_EEquinox from './Digipan12_EEquinox';
-import Digipan18_EAmara from './Digipan18_EAmara';
+// import Digipan18_EAmara from './Digipan18_EAmara';
 
 interface MiniDigiPanProps {
     scale: Scale;
@@ -95,6 +95,11 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
         ? "w-full aspect-[10/11] max-h-[550px] md:max-h-[800px] relative rounded-2xl overflow-hidden bg-white -mt-2"
         : "w-full aspect-square max-h-[500px] md:max-h-[700px] relative rounded-2xl overflow-hidden bg-white -mt-2";
 
+    // Special Case: E Amara 18 is not ready, so we hide the Digipan area entirely
+    if (scale.id === 'e_amara_18') {
+        return null;
+    }
+
     return (
         <div className="w-full">
             <div ref={containerRef} className={containerClass}>
@@ -108,7 +113,9 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
                     // Actual Content (Preserved Logic)
                     is18Notes ? (
                         scale.id === 'e_amara_18' ? (
-                            <Digipan18_EAmara {...commonProps} />
+                            <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-400">
+                                <span className="text-sm font-medium">준비 중 ({language === 'ko' ? 'Preparation in Progress' : 'Coming Soon'})</span>
+                            </div>
                         ) : (
                             <Digipan18M {...commonProps} />
                         )
