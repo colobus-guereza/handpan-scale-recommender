@@ -11,6 +11,8 @@ import Digipan14 from './Digipan14';
 import Digipan14M from './Digipan14M';
 import Digipan15M from './Digipan15M';
 import Digipan18M from './Digipan18M';
+import Digipan12_FsharpLowPygmy from './Digipan12_FsharpLowPygmy';
+import Digipan18_EAmara from './Digipan18_EAmara';
 
 interface MiniDigiPanProps {
     scale: Scale;
@@ -94,7 +96,11 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
                 ) : (
                     // Actual Content (Preserved Logic)
                     is18Notes ? (
-                        <Digipan18M {...commonProps} />
+                        scale.id === 'e_amara_18' ? (
+                            <Digipan18_EAmara {...commonProps} />
+                        ) : (
+                            <Digipan18M {...commonProps} />
+                        )
                     ) : is15Notes ? (
                         <Digipan15M {...commonProps} />
                     ) : is14Notes ? (
@@ -104,7 +110,11 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
                             <Digipan14 {...commonProps} />
                         )
                     ) : is12Notes ? (
-                        <Digipan12 {...commonProps} />
+                        scale.id === 'fs_low_pygmy_12' ? (
+                            <Digipan12_FsharpLowPygmy {...commonProps} />
+                        ) : (
+                            <Digipan12 {...commonProps} />
+                        )
                     ) : is11Notes ? (
                         <Digipan11 {...commonProps} />
                     ) : is10Notes ? (
