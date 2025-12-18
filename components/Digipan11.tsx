@@ -268,7 +268,20 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
         // 3. Assign subLabel based on Rank (All notes including Ding get their rank number)
         const finalNotes = generatedNotes.map(n => {
             const rank = sortedByPitch.findIndex(x => x.id === n.id) + 1;
-            const subLabel = rank.toString(); // All notes get rank number
+            let subLabel = rank.toString(); // All notes get rank number
+            
+            // C# Pygmy 11 특별 처리
+            if (scale?.id === 'cs_pygmy_11') {
+                // C#3 노트의 subLabel을 '1'로 설정
+                if (n.label === 'C#3') {
+                    subLabel = '1';
+                }
+                // D3 노트의 subLabel을 '2'로 설정
+                else if (n.label === 'D3') {
+                    subLabel = '2';
+                }
+            }
+            
             return { ...n, subLabel };
         });
 

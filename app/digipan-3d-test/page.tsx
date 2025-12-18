@@ -1615,7 +1615,20 @@ export default function Digipan3DTestPage() {
             const rank = sortedByPitch.findIndex(x => x.id === n.id) + 1;
             // Rank 1 is usually Ding in frequency sort (C#3 < D3).
             // Assign 'D' if ID=0, otherwise Rank.
-            const subLabel = n.id === 0 ? 'D' : rank.toString();
+            let subLabel = n.id === 0 ? 'D' : rank.toString();
+            
+            // C# Pygmy 11 특별 처리
+            if (scale?.id === 'cs_pygmy_11') {
+                // C#3 노트의 subLabel을 '1'로 설정
+                if (n.label === 'C#3') {
+                    subLabel = '1';
+                }
+                // D3 노트의 subLabel을 '2'로 설정
+                else if (n.label === 'D3') {
+                    subLabel = '2';
+                }
+            }
+            
             return { ...n, subLabel };
         });
 
