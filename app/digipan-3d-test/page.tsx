@@ -11,7 +11,7 @@ import Digipan15M from '../../components/Digipan15M';
 import Digipan18M from '../../components/Digipan18M';
 import DigipanDM from '../../components/DigipanDM';
 import ScaleInfoPanel from '../../components/ScaleInfoPanel';
-import { SCALES } from '@/data/handpanScales';
+import { SCALES } from '@mindforge/handpan-data';
 import { ChevronDown, RefreshCw, Smartphone, Monitor, Grid, Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Play, Ship, Pointer } from 'lucide-react';
 import { Digipan3DHandle } from '../../components/Digipan3D';
 import { useControls, button, Leva } from 'leva';
@@ -205,6 +205,24 @@ export default function Digipan3DTestPage() {
                 labelOffset: 25
             };
         });
+
+        // Special handling for D Kurd 12: Swap bottom note positions (F3 and G3)
+        // This is done POST-mapping to ensure we swap the final visual coordinates
+        if (scale.id === 'd_kurd_12') {
+            const n10Index = notes.findIndex(n => n.id === 10);
+            const n11Index = notes.findIndex(n => n.id === 11);
+
+            if (n10Index !== -1 && n11Index !== -1) {
+                const n10 = notes[n10Index];
+                const n11 = notes[n11Index];
+
+                // Swap geometric properties
+                const tempProps = { cx: n10.cx, cy: n10.cy, rotate: n10.rotate, scaleX: n10.scaleX, scaleY: n10.scaleY };
+
+                n10.cx = n11.cx; n10.cy = n11.cy; n10.rotate = n11.rotate; n10.scaleX = n11.scaleX; n10.scaleY = n11.scaleY;
+                n11.cx = tempProps.cx; n11.cy = tempProps.cy; n11.rotate = tempProps.rotate; n11.scaleX = tempProps.scaleX; n11.scaleY = tempProps.scaleY;
+            }
+        }
 
         // Sort by frequency for subLabel assignment (lowest = 1)
         const sortedByPitch = [...notes].sort((a, b) => a.frequency - b.frequency);

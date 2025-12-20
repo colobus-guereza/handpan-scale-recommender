@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Scale, SCALES } from '../data/handpanScales';
+import { Scale, SCALES } from '@mindforge/handpan-data';
 import DraggablePanel from './DraggablePanel';
 import { Filter, SortAsc, SortDesc, Search, Music2 } from 'lucide-react';
 

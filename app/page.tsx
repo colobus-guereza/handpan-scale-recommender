@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useEffect, Fragment } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -6,7 +6,7 @@ import VibeSelector, { Vibe, VIBES } from "@/components/VibeSelector";
 import ScaleList from "@/components/ScaleList";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
-import { SCALES } from '@/data/handpanScales';
+import { SCALES } from '@mindforge/handpan-data';
 import { PRODUCTS as ACCESSORY_PRODUCTS, Product } from '@/data/products';
 // import { CircleFlag } from 'react-circle-flags'; // Removed
 import { TRANSLATIONS, SUPPORTED_LANGUAGES, Language } from '@/constants/translations';

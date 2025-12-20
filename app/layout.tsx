@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+// 폰트 로딩 실패 시 대체를 위해 시스템 폰트 사용
+const inter = { className: "font-sans" };
 
 export const metadata: Metadata = {
     title: "나에게 맞는 핸드팬 스케일 찾기",

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useChordSynth } from '@/hooks/useChordSynth';
 import { generateAccompanimentData } from '@/utils/musicTheory';
-import { SCALES } from '@/data/handpanScales';
+import { SCALES } from '@mindforge/handpan-data';
 
 type ScaleKey = string;
 

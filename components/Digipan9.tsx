@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import Digipan3D from './Digipan3D';
-import { Scale } from '../data/handpanScales';
+import { Scale } from '@mindforge/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
 import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
 

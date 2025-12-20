@@ -1,5 +1,5 @@
 
-import { Scale } from '../data/handpanScales';
+import { Scale } from '@mindforge/handpan-data';
 
 /**
  * 1. 기초 주파수 데이터 (Hz)

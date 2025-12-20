@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
-import { SCALES } from '@/data/handpanScales';
+import { SCALES } from '@mindforge/handpan-data';
 import { PRODUCTS as ACCESSORY_PRODUCTS } from '@/data/products';
 import IframeResizer from '@/components/IframeResizer';
 import { SUPPORTED_LANGUAGES, Language } from '@/constants/translations';

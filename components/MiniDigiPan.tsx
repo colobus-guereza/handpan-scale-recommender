@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Scale } from '../data/handpanScales';
-import { Language } from '../constants/translations';
+import { Scale } from '@mindforge/handpan-data';
+import { Language } from '@/constants/translations';
 import Digipan9 from './Digipan9';
 import Digipan10 from './Digipan10';
 import Digipan11 from './Digipan11';
@@ -11,18 +11,16 @@ import Digipan14 from './Digipan14';
 import Digipan14M from './Digipan14M';
 import Digipan15M from './Digipan15M';
 import Digipan18M from './Digipan18M';
-import Digipan14_FsharpLowPygmy from './Digipan14_FsharpLowPygmy';
-import Digipan12_FsharpLowPygmy from './Digipan12_FsharpLowPygmy';
-import Digipan12_FLowPygmy from './Digipan12_FLowPygmy';
-import Digipan12_EEquinox from './Digipan12_EEquinox';
-// import Digipan18_EAmara from './Digipan18_EAmara';
+import Digipan18_EAmara from './Digipan18_EAmara';
+
+import { Digipan3DHandle } from './Digipan3D';
 
 interface MiniDigiPanProps {
     scale: Scale;
     language: Language;
 }
 
-export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
+const MiniDigiPan = React.forwardRef<Digipan3DHandle, MiniDigiPanProps>(({ scale, language }, ref) => {
     // --- Lazy Loading State ---
     const [isVisible, setIsVisible] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -60,15 +58,8 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
     const is10Notes = totalNotes === 10;
     const is9Notes = totalNotes === 9;
 
-    // DEBUG LOGGING
-    useEffect(() => {
-        if (scale.id.includes('pygmy') || totalNotes === 12) {
-            console.log(`[MiniDigiPan] Rendering Scale: ${scale.id}, Total Notes: ${totalNotes}`);
-            console.log(`[MiniDigiPan] is12Notes: ${is12Notes}`);
-        }
-    }, [scale.id, totalNotes, is12Notes]);
-
     const commonProps = {
+        // ref not included here to be explicit
         scale: scale,
         isCameraLocked: true as const,
         showControls: false as const,
@@ -77,6 +68,7 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
         enableZoom: false as const,
         enablePan: false as const,
         showLabelToggle: true as const,
+        hideTouchText: true as const,
     };
 
     // Responsive Container Logic for Digipan 11 and 12
@@ -95,11 +87,6 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
         ? "w-full aspect-[10/11] max-h-[550px] md:max-h-[800px] relative rounded-2xl overflow-hidden bg-white -mt-2"
         : "w-full aspect-square max-h-[500px] md:max-h-[700px] relative rounded-2xl overflow-hidden bg-white -mt-2";
 
-    // Special Case: E Amara 18 is not ready, so we hide the Digipan area entirely
-    if (scale.id === 'e_amara_18') {
-        return null;
-    }
-
     return (
         <div className="w-full">
             <div ref={containerRef} className={containerClass}>
@@ -112,37 +99,27 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
                 ) : (
                     // Actual Content (Preserved Logic)
                     is18Notes ? (
-                        scale.id === 'e_amara_18' ? (
-                            <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-400">
-                                <span className="text-sm font-medium">준비 중 ({language === 'ko' ? 'Preparation in Progress' : 'Coming Soon'})</span>
-                            </div>
+                        scale.id === 'e_amara_18_mutant' ? (
+                            <Digipan18_EAmara ref={ref} {...commonProps} />
                         ) : (
-                            <Digipan18M {...commonProps} />
+                            <Digipan18M ref={ref} {...commonProps} />
                         )
                     ) : is15Notes ? (
-                        <Digipan15M {...commonProps} />
+                        <Digipan15M ref={ref} {...commonProps} />
                     ) : is14Notes ? (
                         scale.id === 'fs_low_pygmy_14_mutant' ? (
-                            <Digipan14_FsharpLowPygmy {...commonProps} />
+                            <Digipan14M ref={ref} {...commonProps} />
                         ) : (
-                            <Digipan14M {...commonProps} />
+                            <Digipan14 ref={ref} {...commonProps} />
                         )
                     ) : is12Notes ? (
-                        scale.id === 'fs_low_pygmy_12' ? (
-                            <Digipan12_FsharpLowPygmy {...commonProps} />
-                        ) : scale.id === 'f_low_pygmy_12' ? (
-                            <Digipan12_FLowPygmy {...commonProps} />
-                        ) : scale.id === 'e_equinox_12' ? (
-                            <Digipan12_EEquinox {...commonProps} />
-                        ) : (
-                            <Digipan12 {...commonProps} />
-                        )
+                        <Digipan12 ref={ref} {...commonProps} />
                     ) : is11Notes ? (
-                        <Digipan11 {...commonProps} />
+                        <Digipan11 ref={ref} {...commonProps} />
                     ) : is10Notes ? (
-                        <Digipan10 {...commonProps} />
+                        <Digipan10 ref={ref} {...commonProps} />
                     ) : is9Notes ? (
-                        <Digipan9 {...commonProps} />
+                        <Digipan9 ref={ref} {...commonProps} />
                     ) : (
                         <div className="flex items-center justify-center w-full h-full bg-slate-100 text-slate-400">
                             Unknown Note Layout ({totalNotes})
@@ -152,4 +129,6 @@ export default function MiniDigiPan({ scale, language }: MiniDigiPanProps) {
             </div>
         </div>
     );
-}
+});
+
+export default MiniDigiPan;

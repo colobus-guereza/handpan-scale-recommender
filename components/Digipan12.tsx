@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import Digipan3D, { svgTo3D, getTonefieldDimensions, Digipan3DHandle } from './Digipan3D';
-import { Scale } from '../data/handpanScales';
+import { Scale } from '@mindforge/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
 import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
 import * as THREE from 'three';
@@ -29,6 +29,7 @@ interface Digipan12Props {
     notes?: any[]; // Allow passing notes for editor mode override
     showAxes?: boolean;
     onIsRecordingChange?: (isRecording: boolean) => void;
+    hideTouchText?: boolean;
 }
 
 // Composite Background Component for Digipan 12 (10 notes image + 2 visual tonefields)
@@ -110,36 +111,53 @@ const Digipan12 = React.forwardRef<Digipan3DHandle, Digipan12Props>(({
     forceCompactView = false,
     notes: externalNotes,
     showAxes = false,
-    onIsRecordingChange
+    onIsRecordingChange,
+    hideTouchText = false
 }, ref) => {
 
     // 10-Note Base Coordinates (from Digipan10.tsx)
-    const baseNotes10 = useMemo(() => {
-        // Default Standard 12-Note Layout
-        const standardLayout = [
-            { "id": 0, "cx": 508, "cy": 515, "scale": 0, "rotate": 89, "position": "center", "angle": 0, "scaleX": 1.36, "scaleY": 1.16 },
-            { "id": 1, "cx": 639, "cy": 811, "scale": 0, "rotate": 66, "position": "top", "angle": 0, "scaleX": 1, "scaleY": 0.89 },
-            { "id": 2, "cx": 356, "cy": 811, "scale": 0, "rotate": 103, "position": "top", "angle": 0, "scaleX": 0.98, "scaleY": 0.9 },
-            { "id": 3, "cx": 822, "cy": 626, "scale": 0, "rotate": 194, "position": "top", "angle": 0, "scaleX": 1, "scaleY": 0.93 },
-            { "id": 4, "cx": 178, "cy": 609, "scale": 0, "rotate": 163, "position": "top", "angle": 0, "scaleX": 0.99, "scaleY": 0.91 },
-            { "id": 5, "cx": 832, "cy": 391, "scale": 0, "rotate": 158, "position": "top", "angle": 0, "scaleX": 0.94, "scaleY": 0.82 },
-            { "id": 6, "cx": 184, "cy": 367, "scale": 0, "rotate": 28, "position": "top", "angle": 0, "scaleX": 0.97, "scaleY": 0.85 },
-            { "id": 7, "cx": 703, "cy": 215, "scale": 0, "rotate": 142, "position": "top", "angle": 0, "scaleX": 1.02, "scaleY": 0.8 },
-            { "id": 8, "cx": 314, "cy": 200, "scale": 0, "rotate": 57, "position": "top", "angle": 0, "scaleX": 0.98, "scaleY": 0.83 },
-            { "id": 9, "cx": 508, "cy": 143, "scale": 0, "rotate": 138, "position": "top", "angle": 0, "scaleX": 1.07, "scaleY": 0.79 },
-            { "id": 10, "cx": 1000, "cy": 762, "scale": 0, "rotate": 21, "position": "bottom", "angle": 0, "scaleX": 1.0, "scaleY": 1.2 },
-            { "id": 11, "cx": 4, "cy": 762, "scale": 0, "rotate": 158, "position": "bottom", "angle": 0, "scaleX": 1.0, "scaleY": 1.3 }
-        ];
-
-        // Specific Override REMOVED by user request
-
-        return standardLayout;
-    }, [scale]);
+    const baseNotes10 = useMemo(() => [
+        { "id": 0, "cx": 508, "cy": 515, "scale": 0, "rotate": 89, "position": "center", "angle": 0, "scaleX": 1.36, "scaleY": 1.16 },
+        { "id": 1, "cx": 639, "cy": 811, "scale": 0, "rotate": 66, "position": "top", "angle": 0, "scaleX": 1, "scaleY": 0.89 },
+        { "id": 2, "cx": 356, "cy": 811, "scale": 0, "rotate": 103, "position": "top", "angle": 0, "scaleX": 0.98, "scaleY": 0.9 },
+        { "id": 3, "cx": 822, "cy": 626, "scale": 0, "rotate": 194, "position": "top", "angle": 0, "scaleX": 1, "scaleY": 0.93 },
+        { "id": 4, "cx": 178, "cy": 609, "scale": 0, "rotate": 163, "position": "top", "angle": 0, "scaleX": 0.99, "scaleY": 0.91 },
+        { "id": 5, "cx": 832, "cy": 391, "scale": 0, "rotate": 158, "position": "top", "angle": 0, "scaleX": 0.94, "scaleY": 0.82 },
+        { "id": 6, "cx": 184, "cy": 367, "scale": 0, "rotate": 28, "position": "top", "angle": 0, "scaleX": 0.97, "scaleY": 0.85 },
+        { "id": 7, "cx": 703, "cy": 215, "scale": 0, "rotate": 142, "position": "top", "angle": 0, "scaleX": 1.02, "scaleY": 0.8 },
+        { "id": 8, "cx": 314, "cy": 200, "scale": 0, "rotate": 57, "position": "top", "angle": 0, "scaleX": 0.98, "scaleY": 0.83 },
+        { "id": 9, "cx": 508, "cy": 143, "scale": 0, "rotate": 138, "position": "top", "angle": 0, "scaleX": 1.07, "scaleY": 0.79 },
+        // Appended Bottom Tonefields (Updated Manual Layout: ID 10 Left, ID 11 Right)
+        { "id": 10, "cx": 0, "cy": 762, "scale": 0, "rotate": 159, "position": "bottom", "angle": 0, "scaleX": 1.24, "scaleY": 1.48 },
+        { "id": 11, "cx": 1000, "cy": 762, "scale": 0, "rotate": 205, "position": "bottom", "angle": 0, "scaleX": 1.28, "scaleY": 1.61 }
+    ], []);
 
     const internalNotes = useMemo(() => {
         // If externalNotes provided, use them. If no scale, return base notes for fallback.
         if (externalNotes && externalNotes.length > 0) return externalNotes;
         if (!scale) return baseNotes10.map(n => ({ ...n, label: '', frequency: 440, visualFrequency: 440, offset: [0, 0, 0] as [number, number, number] }));
+
+        // Special handling for D Kurd 12: Swap bottom note positions (F3 and G3)
+        // Default: ID 10 (Left), ID 11 (Right)
+        // D Kurd 12: ID 10 (Right), ID 11 (Left)
+        let activeTemplateNotes = JSON.parse(JSON.stringify(baseNotes10)); // Deep copy
+
+        if (scale.id === 'd_kurd_12') {
+            console.log("[Digipan12] D Kurd 12 detected (Root). Swapping bottom notes.");
+            const t10Index = activeTemplateNotes.findIndex((t: any) => t.id === 10);
+            const t11Index = activeTemplateNotes.findIndex((t: any) => t.id === 11);
+
+            if (t10Index !== -1 && t11Index !== -1) {
+                const t10 = activeTemplateNotes[t10Index];
+                const t11 = activeTemplateNotes[t11Index];
+
+                // Swap geometric properties
+                const tempProps = { cx: t10.cx, cy: t10.cy, rotate: t10.rotate, scaleX: t10.scaleX, scaleY: t10.scaleY };
+
+                t10.cx = t11.cx; t10.cy = t11.cy; t10.rotate = t11.rotate; t10.scaleX = t11.scaleX; t10.scaleY = t11.scaleY;
+                t11.cx = tempProps.cx; t11.cy = tempProps.cy; t11.rotate = tempProps.rotate; t11.scaleX = tempProps.scaleX; t11.scaleY = tempProps.scaleY;
+            }
+        }
 
         // Template Notes for frequency lookup (Visual Sizing)
         const TEMPLATE_NOTES = ["D3", "A3", "Bb3", "C4", "D4", "E4", "F4", "G4", "A4", "C5", "D5", "E5"]; // Extended for 12
@@ -147,7 +165,7 @@ const Digipan12 = React.forwardRef<Digipan3DHandle, Digipan12Props>(({
         // Determine Scale Notes (Ding + Top + Bottom)
         const currentScaleNotes = [scale.notes.ding, ...scale.notes.top, ...(scale.notes.bottom || [])];
 
-        const generatedNotes = baseNotes10.map((n, i) => {
+        const generatedNotes = activeTemplateNotes.map((n: any, i: number) => {
             const noteName = currentScaleNotes[i] || ''; // e.g., "D3", "A3"
             const frequency = getNoteFrequency(noteName);
 
@@ -237,6 +255,8 @@ const Digipan12 = React.forwardRef<Digipan3DHandle, Digipan12Props>(({
             forceCompactView={forceCompactView}
             hideStaticLabels={true}
             showAxes={showAxes}
+            onIsRecordingChange={onIsRecordingChange}
+            hideTouchText={hideTouchText}
             sceneSize={forceCompactView ? { width: 66, height: 50 } : { width: 64, height: 60 }}
             cameraZoom={DIGIPAN_VIEW_CONFIG['12'].zoom}
             cameraTargetY={DIGIPAN_VIEW_CONFIG['12'].targetY}

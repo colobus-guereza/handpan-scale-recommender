@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { SCALES, Scale, VECTOR_AXES } from '../data/handpanScales';
+import { SCALES, Scale, VECTOR_AXES } from '@mindforge/handpan-data';
 import { Vibe, VIBES } from './VibeSelector';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Sparkles, Moon, Sun, Flame, Share2, Check } from 'lucide-react';
@@ -667,8 +667,8 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                                             const ownUrl = currentScale?.ownUrl;
                                             const ownUrlEn = currentScale?.ownUrlEn;
 
-                                            // Priority: 1. English URL if lang is NOT 'ko', 2. Korean URL (default)
-                                            let purchaseUrl = ownUrl;
+                                            // Priority: 1. English URL if lang is NOT 'ko', 2. Korean URL (default), 3. Product URL (Fallback)
+                                            let purchaseUrl = ownUrl || currentScale?.productUrl;
                                             if (language !== 'ko' && ownUrlEn) {
                                                 purchaseUrl = ownUrlEn;
                                             }
@@ -793,7 +793,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
             </div>
 
             {/* MiniDigiPan 컴포넌트 - 버튼 영역 위 */}
-            {showMiniDigiPan && (
+            {showMiniDigiPan && currentScale.id !== 'e_amara_18_mutant' && (
                 <div className="-mt-4 mb-4">
                     <MiniDigiPan key={miniDigiPanKey} scale={currentScale} language={language} />
                 </div>

@@ -1,4 +1,4 @@
-import { Scale } from '@/data/handpanScales';
+import { Scale } from '@mindforge/handpan-data';
 import { Language } from '@/constants/translations';
 
 export interface LocalizedContent {

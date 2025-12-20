@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import Digipan3D, { svgTo3D, getTonefieldDimensions, Digipan3DHandle } from './Digipan3D';
 import { useTexture } from '@react-three/drei';
 import { HANDPAN_CONFIG } from '../constants/handpanConfig';
-import { Scale } from '../data/handpanScales';
+import { Scale } from '@mindforge/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
 import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
 import * as THREE from 'three';

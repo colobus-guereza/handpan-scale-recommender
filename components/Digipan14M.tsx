@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import Digipan3D, { svgTo3D, getTonefieldDimensions, Digipan3DHandle } from './Digipan3D';
-import { Scale } from '../data/handpanScales';
+import { Scale } from '@mindforge/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
 import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
 import * as THREE from 'three';
@@ -281,7 +281,20 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
         const currentScaleNotes = [scale.notes.ding, ...scale.notes.top, ...(scale.notes.bottom || [])];
 
         const generatedNotes = baseNotes10.map((n, i) => {
-            const noteName = currentScaleNotes[i] || '';
+            // Default mapping: index i maps to note i
+            let mappedIndex = i;
+
+            // Remapping logic for F# Low Pygmy 14 Mutant to swap Bass and High positions
+            // This ensures D3/E3 (bottom array) appear at the bottom visual positions
+            // and E5/F#5 (top array high notes) appear at the top inner positions
+            if (scale.id === 'fs_low_pygmy_14_mutant') {
+                if (i === 10) mappedIndex = 12; // Mesh 10 (Bottom) gets Note 12 (Bass D3)
+                else if (i === 11) mappedIndex = 13; // Mesh 11 (Bottom) gets Note 13 (Bass E3)
+                else if (i === 12) mappedIndex = 10; // Mesh 12 (Top) gets Note 10 (High E5)
+                else if (i === 13) mappedIndex = 11; // Mesh 13 (Top) gets Note 11 (High F#5)
+            }
+
+            const noteName = currentScaleNotes[mappedIndex] || ''; // e.g., "D3", "A3"
             const frequency = getNoteFrequency(noteName);
             const visualNoteName = TEMPLATE_NOTES[i] || "A4";
             const visualFrequency = getNoteFrequency(visualNoteName);
