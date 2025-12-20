@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, Suspense } from 'react';
 import { SCALES, Scale, VECTOR_AXES } from '@/data/handpan-data';
 import { Vibe, VIBES } from './VibeSelector';
 import { motion } from 'framer-motion';
@@ -795,7 +795,9 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
             {/* MiniDigiPan 컴포넌트 - 버튼 영역 위 */}
             {showMiniDigiPan && currentScale.id !== 'e_amara_18_mutant' && (
                 <div className="-mt-4 mb-4">
-                    <MiniDigiPan key={currentScale.id} scale={currentScale} language={language} />
+                    <Suspense fallback={<div className="w-full aspect-square bg-slate-100 dark:bg-slate-800 rounded-2xl animate-pulse" />}>
+                        <MiniDigiPan key={currentScale.id} scale={currentScale} language={language} />
+                    </Suspense>
                 </div>
             )}
 
