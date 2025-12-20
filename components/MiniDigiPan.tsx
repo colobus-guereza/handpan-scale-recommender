@@ -21,10 +21,11 @@ interface MiniDigiPanProps {
 }
 
 const MiniDigiPan = React.forwardRef<Digipan3DHandle, MiniDigiPanProps>(({ scale, language }, ref) => {
-    // --- Lazy Loading State ---
-    const [isVisible, setIsVisible] = useState(false);
+    // --- Lazy Loading State (Temporarily disabled for debugging) ---
+    const [isVisible, setIsVisible] = useState(true);
     const containerRef = useRef<HTMLDivElement>(null);
 
+    /*
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
@@ -42,6 +43,7 @@ const MiniDigiPan = React.forwardRef<Digipan3DHandle, MiniDigiPanProps>(({ scale
 
         return () => observer.disconnect();
     }, []);
+    */
     // --------------------------
 
     // Determine which component to render based on note count

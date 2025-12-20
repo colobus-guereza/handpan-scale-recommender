@@ -497,7 +497,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
         if (!containerRef.current) return;
         const controls = containerRef.current.querySelector('.controls-container') as HTMLElement;
         if (controls) controls.style.display = 'none';
-        const canvas = await html2canvas(containerRef.current, { background: '#FFFFFF', logging: false, useCORS: true });
+        const canvas = await html2canvas(containerRef.current, { backgroundColor: '#FFFFFF', logging: false, useCORS: true });
         if (controls) controls.style.display = 'flex';
         canvas.toBlob(async (blob) => { if (blob) { try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); setCopySuccess(true); setTimeout(() => setCopySuccess(false), 2000); } catch (err) { console.error('Failed to copy to clipboard:', err); } } });
     };
@@ -561,7 +561,9 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                 <CameraHandler isLocked={isCameraLockedState} enableZoom={enableZoom} enablePan={enablePan} sceneSize={sceneSize} cameraTargetY={cameraTargetY} cameraZoom={cameraZoom} />
                 <group>
                     <CyberBoat isIdle={isIdle && showIdleBoat} />
-                    <TouchText isIdle={isIdle && !isJamPlaying && showTouchText} suppressExplosion={false} overrideText={introCountdown} interactionTrigger={interactionCount} />
+                    <Suspense fallback={null}>
+                        <TouchText isIdle={isIdle && !isJamPlaying && showTouchText} suppressExplosion={false} overrideText={introCountdown} interactionTrigger={interactionCount} />
+                    </Suspense>
                     <Suspense fallback={null}>{backgroundContent ? backgroundContent : <HandpanImage backgroundImage={backgroundImage} centerX={centerX} centerY={centerY} />}</Suspense>
                     {isDevPage && showAxes && (
                         <><mesh position={[0, 0, 0]}><sphereGeometry args={[0.5, 16, 16]} /><meshBasicMaterial color="#ff0000" /></mesh><Text position={[0, -1.5, 0]} fontSize={1} color="#000000" anchorX="center" anchorY="middle">(0, 0, 0)</Text><mesh position={[10, 0, 0]} rotation={[0, 0, -Math.PI / 2]}><cylinderGeometry args={[0.1, 0.1, 20, 8]} /><meshBasicMaterial color="#0000ff" /></mesh><mesh position={[20, 0, 0]} rotation={[0, 0, -Math.PI / 2]}><coneGeometry args={[0.3, 1, 8]} /><meshBasicMaterial color="#0000ff" /></mesh><Text position={[21, 0, 0]} fontSize={0.8} color="#0000ff" anchorX="left" anchorY="middle">X</Text><mesh position={[0, 10, 0]}><cylinderGeometry args={[0.1, 0.1, 20, 8]} /><meshBasicMaterial color="#ff0000" /></mesh><mesh position={[0, 20, 0]}><coneGeometry args={[0.3, 1, 8]} /><meshBasicMaterial color="#ff0000" /></mesh><Text position={[0, 21, 0]} fontSize={0.8} color="#ff0000" anchorX="center" anchorY="bottom">Y</Text><mesh position={[0, 0, 10]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.1, 0.1, 20, 8]} /><meshBasicMaterial color="#00ff00" /></mesh><mesh position={[0, 0, 20]} rotation={[Math.PI / 2, 0, 0]}><coneGeometry args={[0.3, 1, 8]} /><meshBasicMaterial color="#00ff00" /></mesh><Text position={[0, 0, 21]} fontSize={0.8} color="#00ff00" anchorX="center" anchorY="middle">Z</Text></>

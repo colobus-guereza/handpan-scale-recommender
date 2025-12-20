@@ -18,11 +18,11 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="ko" className="h-full">
-            <body className={`${inter.className} min-h-full m-0 p-0 overflow-y-auto`}>
+        <html lang="ko" className="h-full" suppressHydrationWarning>
+            <body className={`${inter.className} min-h-full m-0 p-0 overflow-y-auto`} suppressHydrationWarning>
                 <ThemeProvider>
-                    <IframeResizer />
                     <div className="min-h-screen w-full py-4">
+                        <IframeResizer />
                         {children}
                     </div>
                 </ThemeProvider>

@@ -795,7 +795,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
             {/* MiniDigiPan 컴포넌트 - 버튼 영역 위 */}
             {showMiniDigiPan && currentScale.id !== 'e_amara_18_mutant' && (
                 <div className="-mt-4 mb-4">
-                    <MiniDigiPan key={miniDigiPanKey} scale={currentScale} language={language} />
+                    <MiniDigiPan key={currentScale.id} scale={currentScale} language={language} />
                 </div>
             )}
 

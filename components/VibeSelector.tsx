@@ -7,7 +7,7 @@ export interface Vibe {
     id: string;
     title: string; // Deprecated: Use translation key instead
     description: string;
-    icon: React.ReactNode;
+    icon: React.ReactElement;
     target: { minorMajor: number; pureSpicy: number };
 }
 
@@ -112,7 +112,7 @@ export default function VibeSelector({ onSelect, language }: Props) {
 
                             <div className="relative z-10 mb-4 transition-all duration-300">
                                 <div className="group-hover:scale-110 transition-transform duration-300">
-                                    {React.cloneElement(vibe.icon as React.ReactElement, { className: `w-16 h-16 ${hoverStyles.iconColor} transition-all duration-300` })}
+                                    {React.cloneElement(vibe.icon, { className: `w-16 h-16 ${hoverStyles.iconColor} transition-all duration-300` } as React.HTMLAttributes<HTMLElement>)}
                                 </div>
                             </div>
                             <h3 className={`relative z-10 text-2xl font-bold ${hoverStyles.textColor} tracking-tight transition-colors duration-300`}>

@@ -14,8 +14,10 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Default to 'light' as per user preference
     const [theme, setTheme] = useState<Theme>('light');
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         // Initialize theme from localStorage or default to 'light'
         const savedTheme = localStorage.getItem('theme') as Theme;
         if (savedTheme) {
@@ -39,7 +41,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
-            {children}
+            <div className={mounted ? '' : 'invisible'}>
+                {children}
+            </div>
         </ThemeContext.Provider>
     );
 }

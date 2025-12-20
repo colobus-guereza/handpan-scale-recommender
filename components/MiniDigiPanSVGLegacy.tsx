@@ -1426,7 +1426,7 @@ interface ToneFieldProps {
     onSelect: () => void;
     isCalibrationEnabled?: boolean;
     onUpdateNote?: (id: number, updates: Partial<NoteData>) => void;
-    svgRef?: React.RefObject<SVGSVGElement>;
+    svgRef?: React.RefObject<SVGSVGElement | null>;
 }
 
 // 톤필드 컴포넌트

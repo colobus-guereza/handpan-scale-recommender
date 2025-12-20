@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 
 interface UseDigipanRecorderProps {
-    canvasRef: React.RefObject<HTMLCanvasElement>;
+    canvasRef: React.RefObject<HTMLCanvasElement | null>;
     getAudioContext: () => AudioContext | null;
     getMasterGain: () => GainNode | null;
     onRecordingComplete?: (blob: Blob) => void;
