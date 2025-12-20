@@ -174,15 +174,26 @@ export const useDrumMachine = (bpm: number = 100, durationSeconds: number = 30, 
         // Sync Duration for Timer: 38.4 seconds
         const seqDuration = totalSixteenths * sixteenthTime;
 
-        // ★ Groove Constants
-        const SWING_AMOUNT = 0.035;
-        const SNARE_LAG = 0.020;
-        const HUMAN_JITTER = 0.006;
+        // ★ Groove Constants (Set to 0 for strict/honest beat)
+        const SWING_AMOUNT = 0;
+        const SNARE_LAG = 0;
+        const HUMAN_JITTER = 0;
 
-        // Standard Pattern (2 Bars / 32 steps) loop
-        const stdKick = [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0];
-        const stdSnare = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
-        const stdHat = [1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 2, 1, 2];
+        // Standard Pattern (Strict Quarter Notes: K-H-S-H)
+        // User Requirement: "Kick-Hat-Snare-Hat" on Jung-bak (On-beat 1, 2, 3, 4)
+        // 0: Kick, 4: Hat, 8: Snare, 12: Hat
+        const stdKick = [
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        ];
+        const stdSnare = [
+            0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0
+        ];
+        const stdHat = [
+            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0
+        ];
 
         // [New Pattern 1] Lo-fi Fill (Bar 4 & 12) - "Chill Hop Stutter"
         // Syncopated Kicks & Ghost Snares to keep the groove flowing but interesting

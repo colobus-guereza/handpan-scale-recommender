@@ -23,6 +23,7 @@ import { DEFAULT_HARMONIC_SETTINGS, DigipanHarmonicConfig } from '../constants/h
 import { useDigipanRecorder } from '../hooks/useDigipanRecorder';
 import { useJamSession } from '@/hooks/useJamSession';
 import { calculateChordProgression, ChordSet } from '../utils/ChordCalculator';
+import { useRhythmEngine, RhythmPreset } from '@/hooks/useRhythmEngine';
 
 const CameraHandler = ({
     isLocked,
@@ -137,6 +138,7 @@ interface Digipan3DProps {
     onIsRecordingChange?: (isRecording: boolean) => void;
     cameraZoom?: number;
     hideTouchText?: boolean;
+    drumPreset?: string; // e.g. 'basic', 'lofi'
 }
 
 export interface Digipan3DHandle {
@@ -366,7 +368,7 @@ const ToneFieldMesh = React.memo(({
 });
 
 const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
-    notes, onNoteClick, isCameraLocked = false, scale, centerX = 500, centerY = 500, onScaleSelect, backgroundImage, extraControls, noteCountFilter = 10, showControls = true, showInfoPanel = true, initialViewMode = 0, viewMode: controlledViewMode, onViewModeChange, enableZoom = true, enablePan = true, showLabelToggle = false, forceCompactView = false, backgroundContent, tonefieldOffset = [0, 0, 0], hideStaticLabels = false, sceneSize = { width: 60, height: 60 }, cameraTargetY = 0, showAxes = false, harmonicSettings, onIsRecordingChange, cameraZoom, hideTouchText = false
+    notes, onNoteClick, isCameraLocked = false, scale, centerX = 500, centerY = 500, onScaleSelect, backgroundImage, extraControls, noteCountFilter = 10, showControls = true, showInfoPanel = true, initialViewMode = 0, viewMode: controlledViewMode, onViewModeChange, enableZoom = true, enablePan = true, showLabelToggle = false, forceCompactView = false, backgroundContent, tonefieldOffset = [0, 0, 0], hideStaticLabels = false, sceneSize = { width: 60, height: 60 }, cameraTargetY = 0, showAxes = false, harmonicSettings, onIsRecordingChange, cameraZoom, hideTouchText = false, drumPreset
 }, ref) => {
     const pathname = usePathname();
     const isDevPage = pathname === '/digipan-3d-test';
@@ -423,7 +425,14 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
 
     const dingNote = notes.find(n => n.id === 0)?.label || "D3";
     const scaleNoteNames = useMemo(() => notes.map(n => n.label), [notes]);
-    const { togglePlay: toggleJam, isPlaying: isJamPlaying, introCountdown, onInteraction } = useJamSession({ bpm: 100, rootNote: dingNote, scaleNotes: scaleNoteNames });
+
+    // Use the new isolated engine
+    const { togglePlay: toggleJam, isPlaying: isJamPlaying, introCountdown, onInteraction } = useRhythmEngine({
+        bpm: 100,
+        rootNote: dingNote,
+        scaleNotes: scaleNoteNames,
+        preset: (drumPreset as RhythmPreset) || 'basic'
+    });
 
     const totalDuration = 38.4;
     const toggleDrum = () => { toggleJam(); if (drumTimer !== null) setDrumTimer(null); else setDrumTimer(Math.ceil(totalDuration)); };

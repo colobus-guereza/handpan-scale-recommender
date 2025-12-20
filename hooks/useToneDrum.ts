@@ -73,10 +73,20 @@ export const useToneDrum = (bpm: number = 100, kickBaseFreq: number = 40) => {
 
         currentBarRef.current = 0;
 
-        // Define Patterns (Same as before)
-        const stdKick = [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]; // 2 Bars
-        const stdSnare = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
-        const stdHat = [1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 2, 1, 2];
+        // Define Patterns (Strict Quarter Notes: K-H-S-H)
+        // 0: Kick, 4: Hat, 8: Snare, 12: Hat
+        const stdKick = [
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        ];
+        const stdSnare = [
+            0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0
+        ];
+        const stdHat = [
+            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0
+        ];
 
         // Fills
         const fillSimpleKick = [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0];
@@ -124,9 +134,9 @@ export const useToneDrum = (bpm: number = 100, kickBaseFreq: number = 40) => {
                 kickRef.current.triggerAttackRelease(kickFreqRef.current, "8n", time);
             }
             if (sVal && snareRef.current) {
-                // Humanize Snare
-                const lag = (Math.random() * 0.02);
-                snareRef.current.triggerAttackRelease("8n", time + lag);
+                // Humanize Snare: Removed for strict time
+                // const lag = (Math.random() * 0.02);
+                snareRef.current.triggerAttackRelease("8n", time);
             }
             if (hVal && hatRef.current) {
                 const vel = hVal === 1 ? -15 : -25; // dB
