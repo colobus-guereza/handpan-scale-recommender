@@ -8,7 +8,7 @@ const btnMobile = "w-[38.4px] h-[38.4px] flex items-center justify-center bg-whi
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Text, OrbitControls, Center, Line, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
-import { Scale } from '@mindforge/handpan-data';
+import { Scale } from '@/data/handpan-data';
 import { Lock, Unlock, Camera, Check, Eye, EyeOff, MinusCircle, PlayCircle, Play, Ship, Pointer, Disc, Square, Drum, Music, Music2, Download, Trash2 } from 'lucide-react';
 import { HANDPAN_CONFIG, getDomeHeight, TONEFIELD_CONFIG } from '../constants/handpanConfig';
 import { DIGIPAN_VIEW_CONFIG, DIGIPAN_LABEL_POS_FACTOR } from '../constants/digipanViewConfig';
@@ -83,7 +83,7 @@ const CameraHandler = ({
     );
 };
 
-import { SCALES } from '@mindforge/handpan-data';
+import { SCALES } from '@/data/handpan-data';
 
 interface NoteData {
     id: number;
@@ -505,7 +505,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     const handleDemoPlay = async () => {
         if (isPlaying) return;
         setIsPlaying(true);
-        const sortedNotes = [...notes].sort((a, b) => a.frequency - b.frequency);
+        const sortedNotes = [...notes].sort((a: any, b: any) => a.frequency - b.frequency);
         console.log(`[DemoPlay] Starting. Total notes: ${sortedNotes.length}`);
         const lowestNoteId = sortedNotes.length > 0 ? sortedNotes[0].id : -1;
         const playNoteInternal = async (id: number, duration: number, indexLabel: string) => {

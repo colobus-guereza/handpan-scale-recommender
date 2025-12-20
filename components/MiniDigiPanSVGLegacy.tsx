@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useTheme } from './ThemeProvider';
-import { Scale } from '@mindforge/handpan-data';
+import { Scale } from '@/data/handpan-data';
 import { TRANSLATIONS, Language } from '../constants/translations';
 import { Settings } from 'lucide-react';
 

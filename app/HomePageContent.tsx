@@ -1,14 +1,24 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect, Fragment } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import VibeSelector, { Vibe, VIBES } from "@/components/VibeSelector";
+import ScaleList from "@/components/ScaleList";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { SCALES } from '@/data/handpan-data';
-import { PRODUCTS as ACCESSORY_PRODUCTS } from '@/data/products';
-import IframeResizer from '@/components/IframeResizer';
-import { SUPPORTED_LANGUAGES, Language } from '@/constants/translations';
+import { PRODUCTS as ACCESSORY_PRODUCTS, Product } from '@/data/products';
+// import { CircleFlag } from 'react-circle-flags'; // Removed
+import { TRANSLATIONS, SUPPORTED_LANGUAGES, Language } from '@/constants/translations';
+import { getLocalizedProduct } from '../utils/i18n';
+import ThemeToggle from "@/components/ThemeToggle";
 
 import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
+import * as THREE from 'three';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
@@ -168,7 +178,8 @@ const MAJOR_SCALE_PRODUCTS = [
     },
     {
         id: 205,
-        name: 'C Yunsl 9',
+        name: 'C 윤슬 9',
+        nameEn: 'C Yunsl 9',
         price: '2,640,000원',
         rating: 4.9,
         reviewCount: 85,
@@ -248,7 +259,8 @@ const DEEP_ETHNIC_PRODUCTS = [
 const CASE_PRODUCTS = [
     {
         id: 1,
-        name: 'HTC Evatek 하드케이스',
+        name: 'HTC Evatek (M, Black)',
+        nameEn: 'HTC Evatek (M, Black)',
         price: '484,000원',
         rating: 4.8,
         reviewCount: 120,
@@ -256,11 +268,121 @@ const CASE_PRODUCTS = [
     },
     {
         id: 2,
-        name: 'Avaja 고급 소프트케이스',
+        name: 'HTC Evatek (M, Cayenne)',
+        nameEn: 'HTC Evatek (M, Cayenne)',
         price: '484,000원',
         rating: 4.8,
         reviewCount: 120,
-        image: '/images/products/avaja.png',
+        image: '/images/products/evatek_cayenne.png',
+        soldOut: true,
+    },
+    {
+        id: 3,
+        name: 'HTC Evatek (M, Woodbine)',
+        nameEn: 'HTC Evatek (M, Woodbine)',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/evatek_woodbine.png',
+        soldOut: true,
+    },
+    {
+        id: 4,
+        name: 'HTC Evatek (M, Mustang)',
+        nameEn: 'HTC Evatek (M, Mustang)',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/evatek_mustang.png',
+        soldOut: true,
+    },
+    {
+        id: 5,
+        name: 'HTC Evatek (M, AJP)',
+        nameEn: 'HTC Evatek (M, AJP)',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/evatek_ajp.png',
+        soldOut: true,
+    },
+];
+
+// 소프트케이스 카테고리용 제품 목록
+const SOFT_CASE_PRODUCTS = [
+    {
+        id: 2,
+        name: 'Avaja Premium (M, Grey)',
+        nameEn: 'Avaja Premium (M, Grey)',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/avaja_titanmid_grey.png',
+        i18n: {
+            fr: {
+                name: 'Avaja Premium (M, Gris)'
+            }
+        }
+    },
+    {
+        id: 3,
+        name: 'Avaja Premium (M, Green)',
+        nameEn: 'Avaja Premium (M, Green)',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/avaja_titanmid_green.png',
+        soldOut: true,
+        i18n: {
+            fr: {
+                name: 'Avaja Premium (M, Vert)'
+            }
+        }
+    },
+    {
+        id: 4,
+        name: 'Avaja Premium (M, White)',
+        nameEn: 'Avaja Premium (M, White)',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/avaja_titanmid_white.png',
+        soldOut: true,
+        i18n: {
+            fr: {
+                name: 'Avaja Premium (M, Blanc)'
+            }
+        }
+    },
+    {
+        id: 5,
+        name: 'Avaja Premium (M, Khaki)',
+        nameEn: 'Avaja Premium (M, Khaki)',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/avaja_khaki.png',
+        soldOut: true,
+        i18n: {
+            fr: {
+                name: 'Avaja Premium (M, Kaki)'
+            }
+        }
+    },
+    {
+        id: 6,
+        name: 'Avaja Premium (M, Red)',
+        nameEn: 'Avaja Premium (M, Red)',
+        price: '484,000원',
+        rating: 4.8,
+        reviewCount: 120,
+        image: '/images/products/avaja_red.png',
+        soldOut: true,
+        i18n: {
+            fr: {
+                name: 'Avaja Premium (M, Rouge)'
+            }
+        }
     },
 ];
 
@@ -269,18 +391,30 @@ const STAND_PRODUCTS = [
     {
         id: 1,
         name: '고급 원목스탠드 S',
+        nameEn: 'Wood Handpan Stand S',
         price: '85,000원',
         rating: 4.8,
         reviewCount: 0,
         image: '/images/products/stand_s.png',
+        i18n: {
+            fr: {
+                name: 'Support de handpan en bois S'
+            }
+        }
     },
     {
         id: 2,
         name: '고급 원목스탠드 M',
+        nameEn: 'Wood Handpan Stand M',
         price: '105,000원',
         rating: 4.8,
         reviewCount: 0,
         image: '/images/products/stand_m.png',
+        i18n: {
+            fr: {
+                name: 'Support de handpan en bois M'
+            }
+        }
     },
 ];
 
@@ -288,50 +422,65 @@ const STAND_PRODUCTS = [
 const productNameMap: Record<string, string> = {
     '고급 원목스탠드 S': '원목 핸드팬스탠드 S',
     '고급 원목스탠드 M': '원목 핸드팬스탠드 M',
+    'HTC Evatek (M, Black)': 'HTC Evatek 하드케이스',
 };
 
-
-
 // 제품명으로 productUrl을 찾는 헬퍼 함수
-// 제품명으로 productUrl을 찾는 헬퍼 함수
-const getProductUrl = (productName: string): string | null => {
+const getProductUrl = (productName: string, language: Language = 'ko'): string | null => {
     // 먼저 스케일에서 찾기
     const scale = SCALES.find(s => s.name === productName);
-    if (scale?.ownUrl) {
-        return scale.ownUrl;
+    if (scale) {
+        if (language !== 'ko' && scale.ownUrlEn) return scale.ownUrlEn;
+        if (scale.ownUrl) return scale.ownUrl;
+        if (scale.productUrl) return scale.productUrl;
     }
-    // ownUrl이 없으면 productUrl 사용
-    if (scale?.productUrl) {
-        return scale.productUrl;
+
+    // Avaja Premium 제품들은 모두 같은 링크 사용
+    if (productName.includes('Avaja Premium')) {
+        const avajaProduct = ACCESSORY_PRODUCTS.find(p => p.name === 'Avaja 고급 소프트케이스') as Product | undefined;
+        if (avajaProduct) {
+            if (language !== 'ko' && avajaProduct.ownUrlEn) return avajaProduct.ownUrlEn;
+            if (avajaProduct.ownUrl) return avajaProduct.ownUrl;
+        }
     }
 
     // 제품명 매핑 적용
     const mappedName = productNameMap[productName] || productName;
 
     // PRODUCTS에서 찾기
-    const product = ACCESSORY_PRODUCTS.find(p => p.name === mappedName || p.name === productName);
-    return product?.ownUrl || null;
+    const product = ACCESSORY_PRODUCTS.find(p => p.name === mappedName || p.name === productName) as Product | undefined;
+    if (product) {
+        if (language !== 'ko' && product.ownUrlEn) return product.ownUrlEn;
+        return product.ownUrl || null;
+    }
+
+    return null;
 };
 
-export default function CategorySliderPage() {
-    const [isLoading, setIsLoading] = useState(true);
+export default function HomePageContent() {
+    const [scaleIdFromUrl, setScaleIdFromUrl] = useState<string | null>(null);
     const [language, setLanguage] = useState<Language>('ko');
+    const t = TRANSLATIONS[language];
 
+    // Font Preloading for Home Screen (Same as Developer Page)
     useEffect(() => {
-        // 페이지 로드 완료 후 로딩 상태 해제
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 100); // 최소한의 지연으로 부드러운 전환
-
-        return () => {
-            clearTimeout(timer);
-        };
+        if (typeof window !== 'undefined') {
+            THREE.Cache.enabled = true;
+            const loader = new FontLoader();
+            loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', () => {
+                console.log('TouchText Font preloaded (Home)');
+            });
+        }
     }, []);
 
-    // URL에서 언어 파라미터 읽기
+    // 클라이언트 측에서 URL 파라미터 읽기
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const params = new URLSearchParams(window.location.search);
+            const scaleId = params.get('scale');
+            setScaleIdFromUrl(scaleId);
+
+            // URL에서 언어 파라미터 확인
             const lang = params.get('lang');
             const isSupported = SUPPORTED_LANGUAGES.some(l => l.code === lang);
             if (isSupported && lang) {
@@ -339,6 +488,26 @@ export default function CategorySliderPage() {
             }
         }
     }, []);
+
+    // 초기값을 '요가명상힐링' (meditation)으로 설정
+    const initialVibe = VIBES.find(v => v.id === 'meditation') || null;
+    const [step, setStep] = useState<'selection' | 'result'>('result');
+    const [selectedVibe, setSelectedVibe] = useState<Vibe | null>(initialVibe);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+
+    // 언어 전환 핸들러
+    const handleLanguageChange = (lang: Language) => {
+        setLanguage(lang);
+        // URL에 언어 파라미터 추가 (현재 페이지 유지)
+        if (typeof window !== 'undefined') {
+            const url = new URL(window.location.href);
+            url.searchParams.set('lang', lang);
+            window.history.pushState({}, '', url.toString());
+            // TopBanner에 언어 변경 알림
+            window.dispatchEvent(new CustomEvent('languagechange'));
+        }
+    };
 
     // 가격 변환 맵 (KRW -> USD)
     const priceConversionMap: Record<string, string> = {
@@ -372,25 +541,163 @@ export default function CategorySliderPage() {
         return price;
     };
 
+
+
+    useEffect(() => {
+        // 페이지 로드 완료 후 로딩 상태 해제
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+
+            // 로딩 완료 후 높이 갱신 메시지 전송 (아이프레임 높이 조절)
+            if (typeof window !== 'undefined' && window.self !== window.top) {
+                setTimeout(() => {
+                    const height = document.documentElement.offsetHeight;
+                    window.parent.postMessage({ type: 'setHeight', height }, '*');
+                }, 100); // 렌더링 및 레이아웃 안정화 시간 고려
+            }
+        }, 300); // 이미지 로드 시간을 고려한 지연
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, []);
+
+    const handleVibeSelect = (vibe: Vibe) => {
+        setSelectedVibe(vibe);
+        setStep('result');
+    };
+
+    const handleBack = () => {
+        setStep('selection');
+        setSelectedVibe(null);
+    };
+
     // 로딩 중일 때 로딩 인디케이터 표시
     if (isLoading) {
         return (
-            <>
-                <div className="w-full min-h-screen bg-white flex items-center justify-center">
-                    <div className="w-12 h-12 border-3 border-gray-100 border-t-gray-300 rounded-full animate-spin opacity-50"></div>
-                </div>
-            </>
+            <div className="w-full min-h-screen bg-white flex items-center justify-center">
+                <div className="w-12 h-12 border-4 border-gray-100 border-t-gray-300 rounded-full animate-spin opacity-50"></div>
+            </div>
         );
     }
 
-
-
     return (
-        <>
-            <IframeResizer />
-            <div className="w-full min-h-screen bg-white flex flex-col items-center justify-center p-0 gap-8">
+        <div className="flex flex-col items-center w-full">
+            {/* Main Service Container - Preserving Original Styles */}
+            <div className="w-full max-w-full px-2 md:px-4">
+                <div className="flex flex-col items-center space-y-4 glass-card p-4 rounded-3xl border border-glass-border relative min-h-[600px]">
+                    {/* Theme Toggle Button (Top Right) - Hidden as requested */}
+                    <div className="absolute top-4 right-4 z-50 hidden">
+                        <ThemeToggle />
+                    </div>
+
+                    {/* Language Selector - Top Right on Web - Dropdown */}
+                    <div className="absolute top-4 right-4 z-50 hidden md:flex flex-row items-center gap-3">
+                        <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pt-0.5">Language</span>
+                        <div className="relative" onMouseEnter={() => setIsLangMenuOpen(true)} onMouseLeave={() => setIsLangMenuOpen(false)}>
+                            <button
+                                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                                className="transition-all duration-200 px-4 py-2 rounded-full text-sm font-medium bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 ring-1 ring-gray-200 dark:ring-gray-600 shadow-sm flex items-center gap-2"
+                                aria-label="Select Language"
+                                aria-expanded={isLangMenuOpen}
+                            >
+                                <span>{SUPPORTED_LANGUAGES.find(l => l.code === language)?.name || 'Language'}</span>
+                                <svg className={`w-4 h-4 transition-transform duration-200 ${isLangMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+
+                            {isLangMenuOpen && (
+                                <div className="absolute top-[calc(100%-0.5rem)] right-0 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden py-1 max-h-[80vh] overflow-y-auto pt-6">
+                                    {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'].includes(lang.code))
+                                        .sort((a, b) => a.code.localeCompare(b.code))
+                                        .map((lang) => (
+                                            <button
+                                                key={lang.code}
+                                                onClick={() => {
+                                                    handleLanguageChange(lang.code);
+                                                    setIsLangMenuOpen(false);
+                                                }}
+                                                className={`w-full text-left px-4 py-3 text-sm transition-colors duration-150 ${language === lang.code
+                                                    ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-semibold'
+                                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'
+                                                    }`}
+                                            >
+                                                {lang.name}
+                                            </button>
+                                        ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <header className="text-center space-y-2 pt-2">
+                        <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-slate-400 drop-shadow-sm">
+                            {t.title}
+                        </h1>
+                        {/* Language Selector - Center on Mobile - Dropdown */}
+                        <div className="relative flex flex-row items-center justify-center md:hidden px-4 z-40 gap-3 mt-2">
+                            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pt-0.5">Language</span>
+                            <div className="relative" onMouseEnter={() => setIsLangMenuOpen(true)} onMouseLeave={() => setIsLangMenuOpen(false)}>
+                                <button
+                                    onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                                    className="transition-all duration-200 px-4 py-2 rounded-full text-sm font-medium bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 ring-1 ring-gray-200 dark:ring-gray-600 shadow-sm flex items-center gap-2"
+                                    aria-label="Select Language"
+                                    aria-expanded={isLangMenuOpen}
+                                >
+                                    <span>{SUPPORTED_LANGUAGES.find(l => l.code === language)?.name || 'Language'}</span>
+                                    <svg className={`w-4 h-4 transition-transform duration-200 ${isLangMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+
+                                {isLangMenuOpen && (
+                                    <div className="absolute top-[calc(100%-0.5rem)] left-1/2 transform -translate-x-1/2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden py-1 max-h-[60vh] overflow-y-auto z-50 pt-6">
+                                        {SUPPORTED_LANGUAGES.filter(lang => ['ko', 'en', 'zh', 'fr', 'ja', 'de', 'es', 'ru', 'fa', 'pt', 'ae', 'it'].includes(lang.code))
+                                            .sort((a, b) => a.code.localeCompare(b.code))
+                                            .map((lang) => (
+                                                <button
+                                                    key={lang.code}
+                                                    onClick={() => {
+                                                        handleLanguageChange(lang.code);
+                                                        setIsLangMenuOpen(false);
+                                                    }}
+                                                    className={`w-full text-left px-4 py-3 text-sm transition-colors duration-150 ${language === lang.code
+                                                        ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-semibold'
+                                                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'
+                                                        }`}
+                                                >
+                                                    {lang.name}
+                                                </button>
+                                            ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="w-full">
+                        {step === 'selection' ? (
+                            <div className="w-full">
+                                <VibeSelector onSelect={handleVibeSelect} language={language} />
+                            </div>
+                        ) : (
+                            <section className="w-full bg-white dark:bg-slate-950 py-8">
+                                {selectedVibe && (
+                                    <ScaleList
+                                        selectedVibe={selectedVibe}
+                                        onBack={handleBack}
+                                        onChangeVibe={handleVibeSelect}
+                                        initialScaleId={scaleIdFromUrl || undefined}
+                                        language={language}
+                                    />
+                                )}
+                            </section>
+                        )}
+                    </main>
+                </div>
+            </div>
+
+            {/* Category Slider Container - Full Width */}
+            <section className="w-full bg-white dark:bg-slate-950 py-8 mt-8">
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">입문용</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{t.categories.beginner}</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -417,7 +724,7 @@ export default function CategorySliderPage() {
                         className="mySwiper !pb-10 !px-2"
                     >
                         {PRODUCTS.map((product) => {
-                            const productUrl = getProductUrl(product.name);
+                            const productUrl = getProductUrl(product.name, language);
 
                             return (
                                 <SwiperSlide key={product.id}>
@@ -453,7 +760,7 @@ export default function CategorySliderPage() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {product.name}
+                                                {getLocalizedProduct(product as any, language).name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
@@ -469,7 +776,7 @@ export default function CategorySliderPage() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">요가명상힐링</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{t.categories.healing}</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -496,7 +803,7 @@ export default function CategorySliderPage() {
                         className="mySwiper !pb-10 !px-2"
                     >
                         {HEALING_PRODUCTS.map((product) => {
-                            const productUrl = getProductUrl(product.name);
+                            const productUrl = getProductUrl(product.name, language);
 
                             return (
                                 <SwiperSlide key={product.id}>
@@ -532,7 +839,7 @@ export default function CategorySliderPage() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {product.name}
+                                                {getLocalizedProduct(product as any, language).name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
@@ -548,7 +855,7 @@ export default function CategorySliderPage() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">메이저 스케일</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{t.categories.bright}</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -575,7 +882,7 @@ export default function CategorySliderPage() {
                         className="mySwiper !pb-10 !px-2"
                     >
                         {MAJOR_SCALE_PRODUCTS.map((product) => {
-                            const productUrl = getProductUrl(product.name);
+                            const productUrl = getProductUrl(product.name, language);
 
                             return (
                                 <SwiperSlide key={product.id}>
@@ -611,7 +918,7 @@ export default function CategorySliderPage() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {product.name}
+                                                {getLocalizedProduct(product as any, language).name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
@@ -627,7 +934,7 @@ export default function CategorySliderPage() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">딥 에스닉</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{t.categories.ethnic}</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -654,7 +961,7 @@ export default function CategorySliderPage() {
                         className="mySwiper !pb-10 !px-2"
                     >
                         {DEEP_ETHNIC_PRODUCTS.map((product) => {
-                            const productUrl = getProductUrl(product.name);
+                            const productUrl = getProductUrl(product.name, language);
 
                             return (
                                 <SwiperSlide key={product.id}>
@@ -690,7 +997,7 @@ export default function CategorySliderPage() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {product.name}
+                                                {getLocalizedProduct(product as any, language).name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
@@ -706,7 +1013,7 @@ export default function CategorySliderPage() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">Hard Case</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{t.categories.case}</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -733,14 +1040,15 @@ export default function CategorySliderPage() {
                         className="mySwiper !pb-10 !px-2"
                     >
                         {CASE_PRODUCTS.map((product) => {
-                            const productUrl = getProductUrl(product.name);
+                            const productUrl = getProductUrl(product.name, language);
+                            const isSoldOut = (product as any).soldOut || false;
 
                             return (
                                 <SwiperSlide key={product.id}>
                                     <div
-                                        className="flex flex-col group cursor-pointer"
+                                        className={`flex flex-col group ${isSoldOut ? 'cursor-default' : 'cursor-pointer'}`}
                                         onClick={() => {
-                                            if (productUrl) {
+                                            if (!isSoldOut && productUrl) {
                                                 window.open(productUrl, '_top');
                                             }
                                         }}
@@ -758,21 +1066,27 @@ export default function CategorySliderPage() {
                                                 alt={product.name}
                                                 loading="lazy"
                                                 decoding="async"
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                className={`w-full h-full object-cover transition-transform duration-300 ${isSoldOut ? '' : 'group-hover:scale-105'}`}
                                                 style={{
                                                     width: '100%',
                                                     height: '100%',
                                                     display: 'block',
-                                                    objectFit: 'cover'
+                                                    objectFit: 'contain',
+                                                    opacity: 1
                                                 }}
                                             />
                                         </div>
-                                        <div>
-                                            <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {product.name}
+                                        <div className="relative">
+                                            {isSoldOut && (
+                                                <span className="absolute -top-2 left-0 bg-gray-800 text-white px-3 py-1 rounded-lg font-bold text-xs shadow-lg">
+                                                    {t.soldOut}
+                                                </span>
+                                            )}
+                                            <h3 className={`text-sm font-medium line-clamp-1 mb-0 ${isSoldOut ? 'text-gray-400' : 'text-gray-900'} ${isSoldOut ? 'mt-6' : ''}`}>
+                                                {language === 'en' ? ((product as any).nameEn || product.name) : product.name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
-                                                <span className="text-lg font-bold text-gray-900">
+                                                <span className={`text-lg font-bold ${isSoldOut ? 'text-gray-400' : 'text-gray-900'}`}>
                                                     {formatPrice(product.price)}
                                                 </span>
                                             </div>
@@ -785,7 +1099,93 @@ export default function CategorySliderPage() {
                 </div>
                 <div className="w-full border-t border-gray-300 my-8"></div>
                 <div className="w-full max-w-full">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">Stand</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{t.categories.softCase}</h2>
+                    <Swiper
+                        modules={[Navigation, Pagination]}
+                        spaceBetween={20}
+                        navigation
+                        pagination={{ clickable: true }}
+                        breakpoints={{
+                            0: {
+                                slidesPerView: 2,
+                                spaceBetween: 10,
+                            },
+                            640: {
+                                slidesPerView: 3,
+                                spaceBetween: 15,
+                            },
+                            1024: {
+                                slidesPerView: 4,
+                                spaceBetween: 20,
+                            },
+                            1280: {
+                                slidesPerView: 4,
+                                spaceBetween: 20,
+                            },
+                        }}
+                        className="mySwiper !pb-10 !px-2"
+                    >
+                        {SOFT_CASE_PRODUCTS.map((product) => {
+                            const productUrl = getProductUrl(product.name, language);
+                            const isSoldOut = (product as any).soldOut || false;
+
+                            return (
+                                <SwiperSlide key={product.id}>
+                                    <div
+                                        className={`flex flex-col group ${isSoldOut ? 'cursor-default' : 'cursor-pointer'}`}
+                                        onClick={() => {
+                                            if (!isSoldOut && productUrl) {
+                                                window.open(productUrl, '_top');
+                                            }
+                                        }}
+                                    >
+                                        <div
+                                            className="relative overflow-hidden rounded-xl bg-white mb-5"
+                                            style={{
+                                                width: '100%',
+                                                aspectRatio: '1 / 1',
+                                                minHeight: '200px'
+                                            }}
+                                        >
+                                            <img
+                                                src={product.image}
+                                                alt={product.name}
+                                                loading="lazy"
+                                                decoding="async"
+                                                className={`w-full h-full object-cover transition-transform duration-300 ${isSoldOut ? '' : 'group-hover:scale-105'}`}
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    display: 'block',
+                                                    objectFit: 'cover',
+                                                    opacity: 1
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="relative">
+                                            {isSoldOut && (
+                                                <span className="absolute -top-2 left-0 bg-gray-800 text-white px-3 py-1 rounded-lg font-bold text-xs shadow-lg">
+                                                    {t.soldOut}
+                                                </span>
+                                            )}
+                                            <h3 className={`text-sm font-medium line-clamp-1 mb-0 ${isSoldOut ? 'text-gray-400' : 'text-gray-900'} ${isSoldOut ? 'mt-6' : ''}`}>
+                                                {getLocalizedProduct(product as any, language).name}
+                                            </h3>
+                                            <div className="flex items-baseline gap-2">
+                                                <span className={`text-lg font-bold ${isSoldOut ? 'text-gray-400' : 'text-gray-900'}`}>
+                                                    {formatPrice(product.price)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </SwiperSlide>
+                            );
+                        })}
+                    </Swiper>
+                </div>
+                <div className="w-full border-t border-gray-300 my-8"></div>
+                <div className="w-full max-w-full">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4 px-2 text-center">{t.categories.stand}</h2>
                     <Swiper
                         modules={[Navigation, Pagination]}
                         spaceBetween={20}
@@ -812,7 +1212,7 @@ export default function CategorySliderPage() {
                         className="mySwiper !pb-10 !px-2"
                     >
                         {STAND_PRODUCTS.map((product) => {
-                            const productUrl = getProductUrl(product.name);
+                            const productUrl = getProductUrl(product.name, language);
 
                             return (
                                 <SwiperSlide key={product.id}>
@@ -848,7 +1248,7 @@ export default function CategorySliderPage() {
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-900 line-clamp-1 mb-0">
-                                                {product.name}
+                                                {getLocalizedProduct(product as any, language).name}
                                             </h3>
                                             <div className="flex items-baseline gap-2">
                                                 <span className="text-lg font-bold text-gray-900">
@@ -862,7 +1262,7 @@ export default function CategorySliderPage() {
                         })}
                     </Swiper>
                 </div>
-            </div>
-        </>
+            </section>
+        </div>
     );
 }

@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { SCALES, Scale, VECTOR_AXES } from '@mindforge/handpan-data';
+import { SCALES, Scale, VECTOR_AXES } from '@/data/handpan-data';
 import { Vibe, VIBES } from './VibeSelector';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Star, Play, ExternalLink, Music2, Filter, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Sparkles, Moon, Sun, Flame, Share2, Check } from 'lucide-react';
@@ -236,7 +236,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
                 Math.pow(scale.vector.pureSpicy - target.pureSpicy, 2)
             );
             return { ...scale, distance };
-        }).sort((a, b) => {
+        }).sort((a: any, b: any) => {
             // Primary Sort: Distance (Ascending)
             const distDiff = a.distance - b.distance;
 
@@ -370,7 +370,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
         const order = ['C', 'C#', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B'];
         return Array.from(pitches)
             .filter(pitch => pitch !== 'Db') // Db 제거
-            .sort((a, b) => {
+            .sort((a: any, b: any) => {
                 const indexA = order.indexOf(a);
                 const indexB = order.indexOf(b);
                 if (indexA === -1 && indexB === -1) return 0;
@@ -393,7 +393,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
             const count = getNoteCount(scale.name);
             if (count) counts.add(count);
         });
-        return Array.from(counts).sort((a, b) => a - b);
+        return Array.from(counts).sort((a: any, b: any) => a - b);
     }, []);
 
     // 피치 토글 함수
@@ -465,7 +465,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
                 return true;
             })
-            .sort((a, b) => {
+            .sort((a: any, b: any) => {
                 // 딩 노트의 알파벳 순서로 정렬 - CDEFGAB 순서
                 const pitchA = getPitchFromNote(a.notes.ding);
                 const pitchB = getPitchFromNote(b.notes.ding);

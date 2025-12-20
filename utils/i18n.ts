@@ -1,4 +1,4 @@
-import { Scale } from '@mindforge/handpan-data';
+import { Scale } from '@/data/handpan-data';
 import { Product } from '../data/products';
 import { Language } from '../constants/translations';
 

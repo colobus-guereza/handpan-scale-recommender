@@ -9,7 +9,6 @@
         "lint": "next lint"
     },
     "dependencies": {
-        "@mindforge/handpan-data": "file:../../packages/handpan-data",
         "@react-three/drei": "^9.122.0",
         "@react-three/fiber": "^8.18.0",
         "@types/three": "^0.181.0",

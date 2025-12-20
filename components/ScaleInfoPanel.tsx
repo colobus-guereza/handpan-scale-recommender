@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Scale, SCALES } from '@mindforge/handpan-data';
+import { Scale, SCALES } from '@/data/handpan-data';
 import DraggablePanel from './DraggablePanel';
 import { Filter, SortAsc, SortDesc, Search, Music2 } from 'lucide-react';
 
@@ -58,7 +58,7 @@ export default function ScaleInfoPanel({
         });
 
         // Sorting
-        result = result.sort((a, b) => {
+        result = result.sort((a: any, b: any) => {
             let valA: any, valB: any;
 
             if (sortBy === 'NAME') {

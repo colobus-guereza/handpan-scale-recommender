@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import Digipan3D, { svgTo3D, getTonefieldDimensions, Digipan3DHandle } from './Digipan3D';
-import { Scale } from '@mindforge/handpan-data';
+import { Scale } from '@/data/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
 import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
 import * as THREE from 'three';
@@ -50,7 +50,7 @@ const Digipan15MBackground = ({ centerX = 500, centerY = 500, visualNotes = [], 
             </mesh>
 
             {/* Permanent Visual Tonefields for Bottom Notes (N10, N11, N12, N13) */}
-            {viewMode !== 4 && visualNotes.filter(n => !n.hideGuide).map((note) => {
+            {viewMode !== 4 && visualNotes.filter((n: any) => !n.hideGuide).map((note) => {
                 const cx = note.cx ?? 500;
                 const cy = note.cy ?? 500;
                 const notePos = svgTo3D(cx, cy, centerX, centerY);
@@ -308,9 +308,9 @@ const Digipan15M = React.forwardRef<Digipan3DHandle, Digipan15MProps>(({
 
 
         // Sort by frequency for subLabel
-        const sortedByPitch = [...generatedNotes].sort((a, b) => a.frequency - b.frequency);
+        const sortedByPitch = [...generatedNotes].sort((a: any, b: any) => a.frequency - b.frequency);
 
-        return generatedNotes.map(n => {
+        return generatedNotes.map((n: any) => {
             const rank = sortedByPitch.findIndex(x => x.id === n.id) + 1;
             const subLabel = rank.toString();
             return { ...n, subLabel };
@@ -322,7 +322,7 @@ const Digipan15M = React.forwardRef<Digipan3DHandle, Digipan15MProps>(({
 
     // Filter notes for the Permanent Visual Layer (Bottom 4 notes: IDs >= 10)
     const visualNotes = useMemo(() => {
-        return notesToRender.filter(n => n.id >= 12);
+        return notesToRender.filter((n: any) => n.id >= 12);
     }, [notesToRender]);
 
     return (

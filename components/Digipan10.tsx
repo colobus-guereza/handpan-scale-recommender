@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import Digipan3D from './Digipan3D';
-import { Scale } from '@mindforge/handpan-data';
+import { Scale } from '@/data/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
 import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
 
@@ -214,14 +214,14 @@ const Digipan10 = React.forwardRef<Digipan3DHandle, Digipan10Props>(({
                 frequency: TEMPLATE_FREQUENCIES[index + 1] || 440,
                 labelOffset: 25
             };
-        }).filter(n => n !== null);
+        }).filter((n: any) => n !== null);
 
         const generatedNotes = [dingNote, ...topNotes] as any[];
 
         // Sort by frequency to determine 1-based numbering
-        const sorted = [...generatedNotes].sort((a, b) => a.frequency - b.frequency);
+        const sorted = [...generatedNotes].sort((a: any, b: any) => a.frequency - b.frequency);
 
-        return generatedNotes.map(n => {
+        return generatedNotes.map((n: any) => {
             const rank = sorted.findIndex(x => x.id === n.id) + 1;
             return {
                 ...n,

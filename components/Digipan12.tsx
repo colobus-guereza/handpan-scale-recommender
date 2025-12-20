@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import Digipan3D, { svgTo3D, getTonefieldDimensions, Digipan3DHandle } from './Digipan3D';
-import { Scale } from '@mindforge/handpan-data';
+import { Scale } from '@/data/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
 import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
 import * as THREE from 'three';
@@ -214,9 +214,9 @@ const Digipan12 = React.forwardRef<Digipan3DHandle, Digipan12Props>(({
         });
 
         // Sort for numbering by frequency (lowest = 1)
-        const sortedByPitch = [...generatedNotes].sort((a, b) => a.frequency - b.frequency);
+        const sortedByPitch = [...generatedNotes].sort((a: any, b: any) => a.frequency - b.frequency);
 
-        return generatedNotes.map(n => {
+        return generatedNotes.map((n: any) => {
             // All notes get their frequency-based rank (1 = lowest frequency)
             const rank = sortedByPitch.findIndex(x => x.id === n.id) + 1;
             const subLabel = rank.toString();
@@ -229,7 +229,7 @@ const Digipan12 = React.forwardRef<Digipan3DHandle, Digipan12Props>(({
 
     // Filter notes for the Permanent Visual Layer (Bottom 2 notes: IDs 10, 11)
     const visualNotes = useMemo(() => {
-        return notesToRender.filter(n => n.id >= 10);
+        return notesToRender.filter((n: any) => n.id >= 10);
     }, [notesToRender]);
 
     // Define sceneSize based on forceCompactView

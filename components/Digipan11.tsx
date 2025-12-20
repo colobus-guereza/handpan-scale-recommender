@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import Digipan3D, { svgTo3D, getTonefieldDimensions, Digipan3DHandle } from './Digipan3D';
 import { useTexture } from '@react-three/drei';
 import { HANDPAN_CONFIG } from '../constants/handpanConfig';
-import { Scale } from '@mindforge/handpan-data';
+import { Scale } from '@/data/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
 import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
 import * as THREE from 'three';
@@ -263,10 +263,10 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
         });
 
         // 2. Sort by Pitch to determine Rank (1-based index) for subLabel
-        const sortedByPitch = [...generatedNotes].sort((a, b) => a.frequency - b.frequency);
+        const sortedByPitch = [...generatedNotes].sort((a: any, b: any) => a.frequency - b.frequency);
 
         // 3. Assign subLabel based on Rank (All notes including Ding get their rank number)
-        const finalNotes = generatedNotes.map(n => {
+        const finalNotes = generatedNotes.map((n: any) => {
             const rank = sortedByPitch.findIndex(x => x.id === n.id) + 1;
             let subLabel = rank.toString(); // All notes get rank number
             
@@ -305,7 +305,7 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
             onNoteClick={onNoteClick}
             onScaleSelect={onScaleSelect}
             // Background is simpler now - we pass content instead of string
-            backgroundContent={<Digipan11Background visualNotes={notesToRender.filter(n => n.id >= 9)} viewMode={viewMode} />}
+            backgroundContent={<Digipan11Background visualNotes={notesToRender.filter((n: any) => n.id >= 9)} viewMode={viewMode} />}
             // tonefieldOffset={[-28.5, 0, 0]} // REMOVED global offset, will use per-note offset
             extraControls={extraControls}
             noteCountFilter={9} // Keep filter as 9 for now as it duplicates 9

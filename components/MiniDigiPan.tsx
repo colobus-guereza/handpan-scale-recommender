@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Scale } from '@mindforge/handpan-data';
+import { Scale } from '@/data/handpan-data';
 import { Language } from '@/constants/translations';
 import Digipan9 from './Digipan9';
 import Digipan10 from './Digipan10';
