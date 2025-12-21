@@ -210,6 +210,28 @@ const ToneFieldMesh = React.memo(({
 }) => {
     const [hovered, setHovered] = useState(false);
     const [pulsing, setPulsing] = useState(false);
+
+    // Shader Warmup State
+    const isWarmedUp = useRef(false);
+
+    useEffect(() => {
+        // [Shader Warmup]
+        // Force strict visibility on mount to trigger shader compilation
+        if (!isWarmedUp.current) {
+            setPulsing(true);
+
+            // Immediately hide via direct access to prevent flash
+            if (effectMaterialRef.current) effectMaterialRef.current.opacity = 0;
+            if (impactMaterialRef.current) impactMaterialRef.current.opacity = 0;
+
+            const timer = setTimeout(() => {
+                setPulsing(false);
+                isWarmedUp.current = true;
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, []);
+
     const cx = note.cx ?? 500;
     const cy = note.cy ?? 500;
     const pos = svgTo3D(cx, cy, centerX, centerY);
@@ -257,6 +279,13 @@ const ToneFieldMesh = React.memo(({
     const SUSTAIN_DURATION = CLICK_EFFECT_CONFIG.timing.duration;
 
     useFrame((_state: any, delta: number) => {
+        // Skip changes if we are just warming up (keep opacity 0)
+        if (!isWarmedUp.current) {
+            if (effectMaterialRef.current) effectMaterialRef.current.opacity = 0;
+            if (impactMaterialRef.current) impactMaterialRef.current.opacity = 0;
+            return;
+        }
+
         if (!animState.current.active || !effectMeshRef.current || !effectMaterialRef.current) return;
         animState.current.time += delta;
         const progress = Math.min(animState.current.time / SUSTAIN_DURATION, 1);
@@ -571,7 +600,9 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                 <group>
                     <CyberBoat isIdle={isIdle && showIdleBoat} />
                     <Suspense fallback={null}>
-                        <TouchText isIdle={isIdle && !isJamPlaying && showTouchText} suppressExplosion={false} overrideText={introCountdown} interactionTrigger={interactionCount} />
+                        {(showTouchText || introCountdown) && (
+                            <TouchText isIdle={isIdle && !isJamPlaying && showTouchText} suppressExplosion={false} overrideText={introCountdown} interactionTrigger={interactionCount} />
+                        )}
                     </Suspense>
                     <Suspense fallback={null}>{backgroundContent ? backgroundContent : <HandpanImage backgroundImage={backgroundImage} centerX={centerX} centerY={centerY} />}</Suspense>
                     {isDevPage && showAxes && (

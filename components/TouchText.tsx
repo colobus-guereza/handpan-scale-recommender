@@ -130,7 +130,12 @@ const TouchText = ({ isIdle, suppressExplosion = false, overrideText, interactio
 
     // Sequential Text Cycling
     const [stepIndex, setStepIndex] = useState(0);
-    const [displayedText, setDisplayedText] = useState('Ready');
+    // ★ Fix: Compute initial state based on props to prevent 'Ready' flash
+    const [displayedText, setDisplayedText] = useState<string | null>(() => {
+        if (overrideText) return overrideText;
+        if (isIdle) return 'Ready';
+        return null;
+    });
 
     // Logic: Sync displayedText based on state
     // If not Idle and not Overriding, we PRESERVE the last text to allow fading out smoothly.
@@ -177,8 +182,8 @@ const TouchText = ({ isIdle, suppressExplosion = false, overrideText, interactio
     // Internal Explosion Logic (Safe to call from effects)
     const triggerExplosion = useCallback(() => {
         const text = currentTextRef.current;
-        // Exception: Don't explode if showing Countdown Numbers
-        if (['4', '3', '2', '1'].includes(text)) {
+        // Exception: Don't explode if showing Countdown Numbers (or null)
+        if (!text || ['4', '3', '2', '1'].includes(text)) {
             return;
         }
 
@@ -223,9 +228,9 @@ const TouchText = ({ isIdle, suppressExplosion = false, overrideText, interactio
     // - "4","3","2","1" -> Yellow (Same as 'Set')
     // - "Touch!" -> Red
     // Else -> Standard Mapping
-    let theme = THEMES[currentText];
+    let theme = currentText ? THEMES[currentText] : undefined;
     if (!theme) {
-        if (['4', '3', '2', '1'].includes(currentText)) {
+        if (currentText && ['4', '3', '2', '1'].includes(currentText)) {
             theme = THEMES['Set']; // Yellow
         } else {
             theme = THEMES['Touch!']; // Fallback / Red
@@ -304,7 +309,7 @@ const TouchText = ({ isIdle, suppressExplosion = false, overrideText, interactio
                 {currentText && (
                     <Center key={currentText}>
                         <Text3D
-                            font="https://threejs.org/examples/fonts/helvetiker_bold.typeface.json"
+                            font="/fonts/helvetiker_bold.typeface.json"
                             size={['4', '3', '2', '1'].includes(currentText) ? 14.4 : 12}
                             height={2}
                             curveSegments={12}

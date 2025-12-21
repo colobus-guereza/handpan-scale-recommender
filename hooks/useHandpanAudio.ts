@@ -83,14 +83,32 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
         // Initialize Howler & Preload ONLY ONCE
         if (!IS_GLOBAL_LOAD_INITIATED) {
             IS_GLOBAL_LOAD_INITIATED = true;
+            const startTime = performance.now();
+            // Assuming priorityNotes is not passed to the hook, logging 0.
+            console.log(`[AudioDebug] 🟢 Preloading Started. Priority: 0 notes`);
+
 
             import('howler').then(({ Howl, Howler }) => {
                 howlerGlobalRef.current = Howler;
 
-                // --- Audio Context & Limiter Logic (Same as before) ---
-                const resumeAudioContext = () => {
+                // --- Audio Context & Limiter Logic ---
+                const resumeAudioContext = async () => {
+                    const now = performance.now();
+
+                    // 1. Resume Howler
                     if (Howler && Howler.ctx && Howler.ctx.state === 'suspended') {
-                        Howler.ctx.resume().then(() => console.log('[useHandpanAudio] AudioContext resumed'));
+                        Howler.ctx.resume();
+                    }
+
+                    // 2. Resume Tone.js (Dynamic Import to avoid SSR issues if not already imported)
+                    // We check global Tone or import it
+                    try {
+                        const Tone = await import('tone');
+                        if (Tone.context && Tone.context.state === 'suspended') {
+                            Tone.start();
+                        }
+                    } catch (e) {
+                        // Tone might not be used/installed in this scope, ignore
                     }
                 };
 
@@ -99,20 +117,29 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
                     try {
                         const ctx = Howler.ctx as AudioContext;
                         const masterGain = Howler.masterGain as GainNode;
-                        const limiter = ctx.createDynamicsCompressor();
-                        limiter.threshold.value = -2.0;
-                        limiter.knee.value = 0.0;
-                        limiter.ratio.value = 20.0;
-                        limiter.attack.value = 0.001;
-                        limiter.release.value = 0.1;
-                        masterGain.disconnect();
-                        masterGain.connect(limiter);
-                        limiter.connect(ctx.destination);
-                        console.log('[useHandpanAudio] Limiter applied');
-                    } catch (err) { console.warn('[useHandpanAudio] Limiter failed:', err); }
+                        try {
+                            // Helper to safely check/create limiter
+                            // (Avoid re-connecting errors by checking if already connected - tricky with WebAudio, so we wrap in try)
+                            const limiter = ctx.createDynamicsCompressor();
+                            limiter.threshold.value = -2.0;
+                            limiter.knee.value = 0.0;
+                            limiter.ratio.value = 20.0;
+                            limiter.attack.value = 0.001;
+                            limiter.release.value = 0.1;
+
+                            // Only connect if we can (Simplified logic: we assume this runs once on init)
+                            masterGain.disconnect();
+                            masterGain.connect(limiter);
+                            limiter.connect(ctx.destination);
+                        } catch (e) {
+                            // Limiter application skipped (already connected or error)
+                        }
+                    } catch (err) { console.warn('Limiter setup failed:', err); }
                 }
 
-                // Global Resume Listeners
+                // Global Resume Listeners (Passive: true is good for scroll, but we want IMMEDIATE execution)
+                // We use useCapture=true for 'touchstart' to catch it as early as possible? 
+                // Actually, just standard bubble is fine, but we want to ensure it runs.
                 ['touchstart', 'touchend', 'click', 'keydown'].forEach(event => {
                     document.addEventListener(event, resumeAudioContext, { passive: true });
                 });
@@ -137,11 +164,11 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
                                 IS_GLOBAL_LOADED = true;
                                 GLOBAL_LOADING_PROGRESS = 100;
                                 notifyObservers();
-                                console.log('[useHandpanAudio] All sounds preloaded (Singleton)');
+                                console.log('[useHandpanAudio] All sounds preloaded');
                             }
                         },
                         onloaderror: (_id: number, error: unknown) => {
-                            console.error(`[useHandpanAudio] Failed ${note}`, error);
+                            console.error(`[AudioDebug] Failed ${note}`, error);
                             loadedCount++; // Count anyway to avoid stuck state
                             if (loadedCount === totalSounds) {
                                 IS_GLOBAL_LOADED = true;
@@ -151,10 +178,20 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
                     });
                 });
 
-            }).catch(err => console.error('[useHandpanAudio] Howler import failed', err));
+                // Fallback Timer
+                setTimeout(() => {
+                    if (!IS_GLOBAL_LOADED && loadedCount > totalSounds * 0.9) {
+                        console.warn('[AudioDebug] Force finish (fallback timer)');
+                        IS_GLOBAL_LOADED = true;
+                        GLOBAL_LOADING_PROGRESS = 100;
+                        notifyObservers();
+                    }
+                }, 10000);
+
+            }).catch(err => console.error('[AudioDebug] Howler import failed', err));
         } else {
+            console.log("[AudioDebug] Global Load already initiated (Singleton check passed)");
             // If already initiated, try to capture Howler ref if possible (lazy)
-            // Ideally we just trust global Howler exists on window if loaded.
             import('howler').then(({ Howler }) => {
                 howlerGlobalRef.current = Howler;
             });
@@ -162,10 +199,11 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
     }, []);
 
     const playNote = useCallback((noteName: string, volume: number = 0.6) => {
-        // Resume check
-        import('howler').then(({ Howler }) => {
-            if (Howler?.ctx?.state === 'suspended') Howler.ctx.resume();
-        });
+        // Optimized Resume Check: Use cached ref if available to avoid micro-latency of import()
+        const Howler = howlerGlobalRef.current;
+        if (Howler?.ctx?.state === 'suspended') {
+            Howler.ctx.resume(); // Fire and forget
+        }
 
         const sound = GLOBAL_SOUND_CACHE[noteName];
         if (sound) {
