@@ -549,9 +549,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     const handleSaveAction = async () => { if (currentBlob) { await handleSaveRecording(`digipan-performance-${Date.now()}`, currentBlob); setCurrentBlob(null); } };
     useEffect(() => { if (currentBlob && isMobileButtonLayout) handleSaveAction(); }, [currentBlob]);
     const handleDiscardAction = () => setCurrentBlob(null);
-    const handleRecordToggle = async () => { 
-        window.location.href = 'https://handpan-transformer.vercel.app/playground';
-    };
+    const handleRecordToggle = async () => { if (isRecording) stopRecording(); else startRecording(); };
 
     React.useImperativeHandle(ref, () => ({ handleCapture, handleDemoPlay, handleRecordToggle, toggleViewMode: () => setViewMode(prev => (prev + 1) % 5 as 0 | 1 | 2 | 3 | 4), toggleIdleBoat: () => setShowIdleBoat(prev => !prev), toggleTouchText: () => setShowTouchText(prev => !prev) }));
 
