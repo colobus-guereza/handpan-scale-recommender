@@ -588,7 +588,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
             {!isDevPage && (
                 <div className={`absolute ${isMobileButtonLayout ? 'top-2' : 'top-4'} right-4 z-50 flex flex-row items-center gap-2`}>
                     <button onClick={() => setViewMode(prev => prev === 3 ? 2 : 3)} className={btnMobile} title={viewMode === 3 ? "Show Labels" : "Hide Labels"}>{viewMode === 3 ? <EyeOff size={16} className="opacity-50" /> : <Eye size={16} />}</button>
-                    <button onClick={handleDemoPlay} disabled={isPlaying} className={`${btnMobile} ${isPlaying ? 'text-slate-400 cursor-not-allowed' : 'text-red-600'}`} title="Play Scale Demo"><Play size={24} fill="currentColor" className="pl-1" /></button>
+                    <button onClick={handleDemoPlay} disabled={isPlaying} className={`${btnMobile} ${isPlaying ? 'text-red-600 cursor-not-allowed' : 'text-slate-400'}`} title="Play Scale Demo"><Play size={24} fill="currentColor" className="pl-1" /></button>
                     <button onClick={handleRecordToggle} className={`${btnMobile} text-red-600 ${isRecording ? 'animate-pulse ring-2 ring-red-100 border-red-400' : ''}`} title={isRecording ? "Stop Recording" : "Start Recording"}>{isRecording ? <Square size={16} fill="currentColor" /> : <Disc size={16} fill="currentColor" />}</button>
                     <button onClick={toggleDrum} className={`${btnMobile} relative ${isJamPlaying ? 'animate-heartbeat' : ''}`} style={{ color: '#0066FF' }} title={isJamPlaying ? "Castling 중지" : "Castling 시작"}><span className="text-3xl font-black leading-none relative z-10">C</span></button>
                 </div>

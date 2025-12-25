@@ -18,7 +18,7 @@ export const SUPPORTED_LANGUAGES = [
 ] as const;
 
 const EN_TRANSLATIONS = {
-    title: 'Find My Perfect Handpan Scale',
+    title: 'MYscale',
     vibeSelector: {
         jamming: 'Beginner',
         meditation: 'Yoga·Meditation·Healing',
@@ -116,7 +116,7 @@ const EN_TRANSLATIONS = {
 };
 
 const FR_TRANSLATIONS = {
-    title: 'Trouver ma gamme de handpan idéale',
+    title: 'MYscale',
     vibeSelector: {
         jamming: 'Débutant',
         meditation: 'Yoga·Méditation·Guérison',
@@ -214,7 +214,7 @@ const FR_TRANSLATIONS = {
 };
 
 const DE_TRANSLATIONS = {
-    title: 'Meine passende Handpan-Tonleiter finden',
+    title: 'MYscale',
     vibeSelector: {
         jamming: 'Anfänger',
         meditation: 'Yoga·Meditation·Heilung',
@@ -312,7 +312,7 @@ const DE_TRANSLATIONS = {
 };
 
 const RU_TRANSLATIONS = {
-    title: 'Найти мою идеальную гамму хэндпана',
+    title: 'MYscale',
     vibeSelector: {
         jamming: 'Новичок',
         meditation: 'Йога·Медитация·Исцеление',
@@ -410,7 +410,7 @@ const RU_TRANSLATIONS = {
 };
 
 const FA_TRANSLATIONS = {
-    title: 'یافتن گام هنگ‌درام مناسب من',
+    title: 'MYscale',
     vibeSelector: {
         jamming: 'مبتدی',
         meditation: 'یوگا·مدیتیشن·درمان',
@@ -508,7 +508,7 @@ const FA_TRANSLATIONS = {
 };
 
 const AE_TRANSLATIONS = {
-    title: 'اكتشاف سُلَّم الهاندبان المناسب لي',
+    title: 'MYscale',
     vibeSelector: {
         jamming: 'مبتدئ',
         meditation: 'يوغا·تأمل·شفاء',
@@ -606,7 +606,7 @@ const AE_TRANSLATIONS = {
 };
 
 const ES_TRANSLATIONS = {
-    title: 'Encontrar mi escala de handpan perfecta',
+    title: 'MYscale',
     vibeSelector: {
         jamming: 'Principiante',
         meditation: 'Yoga·Meditación·Sanación',
@@ -704,7 +704,7 @@ const ES_TRANSLATIONS = {
 };
 
 const PT_TRANSLATIONS = {
-    title: 'Encontrar minha escala de handpan ideal',
+    title: 'MYscale',
     vibeSelector: {
         jamming: 'Iniciante',
         meditation: 'Yoga·Meditação·Cura',
@@ -802,7 +802,7 @@ const PT_TRANSLATIONS = {
 };
 
 const IT_TRANSLATIONS = {
-    title: 'Trovare la mia scala di handpan ideale',
+    title: 'MYscale',
     vibeSelector: {
         jamming: 'Principiante',
         meditation: 'Yoga·Meditazione·Guarigione',
@@ -900,7 +900,7 @@ const IT_TRANSLATIONS = {
 };
 
 const JA_TRANSLATIONS = {
-    title: '自分に合ったハンドパン・スケールを見つける',
+    title: 'MYscale',
     vibeSelector: {
         jamming: '初心者',
         meditation: 'ヨガ・瞑想・ヒーリング',
@@ -998,7 +998,7 @@ const JA_TRANSLATIONS = {
 };
 
 const ZH_TRANSLATIONS = {
-    title: '找到适合我的手碟音阶',
+    title: 'MYscale',
     vibeSelector: {
         jamming: '初学者',
         meditation: '瑜伽·冥想·疗愈',
@@ -1099,7 +1099,7 @@ export type TranslationType = typeof EN_TRANSLATIONS;
 
 export const TRANSLATIONS: Record<Language, TranslationType> = {
     ko: {
-        title: '나에게 맞는 핸드팬 스케일 찾기',
+        title: 'MYscale',
         vibeSelector: {
             jamming: '입문용',
             meditation: '요가·명상·힐링',
