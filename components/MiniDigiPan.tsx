@@ -70,7 +70,7 @@ const MiniDigiPan = React.forwardRef<Digipan3DHandle, MiniDigiPanProps>(({ scale
         enableZoom: false as const,
         enablePan: false as const,
         showLabelToggle: true as const,
-        hideTouchText: true as const,
+        hideTouchText: false as const, // TEMP TEST: Show TouchText on all scales
     };
 
     // Responsive Container Logic for Digipan 11 and 12

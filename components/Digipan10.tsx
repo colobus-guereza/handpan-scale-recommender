@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import Digipan3D from './Digipan3D';
 import { Scale } from '@/data/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
-import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
+import { DIGIPAN_VIEW_CONFIG, getDeviceSettings } from '../constants/digipanViewConfig';
 
 import { Digipan3DHandle } from './Digipan3D';
 
@@ -49,6 +49,21 @@ const Digipan10 = React.forwardRef<Digipan3DHandle, Digipan10Props>(({
     showAxes = false,
     onIsRecordingChange
 }, ref) => {
+
+    // Mobile detection for responsive settings
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Get device-specific settings
+    const viewSettings = getDeviceSettings(DIGIPAN_VIEW_CONFIG['10'], isMobile);
+
 
     // 10-Note Specific Layout (Coordinates for 10notes.png)
     const notes = useMemo(() => {
@@ -256,8 +271,8 @@ const Digipan10 = React.forwardRef<Digipan3DHandle, Digipan10Props>(({
             showAxes={showAxes}
             onIsRecordingChange={onIsRecordingChange}
             sceneSize={forceCompactView ? { width: 66, height: 50 } : { width: 64, height: 60 }}
-            cameraZoom={DIGIPAN_VIEW_CONFIG['10'].zoom}
-            cameraTargetY={DIGIPAN_VIEW_CONFIG['10'].targetY}
+            cameraZoom={viewSettings.zoom}
+            cameraTargetY={viewSettings.targetY}
         />
     );
 });

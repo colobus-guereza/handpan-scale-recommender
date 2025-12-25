@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import Digipan3D, { svgTo3D, getTonefieldDimensions, Digipan3DHandle } from './Digipan3D';
 import { Scale } from '@/data/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
-import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
+import { DIGIPAN_VIEW_CONFIG, getDeviceSettings } from '../constants/digipanViewConfig';
 import * as THREE from 'three';
 import { VisualTonefield } from './VisualTonefield';
 import { useTexture } from '@react-three/drei';
@@ -111,6 +111,20 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
     onIsRecordingChange,
     hideTouchText
 }, ref) => {
+
+    // Mobile detection for responsive settings
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Get device-specific settings
+    const viewSettings = getDeviceSettings(DIGIPAN_VIEW_CONFIG['14M'], isMobile);
 
     // 10-Note Base Coordinates (from Digipan10.tsx) - Starting point for 14M as well
     const baseNotes10 = useMemo(() => [
@@ -358,9 +372,9 @@ const Digipan14M = React.forwardRef<Digipan3DHandle, Digipan14MProps>(({
             backgroundContent={<Digipan14MBackground visualNotes={visualNotes} viewMode={viewMode} />}
             forceCompactView={forceCompactView}
             hideStaticLabels={true}
-            cameraTargetY={DIGIPAN_VIEW_CONFIG['14M'].targetY}
+            cameraTargetY={viewSettings.targetY}
             sceneSize={forceCompactView ? { width: 66, height: 66 } : { width: 64, height: 66 }} // Tighter vertical bounds (60 + 10%)
-            cameraZoom={DIGIPAN_VIEW_CONFIG['14M'].zoom}
+            cameraZoom={viewSettings.zoom}
             showAxes={showAxes}
             hideTouchText={hideTouchText} // Pass prop
         />

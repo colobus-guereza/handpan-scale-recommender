@@ -1,11 +1,11 @@
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import Digipan3D, { svgTo3D, getTonefieldDimensions, Digipan3DHandle } from './Digipan3D';
 import { useTexture } from '@react-three/drei';
 import { HANDPAN_CONFIG } from '../constants/handpanConfig';
 import { Scale } from '@/data/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
-import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
+import { DIGIPAN_VIEW_CONFIG, getDeviceSettings } from '../constants/digipanViewConfig';
 import * as THREE from 'three';
 import { VisualTonefield } from './VisualTonefield';
 
@@ -109,6 +109,20 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
     showAxes = false,
     onIsRecordingChange
 }, ref) => {
+
+    // Mobile detection for responsive settings
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Get device-specific settings
+    const viewSettings = getDeviceSettings(DIGIPAN_VIEW_CONFIG['11'], isMobile);
 
     // Internal Note Generation (C# Pygmy 11 Layout)
     const internalNotes = useMemo(() => {
@@ -269,7 +283,7 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
         const finalNotes = generatedNotes.map((n: any) => {
             const rank = sortedByPitch.findIndex(x => x.id === n.id) + 1;
             let subLabel = rank.toString(); // All notes get rank number
-            
+
             // C# Pygmy 11 특별 처리
             if (scale?.id === 'cs_pygmy_11') {
                 // C#3 노트의 subLabel을 '1'로 설정
@@ -281,7 +295,7 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
                     subLabel = '2';
                 }
             }
-            
+
             return { ...n, subLabel };
         });
 
@@ -321,8 +335,8 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
             showAxes={showAxes}
             hideStaticLabels={true} // Hide RS/LS/H labels
             sceneSize={sceneSize} // Pass dynamic scene size
-            cameraZoom={DIGIPAN_VIEW_CONFIG['11'].zoom}
-            cameraTargetY={DIGIPAN_VIEW_CONFIG['11'].targetY}
+            cameraZoom={viewSettings.zoom}
+            cameraTargetY={viewSettings.targetY}
             onIsRecordingChange={onIsRecordingChange}
         />
     );

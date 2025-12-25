@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import Digipan3D, { svgTo3D, getTonefieldDimensions, Digipan3DHandle } from './Digipan3D';
 import { Scale } from '@/data/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
-import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
+import { DIGIPAN_VIEW_CONFIG, getDeviceSettings } from '../constants/digipanViewConfig';
 import * as THREE from 'three';
 import { VisualTonefield } from './VisualTonefield';
 import { useTexture } from '@react-three/drei';
@@ -109,6 +109,20 @@ const Digipan18M = React.forwardRef<Digipan3DHandle, Digipan18MProps>(({
     showAxes = false,
     onIsRecordingChange
 }, ref) => {
+
+    // Mobile detection for responsive settings
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Get device-specific settings
+    const viewSettings = getDeviceSettings(DIGIPAN_VIEW_CONFIG['18M'], isMobile);
 
     // 15-Note Base Coordinates (COPIED FROM 15M AS STARTING POINT)
     // Note: User wants an 18-note template, but asked to duplicate 15M exactly first.
@@ -383,9 +397,9 @@ const Digipan18M = React.forwardRef<Digipan3DHandle, Digipan18MProps>(({
             backgroundContent={<Digipan18MBackground visualNotes={visualNotes} viewMode={viewMode} />}
             forceCompactView={forceCompactView}
             hideStaticLabels={true}
-            cameraTargetY={DIGIPAN_VIEW_CONFIG['18M'].targetY}
+            cameraTargetY={viewSettings.targetY}
             sceneSize={forceCompactView ? { width: 66, height: 66 } : { width: 64, height: 66 }}
-            cameraZoom={DIGIPAN_VIEW_CONFIG['18M'].zoom}
+            cameraZoom={viewSettings.zoom}
             showAxes={showAxes}
         />
     );

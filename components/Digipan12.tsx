@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import Digipan3D, { svgTo3D, getTonefieldDimensions, Digipan3DHandle } from './Digipan3D';
 import { Scale } from '@/data/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
-import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
+import { DIGIPAN_VIEW_CONFIG, getDeviceSettings } from '../constants/digipanViewConfig';
 import * as THREE from 'three';
 import { VisualTonefield } from './VisualTonefield';
 import { useTexture } from '@react-three/drei';
@@ -114,6 +114,20 @@ const Digipan12 = React.forwardRef<Digipan3DHandle, Digipan12Props>(({
     onIsRecordingChange,
     hideTouchText = false
 }, ref) => {
+
+    // Mobile detection for responsive settings
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Get device-specific settings
+    const viewSettings = getDeviceSettings(DIGIPAN_VIEW_CONFIG['12'], isMobile);
 
     // 10-Note Base Coordinates (from Digipan10.tsx)
     const baseNotes10 = useMemo(() => [
@@ -258,8 +272,8 @@ const Digipan12 = React.forwardRef<Digipan3DHandle, Digipan12Props>(({
             onIsRecordingChange={onIsRecordingChange}
             hideTouchText={hideTouchText}
             sceneSize={forceCompactView ? { width: 66, height: 50 } : { width: 64, height: 60 }}
-            cameraZoom={DIGIPAN_VIEW_CONFIG['12'].zoom}
-            cameraTargetY={DIGIPAN_VIEW_CONFIG['12'].targetY}
+            cameraZoom={viewSettings.zoom}
+            cameraTargetY={viewSettings.targetY}
         />
     );
 });

@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import Digipan3D, { svgTo3D, getTonefieldDimensions, Digipan3DHandle } from './Digipan3D';
 import { Scale } from '@/data/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
-import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
+import { getSimpleSettings } from '../constants/digipanViewConfig';
 import * as THREE from 'three';
 import { VisualTonefield } from './VisualTonefield';
 import { useTexture } from '@react-three/drei';
@@ -383,9 +383,9 @@ const Digipan18_EAmara = React.forwardRef<Digipan3DHandle, Digipan18_EAmaraProps
             backgroundContent={<Digipan18_EAmaraBackground visualNotes={visualNotes} viewMode={viewMode} />}
             forceCompactView={forceCompactView}
             hideStaticLabels={true}
-            cameraTargetY={DIGIPAN_VIEW_CONFIG['18M'].targetY}
+            cameraTargetY={getSimpleSettings('18M').targetY}
             sceneSize={forceCompactView ? { width: 66, height: 66 } : { width: 64, height: 66 }}
-            cameraZoom={DIGIPAN_VIEW_CONFIG['18M'].zoom}
+            cameraZoom={getSimpleSettings('18M').zoom}
             showAxes={showAxes}
         />
     );

@@ -354,11 +354,11 @@ const ToneFieldMesh = React.memo(({
                 )}
                 <mesh ref={impactRingRef} position={[0, 0, 0.6]} scale={[finalRadiusX, finalRadiusY, 1]} visible={pulsing} renderOrder={1000}>
                     <sphereGeometry args={[1, 32, 16]} />
-                    <meshBasicMaterial ref={impactMaterialRef} color={CLICK_EFFECT_CONFIG.ring.color} transparent opacity={0} side={2} depthWrite={false} depthTest={false} />
+                    <meshBasicMaterial ref={impactMaterialRef} color={CLICK_EFFECT_CONFIG.ring.color} transparent opacity={0} side={2} depthWrite={false} depthTest={false} toneMapped={false} />
                 </mesh>
                 <mesh ref={effectMeshRef} position={[0, 0, 0.5]} scale={[finalRadiusX * 1.05, finalRadiusY * 1.05, 1]} visible={pulsing} renderOrder={999}>
                     <sphereGeometry args={[1, 32, 16]} />
-                    <meshBasicMaterial ref={effectMaterialRef} color={CLICK_EFFECT_CONFIG.sphere.color} transparent opacity={0} side={2} depthWrite={false} depthTest={false} />
+                    <meshBasicMaterial ref={effectMaterialRef} color={CLICK_EFFECT_CONFIG.sphere.color} transparent opacity={0} side={2} depthWrite={false} depthTest={false} toneMapped={false} />
                 </mesh>
                 {!isBottom && (
                     <mesh position={[0, 0, 0.01]} rotation={[isDing ? Math.PI / 2 : -Math.PI / 2, 0, 0]} scale={[dimpleRadiusX, 0.05, dimpleRadiusY]} visible={viewMode === 0 || viewMode === 1}>

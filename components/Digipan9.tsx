@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import Digipan3D from './Digipan3D';
 import { Scale } from '@/data/handpan-data';
 import { getNoteFrequency } from '../constants/noteFrequencies';
-import { DIGIPAN_VIEW_CONFIG } from '../constants/digipanViewConfig';
+import { DIGIPAN_VIEW_CONFIG, getDeviceSettings } from '../constants/digipanViewConfig';
 
 import { Digipan3DHandle } from './Digipan3D';
 
@@ -46,6 +46,20 @@ const Digipan9 = React.forwardRef<Digipan3DHandle, Digipan9Props>(({
     showAxes = false,
     onIsRecordingChange
 }, ref) => {
+
+    // Mobile detection for responsive settings
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Get device-specific settings
+    const viewSettings = getDeviceSettings(DIGIPAN_VIEW_CONFIG['9'], isMobile);
 
     // Internal Note Generation (Standard 9-Note D Kurd Layout)
     const internalNotes = useMemo(() => {
@@ -136,8 +150,8 @@ const Digipan9 = React.forwardRef<Digipan3DHandle, Digipan9Props>(({
             showAxes={showAxes}
             onIsRecordingChange={onIsRecordingChange}
             sceneSize={forceCompactView ? { width: 66, height: 50 } : { width: 64, height: 60 }}
-            cameraZoom={DIGIPAN_VIEW_CONFIG['9'].zoom}
-            cameraTargetY={DIGIPAN_VIEW_CONFIG['9'].targetY}
+            cameraZoom={viewSettings.zoom}
+            cameraTargetY={viewSettings.targetY}
         />
     );
 });

@@ -11,15 +11,67 @@ export interface DigipanViewSettings {
     targetY: number;
 }
 
-export const DIGIPAN_VIEW_CONFIG: Record<string, DigipanViewSettings> = {
-    '9': { zoom: 13.5, targetY: 4 },    // Adjusted zoom to 13.5, targetY to 4 per user request
-    '10': { zoom: 13.5, targetY: 0 },   // Changed to 0 per user request
-    '11': { zoom: 12, targetY: 0 },
-    '12': { zoom: 12, targetY: 3 },   // Keep user requested +3 for 12 if desired, or reset to 0? Usually 0.
-    '14': { zoom: 12, targetY: 5 },   // Adjusted to +5 per user request
-    '14M': { zoom: 12, targetY: 5 },  // Adjusted to +5 per user request
-    '15M': { zoom: 12, targetY: 3 },  // Adjusted to +3 per user request
-    '18M': { zoom: 12, targetY: 5 },  // Adjusted to +5 per user request
+export interface DigipanViewSettingsResponsive {
+    web: DigipanViewSettings;
+    mobile: DigipanViewSettings;
+}
+
+// Helper to check if settings are responsive
+export function isResponsiveSettings(settings: DigipanViewSettings | DigipanViewSettingsResponsive): settings is DigipanViewSettingsResponsive {
+    return 'web' in settings && 'mobile' in settings;
+}
+
+// Helper to get settings based on device type
+export function getDeviceSettings(settings: DigipanViewSettings | DigipanViewSettingsResponsive, isMobile: boolean): DigipanViewSettings {
+    if (isResponsiveSettings(settings)) {
+        return isMobile ? settings.mobile : settings.web;
+    }
+    return settings;
+}
+
+// Helper for simple (non-responsive) config access - for backward compatibility
+export function getSimpleSettings(key: string): DigipanViewSettings {
+    const settings = DIGIPAN_VIEW_CONFIG[key];
+    if (isResponsiveSettings(settings)) {
+        // Default to web settings for simple access
+        return settings.web;
+    }
+    return settings;
+}
+
+export const DIGIPAN_VIEW_CONFIG: Record<string, DigipanViewSettings | DigipanViewSettingsResponsive> = {
+    '9': {
+        web: { zoom: 13.5, targetY: 0 },
+        mobile: { zoom: 14.5, targetY: 5 }
+    },
+    '10': {
+        web: { zoom: 13.5, targetY: 0 },
+        mobile: { zoom: 14.5, targetY: 5 }
+    },
+    '11': {
+        web: { zoom: 12, targetY: 0 },
+        mobile: { zoom: 12.5, targetY: 6 }
+    },
+    '12': {
+        web: { zoom: 12, targetY: 3 },
+        mobile: { zoom: 12, targetY: 6 }
+    },
+    '14': {
+        web: { zoom: 12, targetY: 5 },
+        mobile: { zoom: 12, targetY: 10 }
+    },
+    '14M': {
+        web: { zoom: 12, targetY: 5 },
+        mobile: { zoom: 12, targetY: 7 }
+    },
+    '15M': {
+        web: { zoom: 12, targetY: 3 },
+        mobile: { zoom: 12, targetY: 7 }
+    },
+    '18M': {
+        web: { zoom: 12, targetY: 5 },
+        mobile: { zoom: 12, targetY: 10 }
+    },
     'DM': { zoom: 12, targetY: 0 },
 };
 
