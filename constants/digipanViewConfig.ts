@@ -12,9 +12,9 @@ export interface DigipanViewSettings {
 }
 
 export const DIGIPAN_VIEW_CONFIG: Record<string, DigipanViewSettings> = {
-    '9': { zoom: 13.5, targetY: 0 },    // Adjusted zoom to 13.5 per user request
+    '9': { zoom: 13.5, targetY: 4 },    // Adjusted zoom to 13.5, targetY to 4 per user request
     '10': { zoom: 13.5, targetY: 0 },   // Changed to 0 per user request
-    '11': { zoom: 12, targetY: 0 },   
+    '11': { zoom: 12, targetY: 0 },
     '12': { zoom: 12, targetY: 3 },   // Keep user requested +3 for 12 if desired, or reset to 0? Usually 0.
     '14': { zoom: 12, targetY: 5 },   // Adjusted to +5 per user request
     '14M': { zoom: 12, targetY: 5 },  // Adjusted to +5 per user request

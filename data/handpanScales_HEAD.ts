@@ -435,7 +435,7 @@ export const SCALES: Scale[] = [
         name: "C Yunsl 9",
         notes: {
             ding: "C3",
-            top: ["C4", "D4", "E4", "F4", "G4", "B4", "C5"],
+            top: ["C4", "D4", "E4", "F4", "G4", "B4", "C5", "D5"],
             bottom: []
         },
         vector: { minorMajor: 0.8, pureSpicy: 0.1, rarePopular: 0.5 },
