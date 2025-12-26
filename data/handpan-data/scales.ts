@@ -307,8 +307,8 @@ export const SCALES: Scale[] = [
 
     // 23. C Major 9
     {
-        id: "c_major_9",
-        name: "C Major 9",
+        id: "c_major_10",
+        name: "C Major 10",
         notes: {
             ding: "C3",
             top: ["G3", "A3", "B3", "C4", "D4", "E4", "F4", "G4", "A4"],
@@ -323,8 +323,8 @@ export const SCALES: Scale[] = [
 
     // 24. C Rasavali 9
     {
-        id: "c_rasavali_9",
-        name: "C Rasavali 9",
+        id: "c_rasavali_10",
+        name: "C Rasavali 10",
         notes: {
             ding: "C3",
             top: ["G3", "Ab3", "C4", "D4", "E4", "F4", "G4", "Ab4", "C5"],
