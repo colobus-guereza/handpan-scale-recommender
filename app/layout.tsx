@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = { className: "font-sans" };
 
 export const metadata: Metadata = {
-    title: "나에게 맞는 핸드팬 스케일 찾기",
+    title: "MYscale",
     description: "국내 사용자들의 사용 후기를 기반으로 최적의 핸드팬 스케일을 추천합니다.",
 };
 
