@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Scale, SCALES } from '@/data/handpan-data';
 import DraggablePanel from './DraggablePanel';
-import { Filter, SortAsc, SortDesc, Search, Music2 } from 'lucide-react';
+import { SortAsc, SortDesc, Search, Music2 } from 'lucide-react';
 
 interface ScaleInfoPanelProps {
     scale: Scale;
@@ -24,7 +24,8 @@ export default function ScaleInfoPanel({
     const [searchQuery, setSearchQuery] = useState('');
 
     // Filter States
-    const [activeNoteFilter, setActiveNoteFilter] = useState<number | 'ALL' | '14M' | '15M' | '18M'>('ALL');
+    const [activeNoteFilter, setActiveNoteFilter] = useState<number | 'ALL' | 'MUTANT' | '14M' | '15M' | '18M'>('ALL');
+
     const [sortBy, setSortBy] = useState<'NAME' | 'COUNT' | 'POPULARITY'>('NAME');
     const [sortDir, setSortDir] = useState<'ASC' | 'DESC'>('ASC');
 
@@ -32,29 +33,35 @@ export default function ScaleInfoPanel({
     const filteredScales = useMemo(() => {
         let result = SCALES.filter(s => {
             const totalNotes = 1 + s.notes.top.length + s.notes.bottom.length;
+            let matches = true;
 
             // Note Count Filter
-            let matchesCount = false;
-
-            if (activeNoteFilter === 'ALL') {
-                matchesCount = true;
-            } else if (activeNoteFilter === '14M') {
-                matchesCount = totalNotes === 14 && (s.id.includes('mutant') || s.tags?.includes('Mutant') || s.name.includes('Mutant'));
-            } else if (activeNoteFilter === '15M') {
-                matchesCount = totalNotes === 15;
-            } else if (activeNoteFilter === '18M') {
-                matchesCount = totalNotes === 18;
-            } else if (activeNoteFilter === 14) {
-                // 14N (Standard) - exclude mutants
-                matchesCount = totalNotes === 14 && !(s.id.includes('mutant') || s.tags?.includes('Mutant') || s.name.includes('Mutant'));
-            } else {
-                matchesCount = totalNotes === activeNoteFilter;
+            if (activeNoteFilter !== 'ALL') {
+                if (activeNoteFilter === 'MUTANT') {
+                    // Generic Mutant Check
+                    matches = matches && (s.id.includes('mutant') || s.tags?.includes('Mutant') || s.name.toLowerCase().includes('mutant'));
+                } else if (activeNoteFilter === '14M') {
+                    matches = matches && (totalNotes === 14 && (s.id.includes('mutant') || s.tags?.includes('Mutant') || s.name.includes('Mutant')));
+                } else if (activeNoteFilter === '15M') {
+                    matches = matches && totalNotes === 15;
+                } else if (activeNoteFilter === '18M') {
+                    matches = matches && totalNotes === 18;
+                } else if (typeof activeNoteFilter === 'number') {
+                    if (activeNoteFilter === 14) {
+                        const isMutant = s.id.includes('mutant') || s.tags?.includes('Mutant') || s.name.includes('Mutant');
+                        matches = matches && (totalNotes === 14 && !isMutant);
+                    } else {
+                        matches = matches && totalNotes === activeNoteFilter;
+                    }
+                }
             }
 
             // Search Filter
-            const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase());
+            if (searchQuery) {
+                matches = matches && s.name.toLowerCase().includes(searchQuery.toLowerCase());
+            }
 
-            return matchesCount && matchesSearch;
+            return matches;
         });
 
         // Sorting
@@ -80,15 +87,31 @@ export default function ScaleInfoPanel({
         return result;
     }, [activeNoteFilter, searchQuery, sortBy, sortDir]);
 
-    // Dimensions for the grid container
-    // We want roughly 5 columns x visible rows
-    // Buttons are compact.
+    // Render Logic for Filter Buttons
+    const renderFilterButtons = () => {
+        return (
+            <>
+                <FilterButton label="All" active={activeNoteFilter === 'ALL'} onClick={() => setActiveNoteFilter('ALL')} />
+                <FilterButton label="9" active={activeNoteFilter === 9} onClick={() => setActiveNoteFilter(9)} />
+                <FilterButton label="10" active={activeNoteFilter === 10} onClick={() => setActiveNoteFilter(10)} />
+                <FilterButton label="11" active={activeNoteFilter === 11} onClick={() => setActiveNoteFilter(11)} />
+                <FilterButton label="12" active={activeNoteFilter === 12} onClick={() => setActiveNoteFilter(12)} />
+                <FilterButton label="14" active={activeNoteFilter === 14} onClick={() => setActiveNoteFilter(14)} />
+                <FilterButton label="15" active={activeNoteFilter === 15} onClick={() => setActiveNoteFilter(15)} />
+                <FilterButton label="18" active={activeNoteFilter === 18} onClick={() => setActiveNoteFilter(18)} />
+
+                <div className="w-px h-4 bg-slate-600 mx-1 flex-shrink-0" />
+
+                <FilterButton label="Mutant" active={activeNoteFilter === 'MUTANT'} onClick={() => setActiveNoteFilter('MUTANT')} />
+            </>
+        );
+    };
 
     return (
         <DraggablePanel
             title="Scale Selector"
             initialPosition={{ x: 20, y: 80 }} // Position top left
-            className="w-[400px] h-[600px] max-h-[80vh]" // Fixed size initially
+            className="w-[400px] h-[600px] max-h-[80vh]" // Removed debug border
             defaultExpanded={false} // Start collapsed
         >
             <div className="flex flex-col h-full bg-slate-900 text-slate-200">
@@ -109,15 +132,7 @@ export default function ScaleInfoPanel({
 
                     {/* Filters Row - Enabled Horizontal Scroll */}
                     <div className="flex items-center gap-1.5 overflow-x-auto pb-1 min-h-[36px]">
-                        <FilterButton label="All" active={activeNoteFilter === 'ALL'} onClick={() => setActiveNoteFilter('ALL')} />
-                        <FilterButton label="9N" active={activeNoteFilter === 9} onClick={() => setActiveNoteFilter(9)} />
-                        <FilterButton label="10N" active={activeNoteFilter === 10} onClick={() => setActiveNoteFilter(10)} />
-                        <FilterButton label="11N" active={activeNoteFilter === 11} onClick={() => setActiveNoteFilter(11)} />
-                        <FilterButton label="12N" active={activeNoteFilter === 12} onClick={() => setActiveNoteFilter(12)} />
-                        <FilterButton label="14N" active={activeNoteFilter === 14} onClick={() => setActiveNoteFilter(14)} />
-                        <FilterButton label="14M" active={activeNoteFilter === '14M'} onClick={() => setActiveNoteFilter('14M')} />
-                        <FilterButton label="15M" active={activeNoteFilter === '15M'} onClick={() => setActiveNoteFilter('15M')} />
-                        <FilterButton label="18M" active={activeNoteFilter === '18M'} onClick={() => setActiveNoteFilter('18M')} />
+                        {renderFilterButtons()}
                     </div>
 
                     {/* Sort Row */}
