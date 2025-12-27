@@ -20,6 +20,11 @@ export interface Scale {
     ownUrl?: string;
     ownUrlEn?: string;
     nameEn?: string;
+    i18n?: Record<string, {
+        name: string;
+        description?: string;
+        tags?: string[];
+    }>;
 }
 
 export interface NoteData {

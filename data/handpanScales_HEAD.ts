@@ -56,12 +56,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.8, pureSpicy: 0.1, rarePopular: 0.90 },
         tags: ["마이너", "대중적", "감성적"],
-        description: "가장 대중적인 마이너 스케일입니다. 깊고 감성적인 울림으로 완벽한 균형을 이룹니다.",
+        description: "6번째 음이 포함된 완전한 내추럴 마이너 스케일로, 서정적이고 깊은 울림을 자랑하는 가장 대중적인 모델입니다. 쿠르드(Kurd)라는 이름처럼 중동의 감성을 담고 있으면서도, 호불호 없는 완벽한 균형감으로 누구나 쉽게 연주할 수 있습니다. 감성적인 연주부터 리드미컬한 곡까지 폭넓게 소화 가능한 핸드팬의 표준입니다.",
         videoUrl: "https://youtu.be/IvdeC_YuSIg",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/9206864886"
     },
 
-    // 1-1. D Kurd 10 (The Standard Minor Extended)
+    // 2. D Kurd 10 (The Standard Minor Extended)
     {
         id: "d_kurd_10",
         name: "D Kurd 10",
@@ -72,12 +72,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.8, pureSpicy: 0.1, rarePopular: 0.90 },
         tags: ["마이너", "대중적", "연습곡 제일 많음", "유튜브에 교재도 많음"],
-        description: "대중적인 D minor와 같은 음계인 D Kurd 10으로, 유튜브에 악보와 연습곡이 가장 많은 입문용에 적합한 모델입니다.",
+        description: "9음 구성의 D Kurd에 고음 C5가 추가된 확장형 모델로, 전 세계적으로 가장 많은 연습곡과 악보가 존재하는 표준 마이너 스케일입니다. 입문자가 학습하기에 가장 이상적인 '핸드팬의 교과서'와 같은 모델로, 풍성한 멜로디 연주가 가능합니다. 깊고 호소력 짙은 단조의 매력을 완벽하게 표현하는 베스트셀러입니다.",
         videoUrl: "https://youtu.be/uL40C1bqKik?si=DpqHwPB_RLpcA5mc",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/7514024868"
     },
 
-    // 5. E Equinox 14 (Normal)
+    // 3. E Equinox 14 (Normal)
     {
         id: "e_equinox_14",
         name: "E Equinox 14",
@@ -88,12 +88,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.4, pureSpicy: 0.4, rarePopular: 0.30 },
         tags: ["하이브리드", "시네마틱", "상급자용", "달콤씁쓸한"],
-        description: "메이저와 마이너의 경계에 있는 하이브리드 스케일입니다. 시네마틱한 감성과 달콤씁쓸한 매력이 특징이며, 묵직한 저음을 포함한 14개의 노트로 풍성함을 자랑합니다. 상급자용 모델로 복잡하고 감성적인 연주에 적합합니다.",
+        description: "마이너와 메이저의 경계를 넘나드는 하이브리드 스케일로, 낮과 밤의 길이가 같은 '춘분/추분(Equinox)'이라는 이름처럼 묘한 균형미를 가집니다. 저음을 포함한 14개의 풍성한 노트가 시네마틱하고 웅장한 서사를 만들어내며, 달콤씁쓸한 특유의 감성은 상급자의 섬세한 표현력을 극대화합니다. 복잡하고 감성적인 연주를 원하는 분들에게 추천하는 묵직한 모델입니다.",
         videoUrl: "https://youtu.be/v9pXYwhylPg?si=Em_dHnMGyeU19YkE",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12351119980"
     },
 
-    // 6. F# Low Pygmy 14 (The Global Bestseller) - Mutant
+    // 4. F# Low Pygmy 14 (The Global Bestseller) - Mutant
     {
         id: "fs_low_pygmy_14_mutant",
         name: "F# Low Pygmy 14",
@@ -104,12 +104,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.6, pureSpicy: 0.25, rarePopular: 0.95 },
         tags: ["Malte Marten Style", "Bestseller", "Deep", "Storytelling"],
-        description: "전 세계적으로 가장 인기 있는 베스트셀러 스케일입니다. 낮은 저음 노트들이 조화로운 이야기를 만들어내는 스토리텔링이 특징이며, 깊은 울림을 자랑합니다. Malte Marten 같은 연주자들에 의해 널리 알려진 스타일입니다.",
+        description: "아프리카 피그미 부족의 음악에서 유래한 펜타토닉 기반 스케일로, 깊고 몽환적인 저음이 특징인 전 세계적인 베스트셀러입니다. F#3 딩이 만들어내는 그라운딩 효과와 스토리텔링이 강점이며, Malte Marten과 같은 연주자들이 애용하는 스타일입니다. 14개의 노트가 조화롭게 어우러져 즉흥 연주만으로도 완성도 높은 음악을 선사합니다.",
         videoUrl: "https://youtu.be/SthKlH686Pc?si=_YG050uZwcbIoP0X",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12070387231"
     },
 
-    // 7. F Aeolian 10 (Domestic Steady Seller)
+    // 5. F Aeolian 10 (Domestic Steady Seller)
     {
         id: "f_aeolian_10",
         name: "F Aeolian 10",
@@ -120,12 +120,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.8, pureSpicy: 0.15, rarePopular: 0.65 },
         tags: ["국내인기", "안정적", "우울함", "변신가능", "바텀업그레이드", "가성비최고"],
-        description: "국내 시장에서 꾸준히 사랑받는 국내인기 스테디셀러입니다. 안정적이고 우울한 감성이 특징이며, 바텀 업그레이드를 통해 다양한 분위기로 변신이 가능합니다. 가성비 최고의 모델로 추천됩니다.",
+        description: "자연 단음계(Natural Minor)인 에올리안 모드를 기반으로 하여, 한국인이 선호하는 서정적이고 우울한 감성을 가장 잘 표현합니다. 안정적인 음계 구성으로 바텀 업그레이드 시 확장성이 뛰어나며, 호불호 없이 꾸준히 사랑받는 스테디셀러입니다. 차분하고 솔직한 울림으로 깊은 감동을 전달하는 가성비 최고의 모델입니다.",
         videoUrl: "https://youtu.be/BH45TEboAgE?si=SLlNpG-5vTLSWAsx",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/9561986680"
     },
 
-    // 8. E Romanian Hijaz 10 (The Exotic Individualist)
+    // 6. E Romanian Hijaz 10 (The Exotic Individualist)
     {
         id: "e_romanian_hijaz_10",
         name: "E Romanian Hijaz 10",
@@ -136,12 +136,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.5, pureSpicy: 0.75, rarePopular: 0.20 },
         tags: ["이국적", "집시", "독특함", "보헤미안"],
-        description: "남들과 다른 독특함을 추구하는 분들을 위한 이국적인 스케일입니다. 집시와 보헤미안 음악을 연상시키는 강렬하고 신비로운 분위기를 자아냅니다.",
+        description: "루마니아 집시 음악에서 영감을 받은 스케일로, 보헤미안 특유의 자유로움과 강렬한 이국적 색채를 띱니다. 하모닉 마이너의 5번째 모드인 프리지안 도미넌트 구성을 통해 신비롭고 스파이시한 긴장감을 자아냅니다. 남들과 다른 독창적인 분위기를 연출하고 싶은 연주자에게 강력히 추천합니다.",
         videoUrl: "https://youtu.be/gTEsQG3dfKQ?si=IJcS8SYJe9468WgP",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8681747137"
     },
 
-    // 9. D Saladin 9 (The Extreme Niche)
+    // 7. D Saladin 9 (The Extreme Niche)
     {
         id: "d_saladin_9",
         name: "D Saladin 9",
@@ -152,12 +152,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.2, pureSpicy: 0.85, rarePopular: 0.15 },
         tags: ["아라비안", "희귀함", "매운맛", "프리지안"],
-        description: "아라비안 나이트를 연상시키는 매우 이국적이고 강렬한 프리지안 스케일입니다. 희귀함과 매운맛이 특징이며, 희소성이 높아 독보적인 개성을 표현하기 좋습니다.",
+        description: "프리지안 도미넌트(Phrygian Dominant) 스케일로, '살라딘'이라는 이름처럼 아라비안 나이트를 연상시키는 강렬함이 특징입니다. 단 2도(b2)와 장 3도(3)가 만들어내는 이국적인 색채와 매운맛(Spicy)으로 독보적인 개성을 드러냅니다. 중동 풍의 신비로운 멜로디와 리듬을 표현하기에 최적화된 유니크한 모델입니다.",
         videoUrl: "https://youtu.be/OJWGyT1OxIg?si=RM_0FkjjEuxaWPJu",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8669289024"
     },
 
-    // 10. D Asha 9 (The Gentle Major / Sabye)
+    // 8. D Asha 9 (The Gentle Major / Sabye)
     {
         id: "d_asha_9",
         name: "D Asha 9",
@@ -168,12 +168,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: 0.9, pureSpicy: 0.1, rarePopular: 0.85 },
         tags: ["D메이저", "세컨드핸드팬인기", "젠틀소프트", "Sabye", "Ashakiran"],
-        description: "Sabye 또는 Ashakiran이라고도 불리는 부드럽고 온화한 D 메이저 스케일입니다. 젠틀하고 소프트한 음색으로 순수한 빛과 희망을 담고 있으며, 마이너 스케일과 함께 연주하기 좋은 최고의 세컨드 핸드팬으로 인기가 높습니다.",
+        description: "산스크리트어로 '희망(Asha)'을 의미하며, Sabye라고도 불리는 가장 대표적이고 온화한 D 메이저 스케일입니다. 맑고 깨끗한 음색이 주는 긍정적인 에너지는 마이너 스케일 핸드팬과 함께 연주할 때 최고의 조화를 이룹니다. 부드럽고 젠틀한 울림으로 치유와 평화를 노래하는 세컨드 핸드팬의 정석입니다.",
         videoUrl: "https://youtu.be/4tgdyOhT-RI?si=9SQ66sdPiwvgxoP7",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8497384066"
     },
 
-    // 11. E La Sirena 10 (The Siren / Dorian)
+    // 9. E La Sirena 10 (The Siren / Dorian)
     {
         id: "e_la_sirena_10",
         name: "E La Sirena 10",
@@ -184,12 +184,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.3, pureSpicy: 0.6, rarePopular: 0.4 },
         tags: ["도리안", "중급자용", "세이렌", "C#4활용이포인트"],
-        description: "'세이렌'이라는 이름처럼 신비롭고 깊은 물속을 유영하는 듯한 느낌을 주는 도리안 스케일입니다. 메이저와 마이너를 오가는 묘한 매력이 있으며, C#4 노트의 활용이 포인트입니다. 중급자용 모델로 추천됩니다.",
+        description: "그리스 신화 속 '세이렌'처럼 치명적인 매력을 지닌 도리안 모드 스케일로, 깊은 바닷속을 유영하는 듯한 신비로움을 선사합니다. 메이저와 마이너를 오가는 묘한 분위기 속에 C#4 노트가 독특한 포인트를 더해줍니다. 감성적이고 몽환적인 연주를 즐기는 중급자에게 추천하는 매혹적인 모델입니다.",
         videoUrl: "https://youtu.be/B-7jukbN3hw?si=ci_6mlElCZvu_WGH",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8490886007"
     },
 
-    // 12. C# Pygmy 9 (The Original Trance Classic)
+    // 10. C# Pygmy 9 (The Original Trance Classic)
     {
         id: "cs_pygmy_9",
         name: "C# Pygmy 9",
@@ -200,12 +200,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.7, pureSpicy: 0.05, rarePopular: 0.95 },
         tags: ["피그미", "트랜스", "깊음", "클래식"],
-        description: "핸드팬의 고전이자 명작인 클래식 피그미 스케일입니다. 특유의 공허하고 몽환적인 깊은 울림은 깊은 명상과 트랜스 상태로 인도합니다.",
+        description: "핸드팬의 클래식이자 명작으로 꼽히는 피그미 스케일로, 2도와 6도가 생략된 펜타토닉 구성이 공허하면서도 깊은 울림을 만듭니다. 특유의 트랜스(Trance)적인 분위기는 연주자와 청자를 깊은 명상의 상태로 인도합니다. 복잡하지 않은 구성으로도 심오한 내면의 소리를 이끌어내는 힐링 악기입니다.",
         videoUrl: "https://youtu.be/WcREkpJ5I_0?si=YUyV1CEIOLyXWesW",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8521877785"
     },
 
-    // 14. D Asha 15 (2-Octave Major) - Mutant
+    // 11. D Asha 15 (2-Octave Major) - Mutant
     {
         id: "d_asha_15_mutant",
         name: "D Asha 15",
@@ -216,12 +216,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: 0.9, pureSpicy: 0.1, rarePopular: 0.85 },
         tags: ["D메이저", "2옥타브", "범용성", "협연추천"],
-        description: "2옥타브 음역을 완벽하게 커버하는 D 메이저 스케일입니다. 범용성이 뛰어나 메이저 조성이 대다수인 일반 대중음악에서의 활용도가 매우 높으며, 다른 악기와의 협연에서도 강력한 강점을 발휘하는 협연 추천 모델입니다.",
+        description: "2옥타브를 완벽하게 커버하는 광범위한 D 메이저 스케일로, 밝고 희망찬 'Asha'의 에너지를 극대화했습니다. 대중음악의 다수 조성을 소화할 수 있는 압도적인 범용성 덕분에 다른 악기와의 협연에서 빛을 발합니다. 풍성한 화음과 멜로디 라인을 자유자재로 구사할 수 있는 전문가용 모델입니다.",
         videoUrl: "https://youtu.be/aGKx4zLFvRo",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12655523545"
     },
 
-    // 15. E Equinox 12 (Normal, Bass 2 Dings)
+    // 12. E Equinox 12 (Normal, Bass 2 Dings)
     {
         id: "e_equinox_12",
         name: "E Equinox 12",
@@ -232,12 +232,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.3, pureSpicy: 0.3, rarePopular: 0.25 },
         tags: ["하이브리드", "저음보강", "감성적", "밸런스"],
-        description: "하이브리드 스케일인 기존 Equinox에 저음(C3, D3)을 보강하여 더욱 풍성한 울림을 제공합니다. 감성적인 연주에 최적화된 완벽한 밸런스를 자랑합니다.",
+        description: "낮과 밤의 균형을 상징하는 Equinox 스케일에 저음(C3, D3)을 보강하여, 더욱 깊고 웅장한 울림을 완성했습니다. 하이브리드 스케일 특유의 감성적인 선율에 베이스의 무게감이 더해져 완벽한 밸런스를 자랑합니다. 섬세한 감정 표현과 솔로 연주에 최적화된 구성입니다.",
         videoUrl: "https://youtu.be/OcQ64DyA9xM?si=40_8I1KnB_rxCNQO",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12320335441"
     },
 
-    // 16. E Equinox 10 (Normal)
+    // 13. E Equinox 10 (Normal)
     {
         id: "e_equinox_10",
         name: "E Equinox 10",
@@ -248,12 +248,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.3, pureSpicy: 0.3, rarePopular: 0.25 },
         tags: ["메이저마이너", "그사이어딘가", "미묘한느낌", "색다른감성추천"],
-        description: "Equinox 스케일의 표준 모델로, 메이저와 마이너 그 사이 어딘가의 미묘한 느낌이 특징입니다. 색다른 감성을 추구하는 분들에게 추천되며, 적절한 음역대와 감성적인 멜로디 라인으로 입문자부터 숙련자까지 모두에게 적합합니다.",
+        description: "메이저와 마이너 그 어디쯤에 위치한 Equinox의 표준 모델로, '춘분/추분'이라는 이름처럼 미묘하고 중의적인 매력을 가집니다. 너무 밝지도 어둡지도 않은 독특한 감성 덕분에 입문자부터 숙련자까지 폭넓게 사랑받습니다. 색다르면서도 감성적인 멜로디를 찾는 분들에게 가장 적합한 선택입니다.",
         videoUrl: "https://youtu.be/8t8MqTelD9k?si=4gbYwCubpVxb_URT",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12320275460"
     },
 
-    // 17. F# Low Pygmy 18 (Mutant)
+    // 14. F# Low Pygmy 18 (Mutant)
     {
         id: "fs_low_pygmy_18_mutant",
         name: "F# Low Pygmy 18",
@@ -264,12 +264,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.6, pureSpicy: 0.25, rarePopular: 0.95 },
         tags: ["Malte Marten Style", "뮤턴트", "초고음역", "피그미", "전문가용"],
-        description: "Malte Marten 스타일의 뮤턴트 피그미 스케일로, Low Pygmy의 확장판입니다. 18개의 노트를 통해 광활한 음역대와 초고음역을 제공하며, 섬세한 고음 표현과 깊은 저음이 어우러진 전문가용 모델입니다.",
+        description: "Malte Marten 스타일의 뮤턴트 피그미 스케일로, 18개의 노트를 통해 깊은 저음부터 초고음역까지 광활한 음역대를 아우릅니다. 피그미 특유의 몽환적인 분위기에 섬세한 고음과 웅장한 베이스가 더해져 한 편의 서사를 완성합니다. 프로 연주자가 자신의 음악적 세계를 무한히 펼칠 수 있는 최고 사양 모델입니다.",
         videoUrl: "https://youtu.be/UxsvhXeDok0?si=GnSeCzBk0qe8snYr",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689630331"
     },
 
-    // 18. C# Pygmy 11 (Normal, Bass 2 Dings)
+    // 15. C# Pygmy 11 (Normal, Bass 2 Dings)
     {
         id: "cs_pygmy_11",
         name: "C# Pygmy 11",
@@ -280,12 +280,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.7, pureSpicy: 0.05, rarePopular: 0.95 },
         tags: ["피그미", "저음보강", "트랜스", "깊은울림"],
-        description: "클래식 피그미 스케일인 C# Pygmy에 저음(D3, E3)을 보강하여 더욱 깊고 웅장한 깊은 울림을 만들어냅니다. 트랜스와 명상, 힐링 연주에 탁월합니다.",
+        description: "클래식 C# Pygmy에 저음(D3, E3)을 더해, 피그미의 고요함에 웅장한 깊이를 더했습니다. 더욱 풍성해진 공명은 트랜스와 명상, 사운드 힐링에 최적화된 환경을 제공합니다. 깊은 내면으로 침잠하는 듯한 몰입감을 원하는 연주자에게 탁월한 선택입니다.",
         videoUrl: "https://youtu.be/QoUbOkhGGR8?si=TIKXYdCKX4RiuaLY",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12276307998"
     },
 
-    // 19. F Low Pygmy 12 (Normal, Bass 2 Dings)
+    // 16. F Low Pygmy 12 (Normal, Bass 2 Dings)
     {
         id: "f_low_pygmy_12",
         name: "F Low Pygmy 12",
@@ -296,12 +296,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.6, pureSpicy: 0.1, rarePopular: 0.95 },
         tags: ["피그미", "저음보강", "따뜻함", "몽환적"],
-        description: "피그미 스케일인 F Pygmy의 부드러움에 저음을 보강하여 깊이를 더했습니다. 따뜻하고 몽환적인 분위기를 연출하기에 좋습니다.",
+        description: "부드럽고 따뜻한 F Pygmy 스케일에 저음을 보강하여, 몽환적인 분위기를 더욱 짙게 만들었습니다. 안정적인 저음이 받쳐주는 포근한 선율은 듣는 이의 마음을 편안하게 감싸줍니다. 힐링과 휴식을 위한 연주에 더할 나위 없이 좋은 구성을 가졌습니다.",
         videoUrl: "https://youtu.be/_3jpTdVfOBc?si=W9bAL_AqZ5e25Rj8",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8611436986"
     },
 
-    // 20. D Kurd 12 (Normal, Bass 2 Dings)
+    // 17. D Kurd 12 (Normal, Bass 2 Dings)
     {
         id: "d_kurd_12",
         name: "D Kurd 12",
@@ -312,12 +312,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.8, pureSpicy: 0.1, rarePopular: 0.90 },
         tags: ["마이너", "저음보강", "표준확장", "딩베이스", "화성연주"],
-        description: "마이너 스케일인 D Kurd 10 악기에 바텀 업그레이드 한 표준확장형으로, 저음을 보강하여 하단 두개의 딩 베이스로 화성 연주가 가능한 모델입니다.",
+        description: "대중적인 D Kurd 스케일에 하단 딩 베이스를 추가하여 화성적인 풍부함을 더한 표준 확장형 모델입니다. 저음의 보강으로 더욱 입체적인 연주가 가능하며, 마이너 스케일의 감성을 묵직하게 전달합니다. 솔로 연주와 반주 모두에 적합한 다재다능한 구성을 자랑합니다.",
         videoUrl: "https://youtu.be/KXDSbCdPjTM?si=3GD2eOil-5WsmVHa",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12070396728"
     },
 
-    // 21. F Low Pygmy 9 (Normal)
+    // 18. F Low Pygmy 9 (Normal)
     {
         id: "f_low_pygmy_9",
         name: "F Low Pygmy 9",
@@ -328,12 +328,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.6, pureSpicy: 0.1, rarePopular: 0.95 },
         tags: ["피그미", "기본", "차분함", "명상"],
-        description: "차분하고 안정적인 Pygmy 스케일의 기본형입니다. 명상과 힐링 연주에 적합한 부드러운 음색을 가졌습니다.",
+        description: "도리안 모드에서 2음과 6음을 생략한 펜타토닉(Dorian Pentatonic) 구성으로, 숲속의 고요함을 닮은 평화로운 소리를 냅니다. 자극적이지 않고 부드러운 음색은 명상과 힐링을 위한 첫 악기로 완벽합니다. 단순함 속에 깊은 울림을 담아내어 연주자에게 안식을 줍니다.",
         videoUrl: "https://youtu.be/61g8qreUeJk?si=NgBTdfaU51SV__5O",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12085324936"
     },
 
-    // 22. C# Annapurna 9 (Normal)
+    // 19. C# Annapurna 9 (Normal)
     {
         id: "cs_annapurna_9",
         name: "C# Annapurna 9",
@@ -344,12 +344,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: 0.8, pureSpicy: 0.35, rarePopular: 0.55 },
         tags: ["메이저", "안나푸르나", "상쾌함", "에너지"],
-        description: "Yisha Savita와 동일한 구성으로, 안나푸르나의 웅장함과 상쾌함, 에너지를 담은 메이저 스케일입니다.",
+        description: "C# 메이저(Ionian) 스케일로, 히말라야의 안나푸르나 봉우리처럼 웅장하고 상쾌한 에너지를 담고 있습니다. Yisha Savita와 동일한 구성으로, 밝고 긍정적인 기운이 넘치는 멜로디를 연주하기 좋습니다. 높은 산의 맑은 공기처럼 청량감을 주는 모델입니다.",
         videoUrl: "https://youtu.be/HSHDfm9PEM4?si=930q4Eu3DT2URi50",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8513450652"
     },
 
-    // 23. C Major 9
+    // 20. C Major 10
     {
         id: "c_major_10",
         name: "C Major 10",
@@ -360,12 +360,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: 1.0, pureSpicy: 0.0, rarePopular: 0.80 },
         tags: ["메이저", "기본", "밝음", "동요"],
-        description: "가장 기본적이고 순수한 메이저 스케일인 C Major입니다. 밝고 명랑하며, 동요와 같이 누구나 아는 멜로디를 연주하기에 좋습니다.",
+        description: "음악의 가장 기본이 되는 순수한 '도레미' 메이저 스케일로, 밝고 명랑한 동요나 팝을 연주하기에 최적입니다. 복잡함 없이 직관적인 음계 구성 덕분에 누구나 쉽게 멜로디를 익히고 즐길 수 있습니다. 맑고 깨끗한 장조의 울림이 동심과 즐거움을 불러일으킵니다.",
         videoUrl: "https://youtu.be/2peCXnJP2U0?si=bVePs8DvAlPEwI7v",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12751985321"
     },
 
-    // 24. C Rasavali 9
+    // 21. C Rasavali 10
     {
         id: "c_rasavali_10",
         name: "C Rasavali 10",
@@ -376,12 +376,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.2, pureSpicy: 0.6, rarePopular: 0.20 },
         tags: ["라사발리", "인도풍", "신비로움", "독특함"],
-        description: "라사발리 스케일로, 인도풍의 색채를 지닌 신비로운 스케일입니다. 독특한 음계가 만들어내는 묘한 분위기가 매력적입니다.",
+        description: "인도 라가(Raga)에서 영감을 받은 라사발리 스케일로, 동양적이고 신비로운 색채가 짙게 묻어납니다. 독특한 음계 진행이 만들어내는 묘한 분위기는 명상적이면서도 이국적인 매력을 발산합니다. 흔하지 않은 개성 있는 소리를 찾는 분들에게 매력적인 선택지입니다.",
         videoUrl: "https://youtu.be/u9dsmUSd_SY?si=rMBMQOFvj5Yec7vs",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12751991029"
     },
 
-    // 25. C# Deepasia 14 (Normal)
+    // 22. C# Deepasia 14 (Normal)
     {
         id: "cs_deepasia_14",
         name: "C# Deepasia 14",
@@ -392,12 +392,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.5, pureSpicy: 0.5, rarePopular: 0.20 },
         tags: ["딥아시아", "동양적", "확장형", "깊음"],
-        description: "딥아시아 스케일로, 동양적인 깊은 울림을 가진 확장형 모델입니다. 14개의 노트로 확장되어 더욱 풍성하고 명상적인 연주가 가능합니다.",
+        description: "'깊은 아시아(Deep Asia)'라는 이름처럼 동양적인 선율과 여백의 미를 담은 확장형 스케일입니다. 14개의 노트가 만들어내는 그윽하고 깊은 울림은 정적인 명상과 내면의 탐구에 적합합니다. 서구적인 스케일과는 다른, 차분하고 고스넉한 분위기를 자아냅니다.",
         videoUrl: "https://youtu.be/pMKoFUicrFw?si=5HPgyOp8NM0qXMNU",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689651421"
     },
 
-    // 26. C# Blues 9 (Normal)
+    // 23. C# Blues 9 (Normal)
     {
         id: "cs_blues_9",
         name: "C# Blues 9",
@@ -408,12 +408,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.1, pureSpicy: 0.6, rarePopular: 0.4 },
         tags: ["블루스", "재즈", "감성적", "그루브"],
-        description: "블루스 스케일로, 블루지한 감성을 담은 스케일입니다. 재즈나 소울풀한 연주에 적합하며, 특유의 그루브가 살아있는 감성적인 모델입니다.",
+        description: "미국 흑인 음악에서 유래한 헥사토닉 블루스(Hexatonic Blues) 스케일로, 감 5도(블루 노트)가 추가되어 특유의 끈적한 감성을 자아냅니다. 재즈나 소울풀한 연주에 최적화되어 있으며, 즉흥적으로 연주해도 멋스러운 '블루지(Bluesy)'한 느낌을 냅니다. 깊이 있는 감정 표현을 원하는 연주자에게 추천합니다.",
         videoUrl: "https://youtu.be/mY-Uvw-VKO4?si=Ail972LckjNWKp8S",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12689712335"
     },
 
-    // 27. Eb MUJU 10 (Normal)
+    // 24. Eb MUJU 10 (Normal)
     {
         id: "eb_muju_10",
         name: "Eb MUJU 10",
@@ -424,12 +424,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: 0.5, pureSpicy: 0.2, rarePopular: 0.55 },
         tags: ["Eb메이저", "국악평조", "아리랑음계", "무주자연"],
-        description: "Eb 메이저 스케일로, 국악 평조와 아리랑 음계를 담고 있습니다. 무주의 자연을 닮은 평화로운 스케일이며, 부드럽고 따뜻한 음색으로 마음을 치유하는 힘이 있습니다.",
+        description: "한국 전통 국악의 평조와 아리랑 음계를 품은 Eb 메이저(Ionian) 스케일로, 무주(Muju)의 깨끗한 자연을 닮았습니다. 우리 민족의 정서에 닿아있는 따뜻하고 부드러운 선율이 마음을 편안하게 치유해 줍니다. 한국적인 아름다움과 평화를 연주하고 싶은 분들을 위한 특별한 모델입니다.",
         videoUrl: "https://youtu.be/0IGtmQlb1X4?si=y9oZiE4w-_Zkyih6",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/8513504905"
     },
 
-    // 28. C Yunsl 9 (Normal)
+    // 25. C Yunsl 9 (Normal)
     {
         id: "c_yunsl_9",
         name: "C Yunsl 9",
@@ -440,12 +440,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: 0.8, pureSpicy: 0.1, rarePopular: 0.55 },
         tags: ["윤슬", "반짝임", "맑음", "서정적"],
-        description: "윤슬 스케일로, 물결에 비치는 햇살처럼 맑고 반짝이는 소리를 가졌습니다. 서정적이고 아름다운 멜로디 연주에 좋습니다.",
+        description: "6음(A)을 생략한 C 메이저 스케일로, 햇빛이나 달빛에 비치어 반짝이는 잔물결인 '윤슬'과 같은 맑고 영롱한 소리를 냅니다. 서정적이고 아름다운 멜로디를 연주할 때 물 위를 걷는 듯한 투명한 감성을 더해줍니다. 자극적이지 않고 은은하게 빛나는 울림이 매력적입니다.",
         videoUrl: "https://youtu.be/_fB5VHpE1f0?si=v6RDSBTJJUsiAZXK",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12752009418"
     },
 
-    // 29. C# Sapphire 9 (Normal)
+    // 26. C# Sapphire 9 (Normal)
     {
         id: "cs_sapphire_9",
         name: "C# Sapphire 9",
@@ -456,12 +456,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.2, pureSpicy: 0.4, rarePopular: 0.55 },
         tags: ["사파이어", "청량함", "보석", "세련됨"],
-        description: "사파이어 스케일로, 사파이어 보석처럼 청량하고 세련된 울림을 줍니다. 깔끔하고 모던한 느낌의 연주를 선호하는 분들께 추천합니다.",
+        description: "단 7도(b7)를 포함한 믹솔리디안(Mixolydian) 모드의 색채를 띠며, 푸른 보석 사파이어처럼 세련되고 청량한 울림을 가집니다. 맑고 투명한 음색이 깔끔하고 모던한 연주 스타일에 완벽하게 부합합니다. 군더더기 없는 세련미와 시원한 타격감을 선호하는 분들에게 추천합니다.",
         videoUrl: "https://youtu.be/V1bfHlVl9VY?si=yREB5-6dey1kvC_4",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12752029521"
     },
 
-    // 30. C# Annaziska 9 (Normal)
+    // 27. C# Annaziska 9 (Normal)
     {
         id: "cs_annaziska_9",
         name: "C# Annaziska 9",
@@ -472,12 +472,12 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.4, pureSpicy: 0.5, rarePopular: 0.80 },
         tags: ["이국적", "긴장감", "신비", "매니아"],
-        description: "신비롭고 약간의 긴장감을 주는 이국적인 스케일입니다. 독특한 분위기를 연출하고 싶은 매니아 연주자에게 적합합니다.",
+        description: "신비롭고 약간의 긴장감을 머금은 이국적인 스케일로, 독특한 이름만큼이나 개성 강한 분위기를 연출합니다. 평범함을 거부하는 매니아들을 위해 고안되었으며, 묘한 매력으로 청자를 빨아들이는 힘이 있습니다. 드라마틱하고 주술적인 느낌의 연주에 적합합니다.",
         videoUrl: "https://youtu.be/Z3bVZYykphA?si=zJAD4lmQPxMQ0xq8",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12085316070"
     },
 
-    // 31. E Hijaz 9 (Normal)
+    // 28. E Hijaz 9 (Normal)
     {
         id: "e_hijaz_9",
         name: "E Hijaz 9",
@@ -488,7 +488,7 @@ export const SCALES: Scale[] = [
         },
         vector: { minorMajor: -0.3, pureSpicy: 0.7, rarePopular: 0.80 },
         tags: ["이국적", "중동풍", "정열적", "스파이시"],
-        description: "E 키의 히자즈 스케일로, 이국적이고 중동풍의 정열적이며 스파이시한 느낌을 강하게 전달합니다.",
+        description: "E 하모닉 마이너(Harmonic Minor) 스케일로, 중동 음악의 정열을 담은 뜨거운 사막의 바람처럼 강렬하고 스파이시한 느낌을 전달합니다. 히자즈(Hijaz) 특유의 이국적인 음계는 즉흥 연주에 역동적인 에너지를 불어넣습니다. 뚜렷한 색채와 강한 임팩트를 원하는 연주자에게 훌륭한 파트너가 됩니다.",
         videoUrl: "https://youtu.be/MRyGVe5k4Y8?si=VEoopVqXSO9gJ6Rd",
         productUrl: "https://smartstore.naver.com/sndhandpan/products/12085332035"
     }
