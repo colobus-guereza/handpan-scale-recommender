@@ -574,7 +574,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
 
 
             {/* Main Carousel Section */}
-            <div className="relative">
+            <div className="relative md:mx-12">
                 {/* Navigation Buttons */}
                 {displayScales.length > 1 && (
                     <>
