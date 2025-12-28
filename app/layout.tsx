@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 
 import { ThemeProvider } from "@/components/ThemeProvider";
 import IframeResizer from "@/components/IframeResizer";
+import SilentAudioUnlocker from "@/components/utils/SilentAudioUnlocker";
 
 export default function RootLayout({
     children,
@@ -22,6 +23,7 @@ export default function RootLayout({
             <body className={`${inter.className} min-h-full m-0 p-0 overflow-y-auto`} suppressHydrationWarning>
                 <ThemeProvider>
                     <div className="min-h-screen w-full py-4">
+                        <SilentAudioUnlocker />
                         <IframeResizer />
                         {children}
                     </div>
