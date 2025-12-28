@@ -180,6 +180,10 @@ const HandpanImage = ({ backgroundImage, centerX = 500, centerY = 500 }: { backg
 
 const HandpanImageRenderer = ({ url, position }: { url: string; position: [number, number, number] }) => {
     const texture = useTexture(url);
+    useEffect(() => {
+        console.log(`[DEBUG_SYNC] HandpanImage RENDERED (Suspense Resolved): ${url} at ${Date.now()}`);
+    }, [url]);
+
     const size = HANDPAN_CONFIG.OUTER_RADIUS * 2;
     return (
         <mesh position={position} rotation={[0, 0, 0]}>
@@ -208,6 +212,11 @@ const ToneFieldMesh = React.memo(({
     playNote?: (noteName: string, volume?: number) => void;
     offset?: [number, number, number];
 }) => {
+    // Log note rendering
+    if (note.id === 0) { // Log only Ding to avoid spam
+        console.log(`[DEBUG_SYNC] ToneFieldMesh (Ding) RENDERED at ${Date.now()}`);
+    }
+
     const [hovered, setHovered] = useState(false);
     const [pulsing, setPulsing] = useState(false);
 

@@ -57,6 +57,7 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
     const t = TRANSLATIONS[language];
     const [displayScales, setDisplayScales] = useState<Scale[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isPending, startTransition] = React.useTransition();
 
     // ✅ Preload Handpan Audio Global Cache (Singleton)
     // Even if MiniDigiPan is lazy-loaded, we start downloading sounds immediately here.
@@ -518,15 +519,75 @@ export default function ScaleList({ selectedVibe, onBack, onChangeVibe, initialS
         return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
     };
 
-    const nextSlide = () => {
+    // Helper to determine which image to preload based on scale
+    const getScaleImage = (scale: Scale) => {
+        const bottomCount = scale.notes.bottom ? scale.notes.bottom.length : 0;
+        const totalNotes = 1 + scale.notes.top.length + bottomCount;
+
+        // Match logic from MiniDigiPan/Digipan components
+        if (totalNotes === 9) return '/images/9notes.png';
+        if (totalNotes === 10) return '/images/10notes.png';
+        if (totalNotes === 11) return '/images/9notes.png'; // Digipan11 uses 9notes.png base
+        if (totalNotes === 12) return '/images/10notes.png'; // Digipan12 uses 10notes.png base
+        if (totalNotes === 14) {
+            // Check for mutant or standard
+            if (scale.id === 'fs_low_pygmy_14_mutant') return '/images/12notes_mutant.png'; // Digipan14M
+            return '/images/10notes.png'; // Digipan14 uses 10notes base
+        }
+        if (totalNotes >= 15) return '/images/12notes_mutant.png'; // 15M, 18M, etc use mutant base
+
+        return null;
+    };
+
+    const preloadImage = (src: string): Promise<void> => {
+        console.log(`[DEBUG_SYNC] Preload Start: ${src} at ${Date.now()}`);
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = () => {
+                console.log(`[DEBUG_SYNC] Preload Done: ${src} at ${Date.now()}`);
+                resolve();
+            };
+            img.onerror = () => {
+                console.log(`[DEBUG_SYNC] Preload Error: ${src} at ${Date.now()}`);
+                resolve();
+            };
+        });
+    };
+
+    const nextSlide = async () => {
         if (currentIndex < displayScales.length - 1) {
-            setCurrentIndex((prev) => prev + 1);
+            const nextScale = displayScales[currentIndex + 1];
+            console.log(`[DEBUG_SYNC] Next Button Clicked. Current: ${currentIndex}, Next: ${nextScale.name} at ${Date.now()}`);
+
+            const imgSrc = getScaleImage(nextScale);
+
+            if (imgSrc) {
+                await preloadImage(imgSrc);
+            }
+
+            console.log(`[DEBUG_SYNC] StartTransition Triggered at ${Date.now()}`);
+            startTransition(() => {
+                setCurrentIndex((prev) => prev + 1);
+            });
         }
     };
 
-    const prevSlide = () => {
+    const prevSlide = async () => {
         if (currentIndex > 0) {
-            setCurrentIndex((prev) => prev - 1);
+            const prevScale = displayScales[currentIndex - 1];
+            console.log(`[DEBUG_SYNC] Prev Button Clicked. Current: ${currentIndex}, Prev: ${prevScale.name} at ${Date.now()}`);
+
+            const imgSrc = getScaleImage(prevScale);
+
+            if (imgSrc) {
+                await preloadImage(imgSrc);
+            }
+
+            console.log(`[DEBUG_SYNC] StartTransition Triggered at ${Date.now()}`);
+            startTransition(() => {
+                setCurrentIndex((prev) => prev - 1);
+            });
         }
     };
 

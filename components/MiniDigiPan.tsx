@@ -50,7 +50,7 @@ const MiniDigiPan = React.forwardRef<Digipan3DHandle, MiniDigiPanProps>(({ scale
     const bottomCount = scale.notes.bottom ? scale.notes.bottom.length : 0;
     const totalNotes = 1 + scale.notes.top.length + bottomCount;
 
-    // console.log(`MiniDigiPan Render: ${scale.id} (${scale.name}), notes: ${totalNotes}`);
+    console.log(`[DEBUG_SYNC] MiniDigiPan Render: ${scale.id} (${scale.name}) at ${Date.now()}`);
 
     const is18Notes = totalNotes === 18;
     const is15Notes = totalNotes === 15;
