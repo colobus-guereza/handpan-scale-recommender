@@ -212,10 +212,10 @@ const ToneFieldMesh = React.memo(({
     playNote?: (noteName: string, volume?: number) => void;
     offset?: [number, number, number];
 }) => {
-    // Log note rendering
-    if (note.id === 0) { // Log only Ding to avoid spam
-        console.log(`[DEBUG_SYNC] ToneFieldMesh (Ding) RENDERED at ${Date.now()}`);
-    }
+    // Log note rendering - Removed for production optimization
+    // if (note.id === 0) {
+    //     console.log(`[DEBUG_SYNC] ToneFieldMesh (Ding) RENDERED at ${Date.now()}`);
+    // }
 
     const [hovered, setHovered] = useState(false);
     const [pulsing, setPulsing] = useState(false);
