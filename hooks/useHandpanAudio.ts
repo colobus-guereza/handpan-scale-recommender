@@ -53,6 +53,7 @@ const GLOBAL_SOUND_CACHE: Record<string, any> = {};
 let IS_GLOBAL_LOAD_INITIATED = false;
 let GLOBAL_LOADING_PROGRESS = 0;
 let IS_GLOBAL_LOADED = false;
+let GLOBAL_HOWLER: any = null; // NEW: Module-level Howler reference for faster access
 const OBSERVERS: ((progress: number, isLoaded: boolean) => void)[] = [];
 
 // Helper to notify all hooks of progress
@@ -63,7 +64,6 @@ const notifyObservers = () => {
 export const useHandpanAudio = (): UseHandpanAudioReturn => {
     const [isLoaded, setIsLoaded] = useState(IS_GLOBAL_LOADED);
     const [loadingProgress, setLoadingProgress] = useState(GLOBAL_LOADING_PROGRESS);
-    const howlerGlobalRef = useRef<any>(null);
 
     // Subscribe to global progress updates
     useEffect(() => {
@@ -90,7 +90,7 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
 
 
             import('howler').then(({ Howl, Howler }) => {
-                howlerGlobalRef.current = Howler;
+                GLOBAL_HOWLER = Howler; // Store in module variable
 
                 // --- Audio Context & Limiter Logic ---
                 const resumeAudioContext = async () => {
@@ -194,16 +194,15 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
             console.log("[AudioDebug] Global Load already initiated (Singleton check passed)");
             // If already initiated, try to capture Howler ref if possible (lazy)
             import('howler').then(({ Howler }) => {
-                howlerGlobalRef.current = Howler;
+                GLOBAL_HOWLER = Howler;
             });
         }
     }, []);
 
     const playNote = useCallback((noteName: string, volume: number = 0.6) => {
-        // Optimized Resume Check: Use cached ref if available to avoid micro-latency of import()
-        const Howler = howlerGlobalRef.current;
-        if (Howler?.ctx?.state === 'suspended') {
-            Howler.ctx.resume(); // Fire and forget
+        // Optimized Resume Check: Use GLOBAL_HOWLER for faster access
+        if (GLOBAL_HOWLER?.ctx?.state === 'suspended') {
+            GLOBAL_HOWLER.ctx.resume(); // Fire and forget
         }
 
         const sound = GLOBAL_SOUND_CACHE[noteName];
@@ -225,22 +224,17 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
     }, []);
 
     const getAudioContext = useCallback(() => {
-        // Accessing global Howler context requires import or cached ref
-        // We can't guarantee synchronous return if import is needed, 
-        // but typically Howler attaches to window.
-        // For safety, return null or try to find it.
-        return (window as any).Howler?.ctx;
+        return GLOBAL_HOWLER?.ctx;
     }, []);
 
     const getMasterGain = useCallback(() => {
-        return (window as any).Howler?.masterGain;
+        return GLOBAL_HOWLER?.masterGain;
     }, []);
 
-    // NEW: resumeAudio for external AudioContext resume
+    // resumeAudio for external AudioContext resume
     const resumeAudio = useCallback(() => {
-        const Howler = howlerGlobalRef.current;
-        if (Howler?.ctx?.state === 'suspended') {
-            Howler.ctx.resume();
+        if (GLOBAL_HOWLER?.ctx?.state === 'suspended') {
+            GLOBAL_HOWLER.ctx.resume();
         }
     }, []);
 
