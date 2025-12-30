@@ -40,9 +40,10 @@ export interface UseHandpanAudioReturn {
     isLoaded: boolean;
     loadingProgress: number;
     playNote: (noteName: string, volume?: number) => void;
-    resumeAudio: () => void; // NEW: External AudioContext resume
-    getAudioContext: () => any; // Returns AudioContext
-    getMasterGain: () => any; // Returns Head Master Gain
+    resumeAudio: () => void;
+    getAudioContext: () => any;
+    getMasterGain: () => any;
+    preloadScaleNotes: (notes: string[]) => Promise<void>; // NEW: Preload specific scale notes
 }
 
 // Type for Howl instance (avoid importing at top level for SSR compatibility)
@@ -255,5 +256,36 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
         }
     }, []);
 
-    return { isLoaded, loadingProgress, playNote, resumeAudio, getAudioContext, getMasterGain };
+    // preloadScaleNotes: Ensure specific scale notes are fully loaded
+    const preloadScaleNotes = useCallback(async (notes: string[]): Promise<void> => {
+        if (!notes || notes.length === 0) return;
+
+        const promises: Promise<void>[] = [];
+
+        notes.forEach(note => {
+            const normalized = normalizeNote(note);
+            const sound = GLOBAL_SOUND_CACHE[normalized];
+
+            if (sound && sound.state() !== 'loaded') {
+                // Wait for this sound to finish loading
+                promises.push(new Promise<void>((resolve) => {
+                    const checkState = () => {
+                        if (sound.state() === 'loaded') {
+                            resolve();
+                        } else {
+                            setTimeout(checkState, 50);
+                        }
+                    };
+                    checkState();
+                }));
+            }
+        });
+
+        if (promises.length > 0) {
+            await Promise.all(promises);
+            console.log(`[useHandpanAudio] Preloaded ${notes.length} scale notes`);
+        }
+    }, []);
+
+    return { isLoaded, loadingProgress, playNote, resumeAudio, getAudioContext, getMasterGain, preloadScaleNotes };
 };
