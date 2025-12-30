@@ -25,6 +25,7 @@ export interface UseHandpanAudioReturn {
     isLoaded: boolean;
     loadingProgress: number;
     playNote: (noteName: string, volume?: number) => void;
+    resumeAudio: () => void; // NEW: External AudioContext resume
     getAudioContext: () => any; // Returns AudioContext
     getMasterGain: () => any; // Returns Head Master Gain
 }
@@ -235,5 +236,13 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
         return (window as any).Howler?.masterGain;
     }, []);
 
-    return { isLoaded, loadingProgress, playNote, getAudioContext, getMasterGain };
+    // NEW: resumeAudio for external AudioContext resume
+    const resumeAudio = useCallback(() => {
+        const Howler = howlerGlobalRef.current;
+        if (Howler?.ctx?.state === 'suspended') {
+            Howler.ctx.resume();
+        }
+    }, []);
+
+    return { isLoaded, loadingProgress, playNote, resumeAudio, getAudioContext, getMasterGain };
 };
