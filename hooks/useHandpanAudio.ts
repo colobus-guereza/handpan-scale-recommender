@@ -207,7 +207,7 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
 
             }).catch(err => console.error('[AudioDebug] Howler import failed', err));
         } else {
-            console.log("[AudioDebug] Global Load already initiated (Singleton check passed)");
+            // Singleton check passed - Debug log removed for production
             // If already initiated, try to capture Howler ref if possible (lazy)
             import('howler').then(({ Howler }) => {
                 GLOBAL_HOWLER = Howler;
