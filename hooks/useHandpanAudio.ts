@@ -21,6 +21,21 @@ const ALL_NOTES = [
     'G#3', 'G#4', 'G#5',
 ];
 
+// Note name normalization for consistent cache hits
+// Maps enharmonic equivalents (A# → Bb, Db → C#, etc.)
+const normalizeNote = (note: string): string => {
+    const map: Record<string, string> = {
+        // A# → Bb (Bb exists in ALL_NOTES)
+        'A#3': 'Bb3', 'A#4': 'Bb4', 'A#5': 'Bb5',
+        // Gb → F# (F# exists in ALL_NOTES)
+        'Gb3': 'F#3', 'Gb4': 'F#4', 'Gb5': 'F#5',
+        // Ab → G# (G# exists in ALL_NOTES) - BUT Ab also exists, so skip
+        // Db → C# (C# exists in ALL_NOTES) - BUT Db also exists, so skip
+        // Eb → D# (D# exists in ALL_NOTES) - BUT Eb also exists, so skip
+    };
+    return map[note] || note;
+};
+
 export interface UseHandpanAudioReturn {
     isLoaded: boolean;
     loadingProgress: number;
@@ -205,7 +220,9 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
             GLOBAL_HOWLER.ctx.resume(); // Fire and forget
         }
 
-        const sound = GLOBAL_SOUND_CACHE[noteName];
+        // Normalize note name for consistent cache hits (A# → Bb, Gb → F#)
+        const normalized = normalizeNote(noteName);
+        const sound = GLOBAL_SOUND_CACHE[normalized];
         if (sound) {
             try {
                 sound.volume(volume);
@@ -217,7 +234,7 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
         }
 
         // Fallback Logic
-        const filename = noteName.replace('#', '%23');
+        const filename = normalized.replace('#', '%23');
         const audio = new Audio(`/sounds/${filename}.mp3`);
         audio.volume = volume;
         audio.play().catch(e => console.error(e));
