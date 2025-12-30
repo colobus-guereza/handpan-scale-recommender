@@ -128,7 +128,7 @@ const Digipan11 = React.forwardRef<Digipan3DHandle, Digipan11Props>(({
     const internalNotes = useMemo(() => {
         if (!scale || externalNotes) return [];
 
-        // Fine-tuned 11-Note Coordinates (from digipan-3d-test/page.tsx)
+        // Fine-tuned 11-Note Coordinates (from digipan-dev/page.tsx)
         const templateData = [
             {
                 "id": 0,

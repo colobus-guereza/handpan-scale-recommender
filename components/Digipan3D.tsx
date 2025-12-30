@@ -409,7 +409,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     notes, onNoteClick, isCameraLocked = false, scale, centerX = 500, centerY = 500, onScaleSelect, backgroundImage, extraControls, noteCountFilter = 10, showControls = true, showInfoPanel = true, initialViewMode = 0, viewMode: controlledViewMode, onViewModeChange, enableZoom = true, enablePan = true, showLabelToggle = false, forceCompactView = false, backgroundContent, tonefieldOffset = [0, 0, 0], hideStaticLabels = false, sceneSize = { width: 60, height: 60 }, cameraTargetY = 0, showAxes = false, harmonicSettings, onIsRecordingChange, cameraZoom, hideTouchText = false, drumPreset
 }, ref) => {
     const pathname = usePathname();
-    const isDevPage = pathname === '/digipan-3d-test';
+    const isDevPage = pathname === '/digipan-dev';
     const [isCameraLockedState, setIsCameraLocked] = useState(isCameraLocked);
     const [copySuccess, setCopySuccess] = useState(false);
     const [isInfoExpanded, setIsInfoExpanded] = useState(!forceCompactView);
