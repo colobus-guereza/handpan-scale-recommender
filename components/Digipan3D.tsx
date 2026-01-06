@@ -72,6 +72,9 @@ const CameraHandler = ({
         updateZoom();
     }, [isLocked, camera, size.width, size.height, sceneSize.width, sceneSize.height, cameraZoom, cameraTargetY]);
 
+    // Locked 모드일 때는 OrbitControls를 아예 렌더링하지 않음 (모바일 스크롤 문제 해결)
+    if (isLocked) return null;
+
     return (
         <OrbitControls
             ref={controlsRef}
@@ -80,6 +83,7 @@ const CameraHandler = ({
             enablePan={enablePan}
             minZoom={2}
             maxZoom={50}
+            touches={{ ONE: null, TWO: null }}
         />
     );
 };
