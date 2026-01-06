@@ -16,6 +16,11 @@ body {
   overflow-y: auto;
 }
 
+/* DigiPan Canvas 모바일 터치 스크롤 허용 */
+canvas {
+  touch-action: pan-y !important;
+}
+
 /* Light mode: Pure white background for html */
 html.light {
   background: #ffffff;
