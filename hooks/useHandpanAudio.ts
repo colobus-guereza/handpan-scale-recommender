@@ -110,7 +110,15 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
 
                 // --- Audio Context & Limiter Logic ---
                 const resumeAudioContext = async () => {
-                    const now = performance.now();
+                    // Play silent buffer to unlock iOS silent mode (Hardware Mute Switch)
+                    const SILENT_MP3 = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTY2UAAAAPAAADTGF2ZjU5LjI3LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMD//////////////////////////////////////////////////////////////////wAAAAAATGF2YzU5LjM3AAAAAAAAAAAAAAAAJAAAAAAAAAAAASAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAA';
+                    try {
+                        const audio = new Audio(SILENT_MP3);
+                        await audio.play();
+                        console.log('[useHandpanAudio] Silent unlock played');
+                    } catch (e) {
+                        // Ignore auto-play errors
+                    }
 
                     // 1. Resume Howler
                     if (Howler && Howler.ctx && Howler.ctx.state === 'suspended') {
@@ -118,7 +126,6 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
                     }
 
                     // 2. Resume Tone.js (Dynamic Import to avoid SSR issues if not already imported)
-                    // We check global Tone or import it
                     try {
                         const Tone = await import('tone');
                         if (Tone.context && Tone.context.state === 'suspended') {
@@ -135,30 +142,24 @@ export const useHandpanAudio = (): UseHandpanAudioReturn => {
                         const ctx = Howler.ctx as AudioContext;
                         const masterGain = Howler.masterGain as GainNode;
                         try {
-                            // Helper to safely check/create limiter
-                            // (Avoid re-connecting errors by checking if already connected - tricky with WebAudio, so we wrap in try)
                             const limiter = ctx.createDynamicsCompressor();
                             limiter.threshold.value = -2.0;
                             limiter.knee.value = 0.0;
                             limiter.ratio.value = 20.0;
                             limiter.attack.value = 0.001;
                             limiter.release.value = 0.1;
-
-                            // Only connect if we can (Simplified logic: we assume this runs once on init)
                             masterGain.disconnect();
                             masterGain.connect(limiter);
                             limiter.connect(ctx.destination);
                         } catch (e) {
-                            // Limiter application skipped (already connected or error)
+                            // Limiter application skipped
                         }
                     } catch (err) { console.warn('Limiter setup failed:', err); }
                 }
 
-                // Global Resume Listeners (Passive: true is good for scroll, but we want IMMEDIATE execution)
-                // We use useCapture=true for 'touchstart' to catch it as early as possible? 
-                // Actually, just standard bubble is fine, but we want to ensure it runs.
+                // Global Resume Listeners
                 ['touchstart', 'touchend', 'click', 'keydown'].forEach(event => {
-                    document.addEventListener(event, resumeAudioContext, { passive: true });
+                    document.addEventListener(event, resumeAudioContext, { passive: true, once: true });
                 });
 
                 // --- Loading Sounds ---
