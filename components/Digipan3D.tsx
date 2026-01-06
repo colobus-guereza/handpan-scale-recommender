@@ -644,7 +644,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                     <button onClick={toggleDrum} className={`${btnMobile} relative ${isJamPlaying ? 'animate-heartbeat' : ''}`} style={{ color: '#0066FF' }} title={isJamPlaying ? "Castling 중지" : "Castling 시작"}><span className="text-3xl font-black leading-none relative z-10">C</span></button>
                 </div>
             )}
-            <Canvas orthographic dpr={isDevPage ? [1, 2.5] : [1, 2.0]} gl={{ preserveDrawingBuffer: true }} camera={{ zoom: cameraZoom || 12, position: [0, cameraTargetY, 100], near: 0.1, far: 2000 }}>
+            <Canvas orthographic dpr={isDevPage ? [1, 2.5] : [1, 2.0]} gl={{ preserveDrawingBuffer: true }} camera={{ zoom: cameraZoom || 12, position: [0, cameraTargetY, 100], near: 0.1, far: 2000 }} style={{ touchAction: 'pan-y' }}>
                 <color attach="background" args={['#ffffff']} />
                 <ambientLight intensity={1.0} /><pointLight position={[0, 0, 100]} intensity={0.2} color="#ffffff" /><directionalLight position={[-50, 100, 100]} intensity={0.5} />
                 <CameraHandler isLocked={isCameraLockedState} enableZoom={enableZoom} enablePan={enablePan} sceneSize={sceneSize} cameraTargetY={cameraTargetY} cameraZoom={cameraZoom} />
