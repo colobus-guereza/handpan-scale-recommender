@@ -201,7 +201,8 @@ const ToneFieldMesh = React.memo(({
     viewMode = 0,
     demoActive = false,
     playNote,
-    offset
+    offset,
+    isScrollingRef
 }: {
     note: NoteData;
     centerX?: number;
@@ -211,6 +212,7 @@ const ToneFieldMesh = React.memo(({
     demoActive?: boolean;
     playNote?: (noteName: string, volume?: number) => void;
     offset?: [number, number, number];
+    isScrollingRef?: React.MutableRefObject<boolean>;
 }) => {
     // Log note rendering - Removed for production optimization
     // if (note.id === 0) {
@@ -330,6 +332,10 @@ const ToneFieldMesh = React.memo(({
     };
 
     const handlePointerDown = (e: any) => {
+        // 스크롤 중이면 음 재생 건너뛰고 이벤트 전파 허용 (페이지 스크롤)
+        if (isScrollingRef?.current) {
+            return;
+        }
         e.stopPropagation();
         onClick?.(note.id);
         if (playNote) playNote(note.label);
@@ -421,6 +427,11 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     const [currentBlob, setCurrentBlob] = useState<Blob | null>(null);
     const { isLoaded: isAudioLoaded, loadingProgress, playNote, getAudioContext, getMasterGain } = useHandpanAudio();
     const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    // 터치 제스처 판별을 위한 상태 (스크롤 vs 탭)
+    const touchStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
+    const isScrollingRef = useRef(false);
+    const SCROLL_THRESHOLD = 10; // px - 세로 이동 임계값
 
     useEffect(() => {
         if (containerRef.current) {
@@ -589,10 +600,41 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
     const handleDiscardAction = () => setCurrentBlob(null);
     const handleRecordToggle = async () => { if (isRecording) stopRecording(); else startRecording(); };
 
+    // 터치 제스처 핸들러 (스크롤 vs 탭 구분)
+    const handleContainerTouchStart = useCallback((e: React.TouchEvent) => {
+        touchStartRef.current = {
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY,
+            time: Date.now()
+        };
+        isScrollingRef.current = false;
+    }, []);
+
+    const handleContainerTouchMove = useCallback((e: React.TouchEvent) => {
+        if (!touchStartRef.current) return;
+
+        const deltaY = Math.abs(e.touches[0].clientY - touchStartRef.current.y);
+        const deltaX = Math.abs(e.touches[0].clientX - touchStartRef.current.x);
+
+        // 세로 이동량이 가로보다 크고 임계값 이상이면 스크롤 모드
+        if (deltaY > deltaX && deltaY > SCROLL_THRESHOLD) {
+            isScrollingRef.current = true;
+        }
+    }, []);
+
+    const handleContainerTouchEnd = useCallback(() => {
+        touchStartRef.current = null;
+        // 다음 터치를 위해 스크롤 모드 해제
+        setTimeout(() => { isScrollingRef.current = false; }, 100);
+    }, []);
+
     React.useImperativeHandle(ref, () => ({ handleCapture, handleDemoPlay, handleRecordToggle, toggleViewMode: () => setViewMode(prev => (prev + 1) % 5 as 0 | 1 | 2 | 3 | 4), toggleIdleBoat: () => setShowIdleBoat(prev => !prev), toggleTouchText: () => setShowTouchText(prev => !prev) }));
 
     return (
-        <div ref={containerRef} className="w-full h-full relative" style={{ background: '#FFFFFF', touchAction: 'pan-y' }}>
+        <div ref={containerRef} className="w-full h-full relative" style={{ background: '#FFFFFF', touchAction: 'pan-y' }}
+            onTouchStart={handleContainerTouchStart}
+            onTouchMove={handleContainerTouchMove}
+            onTouchEnd={handleContainerTouchEnd}>
             {isMobileButtonLayout && showControls && extraControls && <div className="controls-container absolute top-12 right-4 z-50 flex flex-col gap-2 items-center">{extraControls}</div>}
             {!isDevPage && (
                 <div className={`absolute ${isMobileButtonLayout ? 'top-2' : 'top-4'} right-4 z-50 flex flex-row items-center gap-2`}>
@@ -616,7 +658,7 @@ const Digipan3D = React.forwardRef<Digipan3DHandle, Digipan3DProps>(({
                         {isDevPage && showAxes && (
                             <><mesh position={[0, 0, 0]}><sphereGeometry args={[0.5, 16, 16]} /><meshBasicMaterial color="#ff0000" /></mesh><Text position={[0, -1.5, 0]} fontSize={1} color="#000000" anchorX="center" anchorY="middle">(0, 0, 0)</Text><mesh position={[10, 0, 0]} rotation={[0, 0, -Math.PI / 2]}><cylinderGeometry args={[0.1, 0.1, 20, 8]} /><meshBasicMaterial color="#0000ff" /></mesh><mesh position={[20, 0, 0]} rotation={[0, 0, -Math.PI / 2]}><coneGeometry args={[0.3, 1, 8]} /><meshBasicMaterial color="#0000ff" /></mesh><Text position={[21, 0, 0]} fontSize={0.8} color="#0000ff" anchorX="left" anchorY="middle">X</Text><mesh position={[0, 10, 0]}><cylinderGeometry args={[0.1, 0.1, 20, 8]} /><meshBasicMaterial color="#ff0000" /></mesh><mesh position={[0, 20, 0]}><coneGeometry args={[0.3, 1, 8]} /><meshBasicMaterial color="#ff0000" /></mesh><Text position={[0, 21, 0]} fontSize={0.8} color="#ff0000" anchorX="center" anchorY="bottom">Y</Text><mesh position={[0, 0, 10]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.1, 0.1, 20, 8]} /><meshBasicMaterial color="#00ff00" /></mesh><mesh position={[0, 0, 20]} rotation={[Math.PI / 2, 0, 0]}><coneGeometry args={[0.3, 1, 8]} /><meshBasicMaterial color="#00ff00" /></mesh><Text position={[0, 0, 21]} fontSize={0.8} color="#00ff00" anchorX="center" anchorY="middle">Z</Text></>
                         )}
-                        {notes.map((note) => <ToneFieldMesh key={note.id} note={note} centerX={centerX} centerY={centerY} onClick={handleToneFieldClick} viewMode={viewMode} demoActive={demoNoteId === note.id} playNote={playNote} offset={note.offset || tonefieldOffset} />)}
+                        {notes.map((note) => <ToneFieldMesh key={note.id} note={note} centerX={centerX} centerY={centerY} onClick={handleToneFieldClick} viewMode={viewMode} demoActive={demoNoteId === note.id} playNote={playNote} offset={note.offset || tonefieldOffset} isScrollingRef={isScrollingRef} />)}
                     </Suspense>
                 </group>
             </Canvas>
