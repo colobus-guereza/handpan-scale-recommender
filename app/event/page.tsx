@@ -83,14 +83,16 @@ export default function EventPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-2 sm:p-4">
+        <div className="flex items-center justify-center p-2 sm:p-4 w-full">
             <div
-                className="w-full max-w-[1260px] border border-gray-300 rounded-2xl p-4 sm:p-6 lg:p-10 text-center bg-white relative overflow-hidden transition-all duration-300 flex flex-col justify-center"
+                className="w-full text-center bg-white relative overflow-hidden transition-all duration-300 flex flex-col justify-center"
             >
+                {/* Overlay for better readability if needed, currently disabled or light */}
+                <div className="absolute inset-0 bg-white/30 backdrop-blur-sm -z-10"></div>
 
                 {/* <h1 className="text-3xl font-bold mb-8 relative z-10">전품목 할인 이벤트</h1> */}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 items-stretch relative z-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 items-stretch relative z-10 w-full">
                     {/* Limited Stock Section */}
                     <div className="p-6 bg-red-50 border-2 border-red-100 rounded-lg animate-pulse flex flex-col justify-center items-center h-full">
                         <h2 className="text-2xl font-bold text-red-600 mb-2">⚠ 선착순 3대 남음</h2>
@@ -172,6 +174,7 @@ export default function EventPage() {
                         >
                             <span className="text-3xl">🎟️</span>
                             <span>{currentCouponUrl ? '할인쿠폰 다운받기' : 'Coming Soon'}</span>
+                            {!currentCouponUrl && <span className="text-sm font-normal mt-1 opacity-90">문의 010-8967-9204</span>}
                         </button>
                     </div>
                 </div>
