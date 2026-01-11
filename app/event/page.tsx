@@ -4,11 +4,11 @@ import { useEffect, useState, useRef } from 'react';
 
 // 쿠폰 스케줄 데이터 정의
 const COUPON_SCHEDULE = [
-    { start: '2026-01-12T00:00:00', end: '2026-01-12T23:59:59', url: 'https://handpan.co.kr/?coupon=1C94E5D228A0E' },
-    { start: '2026-01-13T00:00:00', end: '2026-01-13T23:59:59', url: 'https://handpan.co.kr/?coupon=B0B994673157A' },
-    { start: '2026-01-14T00:00:00', end: '2026-01-14T23:59:59', url: 'https://handpan.co.kr/?coupon=67C98668451E3' },
-    { start: '2026-01-15T00:00:00', end: '2026-01-15T23:59:59', url: 'https://handpan.co.kr/?coupon=C0690700AB531' },
-    { start: '2026-01-16T00:00:00', end: '2026-01-16T20:00:00', url: 'https://handpan.co.kr/?coupon=4137D4FCEE546' },
+    { start: '2026-01-12T00:00:00+09:00', end: '2026-01-12T23:59:59+09:00', url: 'https://handpan.co.kr/?coupon=1C94E5D228A0E' },
+    { start: '2026-01-13T00:00:00+09:00', end: '2026-01-13T23:59:59+09:00', url: 'https://handpan.co.kr/?coupon=B0B994673157A' },
+    { start: '2026-01-14T00:00:00+09:00', end: '2026-01-14T23:59:59+09:00', url: 'https://handpan.co.kr/?coupon=67C98668451E3' },
+    { start: '2026-01-15T00:00:00+09:00', end: '2026-01-15T23:59:59+09:00', url: 'https://handpan.co.kr/?coupon=C0690700AB531' },
+    { start: '2026-01-16T00:00:00+09:00', end: '2026-01-16T20:00:00+09:00', url: 'https://handpan.co.kr/?coupon=4137D4FCEE546' },
 ];
 
 export default function EventPage() {
@@ -35,7 +35,7 @@ export default function EventPage() {
 
         // 이벤트 일정 설정
         const EVENT_START_DATE = new Date('2026-01-12T00:00:00+09:00');
-        const EVENT_END_DATE = new Date('2026-01-16T20:00:00');
+        const EVENT_END_DATE = new Date('2026-01-16T20:00:00+09:00');
 
         const calculateTimeLeft = () => {
             const now = new Date();
@@ -221,7 +221,7 @@ export default function EventPage() {
                             className={`w-full flex-1 min-h-[120px] text-white font-bold rounded-xl text-xl px-4 py-4 transition-all duration-200 shadow-md flex flex-col items-center justify-center gap-2
                                 ${!timeLeft.isBeforeEvent && currentCouponUrl
                                     ? 'bg-red-600 hover:bg-red-700 hover:shadow-lg hover:-translate-y-1'
-                                    : 'bg-gray-400 opacity-70 cursor-not-allowed'}`}
+                                    : 'bg-red-200 text-red-50 cursor-not-allowed'}`}
                             onClick={handleCouponDownload}
                         >
                             <span className="text-3xl">🎟️</span>
