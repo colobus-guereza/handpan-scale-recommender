@@ -142,7 +142,7 @@ export default function EventPage() {
                     {/* Limited Stock Section */}
                     {timeLeft.isBeforeEvent ? (
                         <div className="p-6 bg-red-50 border-2 border-red-100 rounded-lg animate-pulse flex flex-col justify-center items-center h-full gap-2">
-                            <h2 className="text-4xl font-bold text-red-600 mb-0">선착순 10대 남음</h2>
+                            <h2 className="text-[44px] font-bold text-red-600 mb-0">선착순 10대 남음</h2>
                         </div>
                     ) : (
                         <div className="p-6 bg-red-50 border-2 border-red-100 rounded-lg animate-pulse flex flex-col justify-center items-center h-full">
