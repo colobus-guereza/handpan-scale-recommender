@@ -247,15 +247,24 @@ export default function EventPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="bg-blue-50 rounded-lg p-4 text-center">
                             <div className="text-3xl mb-2">1️⃣</div>
-                            <p className="font-semibold text-blue-800">쿠폰 다운받기</p>
+                            <p className="font-semibold text-blue-800 mb-3">쿠폰 다운받기</p>
+                            <div className="w-full aspect-[4/3] bg-blue-100 rounded-lg overflow-hidden">
+                                <img src="/images/guide_step1.png" alt="쿠폰 다운받기" className="w-full h-full object-cover" />
+                            </div>
                         </div>
                         <div className="bg-green-50 rounded-lg p-4 text-center">
                             <div className="text-3xl mb-2">2️⃣</div>
-                            <p className="font-semibold text-green-800">제품 고르기</p>
+                            <p className="font-semibold text-green-800 mb-3">핸드팬 고르기</p>
+                            <div className="w-full aspect-[4/3] bg-green-100 rounded-lg overflow-hidden">
+                                <img src="/images/guide_step2.png" alt="핸드팬 고르기" className="w-full h-full object-cover" />
+                            </div>
                         </div>
                         <div className="bg-purple-50 rounded-lg p-4 text-center">
                             <div className="text-3xl mb-2">3️⃣</div>
-                            <p className="font-semibold text-purple-800">결제 시 쿠폰 적용하기</p>
+                            <p className="font-semibold text-purple-800 mb-3">결제 시 쿠폰 적용하기</p>
+                            <div className="w-full aspect-[4/3] bg-purple-100 rounded-lg overflow-hidden">
+                                <img src="/images/guide_step3.png" alt="결제 시 쿠폰 적용하기" className="w-full h-full object-cover" />
+                            </div>
                         </div>
                     </div>
                 </div>
