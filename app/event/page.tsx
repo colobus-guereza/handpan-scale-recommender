@@ -239,7 +239,7 @@ export default function EventPage() {
                         <div className="flex w-full gap-2 mt-3">
                             <a
                                 href="tel:+821089679204"
-                                className="flex-1 bg-white border border-green-200 text-green-700 font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-green-50 transition-colors shadow-sm"
+                                className="flex-1 bg-blue-500 text-white font-bold py-2 px-3 rounded-lg text-sm flex items-center justify-center gap-1 hover:bg-blue-600 transition-colors shadow-sm"
                             >
                                 <span>📞</span>
                                 <span>문의</span>
@@ -283,31 +283,30 @@ export default function EventPage() {
                             </div>
                         </div>
                     </div>
-                    </div>
                 )}
-        </div>
-
-            {/* Coupon Modal */ }
-    {
-        showCouponModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
-                <div className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-2xl transform transition-all animate-scaleIn text-center ring-1 ring-gray-900/5">
-                    <div className="text-6xl mb-6">🎟️</div>
-                    <h3 className="text-2xl font-bold text-gray-800 mb-3">쿠폰 발급 완료!</h3>
-                    <p className="text-gray-600 mb-8 whitespace-pre-line text-lg leading-relaxed">
-                        할인쿠폰이 발급되었습니다.<br />
-                        <span className="font-semibold text-green-600">확인</span> 버튼을 누르면 자동 적용됩니다.
-                    </p>
-                    <button
-                        onClick={handleModalConfirm}
-                        className="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-                    >
-                        확인
-                    </button>
-                </div>
             </div>
-        )
-    }
+
+            {/* Coupon Modal */}
+            {
+                showCouponModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+                        <div className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-2xl transform transition-all animate-scaleIn text-center ring-1 ring-gray-900/5">
+                            <div className="text-6xl mb-6">🎟️</div>
+                            <h3 className="text-2xl font-bold text-gray-800 mb-3">쿠폰 발급 완료!</h3>
+                            <p className="text-gray-600 mb-8 whitespace-pre-line text-lg leading-relaxed">
+                                할인쿠폰이 발급되었습니다.<br />
+                                <span className="font-semibold text-green-600">확인</span> 버튼을 누르면 자동 적용됩니다.
+                            </p>
+                            <button
+                                onClick={handleModalConfirm}
+                                className="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                            >
+                                확인
+                            </button>
+                        </div>
+                    </div>
+                )
+            }
         </div >
     );
 }
