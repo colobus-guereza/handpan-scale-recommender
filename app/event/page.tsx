@@ -140,7 +140,7 @@ export default function EventPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 items-stretch relative z-10 w-full">
                     {/* Limited Stock Section */}
-                    <div className="p-6 border-2 border-red-100 rounded-lg animate-pulse flex flex-col justify-center items-center h-full gap-2">
+                    <div className="p-6 rounded-lg animate-pulse flex flex-col justify-center items-center h-full gap-2">
                         <h2 className="text-[40px] font-bold text-red-600 mb-0">선착순 10대 남음</h2>
                     </div>
 
@@ -207,7 +207,7 @@ export default function EventPage() {
                     </div>
 
                     {/* Purchase Info Section */}
-                    <div className="p-6 border-2 border-green-100 rounded-lg flex flex-col justify-center items-center h-full">
+                    <div className="p-6 rounded-lg flex flex-col justify-center items-center h-full">
                         <button
                             disabled={timeLeft.isBeforeEvent || !currentCouponUrl}
                             className={`w-full flex-1 min-h-[120px] text-white font-bold rounded-xl text-xl px-4 py-4 transition-all duration-200 shadow-md flex flex-col items-center justify-center gap-2
