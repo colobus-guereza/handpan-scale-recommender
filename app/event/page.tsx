@@ -229,10 +229,6 @@ export default function EventPage() {
                             {!timeLeft.isBeforeEvent && !currentCouponUrl && <span className="text-sm font-normal mt-1 opacity-90">문의 010-8967-9204</span>}
                         </button>
 
-                        <p className="text-sm text-green-700 mt-3 text-center break-keep leading-tight">
-                            다운 받으신 쿠폰은 쇼핑몰에서 결제하실 때 적용하실 수 있습니다.
-                        </p>
-
                         <div className="flex w-full gap-2 mt-3">
                             <a
                                 href="tel:+821089679204"
