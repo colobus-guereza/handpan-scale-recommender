@@ -211,11 +211,9 @@ export default function EventPage() {
                     {/* Purchase Info Section */}
                     <div className="p-6 bg-green-50 border-2 border-green-100 rounded-lg flex flex-col justify-center items-center h-full">
                         <button
-                            disabled={timeLeft.isBeforeEvent || !currentCouponUrl}
+                            disabled={false /* 스크린샷용 임시 활성화: timeLeft.isBeforeEvent || !currentCouponUrl */}
                             className={`w-full flex-1 min-h-[120px] text-white font-bold rounded-xl text-xl px-4 py-4 transition-all duration-200 shadow-md flex flex-col items-center justify-center gap-2
-                                ${!timeLeft.isBeforeEvent && currentCouponUrl
-                                    ? 'bg-green-600 hover:bg-green-700 hover:shadow-lg hover:-translate-y-1'
-                                    : 'bg-gray-400 opacity-70 cursor-not-allowed'}`}
+                                bg-green-600 hover:bg-green-700 hover:shadow-lg hover:-translate-y-1`}
                             onClick={handleCouponDownload}
                         >
                             <span className="text-3xl">🎟️</span>
