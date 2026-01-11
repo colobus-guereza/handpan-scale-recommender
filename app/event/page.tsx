@@ -241,13 +241,6 @@ export default function EventPage() {
                                 <span>📞</span>
                                 <span>문의</span>
                             </a>
-                            <button
-                                disabled
-                                className="flex-1 bg-gray-200 text-gray-400 font-bold py-3 rounded-xl flex items-center justify-center gap-2 cursor-not-allowed"
-                            >
-                                <span>📝</span>
-                                <span>신청</span>
-                            </button>
                         </div>
                     </div>
                 </div>
