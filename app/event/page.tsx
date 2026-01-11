@@ -94,14 +94,18 @@ export default function EventPage() {
     }, []);
 
     const handleCouponDownload = () => {
-        if (currentCouponUrl) {
+        // 스크린샷용 임시 설정: 월요일 쿠폰 링크 강제 사용
+        const tempCouponUrl = 'https://handpan.co.kr/?coupon=1C94E5D228A0E';
+        if (tempCouponUrl) {
             setShowCouponModal(true);
         }
     };
 
     const handleModalConfirm = () => {
-        if (currentCouponUrl) {
-            window.location.href = currentCouponUrl;
+        // 스크린샷용 임시 설정: 월요일 쿠폰 링크 강제 사용
+        const tempCouponUrl = 'https://handpan.co.kr/?coupon=1C94E5D228A0E';
+        if (tempCouponUrl) {
+            window.location.href = tempCouponUrl;
         }
         setShowCouponModal(false);
     };
