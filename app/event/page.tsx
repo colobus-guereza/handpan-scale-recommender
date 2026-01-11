@@ -4,11 +4,11 @@ import { useEffect, useState, useRef } from 'react';
 
 // 쿠폰 스케줄 데이터 정의
 const COUPON_SCHEDULE = [
-    { start: '2026-01-12T00:00:00+09:00', end: '2026-01-12T23:59:59+09:00', url: 'https://handpan.co.kr/?coupon=1C94E5D228A0E' },
-    { start: '2026-01-13T00:00:00+09:00', end: '2026-01-13T23:59:59+09:00', url: 'https://handpan.co.kr/?coupon=B0B994673157A' },
-    { start: '2026-01-14T00:00:00+09:00', end: '2026-01-14T23:59:59+09:00', url: 'https://handpan.co.kr/?coupon=67C98668451E3' },
-    { start: '2026-01-15T00:00:00+09:00', end: '2026-01-15T23:59:59+09:00', url: 'https://handpan.co.kr/?coupon=C0690700AB531' },
-    { start: '2026-01-16T00:00:00+09:00', end: '2026-01-16T20:00:00+09:00', url: 'https://handpan.co.kr/?coupon=4137D4FCEE546' },
+    { label: '1월 12일 (월)', rate: '25%', start: '2026-01-12T00:00:00+09:00', end: '2026-01-12T23:59:59+09:00', url: 'https://handpan.co.kr/?coupon=1C94E5D228A0E' },
+    { label: '1월 13일 (화)', rate: '20%', start: '2026-01-13T00:00:00+09:00', end: '2026-01-13T23:59:59+09:00', url: 'https://handpan.co.kr/?coupon=B0B994673157A' },
+    { label: '1월 14일 (수)', rate: '15%', start: '2026-01-14T00:00:00+09:00', end: '2026-01-14T23:59:59+09:00', url: 'https://handpan.co.kr/?coupon=67C98668451E3' },
+    { label: '1월 15일 (목)', rate: '10%', start: '2026-01-15T00:00:00+09:00', end: '2026-01-15T23:59:59+09:00', url: 'https://handpan.co.kr/?coupon=C0690700AB531' },
+    { label: '1월 16일 (금)', rate: '5%', start: '2026-01-16T00:00:00+09:00', end: '2026-01-16T20:00:00+09:00', url: 'https://handpan.co.kr/?coupon=4137D4FCEE546' },
 ];
 
 export default function EventPage() {
@@ -183,26 +183,25 @@ export default function EventPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-blue-100">
-                                    <tr>
-                                        <td className="py-2 px-3 text-left text-gray-700">1월 12일 (월)</td>
-                                        <td className="py-2 px-3 text-right font-bold text-blue-600">25%</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="py-2 px-3 text-left text-gray-700">1월 13일 (화)</td>
-                                        <td className="py-2 px-3 text-right font-bold text-blue-600">20%</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="py-2 px-3 text-left text-gray-700">1월 14일 (수)</td>
-                                        <td className="py-2 px-3 text-right font-bold text-blue-600">15%</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="py-2 px-3 text-left text-gray-700">1월 15일 (목)</td>
-                                        <td className="py-2 px-3 text-right font-bold text-blue-600">10%</td>
-                                    </tr>
-                                    <tr className="bg-red-50/50">
-                                        <td className="py-2 px-3 text-left text-gray-700">1월 16일 (금)</td>
-                                        <td className="py-2 px-3 text-right font-bold text-red-600">5%</td>
-                                    </tr>
+                                    {COUPON_SCHEDULE.map((schedule, index) => {
+                                        const isActive = schedule.url === currentCouponUrl;
+                                        // Friday style special case
+                                        const isLast = index === COUPON_SCHEDULE.length - 1;
+                                        const baseClass = isLast ? "bg-red-50/50" : "";
+                                        const activeClass = isActive ? "bg-blue-600 text-white shadow-md transform scale-[1.02] relative z-10" : "";
+
+                                        return (
+                                            <tr key={index} className={`${baseClass} ${activeClass} transition-all duration-200`}>
+                                                <td className={`py-2 px-3 text-left ${isActive ? 'text-white font-bold' : 'text-gray-700'}`}>
+                                                    {isActive && <span className="mr-1">👉</span>}
+                                                    {schedule.label}
+                                                </td>
+                                                <td className={`py-2 px-3 text-right font-bold ${isActive ? 'text-white' : (isLast ? 'text-red-600' : 'text-blue-600')}`}>
+                                                    {schedule.rate}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>
