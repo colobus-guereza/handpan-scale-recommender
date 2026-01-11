@@ -19,7 +19,6 @@ export default function EventPage() {
         seconds: number;
         isBeforeEvent: boolean;
     } | null>(null);
-    const [showCouponModal, setShowCouponModal] = useState(false);
     const [currentCouponUrl, setCurrentCouponUrl] = useState<string | null>(null);
     const [isWidgetMode, setIsWidgetMode] = useState(false);
 
@@ -105,17 +104,17 @@ export default function EventPage() {
         };
     }, []);
 
-    const handleCouponDownload = () => {
+    const handleCouponDownload = async () => {
         if (currentCouponUrl) {
-            setShowCouponModal(true);
+            try {
+                await navigator.clipboard.writeText(currentCouponUrl);
+                alert('쿠폰 링크가 클립보드에 복사되었습니다.');
+            } catch (err) {
+                console.error('클립보드 복사 실패:', err);
+                // Fallback for older browsers or insecure contexts if needed
+                alert('쿠폰 링크 복사에 실패했습니다. 다시 시도해주세요.');
+            }
         }
-    };
-
-    const handleModalConfirm = () => {
-        if (currentCouponUrl) {
-            window.location.href = currentCouponUrl;
-        }
-        setShowCouponModal(false);
     };
 
     if (!timeLeft) {
@@ -145,16 +144,9 @@ export default function EventPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 items-stretch relative z-10 w-full">
                     {/* Limited Stock Section */}
                     {/* Limited Stock Section */}
-                    {timeLeft.isBeforeEvent ? (
-                        <div className="p-6 bg-red-50 border-2 border-red-100 rounded-lg animate-pulse flex flex-col justify-center items-center h-full gap-2">
-                            <h2 className="text-[40px] font-bold text-red-600 mb-0">선착순 10대 남음</h2>
-                        </div>
-                    ) : (
-                        <div className="p-6 bg-red-50 border-2 border-red-100 rounded-lg animate-pulse flex flex-col justify-center items-center h-full">
-                            <h2 className="text-2xl font-bold text-red-600 mb-2">⚠ 선착순 3대 남음</h2>
-                            <p className="text-red-500 font-medium">서두르세요!<br />재고가 빠르게 소진되고 있습니다.</p>
-                        </div>
-                    )}
+                    <div className="p-6 bg-red-50 border-2 border-red-100 rounded-lg animate-pulse flex flex-col justify-center items-center h-full gap-2">
+                        <h2 className="text-[40px] font-bold text-red-600 mb-0">선착순 10대 남음</h2>
+                    </div>
 
                     {/* Countdown Section */}
                     <div className="p-6 bg-gray-50 rounded-lg flex flex-col justify-center items-center h-full">
@@ -292,27 +284,7 @@ export default function EventPage() {
                 )}
             </div>
 
-            {/* Coupon Modal */}
-            {
-                showCouponModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
-                        <div className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-2xl transform transition-all animate-scaleIn text-center ring-1 ring-gray-900/5">
-                            <div className="text-6xl mb-6">🎟️</div>
-                            <h3 className="text-2xl font-bold text-gray-800 mb-3">쿠폰 발급 완료!</h3>
-                            <p className="text-gray-600 mb-8 whitespace-pre-line text-lg leading-relaxed">
-                                할인쿠폰이 발급되었습니다.<br />
-                                <span className="font-semibold text-green-600">확인</span> 버튼을 누르면 자동 적용됩니다.
-                            </p>
-                            <button
-                                onClick={handleModalConfirm}
-                                className="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-                            >
-                                확인
-                            </button>
-                        </div>
-                    </div>
-                )
-            }
+
         </div >
     );
 }
