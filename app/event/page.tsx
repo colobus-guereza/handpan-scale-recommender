@@ -140,13 +140,12 @@ export default function EventPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 items-stretch relative z-10 w-full">
                     {/* Limited Stock Section */}
-                    {/* Limited Stock Section */}
-                    <div className="p-6 bg-red-50 border-2 border-red-100 rounded-lg animate-pulse flex flex-col justify-center items-center h-full gap-2">
+                    <div className="p-6 border-2 border-red-100 rounded-lg animate-pulse flex flex-col justify-center items-center h-full gap-2">
                         <h2 className="text-[40px] font-bold text-red-600 mb-0">선착순 10대 남음</h2>
                     </div>
 
                     {/* Countdown Section */}
-                    <div className="p-6 bg-gray-50 rounded-lg flex flex-col justify-center items-center h-full">
+                    <div className="p-6 rounded-lg flex flex-col justify-center items-center h-full">
                         <h2 className="text-xl font-semibold mb-6">{timeLeft.isBeforeEvent ? '곧 시작합니다.' : '이벤트 종료까지 남은 시간'}</h2>
                         <div className="flex justify-center items-end gap-2 sm:gap-3 w-full">
                             <div className="text-center flex-1">
@@ -172,7 +171,7 @@ export default function EventPage() {
                     </div>
 
                     {/* Discount Schedule Section */}
-                    <div className="p-4 bg-blue-50 rounded-lg h-full flex flex-col">
+                    <div className="p-4 rounded-lg h-full flex flex-col">
                         <h2 className="text-lg font-semibold mb-3 text-blue-800">일자별 할인율 안내</h2>
                         <div className="flex-1 overflow-hidden rounded-lg border border-blue-100 bg-white">
                             <table className="w-full text-sm h-full">
@@ -208,7 +207,7 @@ export default function EventPage() {
                     </div>
 
                     {/* Purchase Info Section */}
-                    <div className="p-6 bg-green-50 border-2 border-green-100 rounded-lg flex flex-col justify-center items-center h-full">
+                    <div className="p-6 border-2 border-green-100 rounded-lg flex flex-col justify-center items-center h-full">
                         <button
                             disabled={timeLeft.isBeforeEvent || !currentCouponUrl}
                             className={`w-full flex-1 min-h-[120px] text-white font-bold rounded-xl text-xl px-4 py-4 transition-all duration-200 shadow-md flex flex-col items-center justify-center gap-2
