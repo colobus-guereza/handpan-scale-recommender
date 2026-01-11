@@ -76,27 +76,35 @@ export default function EventPage() {
 
     useEffect(() => {
         const sendHeight = () => {
-            if (containerRef.current) {
-                const height = containerRef.current.offsetHeight;
+            const height = Math.max(
+                containerRef.current?.offsetHeight || 0,
+                document.body.scrollHeight
+            );
+            if (height > 0) {
                 window.parent.postMessage({ type: 'RESIZE_EVENT_WIDGET', height }, '*');
             }
         };
 
         // Send height on load and whenever content changes
-        const sendWithDelay = () => setTimeout(sendHeight, 50); // slight delay to ensure layout is done
+        const sendWithDelay = () => setTimeout(sendHeight, 100);
 
         const observer = new ResizeObserver(sendWithDelay);
         if (containerRef.current) {
             observer.observe(containerRef.current);
         }
 
-        // Initial send
+        // Initial send and periodic checks for late rendering
         sendWithDelay();
         window.addEventListener('resize', sendWithDelay);
+
+        // Force check periodically for first few seconds to handle font loading/image rendering
+        const interval = setInterval(sendHeight, 500);
+        setTimeout(() => clearInterval(interval), 5000);
 
         return () => {
             observer.disconnect();
             window.removeEventListener('resize', sendWithDelay);
+            clearInterval(interval);
         };
     }, []);
 
