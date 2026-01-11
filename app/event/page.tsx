@@ -131,14 +131,8 @@ export default function EventPage() {
                 {/* <h1 className="text-3xl font-bold mb-8 relative z-10">전품목 할인 이벤트</h1> */}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 items-stretch relative z-10 w-full">
-                    {/* Limited Stock Section */}
-                    {/* Limited Stock Section */}
-                    {timeLeft.isBeforeEvent ? (
-                        <div className="p-6 bg-red-50 border-2 border-red-100 rounded-lg animate-pulse flex flex-col justify-center items-center h-full gap-2">
-                            <span className="text-4xl">⚠</span>
-                            <h2 className="text-2xl font-bold text-red-600 mb-0">선착순 10대 남음</h2>
-                        </div>
-                    ) : (
+                    {/* Limited Stock Section - only show during event */}
+                    {!timeLeft.isBeforeEvent && (
                         <div className="p-6 bg-red-50 border-2 border-red-100 rounded-lg animate-pulse flex flex-col justify-center items-center h-full">
                             <h2 className="text-2xl font-bold text-red-600 mb-2">⚠ 선착순 3대 남음</h2>
                             <p className="text-red-500 font-medium">서두르세요!<br />재고가 빠르게 소진되고 있습니다.</p>
@@ -146,7 +140,10 @@ export default function EventPage() {
                     )}
 
                     {/* Countdown Section */}
-                    <div className="p-6 bg-gray-50 rounded-lg flex flex-col justify-center items-center h-full">
+                    <div className={`p-6 bg-gray-50 rounded-lg flex flex-col justify-center items-center h-full ${timeLeft.isBeforeEvent ? 'lg:col-span-2' : ''}`}>
+                        {timeLeft.isBeforeEvent && (
+                            <p className="text-red-600 font-bold text-lg mb-2">선착순 10대 남음</p>
+                        )}
                         <h2 className="text-xl font-semibold mb-6">{timeLeft.isBeforeEvent ? '곧 시작합니다.' : '이벤트 종료까지 남은 시간'}</h2>
                         <div className="flex justify-center items-end gap-2 sm:gap-3 w-full">
                             <div className="text-center flex-1">
