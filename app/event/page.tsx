@@ -189,64 +189,65 @@ export default function EventPage() {
                             </a>
                         </div>
                     </div>
+                </div>
 
-                    {/* Purchase Guide Section */}
-                    <div className="w-full mt-6 bg-white rounded-lg p-6 border border-gray-100">
-                        <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">- 간단한 할인구매 방법 -</h2>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            <div className="bg-blue-50 rounded-lg p-4 text-center">
-                                <div className="text-2xl font-bold text-gray-700 mb-2">1</div>
-                                <p className="text-lg font-semibold text-gray-700 mb-3">쿠폰 다운받기</p>
-                                <div className="w-full aspect-[4/3] rounded-lg overflow-hidden">
-                                    <img src="/images/event/guide_step1.png" alt="쿠폰 다운받기" className="w-full h-full object-cover" />
-                                </div>
+                {/* Purchase Guide Section */}
+                <div className="w-full mt-6 bg-white rounded-lg p-6 border border-gray-100">
+                    <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">- 간단한 할인구매 방법 -</h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div className="bg-blue-50 rounded-lg p-4 text-center">
+                            <div className="text-2xl font-bold text-gray-700 mb-2">1</div>
+                            <p className="text-lg font-semibold text-gray-700 mb-3">쿠폰 다운받기</p>
+                            <div className="w-full aspect-[4/3] rounded-lg overflow-hidden">
+                                <img src="/images/event/guide_step1.png" alt="쿠폰 다운받기" className="w-full h-full object-cover" />
                             </div>
-                            <div className="bg-green-50 rounded-lg p-4 text-center">
-                                <div className="text-2xl font-bold text-gray-700 mb-2">2</div>
-                                <p className="text-lg font-semibold text-gray-700 mb-3">핸드팬 고르기</p>
-                                <div className="w-full aspect-[4/3] rounded-lg overflow-hidden">
-                                    <img src="/images/event/guide_step2.png" alt="핸드팬 고르기" className="w-full h-full object-cover" />
-                                </div>
+                        </div>
+                        <div className="bg-green-50 rounded-lg p-4 text-center">
+                            <div className="text-2xl font-bold text-gray-700 mb-2">2</div>
+                            <p className="text-lg font-semibold text-gray-700 mb-3">핸드팬 고르기</p>
+                            <div className="w-full aspect-[4/3] rounded-lg overflow-hidden">
+                                <img src="/images/event/guide_step2.png" alt="핸드팬 고르기" className="w-full h-full object-cover" />
                             </div>
-                            <div className="bg-purple-50 rounded-lg p-4 text-center">
-                                <div className="text-2xl font-bold text-gray-700 mb-2">3</div>
-                                <p className="text-lg font-semibold text-gray-700 mb-3">결제 시 쿠폰 적용하기</p>
-                                <div className="w-full aspect-[4/3] rounded-lg overflow-hidden">
-                                    <img src="/images/event/guide_step3.png" alt="결제 시 쿠폰 적용하기" className="w-full h-full object-cover" />
-                                </div>
+                        </div>
+                        <div className="bg-purple-50 rounded-lg p-4 text-center">
+                            <div className="text-2xl font-bold text-gray-700 mb-2">3</div>
+                            <p className="text-lg font-semibold text-gray-700 mb-3">결제 시 쿠폰 적용하기</p>
+                            <div className="w-full aspect-[4/3] rounded-lg overflow-hidden">
+                                <img src="/images/event/guide_step3.png" alt="결제 시 쿠폰 적용하기" className="w-full h-full object-cover" />
                             </div>
-                            <div className="bg-orange-50 rounded-lg p-4 text-center">
-                                <div className="text-2xl font-bold text-gray-700 mb-2">4</div>
-                                <p className="text-lg font-semibold text-gray-700 mb-3">할인적용 완료</p>
-                                <div className="w-full aspect-[4/3] rounded-lg overflow-hidden">
-                                    <img src="/images/event/guide_step4.png" alt="할인적용 완료" className="w-full h-full object-cover" />
-                                </div>
+                        </div>
+                        <div className="bg-orange-50 rounded-lg p-4 text-center">
+                            <div className="text-2xl font-bold text-gray-700 mb-2">4</div>
+                            <p className="text-lg font-semibold text-gray-700 mb-3">할인적용 완료</p>
+                            <div className="w-full aspect-[4/3] rounded-lg overflow-hidden">
+                                <img src="/images/event/guide_step4.png" alt="할인적용 완료" className="w-full h-full object-cover" />
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                {/* Coupon Modal */}
-                {
-                    showCouponModal && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
-                            <div className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-2xl transform transition-all animate-scaleIn text-center ring-1 ring-gray-900/5">
-                                <div className="text-6xl mb-6">🎟️</div>
-                                <h3 className="text-2xl font-bold text-gray-800 mb-3">쿠폰 발급 완료!</h3>
-                                <p className="text-gray-600 mb-8 whitespace-pre-line text-lg leading-relaxed">
-                                    할인쿠폰이 발급되었습니다.<br />
-                                    <span className="font-semibold text-green-600">확인</span> 버튼을 누르면 자동 적용됩니다.
-                                </p>
-                                <button
-                                    onClick={handleModalConfirm}
-                                    className="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-                                >
-                                    확인
-                                </button>
-                            </div>
+            {/* Coupon Modal */}
+            {
+                showCouponModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+                        <div className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-2xl transform transition-all animate-scaleIn text-center ring-1 ring-gray-900/5">
+                            <div className="text-6xl mb-6">🎟️</div>
+                            <h3 className="text-2xl font-bold text-gray-800 mb-3">쿠폰 발급 완료!</h3>
+                            <p className="text-gray-600 mb-8 whitespace-pre-line text-lg leading-relaxed">
+                                할인쿠폰이 발급되었습니다.<br />
+                                <span className="font-semibold text-green-600">확인</span> 버튼을 누르면 자동 적용됩니다.
+                            </p>
+                            <button
+                                onClick={handleModalConfirm}
+                                className="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                            >
+                                확인
+                            </button>
                         </div>
-                    )
-                }
-            </div >
-            );
+                    </div>
+                )
+            }
+        </div>
+    );
 }
