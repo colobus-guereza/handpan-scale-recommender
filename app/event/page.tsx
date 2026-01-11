@@ -243,7 +243,7 @@ export default function EventPage() {
 
                 {/* Purchase Guide Section */}
                 <div className="w-full mt-6 bg-white rounded-lg p-6 border border-gray-100">
-                    <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">간단 할인구매 방법</h2>
+                    <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">- 간단한 할인구매 방법 -</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         <div className="bg-blue-50 rounded-lg p-4 text-center">
                             <div className="text-2xl font-bold text-gray-700 mb-2">1</div>
