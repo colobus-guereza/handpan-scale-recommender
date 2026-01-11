@@ -104,17 +104,51 @@ export default function EventPage() {
         };
     }, []);
 
+    const [showCouponModal, setShowCouponModal] = useState(false);
+
     const handleCouponDownload = async () => {
-        if (currentCouponUrl) {
-            try {
-                await navigator.clipboard.writeText(currentCouponUrl);
-                alert('쿠폰 링크가 클립보드에 복사되었습니다.');
-            } catch (err) {
-                console.error('클립보드 복사 실패:', err);
-                // Fallback for older browsers or insecure contexts if needed
-                alert('쿠폰 링크 복사에 실패했습니다. 다시 시도해주세요.');
-            }
+        if (!currentCouponUrl) return;
+
+        // Try modern clipboard API first
+        try {
+            await navigator.clipboard.writeText(currentCouponUrl);
+            alert('쿠폰 링크가 클립보드에 복사되었습니다.');
+            return;
+        } catch (err) {
+            console.warn('Navigator clipboard failed, trying fallback:', err);
         }
+
+        // Fallback: Use textarea hack for older browsers or webviews
+        try {
+            const textArea = document.createElement("textarea");
+            textArea.value = currentCouponUrl;
+
+            // Ensure it's not visible but part of the DOM
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            textArea.style.top = "0";
+            document.body.appendChild(textArea);
+
+            textArea.focus();
+            textArea.select();
+
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            if (successful) {
+                alert('쿠폰 링크가 클립보드에 복사되었습니다.');
+                return;
+            }
+        } catch (err) {
+            console.error('Fallback copy failed:', err);
+        }
+
+        // Final fallback: Show modal with the link
+        setShowCouponModal(true);
+    };
+
+    const handleModalConfirm = () => {
+        setShowCouponModal(false);
     };
 
     if (!timeLeft) {
@@ -284,6 +318,41 @@ export default function EventPage() {
                 )}
             </div>
 
+            {/* Coupon Modal */}
+            {
+                showCouponModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+                        <div className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-2xl transform transition-all animate-scaleIn text-center ring-1 ring-gray-900/5">
+                            <div className="text-6xl mb-6">🎟️</div>
+                            <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                                {currentCouponUrl ? '쿠폰 링크 확인' : '쿠폰 발급 완료!'}
+                            </h3>
+                            <p className="text-gray-600 mb-6 whitespace-pre-line text-lg leading-relaxed">
+                                {currentCouponUrl ? (
+                                    <>
+                                        자동 복사에 실패했습니다.<br />
+                                        아래 링크를 직접 복사해서 사용해주세요.<br />
+                                        <div className="mt-4 p-3 bg-gray-100 rounded-lg break-all text-sm font-mono select-all">
+                                            {currentCouponUrl}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        할인쿠폰이 발급되었습니다.<br />
+                                        <span className="font-semibold text-green-600">확인</span> 버튼을 누르면 자동 적용됩니다.
+                                    </>
+                                )}
+                            </p>
+                            <button
+                                onClick={handleModalConfirm}
+                                className="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                            >
+                                확인
+                            </button>
+                        </div>
+                    </div>
+                )
+            }
 
         </div >
     );
