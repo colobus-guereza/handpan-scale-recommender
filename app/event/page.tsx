@@ -246,7 +246,7 @@ export default function EventPage() {
                 {/* Purchase Guide Section */}
                 <div className="w-full mt-6 bg-white rounded-lg p-6 border border-gray-100">
                     <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">간단 할인구매 방법</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         <div className="bg-blue-50 rounded-lg p-4 text-center">
                             <div className="text-3xl mb-2">1️⃣</div>
                             <p className="font-semibold text-blue-800 mb-3">쿠폰 다운받기</p>
@@ -266,6 +266,13 @@ export default function EventPage() {
                             <p className="font-semibold text-purple-800 mb-3">결제 시 쿠폰 적용하기</p>
                             <div className="w-full aspect-[4/3] bg-purple-100 rounded-lg overflow-hidden">
                                 <img src="/images/guide_step3.png" alt="결제 시 쿠폰 적용하기" className="w-full h-full object-cover" />
+                            </div>
+                        </div>
+                        <div className="bg-orange-50 rounded-lg p-4 text-center">
+                            <div className="text-3xl mb-2">4️⃣</div>
+                            <p className="font-semibold text-orange-800 mb-3">할인적용 완료</p>
+                            <div className="w-full aspect-[4/3] bg-orange-100 rounded-lg overflow-hidden">
+                                <img src="/images/guide_step4.png" alt="할인적용 완료" className="w-full h-full object-cover" />
                             </div>
                         </div>
                     </div>
