@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 // 쿠폰 스케줄 데이터 정의
 const COUPON_SCHEDULE = [
@@ -17,19 +17,27 @@ export default function EventPage() {
         hours: number;
         minutes: number;
         seconds: number;
+        isBeforeEvent: boolean;
     } | null>(null);
     const [showCouponModal, setShowCouponModal] = useState(false);
     const [currentCouponUrl, setCurrentCouponUrl] = useState<string | null>(null);
 
+    // Iframe Auto-Resize Logic
+    const containerRef = useRef<HTMLDivElement>(null);
+
     useEffect(() => {
-        // 기준 날짜: 2026년 1월 16일 저녁 8시 (20:00:00)
-        const targetDate = new Date('2026-01-16T20:00:00');
+        // 이벤트 일정 설정
+        const EVENT_START_DATE = new Date('2026-01-12T09:00:00');
+        const EVENT_END_DATE = new Date('2026-01-16T20:00:00');
 
         const calculateTimeLeft = () => {
             const now = new Date();
+            const isBeforeEvent = now < EVENT_START_DATE;
+            const targetDate = isBeforeEvent ? EVENT_START_DATE : EVENT_END_DATE;
+
             const difference = targetDate.getTime() - now.getTime();
 
-            // 쿠폰 유효성 체크
+            // 쿠폰 유효성 체크 (이벤트 기간 내에만 활성화)
             const activeCoupon = COUPON_SCHEDULE.find(schedule => {
                 const startTime = new Date(schedule.start).getTime();
                 const endTime = new Date(schedule.end).getTime();
@@ -43,9 +51,10 @@ export default function EventPage() {
                     hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
                     minutes: Math.floor((difference / 1000 / 60) % 60),
                     seconds: Math.floor((difference / 1000) % 60),
+                    isBeforeEvent
                 };
             }
-            return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+            return { days: 0, hours: 0, minutes: 0, seconds: 0, isBeforeEvent: false };
         };
 
         // 초기값 설정
@@ -56,6 +65,32 @@ export default function EventPage() {
         }, 1000);
 
         return () => clearInterval(timer);
+    }, []);
+
+    useEffect(() => {
+        const sendHeight = () => {
+            if (containerRef.current) {
+                const height = containerRef.current.offsetHeight;
+                window.parent.postMessage({ type: 'RESIZE_EVENT_WIDGET', height }, '*');
+            }
+        };
+
+        // Send height on load and whenever content changes
+        const sendWithDelay = () => setTimeout(sendHeight, 50); // slight delay to ensure layout is done
+
+        const observer = new ResizeObserver(sendWithDelay);
+        if (containerRef.current) {
+            observer.observe(containerRef.current);
+        }
+
+        // Initial send
+        sendWithDelay();
+        window.addEventListener('resize', sendWithDelay);
+
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', sendWithDelay);
+        };
     }, []);
 
     const handleCouponDownload = () => {
@@ -73,17 +108,20 @@ export default function EventPage() {
 
     if (!timeLeft) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-4">
-                <div className="w-full border border-gray-300 rounded-2xl p-10 text-center">
-                    <h1 className="text-3xl font-bold mb-4">Event Page</h1>
-                    <p>Loading...</p>
+            <div className="flex items-center justify-center p-4 min-h-[200px]">
+                <div className="animate-pulse flex flex-col items-center">
+                    <div className="h-4 w-32 bg-gray-200 rounded mb-4"></div>
+                    <div className="h-8 w-48 bg-gray-200 rounded"></div>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="flex items-center justify-center p-2 sm:p-4 w-full">
+        <div
+            ref={containerRef}
+            className="flex items-center justify-center p-2 sm:p-4 w-full"
+        >
             <div
                 className="w-full text-center bg-white relative overflow-hidden transition-all duration-300 flex flex-col justify-center"
             >
@@ -94,14 +132,22 @@ export default function EventPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 items-stretch relative z-10 w-full">
                     {/* Limited Stock Section */}
-                    <div className="p-6 bg-red-50 border-2 border-red-100 rounded-lg animate-pulse flex flex-col justify-center items-center h-full">
-                        <h2 className="text-2xl font-bold text-red-600 mb-2">⚠ 선착순 3대 남음</h2>
-                        <p className="text-red-500 font-medium">서두르세요!<br />재고가 빠르게 소진되고 있습니다.</p>
-                    </div>
+                    {/* Limited Stock Section */}
+                    {timeLeft.isBeforeEvent ? (
+                        <div className="p-6 bg-red-50 border-2 border-red-100 rounded-lg animate-pulse flex flex-col justify-center items-center h-full gap-2">
+                            <span className="text-4xl">⚠</span>
+                            <h2 className="text-2xl font-bold text-red-600 mb-0">선착순 10대 남음</h2>
+                        </div>
+                    ) : (
+                        <div className="p-6 bg-red-50 border-2 border-red-100 rounded-lg animate-pulse flex flex-col justify-center items-center h-full">
+                            <h2 className="text-2xl font-bold text-red-600 mb-2">⚠ 선착순 3대 남음</h2>
+                            <p className="text-red-500 font-medium">서두르세요!<br />재고가 빠르게 소진되고 있습니다.</p>
+                        </div>
+                    )}
 
                     {/* Countdown Section */}
                     <div className="p-6 bg-gray-50 rounded-lg flex flex-col justify-center items-center h-full">
-                        <h2 className="text-xl font-semibold mb-6">이벤트 종료까지 남은 시간</h2>
+                        <h2 className="text-xl font-semibold mb-6">{timeLeft.isBeforeEvent ? '곧 시작합니다.' : '이벤트 종료까지 남은 시간'}</h2>
                         <div className="flex justify-center items-end gap-2 sm:gap-3 w-full">
                             <div className="text-center flex-1">
                                 <p className="text-3xl lg:text-4xl font-bold text-blue-600 tabular-nums">{timeLeft.days}</p>
@@ -165,17 +211,44 @@ export default function EventPage() {
                     {/* Purchase Info Section */}
                     <div className="p-6 bg-green-50 border-2 border-green-100 rounded-lg flex flex-col justify-center items-center h-full">
                         <button
-                            disabled={!currentCouponUrl}
-                            className={`w-full h-full min-h-[120px] text-white font-bold rounded-xl text-xl px-4 py-4 transition-all duration-200 shadow-md flex flex-col items-center justify-center gap-2
-                                ${currentCouponUrl
+                            disabled={timeLeft.isBeforeEvent || !currentCouponUrl}
+                            className={`w-full flex-1 min-h-[120px] text-white font-bold rounded-xl text-xl px-4 py-4 transition-all duration-200 shadow-md flex flex-col items-center justify-center gap-2
+                                ${!timeLeft.isBeforeEvent && currentCouponUrl
                                     ? 'bg-green-600 hover:bg-green-700 hover:shadow-lg hover:-translate-y-1'
-                                    : 'bg-gray-400 opacity-70'}`}
+                                    : 'bg-gray-400 opacity-70 cursor-not-allowed'}`}
                             onClick={handleCouponDownload}
                         >
                             <span className="text-3xl">🎟️</span>
-                            <span>{currentCouponUrl ? '할인쿠폰 다운받기' : 'Coming Soon'}</span>
-                            {!currentCouponUrl && <span className="text-sm font-normal mt-1 opacity-90">문의 010-8967-9204</span>}
+                            <span>
+                                {timeLeft.isBeforeEvent
+                                    ? '쿠폰 다운받기'
+                                    : currentCouponUrl
+                                        ? '할인쿠폰 다운받기'
+                                        : 'Coming Soon'}
+                            </span>
+                            {!timeLeft.isBeforeEvent && !currentCouponUrl && <span className="text-sm font-normal mt-1 opacity-90">문의 010-8967-9204</span>}
                         </button>
+
+                        <p className="text-xs text-green-700 mt-3 text-center break-keep leading-tight">
+                            다운 받으신 쿠폰은 쇼핑몰에서 결제하실 때 적용하실 수 있습니다.
+                        </p>
+
+                        <div className="flex w-full gap-2 mt-3">
+                            <a
+                                href="tel:+821089679204"
+                                className="flex-1 bg-white border border-green-200 text-green-700 font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-green-50 transition-colors shadow-sm"
+                            >
+                                <span>📞</span>
+                                <span>문의</span>
+                            </a>
+                            <button
+                                disabled
+                                className="flex-1 bg-gray-200 text-gray-400 font-bold py-3 rounded-xl flex items-center justify-center gap-2 cursor-not-allowed"
+                            >
+                                <span>📝</span>
+                                <span>신청</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
