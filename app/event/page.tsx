@@ -224,7 +224,9 @@ export default function EventPage() {
                                     : 'bg-red-200 text-red-50 cursor-not-allowed'}`}
                             onClick={handleCouponDownload}
                         >
-                            <span className="text-3xl">🎟️</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+                                <path fillRule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94c-2.618 0-4.5-1.425-4.5-3.06 0-1.636 1.882-3.06 4.5-3.06V6a.75.75 0 00-.75-.75H3.75a.75.75 0 00-.75.75v3.94c2.618 0 4.5 1.425 4.5 3.06 0 1.636-1.882 3.06-4.5 3.06z" clipRule="evenodd" />
+                            </svg>
                             <span>
                                 {timeLeft.isBeforeEvent
                                     ? '쿠폰 다운받기'
