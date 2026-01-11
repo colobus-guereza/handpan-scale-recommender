@@ -76,10 +76,7 @@ export default function EventPage() {
 
     useEffect(() => {
         const sendHeight = () => {
-            const height = Math.max(
-                containerRef.current?.offsetHeight || 0,
-                document.body.scrollHeight
-            );
+            const height = containerRef.current?.offsetHeight || 0;
             if (height > 0) {
                 window.parent.postMessage({ type: 'RESIZE_EVENT_WIDGET', height }, '*');
             }
