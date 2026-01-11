@@ -240,6 +240,25 @@ export default function EventPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Purchase Guide Section */}
+                <div className="w-full mt-6 bg-white rounded-lg p-6 border border-gray-100">
+                    <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">간단 할인구매 방법</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="bg-blue-50 rounded-lg p-4 text-center">
+                            <div className="text-3xl mb-2">1️⃣</div>
+                            <p className="font-semibold text-blue-800">쿠폰 다운받기</p>
+                        </div>
+                        <div className="bg-green-50 rounded-lg p-4 text-center">
+                            <div className="text-3xl mb-2">2️⃣</div>
+                            <p className="font-semibold text-green-800">제품 고르기</p>
+                        </div>
+                        <div className="bg-purple-50 rounded-lg p-4 text-center">
+                            <div className="text-3xl mb-2">3️⃣</div>
+                            <p className="font-semibold text-purple-800">결제 시 쿠폰 적용하기</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* Coupon Modal */}
